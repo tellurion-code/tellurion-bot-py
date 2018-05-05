@@ -69,10 +69,10 @@ async def on_message(message):
 					await client.send_message(message.author, "```FAILED```")
 			#/// RESTART
 			elif str(message.content) == "/restart" :
-				await client.logout()
+				client.logout()
 			elif str(message.content) == "/restart py" :
 				await client.send_message(message.channel, message.author.mention() + ", Le module Python va redémarrer..."
-				await client.logout()
+				client.logout()
 
 
 
