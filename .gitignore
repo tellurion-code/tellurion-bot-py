@@ -39,3 +39,8 @@ tramp
 
 # cask packages
 .cask/
+
+/tmp/
+__pycache__/*
+*/__pycache__/*
+.directory
