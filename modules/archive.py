@@ -1,8 +1,11 @@
 import datetime
 import time
 from subprocess import call
+
 import settings.archive
 import utils.perms
+
+
 async def everyOfGuild(client, message):
 	randtimev=str(time.time())
 	if str(message.content) == "/archive *" and (not (message.author == client.user)) and await utils.perms.hasrole(message.author, settings.archive.everyOfGuildAuth) :

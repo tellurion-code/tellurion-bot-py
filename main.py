@@ -1,9 +1,11 @@
 #!/usr/bin/python3
-import discord
+import discord #pip3 install --user discord[voice]
 import asyncio
+import os
+
 import settings
 import modules
-import os
+
 client = discord.Client(max_messages=100000)
 @client.event
 async def on_ready():
@@ -26,4 +28,5 @@ async def on_message(message):
 async def on_message_delete(message):
 	if settings.dellog.enabled:
 		await modules.dellog.log_deleted(client, message)
+
 client.run(os.environ['DISCORD_TOKEN'])
