@@ -1,4 +1,4 @@
-import settings.c_archive
-import settings.c_login
-import settings.c_dellog
-import settings.c_restart
+import settings.archive
+import settings.login
+import settings.dellog
+import settings.restart

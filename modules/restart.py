@@ -1,12 +1,7 @@
-import settings
-async def hasrole(member, roleidlist):
-	for role in member.roles :
-		for roleid in roleidlist:
-			if role.id == roleid :
-				return True
-	return False
+import settings.restart
+import utils.perms
 async def restart_py(client, message):
-	if (not (message.author == client.user)) and await hasrole(message.author, settings.c_restart.restartAuth):
+	if (not (message.author == client.user)) and await utils.perms.hasrole(message.author, settings.restart.restartAuth):
 		if str(message.content) == "/restart" :
 			await client.logout()
 		elif str(message.content) == "/restart py" :
