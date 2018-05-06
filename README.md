@@ -4,7 +4,7 @@ Bot discord Python pour le serveur officiel d'e-penser
 Ce bot est un supplément au [Bot JS](https://github.com/epenserdiscord/epenser-bot)
 
 
-installer les dépendances du bot et le bot
+Installer les dépendances du bot et le bot
 -
 ```BASH
 user : python3 -m pip install --user discord[voice]
