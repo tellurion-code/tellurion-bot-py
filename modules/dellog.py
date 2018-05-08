@@ -12,7 +12,7 @@ except:
 
 async def log_deleted(client, message):
 	with open("tmp/delLog.txt", "a") as dellogfile:
-		dellogfile.write(str(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')) + " [" + message.channel.name + "]" + " " + str(message.timestamp.strftime('%Y-%m-%d %H:%M:%S')) +  " " + message.author.name + "#" + message.author.discriminator + "> " + message.content + "\n")
+		dellogfile.write(str(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')) + " [" + str(message.channel.name) + "]" + " " + str(message.timestamp.strftime('%Y-%m-%d %H:%M:%S')) +  " " + message.author.name + "#" + message.author.discriminator + "> " + str(message.content) + "\n")
 		dellogfile.write("	Attachments : " + str(message.attachments) + "\n\n")
 
 async def send_logs(client, message):

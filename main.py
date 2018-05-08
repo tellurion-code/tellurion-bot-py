@@ -6,7 +6,10 @@ import os
 import settings
 import modules
 
+#init
 client = discord.Client(max_messages=100000)
+hitlerGame=modules.hitler.HitlerSave()
+#funcs
 @client.event
 async def on_ready():
 	if settings.login.enabled:
@@ -23,10 +26,18 @@ async def on_message(message):
 	
 	if settings.restart.enabled:
 		await modules.restart.restart_py(client, message)
+	if settings.hitler.enabled:
+		await modules.hitler.commandHandler(client, message, hitlerGame)
 
 @client.event
 async def on_message_delete(message):
 	if settings.dellog.enabled:
 		await modules.dellog.log_deleted(client, message)
 
+@client.event
+async def on_error(event, *args, **kwargs):
+	if settings.embederror.enabled :
+		await modules.embederror.sendError(client, event, *args, **kwargs)
+
+#run
 client.run(os.environ['DISCORD_TOKEN'])
