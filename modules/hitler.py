@@ -52,12 +52,13 @@ class HitlerSave :
 		if not self.started :
 			if len(self.playerlist) >= 5 and len(self.playerlist) <= 10 :
 				self.started = True
+				
 			else :
 				await client.send_message(message.channel, message.author.mention + ", secret-hitler se joue de 5 à 10 joueurs")
 		else :
 			await client.send_message(message.channel, message.author.mention + ", La partie a déjà commencé.")
 
-	async def Distribute(self):
+	async def Distribute(self): #Should only be called within StartGame;
 		self.fascists=[]
 		self.liberals=[]
 		tmpl = random.sample(self.playerlist, len(self.playerlist))
@@ -77,6 +78,4 @@ class HitlerSave :
 					self.fascists.append(tmpl[i])
 				else:
 					self.liberals.append(tmpl[i])
-			print("fascists : " + str(len(self.fascists)))
-			print("liberals : " + str(len(self.liberals)))
-	
+		self.hitler=random.choice(self.fascists)
