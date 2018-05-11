@@ -18,8 +18,12 @@ async def sendError(client, event, *args, **kwargs):
 		for member in client.get_all_members() :
 			for ID in settings.owners :
 				if ID == member.id :
-					messages_to_delete.append(await client.send_message(member, embed=embed))
+					try:
+						messages_to_delete.append(await client.send_message(member, embed=embed))
+					except:
+						pass
 		await asyncio.sleep(60)
-		await client.delete_messages(messages_to_delete)
+		for message in messages_to_delete :
+			await client.delete_message(message)
 	except:
 		pass

@@ -1,7 +1,7 @@
 import settings.restart
 import utils.perms
 async def restart_py(client, message):
-	if (not (message.author == client.user)) and await utils.perms.hasrole(message.author, settings.restart.restartAuth):
+	if (not (message.author == client.user)) and (message.content.startswith("/restart") and await utils.perms.hasrole(message.author, settings.restart.restartAuth)):
 		if str(message.content) == "/restart" :
 			await client.logout()
 		elif str(message.content) == "/restart py" :
