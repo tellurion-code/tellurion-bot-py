@@ -1,4 +1,5 @@
 #Secret Hitler is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License as in http://secrethitler.com/assets/Secret_Hitler_Rules.pdf
+#Using some graphics from https://github.com/cozuya/secret-hitler/
 import random
 
 import settings.hitler
@@ -12,8 +13,8 @@ async def commandHandler(client, message, hitlerGame):
 		await hitlerGame.StartGame(client, message)
 	elif message.content == "/game players hitler":
 		await client.send_message(message.channel,"```PYTHON\n{0}\n```".format(await hitlerGame.strUsers()))
-	
-	
+	elif message.content == "/game reset hitler" :
+		hitlerGame.__init__()
 	if settings.hitler.debug :
 		if message.content == "/hitler distribute" :
 			await hitlerGame.Distribute()
@@ -35,13 +36,16 @@ class HitlerSave :
 		self.started=False
 		self.fascists=[]
 		self.liberals=[]
+		self.hitler=""
 	async def CreateEmbed(self, liberal, Title, Description, Image=None) :
 		if liberal :
 			color=0x0cc2f9
+			iconurl="https://github.com/cozuya/secret-hitler/raw/master/public/images/emotes/LibBird.png"
 		else : 
 			color=0xd11717
+			iconurl="https://github.com/cozuya/secret-hitler/raw/master/public/images/emotes/FasSnake.png"
 		embed = discord.Embed(title=Title, description=Description, color=color)
-		embed.set_footer(text="Secret Hitler", icon_url=settings.embederror.icon)
+		embed.set_footer(text="Secret Hitler", icon_url=iconurl)
 		if not Image == None :
 			embed.set_image(url=Image)
 		return embed
@@ -75,6 +79,8 @@ class HitlerSave :
 		if not self.started :
 			if len(self.playerlist) >= 10 :
 				await client.send_message(message.channel, message.author.mention + ", la partie est pleine. Vous ne pouvez pas rejoindre.")
+			elif await self.isPlaying(message.author) :
+				await client.send_message(message.channel, message.author.mention + ", Vous êtes déjà dans la partie.")
 			else :
 				self.playerlist.append(message.author)
 				await client.send_message(message.channel,"```PYTHON\n{0}\n```".format(await self.strUsers()))
@@ -84,16 +90,16 @@ class HitlerSave :
 	
 	async def SendRoles(self, client) :
 		for member in self.liberals :
-			await client.send_message(member, embed=await self.CreateEmbed(True, "Vous êtes un libéral.", "Vous êtes contre les vilains fascistes."))
+			await client.send_message(member, embed=await self.CreateEmbed(True, "Vous êtes un libéral.", "Vous êtes contre les vilains fascistes.", random.choice(settings.hitler.liberalImage)))
 		for member in self.fascists :
-			fasclist="```\n"
+			fasclist="```PYTHON\n"
 			for fag in self.fascists :
 				fasclist += (fag.name + '#' + fag.discriminator + '\n')
 			fasclist += "```"
 			if await self.isHitler(member) :
-				await client.send_message(member, embed=await self.CreateEmbed(False, "Vous êtes Hitler", "Vous êtes contre les libéraux.\nSont avec vous : " + fasclist))
+				await client.send_message(member, embed=await self.CreateEmbed(False, "Vous êtes Hitler", "Vous êtes contre les libéraux.\nSont fascistes : " + fasclist, settings.hitler.hitlerImage))
 			else : 
-				await client.send_message(member, embed=await self.CreateEmbed(False, "Vous êtes un fasciste.", "Vous êtes contre les libéraux. \nSont avec vous : " + fasclist + "\nHitler est : " + self.hitler.mention))
+				await client.send_message(member, embed=await self.CreateEmbed(False, "Vous êtes un fasciste.", "Vous êtes contre les libéraux. \nSont fascistes : " + fasclist + "\nHitler est : " + self.hitler.name + "#" + self.hitler.discriminator, random.choice(settings.hitler.fascistImage) ))
 	async def StartGame(self, client, message):
 		if not self.started :
 			if len(self.playerlist) >= 5 and len(self.playerlist) <= 10 :
