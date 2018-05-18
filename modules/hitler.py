@@ -33,10 +33,30 @@ async def commandHandler(client, message, hitlerGame):
 class HitlerSave :
 	def __init__(self):
 		self.playerlist=[]
+		self.deadlist=[]
 		self.started=False
 		self.fascists=[]
 		self.liberals=[]
 		self.hitler=""
+		self.turn=0
+	async def startTurn(self, client) :
+		for i in range(len(self.playerlist)) :
+			if i == self.turn :
+				if self.playerlist[i] in self.liberals :
+					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(True, "Vous êtes le président.", "Vous devez choisir le chancelier."))
+				if self.playerlist[i] in self.fascists :
+					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(False, "Vous êtes le président.", "Vous devez choisir le chancelier."))
+			else :
+				if self.playerlist[i] in self.liberals :
+					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(True, self.playerlist[i].name + '#' + self.playerlist[i].discriminator + " est le président.", "Il va choisir le chancelier."))
+				if self.playerlist[i] in self.fascists :
+					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(False, self.playerlist[i].name + '#' + self.playerlist[i].discriminator + " est le président.", "Il va choisir le chancelier."))
+	async def nextPresident(self) :
+		self.turn += 1
+		if self.turn >= len(self.playerlist) :
+			self.turn = 0
+		if playerlist[self.turn] in self.deadlist :
+			await self.nextPresident()
 	async def CreateEmbed(self, liberal, Title, Description, Image=None) :
 		if liberal :
 			color=0x0cc2f9
@@ -106,6 +126,7 @@ class HitlerSave :
 				self.started = True
 				await self.Distribute()
 				await self.SendRoles(client)
+				await self.startTurn(client)
 			else :
 				await client.send_message(message.channel, message.author.mention + ", secret-hitler se joue de 5 à 10 joueurs")
 		else :
