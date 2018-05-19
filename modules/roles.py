@@ -10,13 +10,15 @@ async def AddRole(client, message) :
 			for nom, id in settings.roles.RoleList.items() :
 				response += nom + "\n"
 			await client.send_message(message.channel, message.author.mention + response + "\n```")
+			await client.delete_message(message)
 		else :
 			try :
 				if discord.utils.get(message.server.roles, id=settings.roles.RoleList[args[1]]) in message.author.roles :
 					await client.remove_roles(message.author, discord.utils.get(message.server.roles, id=settings.roles.RoleList[args[1]]))
-					await client.send_message(message.author, message.author.mention + ", vous avez perdu le rôle " + args[1] +".")
+					await client.send_message(message.channel, message.author.mention + ", vous avez perdu le rôle " + args[1] +".")
 				else :
 					await client.add_roles(message.author, discord.utils.get(message.server.roles, id=settings.roles.RoleList[args[1]]))
-					await client.send_message(message.author, message.author.mention + ", vous avez reçu le rôle " + args[1] +".")
-			except :
-				pass
+					await client.send_message(message.channel, message.author.mention + ", vous avez reçu le rôle " + args[1] +".")
+			except KeyError:
+				await client.delete_message(message)
+				await client.send_message(message.channel, message.author.mention + ", ce rôle n'est pas disponnible à l'auto-attribution. Vous pouvez avoir la liste des rôles disponnible grâce à la commande /roles liste .")
