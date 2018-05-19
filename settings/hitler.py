@@ -1,4 +1,4 @@
-enabled = True
+enabled = False
 debug = True
 fascistImage=[
 	"https://github.com/cozuya/secret-hitler/raw/master/public/images/cards/fascist0.png",
