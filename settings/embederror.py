@@ -10,5 +10,13 @@ memes=[
 	"https://cdn.discordapp.com/attachments/326742676672086018/431571655115145217/unknown.png",
 	"https://cdn.discordapp.com/attachments/326742676672086018/431574206518525963/Bruce_troll_QHwYz39nj7i.png",
 	"https://cdn.discordapp.com/attachments/326742676672086018/431572693910028289/telecharge_19.jpg"
+	"https://cdn.discordapp.com/attachments/434475794631360512/447168326582665241/2akl04.jpg",
+	"https://cdn.discordapp.com/attachments/434475794631360512/447168326582665241/2akl04.jpg",
+	"https://cdn.discordapp.com/attachments/434475794631360512/447168125067067394/20180519_004620.png",
+	"https://cdn.discordapp.com/attachments/434475794631360512/446441679868788736/Sans_titre_0.png",
+	"https://cdn.discordapp.com/attachments/434475794631360512/446441465611026443/unknown.png",
+	"https://cdn.discordapp.com/attachments/297868535076749323/445789702373638164/image.png",
+	"https://cdn.discordapp.com/attachments/297868535076749323/297875363160129540/unknown.png",
+	"https://cdn.discordapp.com/attachments/326742316456869888/447887603664945163/unknown.png"
 ]
 icon="https://cdn.discordapp.com/attachments/340620490009739265/431569015664803840/photo.png"

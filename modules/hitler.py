@@ -39,13 +39,20 @@ class HitlerSave :
 		self.liberals=[]
 		self.hitler=""
 		self.turn=0
+		self.state="ND" # states : ND = Not Defined ; CC = Choosing chancelier
 	async def startTurn(self, client) :
 		for i in range(len(self.playerlist)) :
+			m=None
 			if i == self.turn :
 				if self.playerlist[i] in self.liberals :
 					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(True, "Vous êtes le président.", "Vous devez choisir le chancelier."))
 				if self.playerlist[i] in self.fascists :
 					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(False, "Vous êtes le président.", "Vous devez choisir le chancelier."))
+				plist
+				for player in self.playerlist :
+					if not (player in deadlist) :
+						if not (player == self.playerlist[i]) :
+							pass  #TODO Finish this thingy.
 			else :
 				if self.playerlist[i] in self.liberals :
 					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(True, self.playerlist[i].name + '#' + self.playerlist[i].discriminator + " est le président.", "Il va choisir le chancelier."))

@@ -5,3 +5,4 @@ import modules.restart
 import modules.embederror
 import modules.hitler
 import modules.roles
+import modules.licorne

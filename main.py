@@ -30,6 +30,8 @@ async def on_message(message):
 		await modules.hitler.commandHandler(client, message, hitlerGame)
 	if settings.roles.enabled:
 		await modules.roles.AddRole(client, message)
+	if settings.licorne.enabled:
+		await modules.licorne.Licorne(client, message)
 @client.event
 async def on_message_delete(message):
 	if settings.dellog.enabled:
