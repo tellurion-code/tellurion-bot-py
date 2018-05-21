@@ -30,11 +30,13 @@ async def commandHandler(client, message, hitlerGame):
 		elif message.content == "/hitler sendroles" :
 			await hitlerGame.SendRoles(client)
 async def voteHandler(client, reaction, user, hitlerGame):
-	if not client.user == user :
+	if user is None :
+		pass
+	elif not (client.user == user) :
 		if hitlerGame.state=="CC":
-			if reaction.message == hitlerGame.CCm :
+			if reaction.message.id == hitlerGame.CCm.id :
 				if str(reaction.emoji) in hitlerGame.elist :
-					hitlerGame.choseChancelier(client, reaction, user)
+					await hitlerGame.choseChancelier(client, reaction, user)
 class HitlerSave :
 	def __init__(self):
 		self.playerlist=[]
@@ -44,29 +46,42 @@ class HitlerSave :
 		self.liberals=[]
 		self.hitler=""
 		self.turn=0
-		self.state="ND" # states : ND = Not Defined ; CC = Choosing chancelier
-		self.CCm=None
+		self.state="ND" # states : ND = Not Defined ; CC = Choosing chancelier ; CdV = Choosed, Voting
+		self.CCm=None #message du chancelier
 		self.elist=[]
 		self.CdC=None
+		self.CdVm=[{}]
 	async def choseChancelier(self, client, reaction, user) :
 		if user == self.playerlist[self.turn] :
-			pass
+			for i in range(10):
+				if str(reaction.emoji) == ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i]:
+					self.CdC=i
+					self.state = "CdV"
+					for i2 in range(len(self.playerlist)) :
+						m=None
+						if self.playerlist[i2] in self.liberals :
+							m = await client.send_message(self.playerlist[i2], embed=await self.CreateEmbed(True, ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][self.turn] + self.playerlist[self.turn].name + '#' + self.playerlist[self.turn].discriminator + " a choisi " + ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][self.CdC] + self.playerlist[self.CdC].name + '#' + self.playerlist[self.CdC].discriminator + " pour être chancelier.", "Stimme ja ✅ oder nein ❌.\n(Votez oui ou non)"))
+						elif self.playerlist[i2] in self.fascists :
+							m = await client.send_message(self.playerlist[i2], embed=await self.CreateEmbed(False, ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][self.turn] + self.playerlist[self.turn].name + '#' + self.playerlist[self.turn].discriminator + " a choisi " + ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][self.CdC] + self.playerlist[self.CdC].name + '#' + self.playerlist[self.CdC].discriminator + " pour être chancelier.", "Stimme ja ✅ oder nein ❌.\n(Votez oui ou non)"))
+						listemote=["✅", "❌"]
+						for emote in listemote :
+							await client.add_reaction(m, emote)
 	async def startTurn(self, client) :
 		self.state = "CC"
+		self.elist=[]
 		for i in range(len(self.playerlist)) :
 			if i == self.turn :
 				plist="\n"
-				self.elist=[]
 				for i2 in range(len(self.playerlist)) :
 					print(str(i) + " " + str(i2))
 					if not (self.playerlist[i2] in self.deadlist) :
 						if not (i2 == i) :
 							listemote=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
 							plist+= listemote[i2] + " " + self.playerlist[i2].name + '#' + self.playerlist[i2].discriminator + "\n"
-							self.elist += listemote[i2]
+							self.elist.append(listemote[i2])
 				m = None
 				if self.playerlist[i] in self.liberals :
-					self.CCm = await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(True, "Vous êtes le président.", "Vous devez choisir le chancelier.\n Voici la liste des joueurs ainsi que leur numéros :\n" + plist))
+					self.CCm = await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(True, "Vous êtes le président.", "Vous devez choisir le chancelier.\n Voici la liste des joueurs ainsi que leur numéros :\n" + plist + "\n\nFaites attention, en votant, c'est votre première réaction qui sera prise en compte, aucun retour n'est possible."))
 				elif self.playerlist[i] in self.fascists :
 					self.CCm = await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(False, "Vous êtes le président.", "Vous devez choisir le chancelier.\n Voici la liste des joueurs ainsi que leur numéros :\n" + plist + "\n\nFaites attention, en votant, c'est votre première réaction qui sera prise en compte, aucun retour n'est possible." ))
 				for i2 in range(len(self.playerlist)) :
