@@ -38,6 +38,11 @@ async def on_message_delete(message):
 		await modules.dellog.log_deleted(client, message)
 
 @client.event
+async def on_reaction_add(reaction, user):
+	if settings.hitler.enabled:
+		await modules.hitler.voteHandler(client, reaction, user, hitlerGame)
+
+@client.event
 async def on_error(event, *args, **kwargs):
 	if settings.embederror.enabled :
 		await modules.embederror.sendError(client, event, *args, **kwargs)

@@ -29,7 +29,12 @@ async def commandHandler(client, message, hitlerGame):
 				await client.send_message(message.channel, message.author.mention + ", usage: `/hitler add <username>`")
 		elif message.content == "/hitler sendroles" :
 			await hitlerGame.SendRoles(client)
-
+async def voteHandler(client, reaction, user, hitlerGame):
+	if not client.user == user :
+		if hitlerGame.state=="CC":
+			if reaction.message == hitlerGame.CCm :
+				if str(reaction.emoji) in hitlerGame.elist :
+					hitlerGame.choseChancelier(client, reaction, user)
 class HitlerSave :
 	def __init__(self):
 		self.playerlist=[]
@@ -40,24 +45,40 @@ class HitlerSave :
 		self.hitler=""
 		self.turn=0
 		self.state="ND" # states : ND = Not Defined ; CC = Choosing chancelier
+		self.CCm=None
+		self.elist=[]
+		self.CdC=None
+	async def choseChancelier(self, client, reaction, user) :
+		if user == self.playerlist[self.turn] :
+			pass
 	async def startTurn(self, client) :
+		self.state = "CC"
 		for i in range(len(self.playerlist)) :
-			m=None
 			if i == self.turn :
+				plist="\n"
+				self.elist=[]
+				for i2 in range(len(self.playerlist)) :
+					print(str(i) + " " + str(i2))
+					if not (self.playerlist[i2] in self.deadlist) :
+						if not (i2 == i) :
+							listemote=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
+							plist+= listemote[i2] + " " + self.playerlist[i2].name + '#' + self.playerlist[i2].discriminator + "\n"
+							self.elist += listemote[i2]
+				m = None
 				if self.playerlist[i] in self.liberals :
-					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(True, "Vous êtes le président.", "Vous devez choisir le chancelier."))
-				if self.playerlist[i] in self.fascists :
-					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(False, "Vous êtes le président.", "Vous devez choisir le chancelier."))
-				plist
-				for player in self.playerlist :
-					if not (player in deadlist) :
-						if not (player == self.playerlist[i]) :
-							pass  #TODO Finish this thingy.
+					self.CCm = await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(True, "Vous êtes le président.", "Vous devez choisir le chancelier.\n Voici la liste des joueurs ainsi que leur numéros :\n" + plist))
+				elif self.playerlist[i] in self.fascists :
+					self.CCm = await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(False, "Vous êtes le président.", "Vous devez choisir le chancelier.\n Voici la liste des joueurs ainsi que leur numéros :\n" + plist + "\n\nFaites attention, en votant, c'est votre première réaction qui sera prise en compte, aucun retour n'est possible." ))
+				for i2 in range(len(self.playerlist)) :
+					if not (self.playerlist[i2] in self.deadlist) :
+						if not (i2 == i) :
+							listemote=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
+							await client.add_reaction(self.CCm, listemote[i2])
 			else :
 				if self.playerlist[i] in self.liberals :
-					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(True, self.playerlist[i].name + '#' + self.playerlist[i].discriminator + " est le président.", "Il va choisir le chancelier."))
-				if self.playerlist[i] in self.fascists :
-					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(False, self.playerlist[i].name + '#' + self.playerlist[i].discriminator + " est le président.", "Il va choisir le chancelier."))
+					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(True, self.playerlist[self.turn].name + '#' + self.playerlist[self.turn].discriminator + " est le président.", "Il va choisir le chancelier."))
+				elif self.playerlist[i] in self.fascists :
+					await client.send_message(self.playerlist[i], embed=await self.CreateEmbed(False, self.playerlist[self.turn].name + '#' + self.playerlist[self.turn].discriminator + " est le président.", "Il va choisir le chancelier."))
 	async def nextPresident(self) :
 		self.turn += 1
 		if self.turn >= len(self.playerlist) :
