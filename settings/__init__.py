@@ -7,3 +7,5 @@ import settings.hitler
 import settings.roles
 import settings.licorne
 owners=["281166473102098433", "151023528446001152"]
+eviewer=["430845952388104212"]
+restriction=True
