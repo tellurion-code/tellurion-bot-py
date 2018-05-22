@@ -17,7 +17,12 @@ async def on_ready():
 
 @client.event
 async def on_message(message):
-	if (not await utils.perms.hasrole(message.author, settings.eviewer)) or ( not settings.restriction ) or message.author.id in settings.owners:
+	allowed=True
+	try:
+		allowed=(not await utils.perms.hasrole(message.author, settings.eviewer)) or ( not settings.restriction ) or message.author.id in settings.owners
+	except:
+		pass
+	if allowed :
 		if settings.archive.enabled:
 			await modules.archive.specific(client, message)
 			await modules.archive.everyOfGuild(client, message)
