@@ -37,6 +37,24 @@ async def voteHandler(client, reaction, user, hitlerGame):
 			if reaction.message.id == hitlerGame.CCm.id :
 				if str(reaction.emoji) in hitlerGame.elist :
 					await hitlerGame.choseChancelier(client, reaction, user)
+		elif hitlerGame.state=="CdV":
+			for usergrp in hitlerGame.CdVm :
+				if usergrp["message"].id == reaction.message.id :
+					if not usergrp["PID"] in hitlerGame.CdVd :
+						print("Yay, " + str(usergrp["PID"]) + " Et : " + str(reaction.emoji))
+						if reaction.emoji == "❌":
+							hitlerGame.CdVd.update({usergrp["PID"]: False})
+						elif reaction.emoji == "✅":
+							hitlerGame.CdVd.update({usergrp["PID"]: True})
+						if len(hitlerGame.CdVd) == len(hitlerGame.playerlist) - len(hitlerGame.deadlist) :
+							print(str(len(hitlerGame.CdVd)) + "   " + str(len(hitlerGame.playerlist) - len(hitlerGame.deadlist)))
+							forcount = 0
+							for i in range (len(hitlerGame.CdVd)) :
+								if hitlerGame.CdVd[i] == True:
+									forcount += 1
+							print(forcount)
+							print(len(hitlerGame.playerlist) - len(hitlerGame.deadlist))
+							#TODO Send vote results to every single player.
 class HitlerSave :
 	def __init__(self):
 		self.playerlist=[]
@@ -46,11 +64,14 @@ class HitlerSave :
 		self.liberals=[]
 		self.hitler=""
 		self.turn=0
-		self.state="ND" # states : ND = Not Defined ; CC = Choosing chancelier ; CdV = Choosed, Voting
+		self.state="ND" # states : ND = Not Defined ; CC = Choosing chancelier ; CdV = Choosed, Voting ; 
 		self.CCm=None #message du chancelier
 		self.elist=[]
 		self.CdC=None
-		self.CdVm=[{}]
+		self.CdVm=[]
+		self.CdVd={} #La liste des votes par id
+	async def addVote(self, client, reaction, user):
+		pass
 	async def choseChancelier(self, client, reaction, user) :
 		if user == self.playerlist[self.turn] :
 			for i in range(10):
@@ -64,8 +85,11 @@ class HitlerSave :
 						elif self.playerlist[i2] in self.fascists :
 							m = await client.send_message(self.playerlist[i2], embed=await self.CreateEmbed(False, ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][self.turn] + self.playerlist[self.turn].name + '#' + self.playerlist[self.turn].discriminator + " a choisi " + ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][self.CdC] + self.playerlist[self.CdC].name + '#' + self.playerlist[self.CdC].discriminator + " pour être chancelier.", "Stimme ja ✅ oder nein ❌.\n(Votez oui ou non)"))
 						listemote=["✅", "❌"]
-						for emote in listemote :
-							await client.add_reaction(m, emote)
+						if not (self.playerlist[i2] in self.deadlist) :
+							for emote in listemote :
+								await client.add_reaction(m, emote)
+							self.CdVm.append({"PID":i2, 'message':m})
+							
 	async def startTurn(self, client) :
 		self.state = "CC"
 		self.elist=[]
@@ -73,7 +97,6 @@ class HitlerSave :
 			if i == self.turn :
 				plist="\n"
 				for i2 in range(len(self.playerlist)) :
-					print(str(i) + " " + str(i2))
 					if not (self.playerlist[i2] in self.deadlist) :
 						if not (i2 == i) :
 							listemote=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
