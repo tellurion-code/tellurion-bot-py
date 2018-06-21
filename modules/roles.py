@@ -13,7 +13,7 @@ async def AddRole(client, message) :
 			await client.delete_message(message)
 		else :
 			try :
-				if discord.utils.get(message.server.roles, id=settings.roles.RoleList[args[1]]) in message.author.roles :
+				if discord.utils.get(message.server.roles, id=settings.roles.RoleList[args[1]][0]) in message.author.roles :
 					await client.remove_roles(message.author, discord.utils.get(message.server.roles, id=settings.roles.RoleList[args[1]][0]))
 					await client.send_message(message.channel, message.author.mention + ", vous avez perdu le rôle " + args[1] +".")
 					await client.delete_message(message)
