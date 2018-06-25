@@ -7,3 +7,4 @@ import modules.hitler
 import modules.roles
 import modules.licorne
 import modules.ekiller
+import modules.testing

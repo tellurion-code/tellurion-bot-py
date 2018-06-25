@@ -39,6 +39,8 @@ async def on_message(message):
 			await modules.licorne.Licorne(client, message)
 		if settings.ekiller.enabled:
 			await modules.ekiller.commandHandler(client, message, ekiller)
+		if settings.testing.enabled:
+			await modules.testing.testsHandler(client, message)
 
 @client.event
 async def on_message_delete(message):
