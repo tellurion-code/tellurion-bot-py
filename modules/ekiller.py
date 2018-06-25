@@ -74,7 +74,7 @@ async def start(client, message, ekiller):
         word = random.choice(ekiller.words)
         embed = discord.Embed(title="E-KILLER", description="Votre cible est : " + players[i+1].display_name + "\nLe mot est : `" + word + "`\n\nBonne chance à vous.", color=0x0000ff)
         await client.send_message(players[i], embed=embed)
-    embed = discord.Embed(title="E-KILLER", description="Liste des joueurs :\n" + str([p.display_name for p in ekiller.players]) + "\nListe des mots :\n" + str(ekiller.words) + "\n\n Bonne chance à tous !", color=0x0000ff)
+    embed = discord.Embed(title="E-KILLER", description="Liste des joueurs :\n" + str([p.display_name for p in ekiller.players]) + "\n\nListe des mots :\n" + str(ekiller.words) + "\n\n Bonne chance à tous !", color=0x0000ff)
     await client.send_message(message.channel, embed=embed)
 
 async def reset(client, message, ekiller):
