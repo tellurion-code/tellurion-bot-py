@@ -3,43 +3,38 @@
 
 import random
 
-import settings.hitler
-import utils.usertools
-import discord
-
-
 async def commandHandler(client, message, ekiller):
     if message.content == "/ekiller join":
-        add_player(client, message, ekiller)
+        await add_player(client, message, ekiller)
 
     elif message.content.startswith("/ekiller quit"):
-        remove_player(client, message, ekiller)
+        await remove_player(client, message, ekiller)
 
     elif message.content.startswith("/ekiller word add"):
         args = message.content.split(' ')
         if len(args) == 4:
-            add_word(client, message, ekiller, args[3])
+            await add_word(client, message, ekiller, args[3])
         else:
-            client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot.")
+            await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot.")
 
     elif message.content.startswith("/ekiller word remove"):
         args = message.content.split(' ')
         if len(args) == 4:
-            add_word(client, message, ekiller, args[3])
+            await add_word(client, message, ekiller, args[3])
         else:
-            client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot.")
+            await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot.")
 
     elif message.content == "/ekiller players":
-        print_players(client, message, ekiller)
+        await print_players(client, message, ekiller)
 
     elif message.content == "/ekiller words":
-        print_words(client, message, ekiller)
+        await print_words(client, message, ekiller)
 
     elif message.content == "/ekiller start":
-        start(client, message, ekiller)
+        await start(client, message, ekiller)
 
     elif message.content == "/ekiller reset":
-        reset(client, message, ekiller)
+        await reset(client, message, ekiller)
 
 
 async def add_player(client, message, ekiller):
