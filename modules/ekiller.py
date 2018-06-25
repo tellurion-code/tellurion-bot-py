@@ -22,8 +22,8 @@ async def commandHandler(client, message, ekiller):
 
     elif message.content.startswith("/ekiller remove"):
         args = message.content.split(' ')
-        if len(args) == 4:
-            await remove_word(client, message, ekiller, args[3])
+        if len(args) == 3:
+            await remove_word(client, message, ekiller, args[2])
         else:
             await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot.")
 
@@ -36,8 +36,11 @@ async def commandHandler(client, message, ekiller):
     elif message.content == "/ekiller start":
         await start(client, message, ekiller)
 
-    elif message.content == "/ekiller reset":
-        await reset(client, message, ekiller)
+    elif message.content == "/ekiller reset players":
+        await reset_players(client, message, ekiller)
+
+    elif message.content == "/ekiller reset words":
+        await reset_words(client, message, ekiller)
 
 
 async def add_player(client, message, ekiller):
@@ -82,9 +85,13 @@ async def start(client, message, ekiller):
     embed = discord.Embed(title="E-KILLER", description="Liste des joueurs :\n" + str([p.display_name for p in ekiller.players]) + "\n\n Bonne chance à tous !", color=0x0000ff)
     await client.send_message(message.channel, embed=embed)
 
-async def reset(client, message, ekiller):
+async def reset_players(client, message, ekiller):
     ekiller.players = []
-    await client.send_message(message.channel, "La partie de E-Killer a été réinitialisée.")
+    await client.send_message(message.channel, "Les participants à la partie de E-Killer ont été réinitialisés.")
+
+async def reset_words(client, message, ekiller):
+    ekiller.words = []
+    await client.send_message(message.channel, "Les mots de la partie de E-Killer ont été réinitialisés.")
 
 
 
