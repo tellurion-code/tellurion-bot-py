@@ -52,7 +52,8 @@ async def remove_player(client, message, ekiller):
 
 async def print_players(client, message, ekiller):
     players = [p.display_name for p in ekiller.players]
-    await client.send_message(message.channel, "```PYTHON\nListe des joueurs :\n{0}\n```".format(str(players)))
+    await client.send_message(message.channel, "Liste des joueurs :")
+    await client.send_message(message.channel, "```PYTHON\n" + str(players) + "\n```")
 
 async def add_word(client, message, ekiller, word):
     ekiller.words.append(word)
@@ -68,7 +69,7 @@ async def print_words(client, message, ekiller):
     words = [ekiller.words[i:i+100] for i in range(0, len(ekiller.words), 100)]
     await client.send_message(message.channel, "Liste des mots :")
     for w in words:
-        await client.send_message(message.channel, str(w))
+        await client.send_message(message.channel, "```PYTHON\n" + str(w) + "\n```")
 
 async def start(client, message, ekiller):
     players = [p for p in ekiller.players]
