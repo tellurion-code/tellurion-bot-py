@@ -39,30 +39,30 @@ async def commandHandler(client, message, ekiller):
 
 async def add_player(client, message, ekiller):
     ekiller.players.append(message.author)
-    client.send_message(message.channel, message.author.mention + ", vous avez bien été ajouté à la liste des participants.")
+    await client.send_message(message.channel, message.author.mention + ", vous avez bien été ajouté à la liste des participants.")
 
 async def remove_player(client, message, ekiller):
     if message.author in ekiller.players:
         ekiller.players.remove(message.author)
-    client.send_message(message.channel, message.author.mention + ", vous avez bien été retiré de la liste des participants.")
+    await client.send_message(message.channel, message.author.mention + ", vous avez bien été retiré de la liste des participants.")
 
 async def print_players(client, message, ekiller):
     players = [p.nick for p in ekiller.players]
-    client.send_message(message.channel, "```PYTHON\nListe des joueurs :\n{0}\n```".format(str(players)))
+    await client.send_message(message.channel, "```PYTHON\nListe des joueurs :\n{0}\n```".format(str(players)))
 
 async def add_word(client, message, ekiller, word):
     ekiller.words.append(word)
-    client.send_message(message.channel, message.author.mention + ", le mot `{0}` a bien été ajouté.".format(word))
+    await client.send_message(message.channel, message.author.mention + ", le mot `{0}` a bien été ajouté.".format(word))
 
 async def remove_word(client, message, ekiller, word):
     if word in ekiller.words:
         ekiller.words.remove(word)
-        client.send_message(message.channel, message.author.mention + ", le mot `{0}` a bien été supprimé.".format(word))
+        await client.send_message(message.channel, message.author.mention + ", le mot `{0}` a bien été supprimé.".format(word))
     else:
-        client.send_message(message.channel, message.author.mention + ", le mot `{0}` n'existe pas.".format(word))
+        await client.send_message(message.channel, message.author.mention + ", le mot `{0}` n'existe pas.".format(word))
 
 async def print_words(client, message, ekiller):
-    client.send_message(message.channel, "```PYTHON\nListe des mots :\n{0}\n```".format(str(ekiller.words)))
+    await client.send_message(message.channel, "```PYTHON\nListe des mots :\n{0}\n```".format(str(ekiller.words)))
 
 async def start(client, message, ekiller):
     players = ekiller.players
@@ -70,13 +70,13 @@ async def start(client, message, ekiller):
     players = players.append(players[0])
     for i in range(len(players)-1):
         word = random.choice(ekiller.words)
-        client.send_message(players[i], "**E-KILLER**\nVotre cible est : " + players[i+1].nick + "\nLe mot est : " + word + "\nBonne chane à vous.")
-    client.send_message(message.channel, "La partie de E-Killer a été lancée.")
+        await client.send_message(players[i], "**E-KILLER**\nVotre cible est : " + players[i+1].nick + "\nLe mot est : " + word + "\nBonne chane à vous.")
+    await client.send_message(message.channel, "La partie de E-Killer a été lancée.")
 
 async def reset(client, message, ekiller):
     ekiller.players = []
     ekiller.words = []
-    client.send_message(message.channel, "La partie de E-Killer a été réinitialisée.")
+    await client.send_message(message.channel, "La partie de E-Killer a été réinitialisée.")
 
 
 
