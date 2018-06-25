@@ -3,11 +3,6 @@
 
 import random
 
-import settings.hitler
-import utils.usertools
-import discord
-
-
 async def commandHandler(client, message, ekiller):
     if message.content == "/ekiller join":
         add_player(client, message, ekiller)
