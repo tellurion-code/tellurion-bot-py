@@ -72,7 +72,7 @@ async def start(client, message, ekiller):
     players.append(players[0])
     for i in range(len(players)-1):
         word = random.choice(ekiller.words)
-        embed = discord.Embed(title="E-KILLER", description="Votre cible est : " + players[i+1].nick + "\nLe mot est : `" + word + "`\n\nBonne chance à vous.", color=0x0000ff)
+        embed = discord.Embed(title="E-KILLER", description="Votre cible est : " + players[i+1].display_name + "\nLe mot est : `" + word + "`\n\nBonne chance à vous.", color=0x0000ff)
         await client.send_message(players[i], embed=embed)
     await client.send_message(message.channel, "La partie de E-Killer a été lancée.\nRécapitulatif :")
     await print_players(client, message, ekiller)
