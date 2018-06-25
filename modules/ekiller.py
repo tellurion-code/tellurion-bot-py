@@ -13,10 +13,10 @@ async def commandHandler(client, message, ekiller):
 
     elif message.content.startswith("/ekiller add"):
         args = message.content.split(' ')
-        if len(args) == 4:
-            for e in args[3].split(','):
+        if len(args) == 3:
+            for e in args[2].split(','):
                 await add_word(client, message, ekiller, e)
-            await client.send_message(message.channel, message.author.mention + ", le(s) mot(s) `{0}` a bien été ajouté.".format(args[3]))
+            await client.send_message(message.channel, message.author.mention + ", le(s) mot(s) `{0}` a bien été ajouté.".format(args[2]))
         else:
             await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot ou une liste de mots séparés par des virgules.")
 
