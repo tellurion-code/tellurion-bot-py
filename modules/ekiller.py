@@ -71,7 +71,10 @@ async def start(client, message, ekiller):
     for i in range(len(players)-1):
         word = random.choice(ekiller.words)
         await client.send_message(players[i], "**E-KILLER**\n\nVotre cible est : " + players[i+1].nick + "\nLe mot est : `" + word + "`\n\nBonne chance à vous.")
-    await client.send_message(message.channel, "La partie de E-Killer a été lancée.\nBonne partie \o")
+    await client.send_message(message.channel, "La partie de E-Killer a été lancée.")
+    await print_players(client, message, ekiller)
+    await print_words(client, message, ekiller)
+    await client.send_message(message.channel, "Bonne chance à tous !")
 
 async def reset(client, message, ekiller):
     ekiller.players = []
