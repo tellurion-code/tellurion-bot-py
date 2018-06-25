@@ -6,3 +6,4 @@ import modules.embederror
 import modules.hitler
 import modules.roles
 import modules.licorne
+import modules.ekiller
