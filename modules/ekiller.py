@@ -83,5 +83,5 @@ async def reset(client, message, ekiller):
 class Ekiller:
 
     def __init__(self):
-        self.players = {}
+        self.players = []
         self.words = []
