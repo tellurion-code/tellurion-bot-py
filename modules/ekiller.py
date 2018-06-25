@@ -47,7 +47,7 @@ async def remove_player(client, message, ekiller):
     await client.send_message(message.channel, message.author.mention + ", vous avez bien été retiré de la liste des participants.")
 
 async def print_players(client, message, ekiller):
-    players = [p.nick for p in ekiller.players]
+    players = [p.display_name for p in ekiller.players]
     await client.send_message(message.channel, "```PYTHON\nListe des joueurs :\n{0}\n```".format(str(players)))
 
 async def add_word(client, message, ekiller, word):
@@ -70,7 +70,7 @@ async def start(client, message, ekiller):
     players.append(players[0])
     for i in range(len(players)-1):
         word = random.choice(ekiller.words)
-        await client.send_message(players[i], "**E-KILLER**\n\nVotre cible est : " + players[i+1].nick + "\nLe mot est : `" + word + "`\n\nBonne chance à vous.")
+        await client.send_message(players[i], "**E-KILLER**\n\nVotre cible est : " + players[i+1].display_name + "\nLe mot est : `" + word + "`\n\nBonne chance à vous.")
     await client.send_message(message.channel, "La partie de E-Killer a été lancée.")
     await print_players(client, message, ekiller)
     await print_words(client, message, ekiller)
