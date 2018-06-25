@@ -9,6 +9,7 @@ import utils.perms
 #init
 client = discord.Client(max_messages=100000)
 hitlerGame=modules.hitler.HitlerSave()
+ekiller = modules.ekiller.Ekiller()
 #funcs
 @client.event
 async def on_ready():
@@ -26,10 +27,8 @@ async def on_message(message):
 		if settings.archive.enabled:
 			await modules.archive.specific(client, message)
 			await modules.archive.everyOfGuild(client, message)
-		
 		if settings.dellog.enabled:
 			await modules.dellog.send_logs(client, message)
-		
 		if settings.restart.enabled:
 			await modules.restart.restart_py(client, message)
 		if settings.hitler.enabled:
@@ -38,6 +37,9 @@ async def on_message(message):
 			await modules.roles.AddRole(client, message)
 		if settings.licorne.enabled:
 			await modules.licorne.Licorne(client, message)
+		if settings.ekiller.enabled:
+			await modules.ekiller.commandHandler(client, message, ekiller)
+
 @client.event
 async def on_message_delete(message):
 	if settings.dellog.enabled:
