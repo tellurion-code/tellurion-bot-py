@@ -20,7 +20,7 @@ async def commandHandler(client, message, ekiller):
     elif message.content.startswith("/ekiller word remove"):
         args = message.content.split(' ')
         if len(args) == 4:
-            await add_word(client, message, ekiller, args[3])
+            await remove_word(client, message, ekiller, args[3])
         else:
             await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot.")
 
