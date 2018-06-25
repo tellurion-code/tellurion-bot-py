@@ -14,7 +14,7 @@ async def commandHandler(client, message, ekiller):
     elif message.content.startswith("/ekiller add"):
         args = message.content.split(' ')
         if len(args) == 4:
-            for e in args[3].split(',')
+            for e in args[3].split(','):
                 await add_word(client, message, ekiller, e)
             await client.send_message(message.channel, message.author.mention + ", le(s) mot(s) `{0}` a bien été ajouté.".format(args[3]))
         else:
