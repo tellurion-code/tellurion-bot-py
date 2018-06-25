@@ -69,7 +69,7 @@ async def start(client, message, ekiller):
     await client.send_message(message.channel, str(players))
     random.shuffle(players)
     await client.send_message(message.channel, str(players))
-    players = players.append(players[0])
+    players.append(players[0])
     await client.send_message(message.channel, str(players))
     for i in range(len(players)-1):
         word = random.choice(ekiller.words)
