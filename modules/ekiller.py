@@ -2,6 +2,7 @@
 #!/usr/bin/python3
 
 import random
+import discord
 
 async def commandHandler(client, message, ekiller):
     if message.content == "/ekiller join":
@@ -38,7 +39,8 @@ async def commandHandler(client, message, ekiller):
 
 
 async def add_player(client, message, ekiller):
-    ekiller.players.append(message.author)
+    if message.author not in ekiller.players:
+        ekiller.players.append(message.author)
     await client.send_message(message.channel, message.author.mention + ", vous avez bien été ajouté à la liste des participants.")
 
 async def remove_player(client, message, ekiller):
@@ -70,7 +72,8 @@ async def start(client, message, ekiller):
     players.append(players[0])
     for i in range(len(players)-1):
         word = random.choice(ekiller.words)
-        await client.send_message(players[i], "**E-KILLER**\n\nVotre cible est : " + players[i+1].display_name + "\nLe mot est : `" + word + "`\n\nBonne chance à vous.")
+        embed = discord.Embed(title="E-KILLER", description="Votre cible est : " + players[i+1].nick + "\nLe mot est : `" + word + "`\n\nBonne chance à vous.", color=0x0000ff)
+        await client.send_message(players[i], embed=embed)
     await client.send_message(message.channel, "La partie de E-Killer a été lancée.")
     await print_players(client, message, ekiller)
     await print_words(client, message, ekiller)
