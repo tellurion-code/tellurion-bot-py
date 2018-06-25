@@ -65,7 +65,7 @@ async def print_words(client, message, ekiller):
     await client.send_message(message.channel, "```PYTHON\nListe des mots :\n{0}\n```".format(str(ekiller.words)))
 
 async def start(client, message, ekiller):
-    players = ekiller.players
+    players = [p for p in ekiller.players]
     random.shuffle(players)
     players = players.append(players[0])
     for i in range(len(players)-1):
