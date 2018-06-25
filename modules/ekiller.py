@@ -79,7 +79,6 @@ async def start(client, message, ekiller):
 
 async def reset(client, message, ekiller):
     ekiller.players = []
-    ekiller.words = []
     await client.send_message(message.channel, "La partie de E-Killer a été réinitialisée.")
 
 
