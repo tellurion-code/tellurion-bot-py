@@ -11,7 +11,7 @@ async def commandHandler(client, message, ekiller):
     if message.content.startswith("/ekiller quit"):
         await remove_player(client, message, ekiller)
     try :
-        if message.content.startswith("/ekiller") and (not utils.perms.hasrole(message.author, settings.ekiller.auth)) :
+        if message.content.startswith("/ekiller") and (not await utils.perms.hasrole(message.author, settings.ekiller.auth)) :
             await client.send_message(message.channel, message.author.mention + ", vous n'avez pas la permission d'effectuer cette commande.")
             return
     except :
