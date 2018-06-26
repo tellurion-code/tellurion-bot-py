@@ -19,12 +19,12 @@ except:
 
 async def commandHandler(client, message, ekiller):
 
-    try :
-        if message.content.startswith("/ekiller") and (not await utils.perms.hasrole(message.author, settings.ekiller.auth)) :
+    try:
+        if message.content.startswith("/ekiller") and (not await utils.perms.hasrole(message.author, settings.ekiller.auth)):
             await client.send_message(message.channel, message.author.mention + ", vous n'avez pas la permission d'effectuer cette commande.")
             return
-    except :
-        if message.content.startswith("/ekiller") :
+    except:
+        if message.content.startswith("/ekiller"):
             await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec ekiller doivent être éffectuées sur le serveur.")
             raise
 
@@ -174,7 +174,7 @@ async def words_reset(client, message, ekiller):
     await client.send_message(message.channel, message.author.mention + ", la liste des mots a bien été réinitialisée.")
 
 async def logs(client, message):
-    if not (message.author == client.user) and await utils.perms.hasrole(message.author, settings.dellog.logsAuth) :
+    if not (message.author == client.user) and await utils.perms.hasrole(message.author, settings.dellog.logsAuth):
         try:
             await client.delete_message(message)
             await client.send_file(message.author, "tmp/ekillerLog.txt")
