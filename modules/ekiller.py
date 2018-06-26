@@ -19,13 +19,13 @@ async def commandHandler(client, message, ekiller):
             await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec ekiller doivent être éffectuées sur le serveur.")
             raise
 
-    elif message.content.startswith("/ekiller addplayer"):
+    if message.content.startswith("/ekiller addplayer"):
         await addplayerbyid(client, message, ekiller)
 
     elif message.content.startswith("/ekiller removeplayer"):
         await delplayerbyid(client, message, ekiller)
 
-    if message.content == "/ekiller join":
+    elif message.content == "/ekiller join":
         await add_player(client, message, ekiller)
 
     elif message.content.startswith("/ekiller add"):
