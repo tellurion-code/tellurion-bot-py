@@ -27,6 +27,5 @@ async def AddRole(client, message) :
             except KeyError:
                 await client.send_message(message.channel, message.author.mention + ", ce rôle n'est pas disponnible à l'auto-attribution. Vous pouvez avoir la liste des rôles disponnible grâce à la commande /role liste .")
             except :
-                if message.content.startswith("/ekiller") :
-                    await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec les roles doivent être éffectuées sur le serveur.")
-                    raise
+                await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec les roles doivent être éffectuées sur le serveur.")
+                raise
