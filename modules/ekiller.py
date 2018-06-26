@@ -102,7 +102,7 @@ async def players_add(client, message, ekiller):
             elif member in ekiller.players:
                 await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` participe déjà.".format(member.display_name))
             else:
-                ekiller.words.append(member)
+                ekiller.players.append(member)
                 await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` a bien été ajouté.".format(member.display_name))
     else:
         await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique id ou une liste d'ids séparés par une virgule.")
@@ -118,7 +118,7 @@ async def players_remove(client, message, ekiller):
             elif member not in ekiller.players:
                 await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` ne participe pas.".format(member.display_name))
             else:
-                ekiller.words.append(member)
+                ekiller.players.append(member)
                 await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` a bien été ajouté.".format(member.display_name))
     else:
         await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique id ou une liste d'ids séparés par une virgule.")
