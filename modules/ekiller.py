@@ -2,14 +2,23 @@
 #!/usr/bin/python3
 
 import random
+import datetime
+import time
+from subprocess import call
 import discord
+
 import utils.perms
 import utils.usertools
 import settings.ekiller
+import settings.dellog
+
+try:
+    call(['mkdir', 'tmp'])
+except:
+    pass
+
 async def commandHandler(client, message, ekiller):
 
-    if message.content.startswith("/ekiller quit"):
-        await remove_player(client, message, ekiller)
     try :
         if message.content.startswith("/ekiller") and (not await utils.perms.hasrole(message.author, settings.ekiller.auth)) :
             await client.send_message(message.channel, message.author.mention + ", vous n'avez pas la permission d'effectuer cette commande.")
@@ -19,127 +28,157 @@ async def commandHandler(client, message, ekiller):
             await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec ekiller doivent être éffectuées sur le serveur.")
             raise
 
-    if message.content.startswith("/ekiller addplayer"):
-        await addplayerbyid(client, message, ekiller)
-
-    elif message.content.startswith("/ekiller removeplayer"):
-        await delplayerbyid(client, message, ekiller)
-
-    elif message.content == "/ekiller join":
-        await add_player(client, message, ekiller)
-
-    elif message.content.startswith("/ekiller add"):
-        args = message.content.split(' ')
-        if len(args) == 3:
-            for e in args[2].split(','):
-                await add_word(client, message, ekiller, e)
-            await client.send_message(message.channel, message.author.mention + ", le(s) mot(s) `{0}` a bien été ajouté.".format(args[2]))
-        else:
-            await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot ou une liste de mots séparés par des virgules.")
-
-    elif message.content.startswith("/ekiller remove"):
-        args = message.content.split(' ')
-        if len(args) == 3:
-            await remove_word(client, message, ekiller, args[2])
-        else:
-            await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot.")
-
-    elif message.content == "/ekiller players":
-        await print_players(client, message, ekiller)
-
-    elif message.content == "/ekiller words":
-        await print_words(client, message, ekiller)
-
-    elif message.content == "/ekiller start":
+    if message.content == "/ekiller start":
         await start(client, message, ekiller)
 
-    elif message.content == "/ekiller reset players":
-        await reset_players(client, message, ekiller)
+    elif message.content == "/ekiller join":
+        await players_join(client, message, ekiller)
 
-    elif message.content == "/ekiller reset words":
-        await reset_words(client, message, ekiller)
+    elif message.content == "/ekiller quit":
+        await players_quit(client, message, ekiller)
 
+    elif message.content.startswith("/ekiller players add"):
+        await players_add(client, message, ekiller)
 
+    elif message.content.startswith("/ekiller players remove"):
+        await players_remove(client, message, ekiller)
 
-async def add_player(client, message, ekiller):
-    if message.author not in ekiller.players:
-        ekiller.players.append(message.author)
-    await client.send_message(message.channel, message.author.mention + ", vous avez bien été ajouté à la liste des participants.")
+    elif message.content == "/ekiller players list":
+        await players_list(client, message, ekiller)
 
-async def remove_player(client, message, ekiller):
-    if message.author in ekiller.players:
-        ekiller.players.remove(message.author)
-    await client.send_message(message.channel, message.author.mention + ", vous avez bien été retiré de la liste des participants.")
+    elif message.content == "/ekiller players reset":
+        await players_reset(client, message, ekiller)
 
-async def print_players(client, message, ekiller):
-    players = [p.display_name for p in ekiller.players]
-    await client.send_message(message.channel, "Liste des joueurs :")
-    await client.send_message(message.channel, "```PYTHON\n" + str(players) + "\n```")
+    elif message.content.startswith("/ekiller words add"):
+        await words_add(client, message, ekiller)
 
-async def add_word(client, message, ekiller, word):
-    ekiller.words.append(word)
+    elif message.content.startswith("/ekiller words remove"):
+        await words_remove(client, message, ekiller)
 
-async def remove_word(client, message, ekiller, word):
-    if word in ekiller.words:
-        ekiller.words.remove(word)
-        await client.send_message(message.channel, message.author.mention + ", le mot `{0}` a bien été supprimé.".format(word))
-    else:
-        await client.send_message(message.channel, message.author.mention + ", le mot `{0}` n'existe pas.".format(word))
+    elif message.content == "/ekiller words list":
+        await words_list(client, message, ekiller)
 
-async def print_words(client, message, ekiller):
-    words = [ekiller.words[i:i+100] for i in range(0, len(ekiller.words), 100)]
-    await client.send_message(message.channel, "Liste des mots :")
-    for w in words:
-        await client.send_message(message.channel, "```PYTHON\n" + str(w) + "\n```")
+    elif message.content == "/ekiller words reset":
+        await words_reset(client, message, ekiller)
+
+    elif message.content == "/ekiller logs":
+        await logs(client, message)
+
 
 async def start(client, message, ekiller):
+    game = []
     players = [p for p in ekiller.players]
     random.shuffle(players)
     players.append(players[0])
     for i in range(len(players)-1):
         word = random.choice(ekiller.words)
-        embed = discord.Embed(title="E-KILLER", description="Votre cible est : " + players[i+1].display_name + "\nLe mot est : `" + word + "`\n\nBonne chance à vous.", color=0x0000ff)
+        dic = {"ekiller":players[i], "target":players[i+1], "word":word}
+        game.append(dic)
+        embed = discord.Embed(title="E-KILLER", description="Votre cible est : " + players[i+1].display_name + "\n\nLe mot est : `" + word + "`\n\nBonne chance à vous.", color=0x0000ff)
         await client.send_message(players[i], embed=embed)
     embed = discord.Embed(title="E-KILLER", description="Liste des joueurs :\n" + str([p.display_name for p in ekiller.players]) + "\n\n Bonne chance à tous !", color=0x0000ff)
     await client.send_message(message.channel, embed=embed)
+    with open("tmp/ekillerLog.txt", "a") as ekillerlogfile:
+        ekillerlogfile.write(str(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')) + " [" + str(game) + "]\n")
 
-async def reset_players(client, message, ekiller):
+async def players_join(client, message, ekiller):
+    if message.author not in ekiller.players:
+        ekiller.players.append(message.author)
+    await client.send_message(message.channel, message.author.mention + ", vous avez bien été ajouté à la liste des participants.")
+
+async def players_quit(client, message, ekiller):
+    if message.author in ekiller.players:
+        ekiller.players.remove(message.author)
+    await client.send_message(message.channel, message.author.mention + ", vous avez bien été retiré de la liste des participants.")
+
+async def players_add(client, message, ekiller):
+    args = message.content.split(' ')
+    if len(args) == 4:
+        ids = args[3].split(',')
+        for id in ids:
+            member = await utils.usertools.UserByID(client, id)
+            if not member:
+                await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` n'existe pas.".format(member.display_name))
+            elif member in ekiller.players:
+                await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` participe déjà.".format(member.display_name))
+            else:
+                ekiller.words.append(member)
+                await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` a bien été ajouté.".format(member.display_name))
+    else:
+        await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique id ou une liste d'ids séparés par une virgule.")
+
+async def players_remove(client, message, ekiller):
+    args = message.content.split(' ')
+    if len(args) == 4:
+        ids = args[3].split(',')
+        for id in ids:
+            member = await utils.usertools.UserByID(client, id)
+            if not member:
+                await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` n'existe pas.".format(member.display_name))
+            elif member not in ekiller.players:
+                await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` ne participe pas.".format(member.display_name))
+            else:
+                ekiller.words.append(member)
+                await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` a bien été ajouté.".format(member.display_name))
+    else:
+        await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique id ou une liste d'ids séparés par une virgule.")
+
+async def players_list(client, message, ekiller):
+    players = [p.display_name for p in ekiller.players]
+    await client.send_message(message.channel, "Liste des joueurs :")
+    await client.send_message(message.channel, "```PYTHON\n" + str(players) + "\n```")
+
+async def players_reset(client, message, ekiller):
     ekiller.players = []
-    await client.send_message(message.channel, "Les participants à la partie de E-Killer ont été réinitialisés.")
+    await client.send_message(message.channel, message.author.mention + ", la liste des participants a bien été réinitialisée.")
 
-async def reset_words(client, message, ekiller):
+async def words_add(client, message, ekiller):
+    args = message.content.split(' ')
+    if len(args) == 4:
+        words = args[3].lower().split(',')
+        for w in words:
+            if w not in ekiller.words:
+                ekiller.words.append(w)
+        if len(words) == 1:
+            await client.send_message(message.channel, message.author.mention + ", le mot `{0}` a bien été ajouté.".format(args[3]))
+        else:
+            await client.send_message(message.channel, message.author.mention + ", les mots `{0}` ont bien été ajoutés.".format(args[3]))
+    else:
+        await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot ou une liste de mots séparés par une virgule.")
+
+async def words_remove(client, message, ekiller):
+    args = message.content.split(' ')
+    if len(args) == 4:
+        words = args[3].lower().split(',')
+        for w in words:
+            if w in ekiller.words:
+                ekiller.words.remove(w)
+        if len(words) == 1:
+            await client.send_message(message.channel, message.author.mention + ", le mot `{0}` a bien été supprimé.".format(args[3]))
+        else:
+            await client.send_message(message.channel, message.author.mention + ", les mots `{0}` ont bien été supprimés.".format(args[3]))
+    else:
+        await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot ou une liste de mots séparés par une virgule.")
+
+async def words_list(client, message, ekiller):
+    words = [ekiller.words[i:i+100] for i in range(0, len(ekiller.words), 100)]
+    await client.send_message(message.channel, "Liste des mots :")
+    for w in words:
+        await client.send_message(message.channel, "```PYTHON\n" + str(w) + "\n```")
+
+async def words_reset(client, message, ekiller):
     ekiller.words = []
-    await client.send_message(message.channel, "Les mots de la partie de E-Killer ont été réinitialisés.")
+    await client.send_message(message.channel, message.author.mention + ", la liste des mots a bien été réinitialisée.")
 
-async def addplayerbyid(client, message, ekiller):
-    args=message.content.split(' ')
-    if len(args)==3:
-        member = False
-        try :
-            member = await utils.usertools.UserByID(client, args[2])
-        except :
-            pass
-        if member == False :
-            await client.send_message(message.channel, message.author.mention + ", l'ID que vous avez donné est invalide.")
-        else :
-            ekiller.players.append(member)
-    else :
-        await client.send_message(message.channel, message.author.mention + ", veuillez péciser un seul et unique ID.")
+async def send_logs(client, message):
+    if not (message.author == client.user) and await utils.perms.hasrole(message.author, settings.dellog.logsAuth) :
+        try:
+            await client.delete_message(message)
+            await client.send_file(message.author, "tmp/ekillerLog.txt")
+        except:
+            await client.send_message(message.author, "```FAILED```")
 
-async def delplayerbyid(client, message, ekiller):
-    args=message.content.split(' ')
-    if len(args)==3:
-        member = False
-        try :
-            member = await utils.usertools.UserByID(client, args[2])
-        except :
-            pass
-        if member == False :
-            await client.send_message(message.channel, message.author.mention + ", l'ID que vous avez donné est invalide.")
-        else :
-            ekiller.players.remove(member)
-    else :
-        await client.send_message(message.channel, message.author.mention + ", veuillez péciser un seul et unique ID.")
+
 class Ekiller:
 
     def __init__(self):
