@@ -11,15 +11,23 @@ async def commandHandler(client, message, ekiller):
     if message.content.startswith("/ekiller quit"):
         await remove_player(client, message, ekiller)
     try :
-        if message.content.startswith("/ekiller") and (not utils.perms.hasrole(message.author, settings.ekiller.auth)) :
+        if message.content.startswith("/ekiller") and (not await utils.perms.hasrole(message.author, settings.ekiller.auth)) :
             await client.send_message(message.channel, message.author.mention + ", vous n'avez pas la permission d'effectuer cette commande.")
             return
     except :
         if message.content.startswith("/ekiller") :
             await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec ekiller doivent être éffectuées sur le serveur.")
             raise
-    if message.content == "/ekiller join":
+
+    if message.content.startswith("/ekiller addplayer"):
+        await addplayerbyid(client, message, ekiller)
+
+    elif message.content.startswith("/ekiller removeplayer"):
+        await delplayerbyid(client, message, ekiller)
+
+    elif message.content == "/ekiller join":
         await add_player(client, message, ekiller)
+
     elif message.content.startswith("/ekiller add"):
         args = message.content.split(' ')
         if len(args) == 3:
@@ -51,10 +59,6 @@ async def commandHandler(client, message, ekiller):
     elif message.content == "/ekiller reset words":
         await reset_words(client, message, ekiller)
 
-    elif message.content.startswith("/ekiller addplayer"):
-        await addplayerbyid(client, message, ekiller)
-    elif message.content.startswith("/ekiller removeplayer"):
-        await delplayerbyid(client, message, ekiller)
 
 
 async def add_player(client, message, ekiller):
@@ -120,7 +124,7 @@ async def addplayerbyid(client, message, ekiller):
         else :
             ekiller.players.append(member)
     else :
-        await client.send_message(message.channel, message.author.mention + ", veuillez péciser un seul et unique ID."
+        await client.send_message(message.channel, message.author.mention + ", veuillez péciser un seul et unique ID.")
 
 async def delplayerbyid(client, message, ekiller):
     args=message.content.split(' ')
@@ -135,7 +139,7 @@ async def delplayerbyid(client, message, ekiller):
         else :
             ekiller.players.remove(member)
     else :
-        await client.send_message(message.channel, message.author.mention + ", veuillez péciser un seul et unique ID."
+        await client.send_message(message.channel, message.author.mention + ", veuillez péciser un seul et unique ID.")
 class Ekiller:
 
     def __init__(self):
