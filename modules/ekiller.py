@@ -18,8 +18,16 @@ async def commandHandler(client, message, ekiller):
         if message.content.startswith("/ekiller") :
             await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec ekiller doivent être éffectuées sur le serveur.")
             raise
+
+    elif message.content.startswith("/ekiller addplayer"):
+        await addplayerbyid(client, message, ekiller)
+
+    elif message.content.startswith("/ekiller removeplayer"):
+        await delplayerbyid(client, message, ekiller)
+
     if message.content == "/ekiller join":
         await add_player(client, message, ekiller)
+
     elif message.content.startswith("/ekiller add"):
         args = message.content.split(' ')
         if len(args) == 3:
@@ -51,10 +59,6 @@ async def commandHandler(client, message, ekiller):
     elif message.content == "/ekiller reset words":
         await reset_words(client, message, ekiller)
 
-    elif message.content.startswith("/ekiller addplayer"):
-        await addplayerbyid(client, message, ekiller)
-    elif message.content.startswith("/ekiller removeplayer"):
-        await delplayerbyid(client, message, ekiller)
 
 
 async def add_player(client, message, ekiller):
