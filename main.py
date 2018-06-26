@@ -13,49 +13,49 @@ ekiller = modules.ekiller.Ekiller()
 #funcs
 @client.event
 async def on_ready():
-	if settings.login.enabled:
-		await modules.login.print_user(client)
+    if settings.login.enabled:
+        await modules.login.print_user(client)
 
 @client.event
 async def on_message(message):
-	allowed=True
-	try:
-		allowed=(not await utils.perms.hasrole(message.author, settings.eviewer)) or ( not settings.restriction ) or message.author.id in settings.owners
-	except:
-		pass
-	if allowed :
-		if settings.archive.enabled:
-			await modules.archive.specific(client, message)
-			await modules.archive.everyOfGuild(client, message)
-		if settings.dellog.enabled:
-			await modules.dellog.send_logs(client, message)
-		if settings.restart.enabled:
-			await modules.restart.restart_py(client, message)
-		if settings.hitler.enabled:
-			await modules.hitler.commandHandler(client, message, hitlerGame)
-		if settings.roles.enabled:
-			await modules.roles.AddRole(client, message)
-		if settings.licorne.enabled:
-			await modules.licorne.Licorne(client, message)
-		if settings.ekiller.enabled:
-			await modules.ekiller.commandHandler(client, message, ekiller)
-		if settings.testing.enabled:
-			await modules.testing.testsHandler(client, message)
+    allowed=True
+    try:
+        allowed=(not await utils.perms.hasrole(message.author, settings.eviewer)) or ( not settings.restriction ) or message.author.id in settings.owners
+    except:
+        pass
+    if allowed :
+        if settings.archive.enabled:
+            await modules.archive.specific(client, message)
+            await modules.archive.everyOfGuild(client, message)
+        if settings.dellog.enabled:
+            await modules.dellog.send_logs(client, message)
+        if settings.restart.enabled:
+            await modules.restart.restart_py(client, message)
+        if settings.hitler.enabled:
+            await modules.hitler.commandHandler(client, message, hitlerGame)
+        if settings.roles.enabled:
+            await modules.roles.AddRole(client, message)
+        if settings.licorne.enabled:
+            await modules.licorne.Licorne(client, message)
+        if settings.ekiller.enabled:
+            await modules.ekiller.commandHandler(client, message, ekiller)
+        if settings.testing.enabled:
+            await modules.testing.testsHandler(client, message)
 
 @client.event
 async def on_message_delete(message):
-	if settings.dellog.enabled:
-		await modules.dellog.log_deleted(client, message)
+    if settings.dellog.enabled:
+        await modules.dellog.log_deleted(client, message)
 
 @client.event
 async def on_reaction_add(reaction, user):
-	if settings.hitler.enabled:
-		await modules.hitler.voteHandler(client, reaction, user, hitlerGame)
+    if settings.hitler.enabled:
+        await modules.hitler.voteHandler(client, reaction, user, hitlerGame)
 
 @client.event
 async def on_error(event, *args, **kwargs):
-	if settings.embederror.enabled :
-		await modules.embederror.sendError(client, event, *args, **kwargs)
+    if settings.embederror.enabled :
+        await modules.embederror.sendError(client, event, *args, **kwargs)
 
 #run
 client.run(os.environ['DISCORD_TOKEN'])
