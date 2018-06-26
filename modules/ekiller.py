@@ -75,9 +75,9 @@ async def start(client, message, ekiller):
     players.append(players[0])
     for i in range(len(players)-1):
         word = random.choice(ekiller.words)
-        dic = {"ekiller":players[i], "target":players[i+1], "word":word}
+        dic = {"ekiller":str(players[i].id)+'#'+players[i].name, "target":str(players[i+1].id)+'#'+players[i+1].name, "word":word}
         game.append(dic)
-        embed = discord.Embed(title="E-KILLER", description="Votre cible est : " + players[i+1].display_name + "\n\nLe mot est : `" + word + "`\n\nBonne chance à vous.", color=0x0000ff)
+        embed = discord.Embed(title="E-KILLER", description="Votre cible est : " + players[i+1].display_name + "\nLe mot est : `" + word + "`\n\nBonne chance à vous.", color=0x0000ff)
         await client.send_message(players[i], embed=embed)
     embed = discord.Embed(title="E-KILLER", description="Liste des joueurs :\n" + str([p.display_name for p in ekiller.players]) + "\n\n Bonne chance à tous !", color=0x0000ff)
     await client.send_message(message.channel, embed=embed)
@@ -166,6 +166,8 @@ async def words_remove(client, message, ekiller):
 async def words_list(client, message, ekiller):
     words = [ekiller.words[i:i+100] for i in range(0, len(ekiller.words), 100)]
     await client.send_message(message.channel, "Liste des mots :")
+    if words == []:
+        words = [[]]
     for w in words:
         await client.send_message(message.channel, "```PYTHON\n" + str(w) + "\n```")
 
@@ -189,6 +191,7 @@ async def help(client, message):
     text += "/ekiller words add foo,bar\najouter des mots\n\n"
     text += "/ekiller words list\nAfficher la liste des mots\n\n"
     text += "/ekiller start\nLancer la partie\n\n"
+    text += "/ekiller help\nAffiche cette aide\n\n"
     embed = discord.Embed(title="E-KILLER", description=text, color=0x0000ff)
     await client.send_message(message.channel, embed=embed)
 
