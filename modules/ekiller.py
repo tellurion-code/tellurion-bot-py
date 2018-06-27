@@ -125,7 +125,10 @@ async def players_remove(client, message, ekiller):
                 await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` a bien été retiré.".format(member.display_name))
     else:
         await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique id ou une liste d'ids séparés par une virgule.")
-    await client.delete_message(message)
+        try:
+            await client.delete_message(message)
+        except:
+            pass
 
 async def players_list(client, message, ekiller):
     players = [p.display_name for p in ekiller.players]
@@ -135,7 +138,10 @@ async def players_list(client, message, ekiller):
 async def players_reset(client, message, ekiller):
     ekiller.players = []
     await client.send_message(message.channel, message.author.mention + ", la liste des participants a bien été réinitialisée.")
-    await client.delete_message(message)
+    try:
+        await client.delete_message(message)
+    except:
+        pass
 
 async def words_add(client, message, ekiller):
     args = message.content.split(' ')
@@ -164,7 +170,10 @@ async def words_remove(client, message, ekiller):
             await client.send_message(message.channel, message.author.mention + ", les mots `{0}` ont bien été retirés.".format(args[3]))
     else:
         await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot ou une liste de mots séparés par une virgule.")
-    await client.delete_message(message)
+    try:
+        await client.delete_message(message)
+    except:
+        pass
 
 async def words_list(client, message, ekiller):
     words = [ekiller.words[i:i+100] for i in range(0, len(ekiller.words), 100)]
@@ -177,14 +186,19 @@ async def words_list(client, message, ekiller):
 async def words_reset(client, message, ekiller):
     ekiller.words = []
     await client.send_message(message.channel, message.author.mention + ", la liste des mots a bien été réinitialisée.")
-    await client.delete_message(message)
+    try:
+        await client.delete_message(message)
+    except:
+        pass
 
 async def logs(client, message):
     if not (message.author == client.user) and await utils.perms.hasrole(message.author, settings.dellog.logsAuth):
         try:
-            await client.delete_message(message)
+            try:
+                await client.delete_message(message)
+            except:
+                pass
             await client.send_file(message.author, "tmp/ekillerLog.txt")
-            await client.delete_message(message)
         except:
             await client.send_message(message.author, "```FAILED```")
 
