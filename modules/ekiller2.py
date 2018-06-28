@@ -56,6 +56,7 @@ async def commandHandler(client, message, ekiller):
         await debug(client, message, ekiller)
 
 async def start(client, message, ekiller):
+    await client.delete_message(message)
     game = []
     players = []
     words = []
@@ -75,9 +76,9 @@ async def start(client, message, ekiller):
     await client.send_message(message.channel, embed=embed)
     with open("tmp/ekillerLog.txt", "a") as ekillerlogfile:
         ekillerlogfile.write(str(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')) + " [" + str(game) + "]\n")
-    await client.delete_message(message)
 
 async def join(client, message, ekiller):
+    await client.delete_message(message)
     args = message.content.split(' ')
     if len(args) == 3:
         if message.author.id in dict(ekiller.buffer):
@@ -87,17 +88,17 @@ async def join(client, message, ekiller):
             await client.send_message(message.channel, message.author.mention + ", vous avez bien été ajouté à la liste des participants.")
     else:
         await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique mot que vous souhaitez ajouter à la liste : `/ekiller join <word>`")
-    await client.delete_message(message)
 
 async def quit(client, message, ekiller):
+    await client.delete_message(message)
     if message.author.id in dict(ekiller.buffer):
         ekiller.buffer = [(id,word) for (id,word) in ekiller.buffer if id!=message.author.id]
         await client.send_message(message.channel, message.author.mention + ", vous avez bien été retiré de la liste des participants.")
     else:
         await client.send_message(message.channel, message.author.mention + ", vous ne faites pas parti des participants.")
-    await client.delete_message(message)
 
 async def kick(client, message, ekiller):
+    await client.delete_message(message)
     args = message.content.split(' ')
     if len(args) == 4:
         ids = args[3].split(',')
@@ -111,22 +112,21 @@ async def kick(client, message, ekiller):
                 ekiller.buffer = [(idd, word) for (idd, word) in ekiller.buffer if idd != id]
                 await client.send_message(message.channel, message.author.mention + ", le joueur `{0}` a bien été retiré.".format(member.display_name))
     else:
-        await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique id ou une liste d'ids séparés par une virgule.")
-    await client.delete_message(message)
+        await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique id ou une liste d'ids séparés par une virgule : `/ekiller kick foo,bar`")
 
 async def players(client, message, ekiller):
+    await client.delete_message(message)
     players = []
     for (id, word) in ekiller.buffer:
         member = await utils.usertools.UserByID(client, id)
         players.append(member.display_name)
     await client.send_message(message.channel, "Liste des joueurs :")
     await client.send_message(message.channel, "```PYTHON\n" + str(players) + "\n```")
-    await client.delete_message(message)
 
 async def reset(client, message, ekiller):
+    await client.delete_message(message)
     ekiller.buffer = []
     await client.send_message(message.channel, message.author.mention + ", le jeu a bien été réinitialisé.")
-    await client.delete_message(message)
 
 async def logs(client, message):
     if not (message.author == client.user) and await utils.perms.hasrole(message.author, settings.dellog.logsAuth):
@@ -137,6 +137,7 @@ async def logs(client, message):
             await client.send_message(message.author, "```FAILED```")
 
 async def help(client, message):
+    await client.delete_message(message)
     text = "Liste des commandes :\n\n"
     text += "/ekiller join <word>\nRejoindre la partie et ajouter le mot <word> à la liste de mots\n\n"
     text += "/ekiller quit\nQuitter la partie la partie\n\n"
@@ -145,11 +146,10 @@ async def help(client, message):
     text += "/ekiller help\nAffiche cette aide\n\n"
     embed = discord.Embed(title="E-KILLER", description=text, color=0x0000ff)
     await client.send_message(message.channel, embed=embed)
-    await client.delete_message(message)
 
 async def debug(client, message, ekiller):
-    await client.send_message(message.channel, message.author.mention + "```PYTHON\n" + str(ekiller.buffer) + "\n```")
     await client.delete_message(message)
+    await client.send_message(message.channel, message.author.mention + "```PYTHON\n" + str(ekiller.buffer) + "\n```")
 
 
 class Ekiller:
