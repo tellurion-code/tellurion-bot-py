@@ -10,6 +10,7 @@ import utils.perms
 client = discord.Client(max_messages=100000)
 hitlerGame=modules.hitler.HitlerSave()
 ekiller = modules.ekiller.Ekiller()
+ekiller = modules.ekiller2.Ekiller()
 #funcs
 @client.event
 async def on_ready():

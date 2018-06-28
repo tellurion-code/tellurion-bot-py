@@ -144,7 +144,7 @@ async def debug(client, message, ekiller):
         await client.send_message(message.channel, message.author.mention + "```PYTHON\n" + str(ekiller.buffer) + "\n```")
 
 
-class Ekiller2:
+class Ekiller:
 
     def __init__(self):
         self.buffer = []
