@@ -10,7 +10,7 @@ import utils.perms
 client = discord.Client(max_messages=100000)
 hitlerGame=modules.hitler.HitlerSave()
 ekiller = modules.ekiller.Ekiller()
-ekiller = modules.ekiller2.Ekiller()
+ekiller2 = modules.ekiller2.Ekiller()
 #funcs
 @client.event
 async def on_ready():
@@ -41,7 +41,7 @@ async def on_message(message):
         if settings.ekiller.enabled:
             await modules.ekiller.commandHandler(client, message, ekiller)
         if settings.ekiller.enabled:
-            await modules.ekiller2.commandHandler(client, message, ekiller)
+            await modules.ekiller2.commandHandler(client, message, ekiller2)
         if settings.testing.enabled:
             await modules.testing.testsHandler(client, message)
 
