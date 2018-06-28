@@ -72,7 +72,7 @@ async def start(client, message, ekiller):
         game.append(dic)
         embed = discord.Embed(title="E-KILLER", description="Votre cible est : " + players[i+1].display_name + "\nLe mot est : `" + words[i] + "`\n\nBonne chance à vous.", color=0x0000ff)
         await client.send_message(players[i], embed=embed)
-    embed = discord.Embed(title="E-KILLER", description="Liste des joueurs :\n" + str([p.display_name for p in players]) + "\n\n Bonne chance à tous !", color=0x0000ff)
+    embed = discord.Embed(title="E-KILLER", description="Liste des joueurs :\n" + str([p.display_name for p in players[:-1]]) + "\n\n Bonne chance à tous !", color=0x0000ff)
     await client.send_message(message.channel, embed=embed)
     with open("tmp/ekillerLog.txt", "a") as ekillerlogfile:
         ekillerlogfile.write(str(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')) + " [" + str(game) + "]\n")
