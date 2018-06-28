@@ -100,8 +100,8 @@ async def quit(client, message, ekiller):
 async def kick(client, message, ekiller):
     await client.delete_message(message)
     args = message.content.split(' ')
-    if len(args) == 4:
-        ids = args[3].split(',')
+    if len(args) == 3:
+        ids = args[2].split(',')
         for id in ids:
             member = await utils.usertools.UserByID(client, id)
             if not member:
