@@ -7,6 +7,7 @@ import settings.hitler
 import settings.roles
 import settings.licorne
 import settings.ekiller
+import settings.ekiller2
 import settings.testing
 owners=["281166473102098433", "118399702667493380", "151023528446001152"]
 eviewer=["430845952388104212", "456726929270374420"]
