@@ -1,2 +1,2 @@
-enabled=True
+enabled=False
 auth=["309384379682127872", "431043517217898496", "430785758258003970"] # E-Chercheur, staff, E-Penser
