@@ -43,7 +43,7 @@ async def on_message(message):
         if settings.ekiller2.enabled:
             await modules.ekiller2.commandHandler(client, message, ekiller2)
         if settings.testing.enabled:
-            await modules.testing.testsHandler(client, message)
+            await modules.testing.testsHandler(client, message, globals(), locals())
 
 @client.event
 async def on_message_delete(message):
