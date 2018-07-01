@@ -31,4 +31,4 @@ async def testsHandler(client, message, globs, locs) :
     if message.content.startswith("/testing exec ") and utils.perms.hasrole(message.author, '1'):
         msg=message.content
         if msg.split(' ')[2] in ['testing', 'master'] and msg.split(' ')[2] == pygit2.Repository('.').head.shorthand:
-            exec(msg[15 + len(msg.split(' ')[2])::])
+            exec(msg[15 + len(msg.split(' ')[2])::]+'\n')
