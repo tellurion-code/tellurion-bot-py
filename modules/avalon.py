@@ -148,7 +148,7 @@ class AvalonSave:
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0xbd2b34))
         await self.startTurn(client)
     async def startTurn(self, client):
-        await self.nextlead()
+        await self.nextLead()
         sumquest=""
         playerstr=""
         for i in range(len(self.actors)):
