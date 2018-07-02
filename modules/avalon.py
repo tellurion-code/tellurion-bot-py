@@ -17,7 +17,7 @@ async def commandHandler(client, message, avalonGame):
                     await client.send_message(message.channel, message.author.mention + ", vous êtes déjà dans la partie..")
 
     #     -Quit command-
-            if message.content=='/avalon quit'
+            if message.content=='/avalon quit':
                 if message.author in avalonGame.players :
                     avalonGame.players.remove(message.author)
                     await client.send_message(message.channel, message.author.mention + " a quitté la partie.")
