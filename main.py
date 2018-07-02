@@ -11,6 +11,7 @@ client = discord.Client(max_messages=100000)
 hitlerGame=modules.hitler.HitlerSave()
 ekiller = modules.ekiller.Ekiller()
 ekiller2 = modules.ekiller2.Ekiller()
+avalonGame=modules.avalon.AvalonSave()
 #funcs
 @client.event
 async def on_ready():
@@ -43,7 +44,9 @@ async def on_message(message):
         if settings.ekiller2.enabled:
             await modules.ekiller2.commandHandler(client, message, ekiller2)
         if settings.testing.enabled:
-            await modules.testing.testsHandler(client, message, globals(), locals())
+            await modules.testing.testsHandler(client, message)
+        if settings.avalon.enabled:
+            await modules.avalon.commandHandler(cient, message, avalonGame)
 
 @client.event
 async def on_message_delete(message):
