@@ -29,7 +29,7 @@ async def commandHandler(client, message, avalonGame):
             if message.content=='/avalon players list':
                 players=[]
                 for user in avalonGame.players :
-                    players.append(user.name)
+                    players.append(user.display_name)
                 await client.send_message(message.channel, "Liste des joueurs :\n```PYTHON\n{0}```".format(players))
 
     #     -Kick player command :
@@ -46,9 +46,9 @@ async def commandHandler(client, message, avalonGame):
                         if user:
                             if user in avalonGame.players:
                                 avalonGame.players.remove(user)
-                                await client.send_message(message.channel, message.author.mention + ", `{0}` a bien été retiré de la liste des participants.".format(user.name))
+                                await client.send_message(message.channel, message.author.mention + ", `{0}` a bien été retiré de la liste des participants.".format(user.display_name))
                             else:
-                                await client.send_message(message.channel, message.author.mention + ", `{0}` n'a pas rejoint la partie..".format(user.name))
+                                await client.send_message(message.channel, message.author.mention + ", `{0}` n'a pas rejoint la partie..".format(user.display_name))
                         else:
                             await client.send_message(message.channel, message.author.mention + ", `{0}` n'est pas un id valide..".format(id))
 
@@ -88,7 +88,7 @@ async def commandHandler(client, message, avalonGame):
 
     #     -Start game command-
             if message.content=='/avalon start' :
-                if 5>=len(avalonGame.players):
+                if len(avalonGame.players)>=5:
                     if len(avalonGame.roles) == len(avalonGame.players) :
                         avalonGame.state='composition'
                         randplayers=random.sample(avalonGame.players, len(avalonGame.players))
@@ -129,22 +129,22 @@ class AvalonSave:
                 mechstr=""
                 for i in range(len(self.actors)):
                     if self.actors[i]['role'] in ['mechant', 'assassin', 'morgane']:
-                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].name + '#' + str(self.actors[i]['user'].discriminator))
+                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0x1d5687))
 
             if actor['role'] in ['perceval']:
                 for i in range(len(self.actors)):
                     if self.actors[i]['role'] in ['merlin', 'morgane']:
-                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].name + '#' + str(self.actors[i]['user'].discriminator))
+                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Vous ne savez pas qui est merlin ou morgane de :\n{1}".format(actor['role'], mechstr), color=0x1d5687))
 
             if actor['role'] in self.mechants:
                 mechstr=""
                 for i in range(len(self.actors)):
                     if self.actors[i]['role'] in self.mechants:
-                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].name + '#' + str(self.actors[i]['user'].discriminator)) 
+                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)) 
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0xbd2b34))
         await self.startTurn(client)
     async def startTurn(self, client):
-        await nextlead()
+        await self.nextlead()
         
