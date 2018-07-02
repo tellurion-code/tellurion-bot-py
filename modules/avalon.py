@@ -31,20 +31,41 @@ async def commandHandler(client, message, avalonGame):
                     players.append(user.name)
                 await client.send_message(message.channel, "Liste des joueurs :\n```PYTHON\n{0}```".format(players))
 
+    #     -Kick player command :
+            if message.content.startswith('/avalon players kick'):
+                args=message.content.split(' ')
+                if len(args)==4:
+                    ans=""
+                    for id in args[3].split(','):
+                        user=None
+                        try :
+                            user=utils.usertools.UserByID()
+                        except:
+                            pass
+                        if user:
+                            if user in avalonGame.players:
+                                avalonGame.players.remove(user)
+                                await client.send_message(message.channel, message.author.mention + ", `{0}` a bien été retiré de la liste des participants.".format(user.name))
+                            else:
+                                await client.send_message(message.channel, message.author.mention + ", `{0}` n'a pas rejoint la partie..".format(user.name))
+                        else:
+                            await client.send_message(message.channel, message.author.mention + ", `{0}` n'est pas un id valide..".format(id))
+
     #     -Roles list command-
             if message.content=='/avalon roles list':
                 await client.send_message(message.channel, "Liste des roles :\n```PYTHON\n{0}```".format(str(avalonGame.roles)))
 
     #     -Add Role command-
             if message.content.startswith('/avalon roles add'):
-                if len(message.content.split(' '))==4:
+                args=message.content.split(' ')
+                if len(args)==4:
                     ans=""
-                    for role in message.content.split(' ')[3].split(','):
+                    for role in args[3].split(','):
                         if role in avalonGame.implemented_roles :
                             avalonGame.roles.append(role)
-                            ans += "{0} ajouté\n".format(role)
+                            ans += "le rôle {0} a été ajouté\n".format(role)
                         else:
-                            ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmis `{1}`.".format(role, str(avalonGame.implemented_roles))
+                            ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmis `{1}`.\n".format(role, str(avalonGame.implemented_roles))
                     await client.send_message(message.channel, message.author.mention + ",\n{0}".format(ans))
                 else:
                     await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique role ou une liste de roles séparés par une virgule.")
@@ -57,7 +78,7 @@ async def commandHandler(client, message, avalonGame):
                     for role in args[3].split(','):
                         if role in avalonGame.implemented_roles :
                             avalonGame.roles.remove(role)
-                            ans += "{0} retiré\n".format(role)
+                            ans += "Le rôle {0} a été retiré\n".format(role)
                         else:
                             ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmis `{1}`.".format(role, str(avalonGame.implemented_roles))
                     await client.send_message(message.channel, message.author.mention + ",\n{0}".format(ans))
