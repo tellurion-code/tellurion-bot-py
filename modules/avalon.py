@@ -2,8 +2,9 @@ import utils.usertools
 
 async def commandHandler(client, message, avalonGame):
     if message.startswith('/avalon'):
+
 #     -lobby commands-
-    if avalonGame.state=='lobby':
+        if avalonGame.state=='lobby':
     #     -Join command-
             if message.content=='/avalon join':
                 if not message.author.id in avalonGame.playersid:
