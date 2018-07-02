@@ -29,7 +29,7 @@ async def commandHandler(client, message, avalonGame):
                 players=[]
                 for user in avalonGame.players :
                     players.append(user.name)
-                await client.send_message(message.channel, "Liste des joueurs :\n```PYTHON\n{0}```".format(players)
+                await client.send_message(message.channel, "Liste des joueurs :\n```PYTHON\n{0}```".format(players))
 
     #     -Roles list command-
             if message.content=='/avalon roles list':
