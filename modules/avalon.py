@@ -163,13 +163,13 @@ class AvalonSave:
         lastquest=""
         if self.quests:
             if self.questfailcount:
-                lastquest="❌ *{0}".format(str(questfailcount))
+                lastquest="❌ *{0}\n".format(str(questfailcount))
             else:
-                lastquest="✅"
+                lastquest="✅\n"
         embed=discord.Embed(title="AVALON", description="{0}\n{1}\nNombre d'équipes rejetées : {2}\nLe prochain leader est : {3}".format(lastquest, sumquest, str(self.votefailcount), "{0} `{1}`\n".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator))), color=0x75dd63)
         for i in range(len(self.actors)):
             await client.send_message(self.actors[i]['user'], embed=embed)
             if i==self.leader:
-                self.leadmsg = await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="Vous êtes le leader, vous devez choisir une équipe. Pour ce faire, vous deveez choisir un joueur en ajoutant la réaction correspondante\n**ATTENTION, VOUS NE POUVEZ PAS REVENIR EN ARRIERE, FAITES ATTENTION EN SELECTIONNANT!!**\n\nListe des joueurs :\n{0}".format(playerstr)))
-        for emote in self.emotes[:len(self.actors)-1:]:
+                self.leadmsg = await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="Vous êtes le leader, vous devez choisir une équipe. Pour ce faire, vous devez choisir un joueur en ajoutant la réaction correspondante\n\n**ATTENTION, VOUS NE POUVEZ PAS REVENIR EN ARRIERE**, FAITES ATTENTION EN SELECTIONNANT!!\n\nListe des joueurs :\n{0}".format(playerstr), color=0xddc860))
+        for emote in self.emotes[:len(self.actors):]:
             await client.add_reaction(self.leadmsg, emote)
