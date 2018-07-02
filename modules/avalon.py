@@ -1,7 +1,7 @@
 import utils.usertools
 
 async def commandHandler(client, message, avalonGame):
-    if message.startswith('/avalon'):
+    if message.content.startswith('/avalon'):
 
 #     -lobby commands-
         if avalonGame.state=='lobby':
