@@ -88,8 +88,8 @@ async def commandHandler(client, message, avalonGame):
 
     #     -Start game command-
             if message.content=='/avalon start' :
-                if 5>=len(players):
-                    if len(roles) == len(players) :
+                if 5>=len(avalonGame.players):
+                    if len(avalonGame.roles) == len(avalonGame.players) :
                         avalonGame.state='composition'
                         randplayers=random.sample(avalonGame.players, len(avalonGame.players))
                         randroles=random.sample(avalonGame.roles, len(avalonGame.roles))
