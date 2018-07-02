@@ -55,7 +55,7 @@ async def commandHandler(client, message, avalonGame):
                             ans += "{0} retiré\n".format(role)
                         else:
                             ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmis `{1}`.".format(role, str(avalonGame.implemented_roles))
-            else:
+                else:
                     await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique role ou une liste de roles séparés par une virgule.")
 
 
