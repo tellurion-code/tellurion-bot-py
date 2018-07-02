@@ -116,7 +116,7 @@ class AvalonSave:
         self.quests=[] # format : [True, True, False] (True = successful)
         self.votefailcount=0
     async def nextLead(self):
-        if self.leader+1=len(self.actors):
+        if self.leader+1==len(self.actors):
             self.leader=0
         else:
             self.leader+=1
