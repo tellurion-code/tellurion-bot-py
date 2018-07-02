@@ -39,26 +39,28 @@ async def commandHandler(client, message, avalonGame):
             if message.content.startswith('/avalon roles add'):
                 if len(message.content.split(' '))==4:
                     ans=""
-                    for role in message.content.split(' ')[2].split(','):
+                    for role in message.content.split(' ')[3].split(','):
                         if role in avalonGame.implemented_roles :
                             roles.append(role)
                             ans += "{0} ajouté\n".format(role)
                         else:
                             ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmis `{1}`.".format(role, str(avalonGame.implemented_roles))
+                    await client.send_message(message.channel, message.author.mention + ",\n{0}".format(ans))
                 else:
                     await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique role ou une liste de roles séparés par une virgule.")
 
     #     -Remove role command-
             if message.content.startswith('/avalon roles remove'):
                 args=message.content.split(' ')
-                if len(args)==3:
+                if len(args)==4:
                     ans=""
-                    for role in args[2].split(','):
+                    for role in args[3].split(','):
                         if role in avalonGame.implemented_roles :
                             roles.remove(role)
                             ans += "{0} retiré\n".format(role)
                         else:
                             ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmis `{1}`.".format(role, str(avalonGame.implemented_roles))
+                    await client.send_message(message.channel, message.author.mention + ",\n{0}".format(ans))
                 else:
                     await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique role ou une liste de roles séparés par une virgule.")
 
