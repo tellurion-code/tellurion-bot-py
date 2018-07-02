@@ -39,7 +39,7 @@ async def commandHandler(client, message, avalonGame):
                     for id in args[3].split(','):
                         user=None
                         try :
-                            user=utils.usertools.UserByID()
+                            user=utils.usertools.UserByID(id)
                         except:
                             pass
                         if user:
