@@ -29,5 +29,5 @@ async def testsHandler(client, message) :
             await client.send_message(message.channel, message.author.mention + ", Le module de **test** Python va redémarrer...")
             call(['bash', '/home/epenser/runtest'])
             await client.logout()
-    if message.content == "/testing clear_cache": and await utils.perms.hasrole(message.author, settings.testing.testingAuth)
+    if message.content == "/testing clear_cache" and await utils.perms.hasrole(message.author, settings.testing.testingAuth):
         utils.usertools.UserById.clear_cache()
