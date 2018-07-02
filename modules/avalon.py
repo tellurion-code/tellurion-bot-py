@@ -1,5 +1,6 @@
 import utils.usertools
-
+import random
+import discord
 async def commandHandler(client, message, avalonGame):
     if message.content.startswith('/avalon'):
 
@@ -85,10 +86,65 @@ async def commandHandler(client, message, avalonGame):
                 else:
                     await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique role ou une liste de roles séparés par une virgule.")
 
+    #     -Start game command-
+            if message.content=='/avalon start' :
+                if 5>=len(players):
+                    if len(roles) == len(players) :
+                        avalonGame.state='composition'
+                        randplayers=random.sample(avalonGame.players, len(avalonGame.players))
+                        randroles=random.sample(avalonGame.roles, len(avalonGame.roles))
+                        for i in range(len(randplayers)):
+                            avalonGame.actors.append({'user':randplayers[i], 'role':randroles[i]})
+                        avalonGame.leader=random.randint(0,len(avalonGame.actors)-1)
+                        await avalonGame.startGame(client)
+                    else:
+                        await client.send_message(message.channel, message.author.mention + ", le nombre de roles est différent du nombre de joueurs.. :/")
+                else:
+                    await client.send_message(message.channel, message.author.mention + ", la partie ne peut-être lancée qu'avec 5 joueurs au minimum..")
 
 class AvalonSave:
     def __init__(self):
+        self.emotes=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
         self.implemented_roles=['gentil', 'mechant', 'merlin', 'perceval', 'morgane', 'assassin', 'mordred']
+        self.gentils=['gentil', 'merlin', 'perceval']
+        self.mechants=['mechant', 'assassin', 'mordred', 'morgane']
         self.players=[]
-        self.state='lobby' # Differents states : {'lobby':'Players are joining and choosing the roles', }
+        self.state='lobby' # Differents states : {'lobby':'Players are joining and choosing the roles', 'composition':'The leader is choosing the team'}
         self.roles=[]
+        self.actors=[] # format : [{'user':user, 'role':role}]
+        self.leader=0
+        self.quests=[] # format : [True, True, False] (True = successful)
+        self.votefailcount=0
+    async def nextLead(self):
+        if self.leader+1=len(self.actors):
+            self.leader=0
+        else:
+            self.leader+=1
+    async def startGame(self, client):
+        for actor in self.actors:
+            if actor['role'] in ['gentil']:
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.".format(actor['role']), color=0x1d5687))
+
+            if actor['role'] in ['merlin']:
+                mechstr=""
+                for i in range(len(self.actors)):
+                    if self.actors[i]['role'] in ['mechant', 'assassin', 'morgane']:
+                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].name + '#' + str(self.actors[i]['user'].discriminator))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0x1d5687))
+
+            if actor['role'] in ['perceval']:
+                for i in range(len(self.actors)):
+                    if self.actors[i]['role'] in ['merlin', 'morgane']:
+                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].name + '#' + str(self.actors[i]['user'].discriminator))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Vous ne savez pas qui est merlin ou morgane de :\n{1}".format(actor['role'], mechstr), color=0x1d5687))
+
+            if actor['role'] in self.mechants:
+                mechstr=""
+                for i in range(len(self.actors)):
+                    if self.actors[i]['role'] in self.mechants:
+                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].name + '#' + str(self.actors[i]['user'].discriminator)) 
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0xbd2b34))
+        await self.startTurn(client)
+    async def startTurn(self, client):
+        await nextlead()
+        
