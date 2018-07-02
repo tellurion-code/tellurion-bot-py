@@ -60,7 +60,7 @@ async def commandHandler(client, message, avalonGame):
 
 
 class AvalonSave:
-    def __init__():
+    def __init__(self):
         self.implemented_roles=['gentil', 'mechant', 'merlin', 'perceval', 'morgane', 'assassin', 'mordred']
         self.playersid=[]
         self.state='lobby' # Differents states : {'lobby':'Players are joining and choosing the roles', }
