@@ -117,36 +117,40 @@ class AvalonSave:
         self.questfailcount=0 # ❌ * 2 for example
         self.votefailcount=0
         self.leadmsg=None
+
     async def nextLead(self):
         if self.leader+1==len(self.actors):
             self.leader=0
         else:
             self.leader+=1
+
     async def startGame(self, client):
         for actor in self.actors:
-            if actor['role'] in ['gentil', 'oberon'] :
+            if actor['role'] == 'gentil' :
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.".format(actor['role']), color=0x1d5687))
-
+            if actor['role'] == 'oberon' :
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.".format(actor['role']), color=0xbd2b34))
             if actor['role'] == 'merlin':
                 mechstr=""
                 for i in range(len(self.actors)):
                     if self.actors[i]['role'] in ['mechant', 'assassin', 'morgane', 'oberon']:
                         mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0x1d5687))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0x1d5687))
 
             if actor['role'] == 'perceval':
                 for i in range(len(self.actors)):
                     if self.actors[i]['role'] in ['merlin', 'morgane']:
                         mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Vous ne savez pas qui est merlin ou morgane de :\n{1}".format(actor['role'], mechstr), color=0x1d5687))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n\n Vous ne savez pas qui est merlin ou morgane de :\n{1}".format(actor['role'], mechstr), color=0x1d5687))
 
             if actor['role'] in ['mechant', 'assassin', 'mordred', 'morgane']:
                 mechstr=""
                 for i in range(len(self.actors)):
                     if self.actors[i]['role'] in self.mechants:
                         mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)) 
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0xbd2b34))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0xbd2b34))
         await self.startTurn(client)
+
     async def startTurn(self, client):
         await self.nextLead()
         sumquest=""
@@ -166,7 +170,7 @@ class AvalonSave:
                 lastquest="❌ *{0}\n".format(str(questfailcount))
             else:
                 lastquest="✅\n"
-        embed=discord.Embed(title="AVALON", description="{0}\n{1}\nNombre d'équipes rejetées : {2}\nLe prochain leader est : {3}".format(lastquest, sumquest, str(self.votefailcount), "{0} `{1}`\n".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator))), color=0x75dd63)
+        embed=discord.Embed(title="AVALON", description="{0}\n{1}\n\nNombre d'équipes rejetées : {2}\nLe prochain leader est : {3}".format(lastquest, sumquest, str(self.votefailcount), "{0} `{1}`\n".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator))), color=0x75dd63)
         for i in range(len(self.actors)):
             await client.send_message(self.actors[i]['user'], embed=embed)
             if i==self.leader:
