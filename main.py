@@ -46,7 +46,7 @@ async def on_message(message):
         if settings.testing.enabled:
             await modules.testing.testsHandler(client, message)
         if settings.avalon.enabled:
-            await modules.avalon.commandHandler(cient, message, avalonGame)
+            await modules.avalon.commandHandler(client, message, avalonGame)
 
 @client.event
 async def on_message_delete(message):
