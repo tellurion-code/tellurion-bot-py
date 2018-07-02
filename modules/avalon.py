@@ -41,7 +41,7 @@ async def commandHandler(client, message, avalonGame):
                     ans=""
                     for role in message.content.split(' ')[3].split(','):
                         if role in avalonGame.implemented_roles :
-                            roles.append(role)
+                            avalonGame.roles.append(role)
                             ans += "{0} ajouté\n".format(role)
                         else:
                             ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmis `{1}`.".format(role, str(avalonGame.implemented_roles))
@@ -56,7 +56,7 @@ async def commandHandler(client, message, avalonGame):
                     ans=""
                     for role in args[3].split(','):
                         if role in avalonGame.implemented_roles :
-                            roles.remove(role)
+                            avalonGame.roles.remove(role)
                             ans += "{0} retiré\n".format(role)
                         else:
                             ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmis `{1}`.".format(role, str(avalonGame.implemented_roles))
