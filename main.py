@@ -57,6 +57,8 @@ async def on_message_delete(message):
 async def on_reaction_add(reaction, user):
     if settings.hitler.enabled:
         await modules.hitler.voteHandler(client, reaction, user, hitlerGame)
+    if settings.avalon.enabled:
+        await modules.hitler.reactionHandler(client, reaction, user, avalonGame)
 
 @client.event
 async def on_error(event, *args, **kwargs):
