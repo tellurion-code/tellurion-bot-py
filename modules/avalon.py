@@ -326,8 +326,8 @@ class AvalonSave:
             votes.append(playergrp[1]['values']['Yes'])
         if len(votes) == len(self.expedvotes):
             self.questfailcount=votes.count(False)
-                if (len(self.actors) >= 7 and len(self.quests) == 3 and self.votefailcount >= 2) or (len(self.quests) != 3 and self.votefailcount >= 1) or(len(self.actors) < 7 and self.votefailcount >=1):
-                    self.quests.append(False)
+            if (len(self.actors) >= 7 and len(self.quests) == 3 and self.votefailcount >= 2) or (len(self.quests) != 3 and self.votefailcount >= 1) or(len(self.actors) < 7 and self.votefailcount >=1):
+                self.quests.append(False)
             else:
                 self.quests.append(True)
             self.state='composition'
