@@ -141,6 +141,7 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                             await client.add_reaction(group[1]['message'], '⭕')
                     if str(reaction.emoji) == '⭕' and avalonGame.votes[group[0]]['values']['valid'] and action == 'add':
                         avalonGame.votes[group[0]].update({'voted':True})
+                        await voteStageCheck(client)
 class AvalonSave:
     def __init__(self):
         self.emotes=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
@@ -148,7 +149,7 @@ class AvalonSave:
         self.gentils=['gentil', 'merlin', 'perceval']
         self.mechants=['mechant', 'assassin', 'mordred', 'morgane', 'oberon']
         self.players=[]
-        self.state='lobby' # Differents states : {'lobby':'Players are joining and choosing the roles', 'composition':'The leader is choosing the team', 'voting':'The players are voting the team made by the leader'}
+        self.state='lobby' # Differents states : {'lobby':'Players are joining and choosing the roles', 'composition':'The leader is choosing the team', 'voting':'The players are voting the team made by the leader', 'expedition':T'he team chosen by the leader votes for the success or the failure of a quest'}
         self.roles=[]
         self.actors=[] # format : [{'user':user, 'role':role}]
         self.leader=0
@@ -252,3 +253,20 @@ class AvalonSave:
             self.votes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="L'équipe proposée par {0}:\n{1}".format(" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)), teamstr), color=0xddc860)), 'values':{'Yes':False, 'No':False, 'valid':False}, 'voted':False}})
             for emote in ['✅', '❎'] :
                 await client.add_reaction(self.votes[i]['message'], emote)
+    async def voteStageCheck(self, client):
+        votes=[]
+        for playergrp in self.votes.items():
+            if playergrp[1]['values']['valid']:
+                votes.append(playergrp[1]['values']['Yes'])
+        if len(votes) == len(self.votes):
+            if votes.count(False) >= votes.count(True):
+                self.state='composition'
+                self.votefailcount += 1
+            else:
+                self.state='expedition'
+                self.votefailcount = 0
+            votesstr=""
+            for i in range(self.votes):
+                votesstr+=" {0} `{1}` : {2}\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator), {True:'✅', False:'❎'}[self.votes[i]['values']['Yes']])
+            for actor in self.actors :
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(teamstr), color=0x75dd63))
