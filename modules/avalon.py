@@ -212,5 +212,7 @@ class AvalonSave:
         if len(self.team) == settings.avalon.teams[len(self.actors)][len(self.quests)::][0]:
             if not self.validteam :
                 await client.add_reaction(self.leadmsg, '✅')
+                self.validteam=True
         elif self.validteam:
             await client.remove_reaction(self.leadmsg, '✅')
+            self.validteam=False
