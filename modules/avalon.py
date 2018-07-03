@@ -103,18 +103,18 @@ async def commandHandler(client, message, avalonGame):
                     await client.send_message(message.channel, message.author.mention + ", la partie ne peut-être lancée qu'avec 5 joueurs au minimum...")
 
 
-async def reactionHandler(client, reaction, user, avalonGame):
+async def reactionHandler(client, reaction, user, avalonGame, action):
     if not user==client.user:
     # -Team composition-
         if avalonGame.state == 'composition':
             if reaction.message.id == avalonGame.leadmsg.id :
-                if str(reaction.emoji) == '❌':
-                    avalonGame.team=[]
-                    await avalonGame.updateTeam(client)
                 if str(reaction.emoji) in avalonGame.emotes[:len(avalonGame.actors):]:
                     chosenPlayer=avalonGame.emotes.index(reaction.emoji)
-                    if not chosenPlayer in avalonGame.team :
+                    if not chosenPlayer in avalonGame.team and action=='add':
                         avalonGame.team.append(chosenPlayer)
+                        await avalonGame.updateTeam(client)
+                    if chosenPlayer in avalonGame.team and action=='remove':
+                        avalonGame.team.remove(chosenPlayer)
                         await avalonGame.updateTeam(client)
 
 class AvalonSave:
@@ -130,6 +130,7 @@ class AvalonSave:
         self.leader=0
         self.quests=[] # format : [True, True, False] (True = successful)
         self.team=[] # format : [0, 3, 4]
+        self.validteam=False
         self.questfailcount=0 # ❌ * 2 for example
         self.votefailcount=0
         self.leadmsg=None
@@ -140,6 +141,10 @@ class AvalonSave:
             self.leader=0
         else:
             self.leader+=1
+        self.team=[] # format : [0, 3, 4]
+        self.validteam=False
+        self.leadmsg=None
+        self.leadconfirmmsg=None
 
     async def startGame(self, client):
         for actor in self.actors:
@@ -191,8 +196,8 @@ class AvalonSave:
         for i in range(len(self.actors)):
             await client.send_message(self.actors[i]['user'], embed=embed)
             if i==self.leader:
-                self.leadmsg = await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="Vous êtes le leader, vous devez choisir une équipe. Pour ce faire, vous devez choisir un joueur en ajoutant la réaction correspondante, vous pouvez recommencer la selection en utilisant la réaction ❌\n\nListe des joueurs :\n{0}".format(playerstr), color=0xddc860))
-        for emote in self.emotes[:len(self.actors):] + ['❌']:
+                self.leadmsg = await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="Vous êtes le leader, vous devez choisir une équipe. Ajoutez les réactions correspondantes, puis validez.\n\nListe des joueurs :\n{0}".format(playerstr), color=0xddc860))
+        for emote in self.emotes[:len(self.actors):]:
             await client.add_reaction(self.leadmsg, emote)
         await self.updateTeam(client)
 
@@ -204,5 +209,8 @@ class AvalonSave:
             await client.edit_message(self.leadconfirmmsg, embed=discord.Embed(title="AVALON", description="L'équipe enregistrée :\n{0}".format(teamstr), color=0xddc860))
         else:
             self.leadconfirmmsg = await client.send_message(self.actors[self.leader]['user'], embed=discord.Embed(title="AVALON", description="L'équipe enregistrée :\n{0}".format(teamstr), color=0xddc860))
-        if len(self.team) >= settings.avalon.teams[len(self.actors)][len(self.quests)::][0] :
-            self.state='voting'
+        if len(self.team) == settings.avalon.teams[len(self.actors)][len(self.quests)::][0]:
+            if not self.validteam :
+                await client.add_reaction(self.leadmsg, '✅')
+        elif self.validteam:
+            await client.remove_reaction(self.leadmsg, '✅')

@@ -58,8 +58,12 @@ async def on_reaction_add(reaction, user):
     if settings.hitler.enabled:
         await modules.hitler.voteHandler(client, reaction, user, hitlerGame)
     if settings.avalon.enabled:
-        await modules.avalon.reactionHandler(client, reaction, user, avalonGame)
+        await modules.avalon.reactionHandler(client, reaction, user, avalonGame, 'add')
 
+@client.event
+async def on_reaction_remove(reaction, user):
+    if settings.avalon.enabled:
+        await modules.avalon.reactionHandler(client, reaction, user, avalonGame, 'remove')
 @client.event
 async def on_error(event, *args, **kwargs):
     if settings.embederror.enabled :
