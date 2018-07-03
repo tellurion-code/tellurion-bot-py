@@ -142,6 +142,28 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                     if str(reaction.emoji) == '⭕' and avalonGame.votes[group[0]]['values']['valid'] and action == 'add':
                         avalonGame.votes[group[0]].update({'voted':True})
                         await avalonGame.voteStageCheck(client)
+        if avalonGame.state == 'expedition':
+            for group in avalonGame.expedvotes.items():
+                if group[1]['message'].id == reaction.message.id and (not avalonGame.expedvotes[group[0]]['voted']):
+                    if str(reaction.emoji) == '✅' and action == 'add':
+                        avalonGame.expedvotes[group[0]]['values'].update({'Yes':True})
+                    if str(reaction.emoji) == '✅' and action == 'remove':
+                        avalonGame.expedvotes[group[0]]['values'].update({'Yes':False})
+                    if str(reaction.emoji) == '❎' and action == 'add':
+                        avalonGame.expedvotes[group[0]]['values'].update({'No':True})
+                    if str(reaction.emoji) == '❎' and action == 'remove':
+                        avalonGame.expedvotes[group[0]]['values'].update({'No':False})
+                    if avalonGame.expedvotes[group[0]]['values']['Yes'] == avalonGame.expedvotes[group[0]]['values']['No']:
+                        if avalonGame.expedvotes[group[0]]['values']['valid']:
+                            avalonGame.expedvotes[group[0]]['values'].update({'valid':False})
+                            await client.remove_reaction(group[1]['message'], '⭕', client.user)
+                    else :
+                        if not avalonGame.expedvotes[group[0]]['values']['valid']:
+                            avalonGame.expedvotes[group[0]]['values'].update({'valid':True})
+                            await client.add_reaction(group[1]['message'], '⭕')
+                    if str(reaction.emoji) == '⭕' and avalonGame.expedvotes[group[0]]['values']['valid'] and action == 'add':
+                        avalonGame.expedvotes[group[0]].update({'voted':True})
+                        await avalonGame.expeditionStageCheck(client)
 class AvalonSave:
     def __init__(self):
         self.emotes=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
@@ -161,6 +183,7 @@ class AvalonSave:
         self.leadmsg=None
         self.leadconfirmmsg=None
         self.votes={}
+        self.expedvotes={}
         self.statuschan=None
 
     async def nextLead(self):
@@ -196,15 +219,16 @@ class AvalonSave:
             if actor['role'] in ['mechant', 'assassin', 'mordred', 'morgane']:
                 mechstr=""
                 for i in range(len(self.actors)):
-                    if self.actors[i]['role'] in self.mechants:
+                    if self.actors[i]['role'] in ['mechant', 'assassin', 'mordred', 'morgane']:
                         mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)) 
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0xbd2b34))
         await self.startTurn(client)
 
     async def startTurn(self, client):
-        if self.votefailcount==5:
+        if self.votefailcount==5 or (len(self.actors) >= 7 and self.votefailcount==2):
             self.votefailcount=0
             self.quests.append(False)
+            self.questfailcount=0
         if self.quests.count(True) == 3 or self.quests.count(False) == 3 :
             await self.endGame(client)
             return
@@ -267,6 +291,13 @@ class AvalonSave:
             if playergrp[1]['values']['valid']:
                 votes.append(playergrp[1]['values']['Yes'])
         if len(votes) == len(self.votes):
+            votesstr=""
+            for i in range(len(self.votes)):
+                votesstr+=" {0} `{1}` : {2}\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator), {True:'✅', False:'❎'}[self.votes[i]['values']['Yes']])
+            for actor in self.actors :
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(votesstr), color=0x75dd63))
+            await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(votesstr), color=0x75dd63))
+
             if votes.count(False) >= votes.count(True):
                 self.state='composition'
                 self.votefailcount += 1
@@ -274,9 +305,20 @@ class AvalonSave:
             else:
                 self.state='expedition'
                 self.votefailcount = 0
-            votesstr=""
-            for i in range(len(self.votes)):
-                votesstr+=" {0} `{1}` : {2}\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator), {True:'✅', False:'❎'}[self.votes[i]['values']['Yes']])
-            for actor in self.actors :
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(votesstr), color=0x75dd63))
-            await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(votesstr), color=0x75dd63))
+                self.questfailcount = 0
+                await self.expeditionStart(client)
+    async def expeditionStart(self,client):
+        for i in team:
+            self.expedvotes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="Vous participez à une quête.\n**Étes vous pour la réussite de cette quête ?**", color=0xffffff)), 'values':{'Yes':False, 'No':False, 'valid':False}, 'voted':False}})
+            for emote in ['✅', '❎'] :
+                await client.add_reaction(self.expedvotes[i]['message'], emote)
+    async def expeditionStageCheck(self, client):
+        votes=[]
+        for playergrp in self.expedvotes.items():
+            votes.append(playergrp[1]['values']['Yes'])
+        if len(votes) == len(self.expedvotes):
+            self.questfailcount=votes.count(False)
+            if self.questfailcount > 0 :
+                self.quests.append(False)
+            else:
+                self.quests.append(True)
