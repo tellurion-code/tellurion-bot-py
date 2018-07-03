@@ -308,7 +308,7 @@ class AvalonSave:
                 self.questfailcount = 0
                 await self.expeditionStart(client)
     async def expeditionStart(self,client):
-        for i in team:
+        for i in self.team:
             self.expedvotes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="Vous participez à une quête.\n**Étes vous pour la réussite de cette quête ?**", color=0xffffff)), 'values':{'Yes':False, 'No':False, 'valid':False}, 'voted':False}})
             for emote in ['✅', '❎'] :
                 await client.add_reaction(self.expedvotes[i]['message'], emote)
