@@ -247,7 +247,7 @@ class AvalonSave:
         lastquest=""
         if self.quests:
             if self.questfailcount:
-                lastquest="❌ *{0}\n".format(str(questfailcount))
+                lastquest="❌ *{0}\n".format(str(self.questfailcount))
             else:
                 lastquest="✅\n"
         embed=discord.Embed(title="AVALON", description="{0}\n{1}\n\nNombre d'équipes rejetées : {2}\nLe prochain leader est : {3}".format(lastquest, sumquest, str(self.votefailcount), "{0} `{1}`\n".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator))), color=0x75dd63)
