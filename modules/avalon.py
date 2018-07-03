@@ -288,7 +288,7 @@ class AvalonSave:
         teamstr=""
         for i in self.team :
             teamstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
-        await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="L'équipe proposée par {0}:\n{1}".format(" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)), teamstr), color=0xddc860))
+        await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="L'équipe proposée par {0}:\n{1}".format(" {0} `{1}`\n".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator)), teamstr), color=0xddc860))
         for i in range(len(self.actors)):
             self.votes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="L'équipe proposée par {0}:\n{1}".format(" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)), teamstr), color=0xddc860)), 'values':{'Yes':False, 'No':False, 'valid':False}, 'voted':False}})
             for emote in ['✅', '❎'] :
@@ -296,7 +296,7 @@ class AvalonSave:
     async def voteStageCheck(self, client):
         votes=[]
         for playergrp in self.votes.items():
-            if playergrp[1]['values']['valid']:
+            if playergrp[1]['values']['voted']:
                 votes.append(playergrp[1]['values']['Yes'])
         if len(votes) == len(self.votes):
             votesstr=""
@@ -323,7 +323,8 @@ class AvalonSave:
     async def expeditionStageCheck(self, client):
         votes=[]
         for playergrp in self.expedvotes.items():
-            votes.append(playergrp[1]['values']['Yes'])
+            if playergrp[1]['values']['voted']:
+                votes.append(playergrp[1]['values']['Yes'])
         if len(votes) == len(self.expedvotes):
             self.questfailcount=votes.count(False)
             if (len(self.actors) >= 7 and len(self.quests) == 3 and self.votefailcount >= 2) or (len(self.quests) != 3 and self.votefailcount >= 1) or(len(self.actors) < 7 and self.votefailcount >=1):
