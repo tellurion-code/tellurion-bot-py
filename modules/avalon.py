@@ -196,7 +196,7 @@ class AvalonSave:
         self.leadmsg=None
         self.leadconfirmmsg=None
     async def endGame(self, client):
-        rolesstr="**RECAP DE PARTIE**"
+        rolesstr="**RECAP DE PARTIE**\n"
         for actor in self.actors:
             rolesstr+= " {0} `{1}` : `{2}`\n".format(self.emotes[self.actors.index(actor)], actor['user'].display_name + '#' + str(actor['user'].discriminator), actor['role'])
         if self.quests.count(False)==3:
