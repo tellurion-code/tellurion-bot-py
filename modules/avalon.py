@@ -178,7 +178,7 @@ class AvalonSave:
         if self.votefailcount==5:
             self.votefailcount=0
             self.quests.append(False)
-        if self.quests.count(True) == 3 or self.count(False) == 3 :
+        if self.quests.count(True) == 3 or self.quests.count(False) == 3 :
             await self.endGame(client)
             return
         for actor in self.actors:
