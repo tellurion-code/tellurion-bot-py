@@ -322,4 +322,5 @@ class AvalonSave:
                 self.quests.append(False)
             else:
                 self.quests.append(True)
+            self.state='composition'
             await self.startTurn(client)
