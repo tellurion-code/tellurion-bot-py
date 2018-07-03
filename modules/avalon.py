@@ -132,11 +132,11 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                     if str(reaction.emoji) == '❎' and action == 'remove':
                         avalonGame.votes[group[0]]['values'].update({'No':False})
                     if avalonGame.votes[group[0]]['values']['Yes'] == avalonGame.votes[group[0]]['values']['No']:
-                        if not avalonGame.votes[group[0]]['values']['valid']:
+                        if avalonGame.votes[group[0]]['values']['valid']:
                             avalonGame.votes[group[0]]['values'].update({'valid':False})
                             await client.remove_reaction(group[1]['message'], '⭕', client.user)
                     else :
-                        if avalonGame.votes[group[0]]['values']['valid']:
+                        if not avalonGame.votes[group[0]]['values']['valid']:
                             avalonGame.votes[group[0]]['values'].update({'valid':True})
                             await client.add_reaction(group[1]['message'], '⭕')
                     if str(reaction.emoji) == '⭕' and avalon.votes[group[0]]['values']['valid'] and action == 'add':
