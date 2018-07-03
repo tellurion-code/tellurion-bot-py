@@ -196,6 +196,7 @@ class AvalonSave:
         self.leadmsg=None
         self.leadconfirmmsg=None
     async def endGame(self, client):
+        
         self.__init__()
     async def startGame(self, client):
         for actor in self.actors:
@@ -225,7 +226,7 @@ class AvalonSave:
         await self.startTurn(client)
 
     async def startTurn(self, client):
-        if self.votefailcount==5 or (len(self.actors) >= 7 and self.votefailcount==2):
+        if self.votefailcount==5:
             self.votefailcount=0
             self.quests.append(False)
             self.questfailcount=0
@@ -318,8 +319,8 @@ class AvalonSave:
             votes.append(playergrp[1]['values']['Yes'])
         if len(votes) == len(self.expedvotes):
             self.questfailcount=votes.count(False)
-            if self.questfailcount > 0 :
-                self.quests.append(False)
+                if (len(self.actors) >= 7 and len(self.quests) == 3 and self.votefailcount >= 2) or (len(self.quests) != 3 and self.votefailcount >= 1) or(len(self.actors) < 7 and self.votefailcount >=1):
+                    self.quests.append(False)
             else:
                 self.quests.append(True)
             self.state='composition'
