@@ -198,7 +198,7 @@ class AvalonSave:
 
     async def updateTeam(self, client):
         teamstr=""
-        for i in avalonGame.team :
+        for i in self.team :
             teamstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
         if self.leadconfirmmsg:
             await client.edit_message(self.leadconfirmmsg, embed=discord.Embed(title="AVALON", description="L'équipe enregistrée :\n{0}".format(teamstr), color=0xddc860))
