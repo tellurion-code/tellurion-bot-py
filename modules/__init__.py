@@ -9,3 +9,4 @@ import modules.licorne
 import modules.ekiller
 import modules.ekiller2
 import modules.testing
+import modules.avalon
