@@ -322,4 +322,4 @@ class AvalonSave:
                 self.quests.append(False)
             else:
                 self.quests.append(True)
-            await self.startTurn()
+            await self.startTurn(client)
