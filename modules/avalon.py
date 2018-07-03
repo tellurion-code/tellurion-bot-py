@@ -141,7 +141,7 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                             await client.add_reaction(group[1]['message'], '⭕')
                     if str(reaction.emoji) == '⭕' and avalonGame.votes[group[0]]['values']['valid'] and action == 'add':
                         avalonGame.votes[group[0]].update({'voted':True})
-                        await voteStageCheck(client)
+                        await avalonGame.voteStageCheck(client)
 class AvalonSave:
     def __init__(self):
         self.emotes=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
