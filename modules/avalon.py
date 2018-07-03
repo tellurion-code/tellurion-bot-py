@@ -96,6 +96,7 @@ async def commandHandler(client, message, avalonGame):
                         for i in range(len(randplayers)):
                             avalonGame.actors.append({'user':randplayers[i], 'role':randroles[i]})
                         avalonGame.leader=random.randint(0,len(avalonGame.actors)-1)
+                        avalonGame.statuschan=message.channel
                         await avalonGame.startGame(client)
                     else:
                         await client.send_message(message.channel, message.author.mention + ", le nombre de roles est différent du nombre de joueurs... :/")
@@ -119,6 +120,27 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                 if str(reaction.emoji) == '✅' and action=='add' and avalonGame.validteam:
                     avalonGame.state='voting'
                     await avalonGame.voteStageStart(client)
+        if avalonGame.state == 'voting':
+            for group in avalonGame.votes.items():
+                if group[1]['message'].id == reaction.message.id and (not avalonGame.votes[group[0]]['voted']:
+                    if str(reaction.emoji) == '✅' and action == 'add':
+                        avalonGame.votes[group[0]]['values'].update({'Yes':True})
+                    if str(reaction.emoji) == '✅' and action == 'remove':
+                        avalonGame.votes[group[0]]['values'].update({'Yes':False})
+                    if str(reaction.emoji) == '❎' and action == 'add':
+                        avalonGame.votes[group[0]]['values'].update({'No':True})
+                    if str(reaction.emoji) == '❎' and action == 'remove':
+                        avalonGame.votes[group[0]]['values'].update({'No':False})
+                    if avalonGame.votes[group[0]]['values']['Yes'] == avalonGame.votes[group[1]]['values']['No']:
+                        if not avalonGame.votes[group[0]]['values']['valid']:
+                            avalonGame.votes[group[0]]['values'].update({'valid':False})
+                            await client.remove_reaction(self.group[0]['message'], '⭕', client.user)
+                    else :
+                        if avalonGame[group[0]]['values']['valid']:
+                            avalonGame.votes[group[0]]['values'].update({'valid':True})
+                            await client.add_reaction(self.group[0]['message'], '⭕')
+                    if str(reaction.emoji) == '⭕' and avalon.votes[group[0]]['values']['valid'] and action == 'add':
+                        avalonGame.votes[group[0]].update({'voted':True})
 class AvalonSave:
     def __init__(self):
         self.emotes=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
@@ -138,6 +160,7 @@ class AvalonSave:
         self.leadmsg=None
         self.leadconfirmmsg=None
         self.votes={}
+        self.statuschan=None
 
     async def nextLead(self):
         if self.leader+1==len(self.actors):
@@ -196,6 +219,7 @@ class AvalonSave:
             else:
                 lastquest="✅\n"
         embed=discord.Embed(title="AVALON", description="{0}\n{1}\n\nNombre d'équipes rejetées : {2}\nLe prochain leader est : {3}".format(lastquest, sumquest, str(self.votefailcount), "{0} `{1}`\n".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator))), color=0x75dd63)
+        await client.send_message(self.statuschan, embed=embed)
         for i in range(len(self.actors)):
             await client.send_message(self.actors[i]['user'], embed=embed)
             if i==self.leader:
@@ -225,6 +249,6 @@ class AvalonSave:
         for i in self.team :
             teamstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
         for i in range(len(self.actors)):
-            self.votes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}".format(" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)), teamstr), color=0xddc860)), 'value':None, 'voted':False}})
+            self.votes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}".format(" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)), teamstr), color=0xddc860)), 'values':{'Yes':False, 'No':False, 'valid':False} 'voted':False}})
             for emote in ['✅', '❎'] :
                 await client.add_reaction(self.votes[i]['message'], emote)
