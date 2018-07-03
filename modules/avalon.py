@@ -172,8 +172,15 @@ class AvalonSave:
         self.validteam=False
         self.leadmsg=None
         self.leadconfirmmsg=None
-
+    async def endGame(self, client):
+        self.__init__()
     async def startGame(self, client):
+        if self.votefailcount==5:
+            self.votefailcount=0
+            self.quests.append(False)
+        if self.quests.count(True) == 3 or self.count(False) == 3 :
+            await self.endGame(client)
+            return
         for actor in self.actors:
             if actor['role'] == 'gentil' :
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.".format(actor['role']), color=0x1d5687))
@@ -263,6 +270,7 @@ class AvalonSave:
             if votes.count(False) >= votes.count(True):
                 self.state='composition'
                 self.votefailcount += 1
+                await self.startTurn(client)
             else:
                 self.state='expedition'
                 self.votefailcount = 0
