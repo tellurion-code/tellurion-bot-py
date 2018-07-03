@@ -270,5 +270,5 @@ class AvalonSave:
             for i in range(len(self.votes)):
                 votesstr+=" {0} `{1}` : {2}\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator), {True:'✅', False:'❎'}[self.votes[i]['values']['Yes']])
             for actor in self.actors :
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(teamstr), color=0x75dd63))
-            await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(teamstr), color=0x75dd63))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(votesstr), color=0x75dd63))
+            await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(votesstr), color=0x75dd63))
