@@ -122,7 +122,7 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                     await avalonGame.voteStageStart(client)
         if avalonGame.state == 'voting':
             for group in avalonGame.votes.items():
-                if group[1]['message'].id == reaction.message.id and (not avalonGame.votes[group[0]]['voted']:
+                if group[1]['message'].id == reaction.message.id and (not avalonGame.votes[group[0]]['voted']):
                     if str(reaction.emoji) == '✅' and action == 'add':
                         avalonGame.votes[group[0]]['values'].update({'Yes':True})
                     if str(reaction.emoji) == '✅' and action == 'remove':
