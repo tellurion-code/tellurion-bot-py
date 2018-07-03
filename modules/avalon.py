@@ -134,11 +134,11 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                     if avalonGame.votes[group[0]]['values']['Yes'] == avalonGame.votes[group[0]]['values']['No']:
                         if not avalonGame.votes[group[0]]['values']['valid']:
                             avalonGame.votes[group[0]]['values'].update({'valid':False})
-                            await client.remove_reaction(self.group[0]['message'], '⭕', client.user)
+                            await client.remove_reaction(group[1]['message'], '⭕', client.user)
                     else :
                         if avalonGame.votes[group[0]]['values']['valid']:
                             avalonGame.votes[group[0]]['values'].update({'valid':True})
-                            await client.add_reaction(self.group[0]['message'], '⭕')
+                            await client.add_reaction(group[1]['message'], '⭕')
                     if str(reaction.emoji) == '⭕' and avalon.votes[group[0]]['values']['valid'] and action == 'add':
                         avalonGame.votes[group[0]].update({'voted':True})
 class AvalonSave:
@@ -249,6 +249,6 @@ class AvalonSave:
         for i in self.team :
             teamstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
         for i in range(len(self.actors)):
-            self.votes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}".format(" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)), teamstr), color=0xddc860)), 'values':{'Yes':False, 'No':False, 'valid':False}, 'voted':False}})
+            self.votes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="L'équipe proposée par {0}:\n{1}".format(" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)), teamstr), color=0xddc860)), 'values':{'Yes':False, 'No':False, 'valid':False}, 'voted':False}})
             for emote in ['✅', '❎'] :
                 await client.add_reaction(self.votes[i]['message'], emote)
