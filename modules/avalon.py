@@ -214,5 +214,5 @@ class AvalonSave:
                 await client.add_reaction(self.leadmsg, '✅')
                 self.validteam=True
         elif self.validteam:
-            await client.remove_reaction(self.leadmsg, '✅')
+            await client.remove_reaction(self.leadmsg, '✅', client.user)
             self.validteam=False
