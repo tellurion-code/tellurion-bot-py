@@ -196,7 +196,14 @@ class AvalonSave:
         self.leadmsg=None
         self.leadconfirmmsg=None
     async def endGame(self, client):
-        
+        rolesstr="**RECAP DE PARTIE**"
+        for actor in self.actors.items():
+            rolesstr+= " {0} `{1}` : `{2}`\n".format(self.emotes[i], actor['user'].display_name + '#' + str(actors['user'].discriminator), actor['role'])
+        if self.quests.count(False)==3:
+            rolesstr+="**Les méchants gagnent !**"
+        if self.quests.count(True)==3:
+            rolesstr+="**Les gentils gagnent !**"
+        await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description=rolesstr, color=0xffffff))
         self.__init__()
     async def startGame(self, client):
         for actor in self.actors:
