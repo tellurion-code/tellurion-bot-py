@@ -137,7 +137,7 @@ class AvalonSave:
         self.votefailcount=0
         self.leadmsg=None
         self.leadconfirmmsg=None
-        self.votes{}
+        self.votes={}
 
     async def nextLead(self):
         if self.leader+1==len(self.actors):
