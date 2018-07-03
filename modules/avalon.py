@@ -139,7 +139,7 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                         if not avalonGame.votes[group[0]]['values']['valid']:
                             avalonGame.votes[group[0]]['values'].update({'valid':True})
                             await client.add_reaction(group[1]['message'], '⭕')
-                    if str(reaction.emoji) == '⭕' and avalon.votes[group[0]]['values']['valid'] and action == 'add':
+                    if str(reaction.emoji) == '⭕' and avalonGame.votes[group[0]]['values']['valid'] and action == 'add':
                         avalonGame.votes[group[0]].update({'voted':True})
 class AvalonSave:
     def __init__(self):
