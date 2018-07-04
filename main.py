@@ -2,6 +2,7 @@
 import discord #pip3 install --user discord[voice]
 import asyncio
 import os
+import pickle
 
 import settings
 import modules
