@@ -395,7 +395,7 @@ class AvalonSave:
                 playerstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
         for actor in self.actors:
             if actor['role'] == 'assassin' :
-                self.assassinmsg = await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes l'assasin, et trois quêtes ont été un succès. Vous devez assassiner Merlin pour gagner. Ajoutez la réaction correspondante, puis validez.\n\nListe des joueurs :\n{0}".format(playerstr), color=0xbd2b34))
+                self.assassinmsg = await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes l'assassin, et trois quêtes ont été un succès. Vous devez assassiner Merlin pour gagner. Ajoutez la réaction correspondante, puis validez.\n\nListe des joueurs :\n{0}".format(playerstr), color=0xbd2b34))
         for i in range(len(self.actors)):
             if not self.actors[i]['role'] in ['mechant', 'assassin', 'mordred', 'morgane', 'oberon'] :
                 self.assassinlist.append(i)
