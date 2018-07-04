@@ -224,7 +224,7 @@ class AvalonSave:
         for actor in self.actors:
             rolesstr+= " {0} `{1}` : `{2}`\n".format(self.emotes[self.actors.index(actor)], actor['user'].display_name + '#' + str(actor['user'].discriminator), actor['role'])
         if self.killed is not None:
-            rolesstr+="L'assassin tue {0}, il était {1}.\n".format(" {0} `{1}`".format(self.emotes[self.killed], self.actors[self.killed]['user'].display_name + '#' + str(self.actors[self.killed]['user'].discriminator)), self.actors[self.killed]['role'])
+            rolesstr+="L'assassin tue {0} qui était {1}.\n".format(" {0} `{1}`".format(self.emotes[self.killed], self.actors[self.killed]['user'].display_name + '#' + str(self.actors[self.killed]['user'].discriminator)), self.actors[self.killed]['role'])
         if self.quests.count(False)==3 or self.votefailcount==5 or self.actors[self.killed]['role']=='merlin':
             rolesstr+="**Les méchants gagnent !**"
         elif self.quests.count(True)==3:
