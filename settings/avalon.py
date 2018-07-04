@@ -1,4 +1,4 @@
-enabled = False
+enabled = True
 debug = False
 teams={
     1:[1,1,1,1,1],
