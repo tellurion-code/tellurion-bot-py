@@ -54,7 +54,7 @@ async def commandHandler(client, message, avalonGame):
 
     #     -Roles list command-
             if message.content=='/avalon roles list':
-                await client.send_message(message.channel, "Liste des roles :\n```PYTHON\n{0}```".format(str(avalonGame.roles)))
+                await client.send_message(message.channel, "Liste des rôles :\n```PYTHON\n{0}```".format(str(avalonGame.roles)))
 
     #     -Add Role command-
             if message.content.startswith('/avalon roles add'):
@@ -66,10 +66,10 @@ async def commandHandler(client, message, avalonGame):
                             avalonGame.roles.append(role)
                             ans += "le rôle {0} a été ajouté\n".format(role)
                         else:
-                            ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmis `{1}`.\n".format(role, str(avalonGame.implemented_roles))
+                            ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmi `{1}`.\n".format(role, str(avalonGame.implemented_roles))
                     await client.send_message(message.channel, message.author.mention + ",\n{0}".format(ans))
                 else:
-                    await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique role ou une liste de roles séparés par une virgule.")
+                    await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique rôle ou une liste de rôles séparés par une virgule.")
 
     #     -Remove role command-
             if message.content.startswith('/avalon roles remove'):
@@ -81,10 +81,10 @@ async def commandHandler(client, message, avalonGame):
                             avalonGame.roles.remove(role)
                             ans += "Le rôle {0} a été retiré\n".format(role)
                         else:
-                            ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmis `{1}`.".format(role, str(avalonGame.implemented_roles))
+                            ans += "Le rôle {0} n'est pas supporté, veuillez en prendre un parmi `{1}`.".format(role, str(avalonGame.implemented_roles))
                     await client.send_message(message.channel, message.author.mention + ",\n{0}".format(ans))
                 else:
-                    await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique role ou une liste de roles séparés par une virgule.")
+                    await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique rôle ou une liste de rôles séparés par une virgule.")
 
     #     -Start game command-
             if message.content=='/avalon start' :
@@ -99,9 +99,9 @@ async def commandHandler(client, message, avalonGame):
                         avalonGame.statuschan=message.channel
                         await avalonGame.startGame(client)
                     else:
-                        await client.send_message(message.channel, message.author.mention + ", le nombre de roles est différent du nombre de joueurs... :/")
+                        await client.send_message(message.channel, message.author.mention + ", le nombre de rôles est différent du nombre de joueurs... :/")
                 else:
-                    await client.send_message(message.channel, message.author.mention + ", la partie ne peut-être lancée qu'avec 5 joueurs au minimum...")
+                    await client.send_message(message.channel, message.author.mention + ", La partie nécessite 5 joueurs au minimum pour être lancée...")
 
 
 async def reactionHandler(client, reaction, user, avalonGame, action):
@@ -110,7 +110,7 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
         if avalonGame.state == 'composition':
             if reaction.message.id == avalonGame.leadmsg.id :
                 if str(reaction.emoji) in avalonGame.emotes[:len(avalonGame.actors):]:
-                    chosenPlayer=avalonGame.emotes.index(reaction.emoji)
+                    chosenPlayer=avalonGame.emotes.index(str(reaction.emoji))
                     if not chosenPlayer in avalonGame.team and action=='add':
                         avalonGame.team.append(chosenPlayer)
                         await avalonGame.updateTeam(client)
@@ -164,6 +164,20 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                     if str(reaction.emoji) == '⭕' and avalonGame.expedvotes[group[0]]['values']['valid'] and action == 'add':
                         avalonGame.expedvotes[group[0]].update({'voted':True})
                         await avalonGame.expeditionStageCheck(client)
+        if avalonGame.state == 'assassination':
+            if reaction.message.id == avalonGame.assassinmsg.id :
+                if str(reaction.emoji) in avalonGame.emotes and avalonGame.emotes.index(str(reaction.emoji)) in avalonGame.assassinlist:
+                    chosenPlayer=avalonGame.emotes.index(str(reaction.emoji))
+                    if not chosenPlayer in avalonGame.assassinkilllist and action=='add':
+                        avalonGame.assassinkilllist.append(chosenPlayer)
+                        await avalonGame.assassinationCheck(client)
+                    if not chosenPlayer in avalonGame.assassinkilllist and action=='remove':
+                        avalonGame.assassinkilllist.remove(chosenPlayer)
+                        await avalonGame.assassinationCheck(client)
+                if str(reaction.emoji) == '✅' and action=='add' and len(avalonGame.assassinkilllist) == 1 and avalonGame.assassinvalid:
+                    avalonGame.state=None
+                    avalonGame.killed=avalonGame.assassinkilllist[0]
+                    await avalonGame.endGame(client)
 class AvalonSave:
     def __init__(self):
         self.emotes=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
@@ -171,7 +185,7 @@ class AvalonSave:
         self.gentils=['gentil', 'merlin', 'perceval']
         self.mechants=['mechant', 'assassin', 'mordred', 'morgane', 'oberon']
         self.players=[]
-        self.state='lobby' # Differents states : {'lobby':'Players are joining and choosing the roles', 'composition':'The leader is choosing the team', 'voting':'The players are voting the team made by the leader', 'expedition':The team chosen by the leader votes for the success or the failure of a quest'}
+        self.state='lobby' # Differents states : {'lobby':'Players are joining and choosing the roles', 'composition':'The leader is choosing the team', 'voting':'The players are voting the team made by the leader', 'expedition':The team chosen by the leader votes for the success or the failure of a quest', 'assassination':'The assassin chooses someone to kill him.'}
         self.roles=[]
         self.actors=[] # format : [{'user':user, 'role':role}]
         self.leader=0
@@ -185,7 +199,11 @@ class AvalonSave:
         self.votes={}
         self.expedvotes={}
         self.statuschan=None
-
+        self.killed=None
+        self.assassinmsg=None
+        self.assassinlist=[]
+        self.assassinkilllist=[]
+        self.assassinvalid=False
     async def nextLead(self):
         if self.leader+1==len(self.actors):
             self.leader=0
@@ -199,11 +217,16 @@ class AvalonSave:
         rolesstr="**RECAP DE PARTIE**\n"
         for actor in self.actors:
             rolesstr+= " {0} `{1}` : `{2}`\n".format(self.emotes[self.actors.index(actor)], actor['user'].display_name + '#' + str(actor['user'].discriminator), actor['role'])
-        if self.quests.count(False)==3:
+        if self.killed:
+            rolesstr+="L'assassin tue {0}, il était {1}.".format(" {0} `{1}`\n".format(self.emotes[self.killed], self.actors[self.killed]['user'].display_name + '#' + str(self.actors[self.killed]['user'].discriminator), self.actors[self.killed]['role'])
+        if self.quests.count(False)==3 or self.votefailcount==5 or self.actors[self.killed]['role']=='merlin':
             rolesstr+="**Les méchants gagnent !**"
-        if self.quests.count(True)==3:
+        elif self.quests.count(True)==3:
             rolesstr+="**Les gentils gagnent !**"
-        await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description=rolesstr, color=0xffffff))
+        embed=discord.Embed(title="AVALON", description=rolesstr, color=0xffffff)
+        await client.send_message(self.statuschan, embed=embed)
+        for actor in self.actors:
+            await client.send_message(actor['user'], embed=embed)
         self.__init__()
     async def startGame(self, client):
         for actor in self.actors:
@@ -222,7 +245,7 @@ class AvalonSave:
                 for i in range(len(self.actors)):
                     if self.actors[i]['role'] in ['merlin', 'morgane']:
                         mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Vous ne savez pas qui est merlin ou morgane de :\n{1}".format(actor['role'], mechstr), color=0x1d5687))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Vous ne savez pas qui est merlin ou morgane entre:\n{1}".format(actor['role'], mechstr), color=0x1d5687))
 
             if actor['role'] in ['mechant', 'assassin', 'mordred', 'morgane']:
                 mechstr=""
@@ -233,12 +256,12 @@ class AvalonSave:
         await self.startTurn(client)
 
     async def startTurn(self, client):
-        if self.votefailcount==5:
-            self.votefailcount=0
-            self.quests.append(False)
-            self.questfailcount=0
-        if self.quests.count(True) == 3 or self.quests.count(False) == 3 :
-            await self.endGame(client)
+        if self.quests.count(True) == 3 or self.quests.count(False) == 3 or self.votefailcount==5 :
+            if self.quests.count(True) == 3:
+                self.state='assassination'
+                await self.assassinationStart(client)
+            else:
+                await self.endGame()
             return
         await self.nextLead()
         sumquest=""
@@ -301,10 +324,11 @@ class AvalonSave:
         if len(votes) == len(self.votes):
             votesstr=""
             for i in range(len(self.votes)):
-                votesstr+=" {0} `{1}` : {2}\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator), {True:'✅', False:'❎'}[self.votes[i]['values']['Yes']])
+                votesstr+=" {2} : {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator), {True:'✅', False:'❎'}[self.votes[i]['values']['Yes']])
+            embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n ✅:{1} ; ❎:{2}\n{0}".format(votesstr, str(votes.count(True)),str(votes.count(False)), color=0x75dd63)
             for actor in self.actors :
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(votesstr), color=0x75dd63))
-            await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(votesstr), color=0x75dd63))
+                await client.send_message(actor['user'], embed=embed)
+            await client.send_message(self.statuschan, embed=embed)
             self.votes={}
             if votes.count(False) >= votes.count(True):
                 self.state='composition'
@@ -327,7 +351,7 @@ class AvalonSave:
                 votes.append(playergrp[1]['values']['Yes'])
         if len(votes) == len(self.expedvotes):
             self.questfailcount=votes.count(False)
-            await client.send_message(self.statuschan, 'self.quests=`{0}`\nvotefailcount=`{1}`\nvotes=`{2}`\nself.questvotes=`{3}`'.format(str(self.quests), str(self.questfailcount),str(votes), str(self.expedvotes)))
+            #await client.send_message(self.statuschan, 'self.quests=`{0}`\nvotefailcount=`{1}`\nvotes=`{2}`\nself.questvotes=`{3}`'.format(str(self.quests), str(self.questfailcount),str(votes), str(self.expedvotes)))
             if len(self.actors) >= 7:
                 if len(self.quests) == 3:
                     if self.questfailcount >= 2: 
@@ -347,3 +371,23 @@ class AvalonSave:
             self.state='composition'
             self.expedvotes={}
             await self.startTurn(client)
+
+    async def assassinationStart(self, client):
+        for i in range(len(self.actors)):
+            if not self.actors[i]['role'] in ['mechant', 'assassin', 'mordred', 'morgane', 'oberon'] :
+                playerstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
+        for actor in self.actors:
+            if actor['role'] == 'assassin' :
+                self.assassinmsg = await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes l'assasin, et trois quêtes ont été un succès. Vous devez assassiner Merlin pour gagner. Ajoutez la réaction correspondante, puis validez.\n\nListe des joueurs :\n{0}".format(playerstr), color=0xbd2b34))
+        for i in range(len(self.actors)):
+            if not self.actors[i]['role'] in ['mechant', 'assassin', 'mordred', 'morgane', 'oberon'] :
+                self.assassinlist.append(i)
+                await client.add_reaction(self.assassinmsg, self.emotes[i])
+    async def assassinationCheck(self, client):
+        if len(self.assassinkilllist) == 1 :
+            if not self.assassinvalid:
+                await client.add_reaction(self.assassinmsg, '✅')
+                self.assassinvalid=True
+        elif self.assassinvalid :
+            await client.remove_reaction(self.assassinmsg, '✅')
+            self.assassinvalid=False

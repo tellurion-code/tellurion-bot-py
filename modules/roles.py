@@ -25,7 +25,7 @@ async def AddRole(client, message) :
                     await client.send_message(message.channel, message.author.mention + ", vous avez reçu le rôle " + args[1] +".")
                     await client.delete_message(message)
             except KeyError:
-                await client.send_message(message.channel, message.author.mention + ", ce rôle n'est pas disponnible à l'auto-attribution. Vous pouvez avoir la liste des rôles disponnible grâce à la commande /role liste .")
+                await client.send_message(message.channel, message.author.mention + ", ce rôle n'est pas disponible à l'auto-attribution. Vous pouvez avoir la liste des rôles disponible grâce à la commande /role liste .")
             except :
-                await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec les roles doivent être éffectuées sur le serveur.")
+                await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec les rôles doivent être effectuées sur le serveur.")
                 raise

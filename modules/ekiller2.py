@@ -25,7 +25,7 @@ async def commandHandler(client, message, ekiller):
             return
     except:
         if message.content.startswith("/ekiller"):
-            await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec ekiller doivent être éffectuées sur le serveur.")
+            await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec ekiller doivent être effectuées sur le serveur.")
             raise
 
     if message.content == "/ekiller start":
