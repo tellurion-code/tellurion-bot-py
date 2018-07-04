@@ -250,8 +250,8 @@ class AvalonSave:
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes **{0}**.\n Sont méchants : \n{1}".format(actor['role'].upper(), mechstr), color=0x1d5687))
 
             if actor['role'] == 'perceval':
+                mechstr=""
                 for i in range(len(self.actors)):
-                    mechstr=""
                     if self.actors[i]['role'] in ['merlin', 'morgane']:
                         mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes **{0}**.\n Vous ne savez pas qui est merlin ou morgane entre:\n{1}".format(actor['role'].upper(), mechstr), color=0x1d5687))
