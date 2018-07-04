@@ -214,6 +214,7 @@ class AvalonSave:
         self.leadmsg=None
         self.leadconfirmmsg=None
     async def endGame(self, client):
+        print(str(self.killed))
         rolesstr="**RECAP DE PARTIE**\n"
         for actor in self.actors:
             rolesstr+= " {0} `{1}` : `{2}`\n".format(self.emotes[self.actors.index(actor)], actor['user'].display_name + '#' + str(actor['user'].discriminator), actor['role'])
@@ -224,7 +225,8 @@ class AvalonSave:
         elif self.quests.count(True)==3:
             rolesstr+="**Les gentils gagnent !**"
         embed=discord.Embed(title="AVALON", description=rolesstr, color=0xffffff)
-        await client.send_message(self.statuschan, embed=embed)
+        embedmain=discord.Embed(title="AVALON", description=rolesstr + "\n\n{0}".format(await utils.usertools.UserByID(client, "118399702667493380").mention), color=0xffffff)
+        await client.send_message(self.statuschan, embed=embedmain)
         for actor in self.actors:
             await client.send_message(actor['user'], embed=embed)
         self.__init__()
@@ -325,7 +327,7 @@ class AvalonSave:
             votesstr=""
             for i in range(len(self.votes)):
                 votesstr+=" {2} : {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator), {True:'✅', False:'❎'}[self.votes[i]['values']['Yes']])
-            embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n ✅:{1} ; ❎:{2}\n{0}".format(votesstr, str(votes.count(True)),str(votes.count(False))), color=0x75dd63)
+            embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n\n ✅:{1}    ❎:{2}\n\n{0}".format(votesstr, str(votes.count(True)),str(votes.count(False))), color=0x75dd63)
             for actor in self.actors :
                 await client.send_message(actor['user'], embed=embed)
             await client.send_message(self.statuschan, embed=embed)
