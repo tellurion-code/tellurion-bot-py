@@ -333,7 +333,7 @@ class AvalonSave:
         teamstr=""
         for i in self.team :
             teamstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
-        self.teamvoteembed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}\n{2} joueurs n'ont pas encore validé leur vote.".format(" {0} `{1}`".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator)), teamstr, les(self.actors)-len(self.votes)), color=0xddc860)
+        self.teamvoteembed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}\n{2} joueurs n'ont pas encore validé leur vote.".format(" {0} `{1}`".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator)), teamstr, len(self.actors)-len(self.votes)), color=0xddc860)
         for votegrp in self.votes.items():
             await client.edit_message(votegrp[1]['message'], embed=embed)
         if len(votes) == len(self.votes):
