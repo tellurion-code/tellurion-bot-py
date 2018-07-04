@@ -373,6 +373,7 @@ class AvalonSave:
             await self.startTurn(client)
 
     async def assassinationStart(self, client):
+        playerstr=""
         for i in range(len(self.actors)):
             if not self.actors[i]['role'] in ['mechant', 'assassin', 'mordred', 'morgane', 'oberon'] :
                 playerstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
