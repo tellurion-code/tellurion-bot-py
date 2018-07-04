@@ -305,7 +305,7 @@ class AvalonSave:
             for actor in self.actors :
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(votesstr), color=0x75dd63))
             await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n{0}".format(votesstr), color=0x75dd63))
-
+            self.votes={}
             if votes.count(False) >= votes.count(True):
                 self.state='composition'
                 self.votefailcount += 1
@@ -327,22 +327,23 @@ class AvalonSave:
                 votes.append(playergrp[1]['values']['Yes'])
         if len(votes) == len(self.expedvotes):
             self.questfailcount=votes.count(False)
-            await client.send_message(self.statuschan, 'self.quests=`{0}`\nvotefailcount=`{1}`\nvotes=`{2}`\nself.expedvotes=`{3}`'.format(str(self.quests), str(self.votefailcount),str(votes), str(self.expedvotes)))
+            await client.send_message(self.statuschan, 'self.quests=`{0}`\nvotefailcount=`{1}`\nvotes=`{2}`\nself.questvotes=`{3}`'.format(str(self.quests), str(self.questfailcount),str(votes), str(self.expedvotes)))
             if len(self.actors) >= 7:
                 if len(self.quests) == 3:
-                    if self.votefailcount >= 2: 
+                    if self.questfailcount >= 2: 
                         self.quests.append(False)
                     else:
                         self.quests.append(True)
                 else:
-                    if self.votefailcount >= 1:
+                    if self.questfailcount >= 1:
                         self.quests.append(False)
                     else:
                         self.quests.append(True)
             else:
-                if self.votefailcount >= 1:
+                if self.questfailcount >= 1:
                     self.quests.append(False)
                 else:
                     self.quests.append(True)
             self.state='composition'
+            self.expedvotes={}
             await self.startTurn(client)
