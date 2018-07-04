@@ -171,7 +171,7 @@ class AvalonSave:
         self.gentils=['gentil', 'merlin', 'perceval']
         self.mechants=['mechant', 'assassin', 'mordred', 'morgane', 'oberon']
         self.players=[]
-        self.state='lobby' # Differents states : {'lobby':'Players are joining and choosing the roles', 'composition':'The leader is choosing the team', 'voting':'The players are voting the team made by the leader', 'expedition':T'he team chosen by the leader votes for the success or the failure of a quest'}
+        self.state='lobby' # Differents states : {'lobby':'Players are joining and choosing the roles', 'composition':'The leader is choosing the team', 'voting':'The players are voting the team made by the leader', 'expedition':The team chosen by the leader votes for the success or the failure of a quest'}
         self.roles=[]
         self.actors=[] # format : [{'user':user, 'role':role}]
         self.leader=0
@@ -327,9 +327,22 @@ class AvalonSave:
                 votes.append(playergrp[1]['values']['Yes'])
         if len(votes) == len(self.expedvotes):
             self.questfailcount=votes.count(False)
-            if (len(self.actors) >= 7 and len(self.quests) == 3 and self.votefailcount >= 2) or (len(self.quests) != 3 and self.votefailcount >= 1) or(len(self.actors) < 7 and self.votefailcount >=1):
-                self.quests.append(False)
+            await client.send_message(self.statuschan, 'self.quests={0}\nvotefailcount={1}\nvotes={2}\nself.expedvotes'.format(str(self.quests), str(self.votefailcount),str(votes), str(self.expedvotes)))
+            if len(self.actors) >= 7:
+                if len(self.quests) == 3:
+                    if self.votefailcount >= 2: 
+                        self.quests.append(False)
+                    else:
+                        self.quests.append(True)
+                else:
+                    if self.votefailcount >= 1:
+                        self.quests.append(False)
+                    else:
+                        self.quests.append(True)
             else:
-                self.quests.append(True)
+                if self.votefailcount >= 1:
+                    self.quests.append(False)
+                else:
+                    self.quests.append(True)
             self.state='composition'
             await self.startTurn(client)
