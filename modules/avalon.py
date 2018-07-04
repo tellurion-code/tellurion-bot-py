@@ -6,9 +6,9 @@ import settings.avalon
 async def commandHandler(client, message, avalonGame):
     if message.content.startswith('/avalon'):
 #     -general commands-
-    if message.content == '/avalon reset' and await utils.hasrole(message.author, "1"):
-        avalonGame.__init__()
-        await client.send_message(message.channel, message.author.mention + "La partie a été réinitialisée."
+        if message.content == '/avalon reset' and await utils.hasrole(message.author, "1"):
+            avalonGame.__init__()
+            await client.send_message(message.channel, message.author.mention + "La partie a été réinitialisée."
 #     -lobby commands-
         if avalonGame.state=='lobby':
     #     -Join command-
