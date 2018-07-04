@@ -225,7 +225,8 @@ class AvalonSave:
         elif self.quests.count(True)==3:
             rolesstr+="**Les gentils gagnent !**"
         embed=discord.Embed(title="AVALON", description=rolesstr, color=0xffffff)
-        embedmain=discord.Embed(title="AVALON", description=rolesstr + "\n\n{0}".format(await utils.usertools.UserByID(client, "118399702667493380").mention), color=0xffffff)
+        Alix = await utils.usertools.UserByID(client, "118399702667493380")
+        embedmain=discord.Embed(title="AVALON", description=rolesstr + "\n\n{0}".format(Alix.mention), color=0xffffff)
         await client.send_message(self.statuschan, embed=embedmain)
         for actor in self.actors:
             await client.send_message(actor['user'], embed=embed)
