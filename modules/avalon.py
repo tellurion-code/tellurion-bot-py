@@ -327,7 +327,7 @@ class AvalonSave:
                 votes.append(playergrp[1]['values']['Yes'])
         if len(votes) == len(self.expedvotes):
             self.questfailcount=votes.count(False)
-            await client.send_message(self.statuschan, 'self.quests={0}\nvotefailcount={1}\nvotes={2}\nself.expedvotes'.format(str(self.quests), str(self.votefailcount),str(votes), str(self.expedvotes)))
+            await client.send_message(self.statuschan, 'self.quests=`{0}`\nvotefailcount=`{1}`\nvotes=`{2}`\nself.expedvotes=`{3}`'.format(str(self.quests), str(self.votefailcount),str(votes), str(self.expedvotes)))
             if len(self.actors) >= 7:
                 if len(self.quests) == 3:
                     if self.votefailcount >= 2: 
