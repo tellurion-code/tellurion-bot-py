@@ -239,29 +239,29 @@ class AvalonSave:
     async def startGame(self, client):
         for actor in self.actors:
             if actor['role'] == 'gentil' :
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.".format(actor['role']), color=0x1d5687))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes **{0}**.".format(actor['role'].upper()), color=0x1d5687))
             if actor['role'] == 'oberon' :
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.".format(actor['role']), color=0xbd2b34))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes **{0}**.".format(actor['role'].upper()), color=0xbd2b34))
             if actor['role'] == 'merlin':
                 mechstr=""
                 for i in range(len(self.actors)):
                     if self.actors[i]['role'] in ['mechant', 'assassin', 'morgane', 'oberon']:
                         mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0x1d5687))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes **{0}**.\n Sont méchants : \n{1}".format(actor['role'].upper(), mechstr), color=0x1d5687))
 
             if actor['role'] == 'perceval':
                 for i in range(len(self.actors)):
                     mechstr=""
                     if self.actors[i]['role'] in ['merlin', 'morgane']:
                         mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Vous ne savez pas qui est merlin ou morgane entre:\n{1}".format(actor['role'], mechstr), color=0x1d5687))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes **{0}**.\n Vous ne savez pas qui est merlin ou morgane entre:\n{1}".format(actor['role'].upper(), mechstr), color=0x1d5687))
 
             if actor['role'] in ['mechant', 'assassin', 'mordred', 'morgane']:
                 mechstr=""
                 for i in range(len(self.actors)):
                     if self.actors[i]['role'] in ['mechant', 'assassin', 'mordred', 'morgane']:
                         mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)) 
-                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes {0}.\n Sont méchants : \n{1}".format(actor['role'], mechstr), color=0xbd2b34))
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes **{0}**.\n Sont méchants : \n{1}".format(actor['role'].upper(), mechstr), color=0xbd2b34))
         await self.startTurn(client)
 
     async def startTurn(self, client):
@@ -334,7 +334,7 @@ class AvalonSave:
         teamstr=""
         for i in self.team :
             teamstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
-        self.teamvoteembed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}\n{2} joueurs n'ont pas encore validé leur vote.".format(" {0} `{1}`".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator)), teamstr, len(self.actors)-len(self.votes)), color=0xddc860)
+        self.teamvoteembed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}\n{2} joueurs n'ont pas encore validé leur vote.".format(" {0} `{1}`".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator)), teamstr, len(self.actors)-len(votes)), color=0xddc860)
         for votegrp in self.votes.items():
             await client.edit_message(votegrp[1]['message'], embed=self.teamvoteembed)
         if len(votes) == len(self.votes):
