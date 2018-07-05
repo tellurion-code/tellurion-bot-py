@@ -209,6 +209,7 @@ class AvalonSave:
         self.assassinkilllist=[]
         self.assassinvalid=False
         self.teamvoteembed=None
+        self.teamvotestatuschanmsg=None
     async def nextLead(self):
         if self.leader+1==len(self.actors):
             self.leader=0
@@ -237,6 +238,10 @@ class AvalonSave:
             await client.send_message(actor['user'], embed=embed)
         self.__init__()
     async def startGame(self, client):
+        playerliststr=""
+        for i in range(len(self.actors)):
+            playerliststr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
+        await client.send_message(self.statuschan, embed=discord.Embed(title="[AVALON] - Liste des joueurs", description=playerliststr, color=0xffffff))
         for actor in self.actors:
             if actor['role'] == 'gentil' :
                 await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Vous êtes **{0}**.".format(actor['role'].upper()), color=0x1d5687))
@@ -270,7 +275,7 @@ class AvalonSave:
                 self.state='assassination'
                 await self.assassinationStart(client)
             else:
-                await self.endGame()
+                await self.endGame(client)
             return
         await self.nextLead()
         sumquest=""
@@ -293,7 +298,6 @@ class AvalonSave:
         embed=discord.Embed(title="AVALON", description="{0}\n{1}\n\nNombre d'équipes rejetées : {2}\nLe prochain leader est : {3}".format(lastquest, sumquest, str(self.votefailcount), "{0} `{1}`\n".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator))), color=0x75dd63)
         await client.send_message(self.statuschan, embed=embed)
         for i in range(len(self.actors)):
-            await client.send_message(self.actors[i]['user'], embed=embed)
             if i==self.leader:
                 self.leadmsg = await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="Vous êtes le leader, vous devez choisir une équipe. Ajoutez les réactions correspondantes, puis validez.\n\nListe des joueurs :\n{0}".format(playerstr), color=0xddc860))
         for emote in self.emotes[:len(self.actors):]:
@@ -321,7 +325,7 @@ class AvalonSave:
         for i in self.team :
             teamstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
         self.teamvoteembed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}".format(" {0} `{1}`".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator)), teamstr), color=0xddc860)
-        await client.send_message(self.statuschan, embed=self.teamvoteembed)
+        self.teamvotestatuschanmsg = await client.send_message(self.statuschan, embed=self.teamvoteembed)
         for i in range(len(self.actors)):
             self.votes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=self.teamvoteembed), 'values':{'Yes':False, 'No':False, 'valid':False}, 'voted':False}})
             for emote in ['✅', '❎'] :
@@ -334,7 +338,13 @@ class AvalonSave:
         teamstr=""
         for i in self.team :
             teamstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
-        self.teamvoteembed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}\n{2} joueurs n'ont pas encore validé leur vote.".format(" {0} `{1}`".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator)), teamstr, len(self.actors)-len(votes)), color=0xddc860)
+        votecountstr=""
+        if len(self.actors)-len(votes) == 1 :
+            votecountstr="1 joueur n'a pas encore validé son vote."
+        elif len(self.actors)-len(votes) > 1 :
+            votecountstr="\n{2} joueurs n'ont pas encore validé leur vote.".format(len(self.actors)-len(votes))
+        self.teamvoteembed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}".format(" {0} `{1}`".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator)), teamstr, votecountstr), color=0xddc860)
+        await client.edit_message(self.teamvotestatuschanmsg, embed=self.teamvoteembed)
         for votegrp in self.votes.items():
             await client.edit_message(votegrp[1]['message'], embed=self.teamvoteembed)
         if len(votes) == len(self.votes):
@@ -342,8 +352,6 @@ class AvalonSave:
             for i in range(len(self.votes)):
                 votesstr+=" {2} : {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator), {True:'✅', False:'❎'}[self.votes[i]['values']['Yes']])
             embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n\n ✅:{1}    ❎:{2}\n\n{0}".format(votesstr, str(votes.count(True)),str(votes.count(False))), color=0x75dd63)
-            for actor in self.actors :
-                await client.send_message(actor['user'], embed=embed)
             await client.send_message(self.statuschan, embed=embed)
             self.votes={}
             if votes.count(False) >= votes.count(True):
