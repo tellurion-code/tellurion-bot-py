@@ -342,8 +342,8 @@ class AvalonSave:
         if len(self.actors)-len(votes) == 1 :
             votecountstr="1 joueur n'a pas encore validé son vote."
         elif len(self.actors)-len(votes) > 1 :
-            votecountstr="\n{0} joueurs n'ont pas encore validé leur vote.".format(len(self.actors)-len(votes))
-        self.teamvoteembed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}".format(" {0} `{1}`".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator)), teamstr, votecountstr), color=0xddc860)
+            votecountstr="{0} joueurs n'ont pas encore validé leur vote.".format(len(self.actors)-len(votes))
+        self.teamvoteembed=discord.Embed(title="AVALON", description="L'équipe proposée par {0} :\n{1}\n\n{2}".format(" {0} `{1}`".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator)), teamstr, votecountstr), color=0xddc860)
         await client.edit_message(self.teamvotestatuschanmsg, embed=self.teamvoteembed)
         for votegrp in self.votes.items():
             await client.edit_message(votegrp[1]['message'], embed=self.teamvoteembed)
