@@ -102,7 +102,7 @@ async def commandHandler(client, message, avalonGame):
                         avalonGame.leader=random.randint(0,len(avalonGame.actors)-1)
                         avalonGame.statuschan=message.channel
                         for actor in avalonGame.actors :
-                            await client.send_message(actor['role', "̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉")
+                            await client.send_message(actor['user'], "̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉\n̉")
                         await avalonGame.startGame(client)
                     else:
                         await client.send_message(message.channel, message.author.mention + ", le nombre de rôles est différent du nombre de joueurs... :/")
