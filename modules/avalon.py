@@ -408,7 +408,7 @@ class AvalonSave:
             if not self.actors[i]['role'] in ['mechant', 'assassin', 'mordred', 'morgane', 'oberon'] :
                 self.assassinlist.append(i)
                 await client.add_reaction(self.assassinmsg, self.emotes[i])
-        await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="Les méchants vont débattre pour choisir celui qu'ils pensent être merlin. Que les gentils coupent leur micros."))
+        await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="Les méchants vont débattre pour choisir celui qu'ils pensent être merlin. Que les gentils coupent leur micro."))
     async def assassinationCheck(self, client):
         if len(self.assassinkilllist) == 1 :
             if not self.assassinvalid:
