@@ -273,7 +273,7 @@ class AvalonSave:
 
     async def startTurn(self, client):
         if self.quests.count(True) == 3 or self.quests.count(False) == 3 or self.votefailcount==5 :
-            if self.quests.count(True) == 3:
+            if self.quests.count(True) == 3 and 'assassin' in self.roles:
                 self.state='assassination'
                 await self.assassinationStart(client)
             else:
