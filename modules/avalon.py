@@ -298,6 +298,7 @@ class AvalonSave:
         embed=discord.Embed(title="AVALON", description="{0}\n{1}\n\nNombre d'équipes rejetées : {2}\nLe prochain leader est : {3}".format(lastquest, sumquest, str(self.votefailcount), "{0} `{1}`\n".format(self.emotes[self.leader], self.actors[self.leader]['user'].display_name + '#' + str(self.actors[self.leader]['user'].discriminator))), color=0x75dd63)
         await client.send_message(self.statuschan, embed=embed)
         for i in range(len(self.actors)):
+            await client.send_message(self.actors[i]['user'], embed=embed)
             if i==self.leader:
                 self.leadmsg = await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="AVALON", description="Vous êtes le leader, vous devez choisir une équipe. Ajoutez les réactions correspondantes, puis validez.\n\nListe des joueurs :\n{0}".format(playerstr), color=0xddc860))
         for emote in self.emotes[:len(self.actors):]:
@@ -353,6 +354,8 @@ class AvalonSave:
                 votesstr+=" {2} : {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator), {True:'✅', False:'❎'}[self.votes[i]['values']['Yes']])
             embed=discord.Embed(title="AVALON", description="Les joueurs ont voté :\n\n ✅:{1}    ❎:{2}\n\n{0}".format(votesstr, str(votes.count(True)),str(votes.count(False))), color=0x75dd63)
             await client.send_message(self.statuschan, embed=embed)
+            for actor in self.actors :
+                await client.send_message(actor['user'], embed=embed)
             self.votes={}
             if votes.count(False) >= votes.count(True):
                 self.state='composition'
@@ -409,6 +412,9 @@ class AvalonSave:
                 self.assassinlist.append(i)
                 await client.add_reaction(self.assassinmsg, self.emotes[i])
         await client.send_message(self.statuschan, embed=discord.Embed(title="AVALON", description="Les méchants vont débattre pour choisir celui qu'ils pensent être merlin. Que les gentils coupent leur micro."))
+        for actor in self.actors:
+            if actor['role'] in self.gentil :
+                await client.send_message(actor['user'], embed=discord.Embed(title="AVALON", description="Les méchants vont débattre pour choisir celui qu'ils pensent être merlin. Coupez votre micro."))
     async def assassinationCheck(self, client):
         if len(self.assassinkilllist) == 1 :
             if not self.assassinvalid:
