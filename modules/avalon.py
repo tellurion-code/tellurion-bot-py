@@ -415,7 +415,7 @@ class AvalonSave:
                 await client.add_reaction(self.assassinmsg, self.emotes[i])
         await client.send_message(self.statuschan, embed=discord.Embed(title="[AVALON] - Assassinat - Quête n°" + str(len(self.quests) + 1), description="Les méchants vont débattre pour choisir celui qu'ils pensent être merlin. Que les gentils coupent leur micro."))
         for actor in self.actors:
-            if actor['role'] in self.gentil :
+            if actor['role'] in self.gentils :
                 await client.send_message(actor['user'], embed=discord.Embed(title="[AVALON] - Assassinat - Quête n°" + str(len(self.quests) + 1), description="Les méchants vont débattre pour choisir celui qu'ils pensent être merlin. Coupez votre micro."))
     async def assassinationCheck(self, client):
         if len(self.assassinkilllist) == 1 :
