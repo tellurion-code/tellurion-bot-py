@@ -1,5 +1,6 @@
 import utils.usertools
 import utils.perms
+import time
 import random
 import discord
 import settings.avalon
@@ -94,6 +95,7 @@ async def commandHandler(client, message, avalonGame):
             if message.content=='/avalon start' :
                 if len(avalonGame.players)>=5 or settings.avalon.debug:
                     if len(avalonGame.roles) == len(avalonGame.players) :
+                        random.seed(time.time())
                         avalonGame.state='composition'
                         randplayers=random.sample(avalonGame.players, len(avalonGame.players))
                         randroles=random.sample(avalonGame.roles, len(avalonGame.roles))
@@ -184,6 +186,8 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                     avalonGame.state=None
                     avalonGame.killed=avalonGame.assassinkilllist[0]
                     await avalonGame.endGame(client)
+
+
 class AvalonSave:
     def __init__(self):
         self.emotes=["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"]
