@@ -11,19 +11,19 @@ async def commandHandler(client, message, avalonGame):
             avalonGame.__init__()
             await client.send_message(message.channel, message.author.mention + "La partie a été réinitialisée.")
         if message.content == '/avalon help' :
-            aidestr="```"
-            aidestr+="Commandes générales :"
-            aidestr+="    [BOT OWNER SEULEMENT] : /avalon reset => Réinitialise la sauvegarde du jeu"
-            aidestr+="    /avalon help => Affiche se message d'aide"
-            aidestr+="Commandes du lobby :"
-            aidestr+="    /avalon join => Vous ajoute dans la liste des joueurs de la prochaine partie"
-            aidestr+="    /avalon quit => Vous retire de la liste des joueurs de la prochaine partie"
-            aidestr+="    /avalon players list => Affiche la liste des joueurs ayant rejoint"
-            aidestr+="    /avalon players kick <userid> => Retire le joueur spécifié de la liste de joueurs"
-            aidestr+="    /avalon roles list => Affiche la liste des roles pour la prochaine partie"
-            aidestr+="    /avalon roles add <role> => Ajoute le rôle spécifié à la liste de roles"
-            aidestr+="    /avalon roles remove <role> => Retire le rôle spécifié de la lsite de roles"
-            aidestr+="    /avalon start => Lance la partie de avalon"
+            aidestr="```\n"
+            aidestr+="Commandes générales :\n"
+            aidestr+="    [BOT OWNER SEULEMENT] : /avalon reset => Réinitialise la sauvegarde du jeu\n"
+            aidestr+="    /avalon help => Affiche se message d'aide\n"
+            aidestr+="Commandes du lobby :\n"
+            aidestr+="    /avalon join => Vous ajoute dans la liste des joueurs de la prochaine partie\n"
+            aidestr+="    /avalon quit => Vous retire de la liste des joueurs de la prochaine partie\n"
+            aidestr+="    /avalon players list => Affiche la liste des joueurs ayant rejoint\n"
+            aidestr+="    /avalon players kick <userid> => Retire le joueur spécifié de la liste de joueurs\n"
+            aidestr+="    /avalon roles list => Affiche la liste des roles pour la prochaine partie\n"
+            aidestr+="    /avalon roles add <role> => Ajoute le rôle spécifié à la liste de roles\n"
+            aidestr+="    /avalon roles remove <role> => Retire le rôle spécifié de la lsite de roles\n"
+            aidestr+="    /avalon start => Lance la partie de avalon\n"
             aidestr+="```"
             await client.send_message(message.channel, embed=discord.Embed(title='[AVALON] - Aide', description=aidestr, color=0x1aceff))
 #     -lobby commands-
