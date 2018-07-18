@@ -27,5 +27,28 @@ async def AddRole(client, message) :
             except KeyError:
                 await client.send_message(message.channel, message.author.mention + ", ce rôle n'est pas disponible à l'auto-attribution. Vous pouvez avoir la liste des rôles disponible grâce à la commande /role liste .")
             except :
-                await client.send_message(message.channel, message.author.mention + ", Une erreur s'est produite. \n\nPS: les commandes ayant un rapport avec les rôles doivent être effectuées sur le serveur.")
-                raise
+                found=False
+                for member in client.get_all_members():
+                    if str(member.id) == str(message.author.id) :
+                        try :
+                            if discord.utils.get(member.server.roles, id=settings.roles.RoleList[args[1]][0]) in member.roles :
+                                await client.remove_roles(member, discord.utils.get(member.server.roles, id=settings.roles.RoleList[args[1]][0]))
+                                await client.send_message(message.channel, message.author.mention + ", vous avez perdu le rôle " + args[1] +".")
+                                try:
+                                    await client.delete_message(message)
+                                except:
+                                    pass
+                            else :
+                                await client.add_roles(member, discord.utils.get(member.server.roles, id=settings.roles.RoleList[args[1]][0]))
+                                await client.send_message(message.channel, message.author.mention + ", vous avez reçu le rôle " + args[1] +".")
+                                try:
+                                    await client.delete_message(message)
+                                except:
+                                    pass
+                            found=True
+                        except KeyError:
+                            await client.send_message(message.channel, message.author.mention + ", ce rôle n'est pas disponible à l'auto-attribution. Vous pouvez avoir la liste des rôles disponible grâce à la commande /role liste .")
+                        except:
+                            pass
+                if not found:
+                    raise

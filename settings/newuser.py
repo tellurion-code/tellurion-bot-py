@@ -1,2 +1,3 @@
 enabled=False
-roleid="430845952388104212"
+newuserroleid="430845952388104212"
+rulesroleid="430846685380345876"
