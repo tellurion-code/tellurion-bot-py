@@ -18,7 +18,8 @@ avalonGame=modules.avalon.AvalonSave()
 async def on_ready():
     if settings.login.enabled:
         await modules.login.print_user(client)
-
+    if settings.newuser.enabled:
+        await modules.newuser.initscan(client)
 @client.event
 async def on_message(message):
     allowed=True
@@ -69,6 +70,11 @@ async def on_reaction_remove(reaction, user):
 async def on_error(event, *args, **kwargs):
     if settings.embederror.enabled :
         await modules.embederror.sendError(client, event, *args, **kwargs)
+
+@client.event
+async def on_member_join(member):
+    if settings.newuser.enabled:
+        await modules.newuser.addrole(client, member)
 
 #run
 client.run(os.environ['DISCORD_TOKEN'])
