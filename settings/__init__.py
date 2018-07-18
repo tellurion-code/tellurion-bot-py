@@ -10,6 +10,7 @@ import settings.ekiller
 import settings.ekiller2
 import settings.testing
 import settings.avalon
+import settings.newuser
 owners=["281166473102098433", "118399702667493380"]
 eviewer=["430845952388104212", "456726929270374420"]
 restriction=True
