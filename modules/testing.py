@@ -1,8 +1,10 @@
 import pygit2
-import utils.perms
-import settings.testing
 from subprocess import call
+
+import settings.testing
+import utils.perms
 import utils.usertools
+
 async def testsHandler(client, message) :
     if message.content.startswith('/'):
         print(" [" + str(message.channel.name) + "]" + " " + str(message.timestamp.strftime('%Y-%m-%d %H:%M:%S')) +  " " + message.author.name + "#" + message.author.discriminator + "> " + str(message.content) + "\n")

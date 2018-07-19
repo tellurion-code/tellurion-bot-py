@@ -1,5 +1,7 @@
-import settings.roles
 import discord
+
+import settings.roles
+
 async def AddRole(client, message) :
     args = message.content.split(" ")
     if args[0] == "/role"  :

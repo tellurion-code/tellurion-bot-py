@@ -1,9 +1,11 @@
-import utils.usertools
-import utils.perms
 import time
 import random
 import discord
+
 import settings.avalon
+import utils.usertools
+import utils.perms
+
 async def commandHandler(client, message, avalonGame):
     if message.content.startswith('/avalon'):
 #     -general commands-

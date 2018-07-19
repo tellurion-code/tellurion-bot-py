@@ -1,6 +1,8 @@
+import pygit2
+
 import settings.restart
 import utils.perms
-import pygit2
+
 async def restart_py(client, message):
     if (not (message.author == client.user)) and (message.content.startswith("/restart") and await utils.perms.hasrole(message.author, settings.restart.restartAuth) and pygit2.Repository('.').head.shorthand=="master"):
         if str(message.content) == "/restart" :

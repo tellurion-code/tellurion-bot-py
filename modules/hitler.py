@@ -1,10 +1,11 @@
 #Secret Hitler is licensed under a Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International License as in http://secrethitler.com/assets/Secret_Hitler_Rules.pdf
 #Using some graphics from https://github.com/cozuya/secret-hitler/
 import random
+import discord
 
 import settings.hitler
 import utils.usertools
-import discord
+
 async def commandHandler(client, message, hitlerGame):
     
     if message.content == "/game join hitler":

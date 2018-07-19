@@ -4,6 +4,7 @@ import random
 import asyncio
 
 import settings
+
 async def sendError(client, event, *args, **kwargs):
     try:
         message = args[0]

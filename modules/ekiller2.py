@@ -7,10 +7,10 @@ import time
 from subprocess import call
 import discord
 
-import utils.perms
-import utils.usertools
 import settings.ekiller2
 import settings.dellog
+import utils.perms
+import utils.usertools
 
 try:
     call(['mkdir', 'tmp'])
