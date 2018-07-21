@@ -95,9 +95,9 @@ async def commandHandler(client, message, avalonGame):
                 avalonGame.roles = []
                 nb_players = len(avalonGame.players)
                 repartition = settings.avalon.roles_distribution[nb_players]
-                for gentil in range(repartition[0]) :
+                for _ in range(repartition[0]) :
                     avalonGame.roles.append("gentil")
-                for mechant in range(repartition[1]) :
+                for _ in range(repartition[1]) :
                     avalonGame.roles.append("mechant")
                 await client.send_message(message.channel, "Liste des rôles :\n```PYTHON\n{0}```".format(str(avalonGame.roles)))
 
