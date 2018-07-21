@@ -21,6 +21,7 @@ async def commandHandler(client, message, avalonGame):
             aidestr+="    /avalon players kick <userid> \n=> Retire le joueur spécifié de la liste de joueurs\n\n"
             aidestr+="    /avalon roles list \n=> Affiche la liste des roles pour la prochaine partie\n\n"
             aidestr+="    /avalon roles add <role> \n=> Ajoute le rôle spécifié à la liste de roles\n\n"
+            aidestr+="    /avalon roles auto \n=> Ajoute et distribue les rôles gentils et méchants en fonction du nombre de joueurs\n\n"
             aidestr+="    /avalon roles remove <role> \n=> Retire le rôle spécifié de la lsite de roles\n\n"
             aidestr+="    /avalon start \n=> Lance la partie de avalon\n\n"
             await client.send_message(message.channel, embed=discord.Embed(title='[AVALON] - Aide', description=aidestr, color=0x1aceff))
