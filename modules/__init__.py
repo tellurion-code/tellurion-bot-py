@@ -1,13 +1,13 @@
 import modules.archive
 import modules.dellog
 import modules.login
-import modules.restart
+#import modules.restart
 import modules.embederror
 import modules.hitler
 import modules.roles
 import modules.licorne
 import modules.ekiller
 import modules.ekiller2
-import modules.testing
+#import modules.testing
 import modules.avalon
 import modules.newuser

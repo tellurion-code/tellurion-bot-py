@@ -33,8 +33,8 @@ async def on_message(message):
             await modules.archive.everyOfGuild(client, message)
         if settings.dellog.enabled:
             await modules.dellog.send_logs(client, message)
-        if settings.restart.enabled:
-            await modules.restart.restart_py(client, message)
+        #if settings.restart.enabled:
+            #await modules.restart.restart_py(client, message)
         if settings.hitler.enabled:
             await modules.hitler.commandHandler(client, message, hitlerGame)
         if settings.roles.enabled:
@@ -45,8 +45,8 @@ async def on_message(message):
             await modules.ekiller.commandHandler(client, message, ekiller)
         if settings.ekiller2.enabled:
             await modules.ekiller2.commandHandler(client, message, ekiller2)
-        if settings.testing.enabled:
-            await modules.testing.testsHandler(client, message)
+        #if settings.testing.enabled:
+            #await modules.testing.testsHandler(client, message)
         if settings.avalon.enabled:
             await modules.avalon.commandHandler(client, message, avalonGame)
 
