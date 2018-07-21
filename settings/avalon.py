@@ -12,3 +12,16 @@ teams={
     9:[3,4,4,5,5],
     10:[3,4,4,5,5]
     }
+
+roles_distribution = { # {nombredejoueur:[nombredegentils,nombredemechants]}
+    1:[1,0],
+    2:[1,1],
+    3:[2,1],
+    4:[3,1],
+    5:[3,2],
+    6:[4,2],
+    7:[4,3],
+    8:[5,3],
+    9:[6,3],
+    10:[6,4],
+    }

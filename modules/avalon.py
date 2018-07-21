@@ -21,6 +21,7 @@ async def commandHandler(client, message, avalonGame):
             aidestr+="    /avalon players kick <userid> \n=> Retire le joueur spécifié de la liste de joueurs\n\n"
             aidestr+="    /avalon roles list \n=> Affiche la liste des roles pour la prochaine partie\n\n"
             aidestr+="    /avalon roles add <role> \n=> Ajoute le rôle spécifié à la liste de roles\n\n"
+            aidestr+="    /avalon roles auto \n=> Ajoute et distribue les rôles gentils et méchants en fonction du nombre de joueurs\n\n"
             aidestr+="    /avalon roles remove <role> \n=> Retire le rôle spécifié de la lsite de roles\n\n"
             aidestr+="    /avalon start \n=> Lance la partie de avalon\n\n"
             await client.send_message(message.channel, embed=discord.Embed(title='[AVALON] - Aide', description=aidestr, color=0x1aceff))
@@ -89,6 +90,17 @@ async def commandHandler(client, message, avalonGame):
                     await client.send_message(message.channel, message.author.mention + ",\n{0}".format(ans))
                 else:
                     await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique rôle ou une liste de rôles séparés par une virgule.")
+
+    #     -Auto role command-
+            if message.content.startswith('/avalon roles auto') :
+                avalonGame.roles = []
+                repartition = settings.avalon.roles_distribution[len(avalonGame.players)]
+                for _ in range(repartition[0]) :
+                    avalonGame.roles.append("gentil")
+                for _ in range(repartition[1]) :
+                    avalonGame.roles.append("mechant")
+                await client.send_message(message.channel, "Liste des rôles :\n```PYTHON\n{0}```".format(str(avalonGame.roles)))
+
 
     #     -Remove role command-
             if message.content.startswith('/avalon roles remove'):
@@ -289,7 +301,7 @@ class AvalonSave:
                 mechstr=""
                 for i in range(len(self.actors)):
                     if self.actors[i]['role'] in ['mechant', 'assassin', 'mordred', 'morgane']:
-                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator)) 
+                        mechstr+=" {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator))
                 await client.send_message(actor['user'], embed=discord.Embed(title="[AVALON] - Distribution des rôles", description="Vous êtes **{0}**.\n Sont méchants : \n{1}".format(actor['role'].upper(), mechstr), color=0xbd2b34))
         await self.startTurn(client)
 
@@ -405,7 +417,7 @@ class AvalonSave:
             #await client.send_message(self.statuschan, 'self.quests=`{0}`\nvotefailcount=`{1}`\nvotes=`{2}`\nself.questvotes=`{3}`'.format(str(self.quests), str(self.questfailcount),str(votes), str(self.expedvotes)))
             if len(self.actors) >= 7:
                 if len(self.quests) == 3:
-                    if self.questfailcount >= 2: 
+                    if self.questfailcount >= 2:
                         self.quests.append(False)
                     else:
                         self.quests.append(True)
