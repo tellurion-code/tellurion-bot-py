@@ -91,7 +91,7 @@ async def commandHandler(client, message, avalonGame):
                 else:
                     await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique rôle ou une liste de rôles séparés par une virgule.")
 
-
+    #     -Auto role command-
             if message.content.startswith('/avalon roles auto') :
                 avalonGame.roles = []
                 repartition = settings.avalon.roles_distribution[len(avalonGame.players)]
