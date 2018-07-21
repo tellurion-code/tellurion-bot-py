@@ -92,6 +92,7 @@ async def commandHandler(client, message, avalonGame):
 
 
             if message.content.startswith('/avalon roles auto') :
+                avalonGame.roles = []
                 nb_players = len(avalonGame.players)
                 repartition = settings.avalon.roles_distribution[nb_players]
                 for gentil in range(repartition[0]) :
