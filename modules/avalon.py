@@ -9,7 +9,7 @@ import utils.perms
 async def commandHandler(client, message, avalonGame):
     if message.content.startswith('/avalon'):
 #     -general commands-
-        if (message.content == '/avalon reset' or message.content.lower() == '/avalon sutaruto' or message.content.lower() == '/avalon staruto') and await utils.perms.hasrole(message.author, "1"):
+        if message.content == '/avalon reset' and await utils.perms.hasrole(message.author, "1"):
             avalonGame.__init__()
             await client.send_message(message.channel, message.author.mention + "La partie a été réinitialisée.")
         if message.content == '/avalon help' :
@@ -120,7 +120,7 @@ async def commandHandler(client, message, avalonGame):
                     await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique rôle ou une liste de rôles séparés par une virgule.")
 
     #     -Start game command-
-            if message.content=='/avalon start' :
+            if (message.content=='/avalon start' or message.content.lower() == '/avalon sutaruto' or message.content.lower() == '/avalon staruto') :
                 if len(avalonGame.players)>=5 or settings.avalon.debug:
                     if len(avalonGame.roles) == len(avalonGame.players) :
                         random.seed(time.time())
