@@ -23,8 +23,11 @@ libs/python: libs libs/libgit2
 	export LD_LIBRARY_PATH=$(mainDir)/libs/libgit2/libgit2-0.27.0/installed/lib;\
 	export LIBGIT2=$(mainDir)/libs/libgit2/libgit2-0.27.0/installed/;\
 	export PYTHONPATH=$(mainDir)/libs/python:${PYTHONPATH};\
-	easy_install3 -d $(mainDir)/libs/python pip;\
-	python3 -m pip install --no-binary all -t libs/python -r dependencies
+	cd libs;\
+	curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py;\
+	python3 get-pip.py --user;\
+	cd ..;\
+	~/.local/bin/pip3 install -t libs/python -r dependencies
 	touch $(mainDir)/libs/python
 
 libs: dependencies
