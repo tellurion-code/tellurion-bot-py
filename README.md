@@ -10,6 +10,7 @@ Installer le bot
 user : git clone https://github.com/epenserdiscord/epenser-bot-py.git
 ```
 Les dépendances seront installées au moment du lancement du bot.
+
 Lancer le bot
 -
 ```BASH

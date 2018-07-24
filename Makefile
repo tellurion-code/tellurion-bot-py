@@ -30,9 +30,12 @@ libs/python: libs libs/libgit2
 	~/.local/bin/pip3 install -t libs/python -r dependencies
 	touch $(mainDir)/libs/python
 
-libs: dependencies
+libs: dependencies.md5
 	mkdir libs;\
 	rm -r libs;\
 	mkdir libs
+
+dependencies.md5: dependencies
+	@md5sum $< | cmp -s $@ -; if test $$? -ne 0; then md5sum $< > $@; fi
 clean:
 	rm -r libs

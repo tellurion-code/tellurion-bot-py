@@ -45,3 +45,4 @@ __pycache__/*
 */__pycache__/*
 .directory
 libs/*
+*.md5
