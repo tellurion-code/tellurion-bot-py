@@ -4,7 +4,7 @@ run: libs/python
 	export LD_LIBRARY_PATH=$(mainDir)/libs/libgit2/libgit2-0.27.0/installed/lib;\
 	export PYTHONPATH=$(mainDir)/libs/python:${PYTHONPATH};\
 	export LIBGIT2=$(mainDir)/libs/libgit2/libgit2-0.27.0/installed/;\
-	python3 main.py
+	python3 -u main.py
 
 libs/libgit2: libs
 	cd $(mainDir)/libs;\
@@ -30,12 +30,13 @@ libs/python: libs libs/libgit2
 	~/.local/bin/pip3 install -t libs/python -r dependencies
 	touch $(mainDir)/libs/python
 
-libs: dependencies.md5
+libs: dependencies.sha512
 	mkdir libs;\
 	rm -r libs;\
 	mkdir libs
 
-dependencies.md5: dependencies
-	@md5sum $< | cmp -s $@ -; if test $$? -ne 0; then md5sum $< > $@; fi
+dependencies.sha512: dependencies
+	@sha512sum $< | cmp -s $@ -; if test $$? -ne 0; then sha512sum $< > $@; fi
 clean:
-	rm -r libs
+	rm -r libs;\
+	rm dependcies.sha512;\
