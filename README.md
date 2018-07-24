@@ -4,18 +4,24 @@ Bot discord Python pour le serveur officiel d'e-penser
 Ce bot est un supplément au [Bot JS](https://github.com/epenserdiscord/epenser-bot)
 
 
-Installer les dépendances du bot et le bot
+Installer le bot
 -
 ```BASH
-user : python3 -m pip install --user discord[voice]
 user : git clone https://github.com/epenserdiscord/epenser-bot-py.git
 ```
+Les dépendances seront installées au moment du lancement du bot.
 Lancer le bot
 -
 ```BASH
-user : export DISCORD_TOKEN=token Remplacez par le token de votre bot. (toujours entre guillemets)
+user : export DISCORD_TOKEN=token Remplacez par le token de votre bot.
 user : cd path/to/epenser-bot-py/
-user : while true ; do git fetch --all; git reset --hard origin/master; ./main.py; done
+user : while true ; do git fetch --all; git reset --hard origin/master; make; done
+```
+On peut aussi lancer le bot sans la boucle :
+```BASH
+user : export DISCORD_TOKEN=token Remplacez par le token de votre bot.
+user : cd path/to/epenser-bot-py/
+user : make
 ```
 Daemoniser le bot
 -
