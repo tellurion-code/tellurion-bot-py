@@ -1,0 +1,4 @@
+discord[voice]
+datetime
+async_lru
+pygit2==0.27.0
