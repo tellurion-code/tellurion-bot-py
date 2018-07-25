@@ -45,7 +45,7 @@ async def on_ready():
                 await client.add_reaction(avalonGame.leadmsg, emote)
             await avalonGame.updateTeam(client)
         if avalonGame.state=='voting':
-            await avalonGame.voteStage(client)
+            await avalonGame.voteStageStart(client)
         if avalonGame.state=='expedition':
             await expeditionStart(client)
         if avalonGame.state=='assassination':
