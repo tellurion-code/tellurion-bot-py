@@ -9,10 +9,23 @@ import modules
 import utils.perms
 #init
 client = discord.Client(max_messages=100000)
-hitlerGame=modules.hitler.HitlerSave()
-ekiller = modules.ekiller.Ekiller()
-ekiller2 = modules.ekiller2.Ekiller()
-avalonGame=modules.avalon.AvalonSave()
+if modules.saving.saveExists("hitlerGame"):
+    hitlerGame=modules.saving.loadObject("hitlerGame")
+else:
+    hitlerGame=modules.hitler.HitlerSave()
+if modules.saving.saveExists("ekiller"):
+    ekiller=modules.saving.loadObject("ekiller")
+else:
+    ekiller= modules.ekiller.Ekiller()
+if modules.saving.saveExists("ekiller2"):
+    ekiller2=modules.saving.loadObject("ekiller2")
+else:
+    ekiller2= modules.ekiller2.Ekiller()
+if modules.saving.saveExists("avalonGame"):
+    avalonGame=modules.saving.loadObject("avalonGame")
+else:
+    avalonGame=modules.avalon.AvalonSave()
+
 #funcs
 @client.event
 async def on_ready():
@@ -20,6 +33,23 @@ async def on_ready():
         await modules.login.print_user(client)
     if settings.newuser.enabled:
         await modules.newuser.initscan(client)
+    if settings.avalon.enabled:
+        if avalonGame.state=='composition':
+            playerstr=""
+            for i in range(len(avalonGame.actors)):
+                playerstr+=" {0} `{1}`\n".format(avalonGame.emotes[i], avalonGame.actors[i]['user'].display_name + '#' + str(avalonGame.actors[i]['user'].discriminator))
+            for i in range(len(avalonGame.actors)):
+                if i==avalonGame.leader:
+                    avalonGame.leadmsg = await client.send_message(avalonGame.actors[i]['user'], embed=discord.Embed(title="[AVALON] - Composition de l'équipe - Quête n°" + str(len(avalonGame.quests) + 1), description="Vous êtes le leader, vous devez choisir une équipe. Ajoutez les réactions correspondantes, puis validez.\n\nListe des joueurs :\n{0}".format(playerstr), color=0xddc860))
+            for emote in avalonGame.emotes[:len(avalonGame.actors):]:
+                await client.add_reaction(avalonGame.leadmsg, emote)
+            await avalonGame.updateTeam(client)
+        if avalonGame.state=='voting':
+            await avalonGame.voteStageStart(client)
+        if avalonGame.state=='expedition':
+            await avalonGame.expeditionStart(client)
+        if avalonGame.state=='assassination':
+            await avalonGame.assassinationStart(client)
 @client.event
 async def on_message(message):
     allowed=True
