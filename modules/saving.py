@@ -2,7 +2,7 @@ import pickle
 import os.path
 from subprocess import call
 def saveObject(object, objectname):
-    with open("tmp/" + objectname + tmp, "wb") as pickleFile:
+    with open("tmp/" + objectname + "tmp", "wb") as pickleFile:
         pickler = pickle.Pickler(pickleFile)
         return pickler.dump(object)
     call(['mv', "tmp/" + objectname + "tmp", "tmp/" + objectname])
