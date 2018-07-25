@@ -25,3 +25,5 @@ roles_distribution = { # {nombredejoueur:[nombredegentils,nombredemechants]}
     9:[6,3],
     10:[6,4],
     }
+
+alix = '118399702667493380'
