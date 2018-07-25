@@ -40,6 +40,7 @@ async def commandHandler(client, message, avalonGame):
                         await client.send_message(message.channel, message.author.mention + ", la partie est complète...")
                 else:
                     await client.send_message(message.channel, message.author.mention + ", vous êtes déjà dans la partie...")
+                modules.saving.saveObject(avalonGame, "avalonGame")
 
     #     -Quit command-
             if message.content=='/avalon quit':
