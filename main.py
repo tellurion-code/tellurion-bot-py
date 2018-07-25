@@ -47,9 +47,9 @@ async def on_ready():
         if avalonGame.state=='voting':
             await avalonGame.voteStageStart(client)
         if avalonGame.state=='expedition':
-            await expeditionStart(client)
+            await avalonGame.expeditionStart(client)
         if avalonGame.state=='assassination':
-            await assassinationStart(client)
+            await avalonGame.assassinationStart(client)
 @client.event
 async def on_message(message):
     allowed=True
