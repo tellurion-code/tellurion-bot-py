@@ -5,6 +5,7 @@ import discord
 import settings.avalon
 import utils.usertools
 import utils.perms
+import modules.saving
 
 async def commandHandler(client, message, avalonGame):
     if message.content.startswith('/avalon'):
