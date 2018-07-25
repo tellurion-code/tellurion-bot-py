@@ -127,7 +127,7 @@ async def commandHandler(client, message, avalonGame):
                 modules.saving.saveObject(avalonGame, "avalonGame")
 
     #     -Start game command-
-            if (message.content=='/avalon start' or message.content.lower() == '/avalon sutaruto' or message.content.lower() == '/avalon staruto') :
+            if (message.content=='/avalon start' or (message.content.lower() == '/avalon sutaruto' and message.author.id == settings.avalon.alix)) :
                 if len(avalonGame.players)>=5 or settings.avalon.debug:
                     if len(avalonGame.roles) == len(avalonGame.players) :
                         random.seed(time.time())
