@@ -4,7 +4,7 @@ from subprocess import call
 def saveObject(object, objectname):
     with open("tmp/" + objectname, "wb") as pickleFile:
         pickler = pickle.Pickler(pickleFile)
-        return unpickler.dump(object)
+        return pickler.dump(object)
 
 def loadObject(objectname):
     if saveExists(objectname):
