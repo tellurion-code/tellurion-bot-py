@@ -34,7 +34,7 @@ async def on_ready():
     if settings.newuser.enabled:
         await modules.newuser.initscan(client)
     if settings.avalon.enabled:
-        if avalonGame.status=='composition':
+        if avalonGame.state=='composition':
             playerstr=""
             for i in range(len(avalonGame.actors)):
                 playerstr+=" {0} `{1}`\n".format(avalonGame.emotes[i], avalonGame.actors[i]['user'].display_name + '#' + str(avalonGame.actors[i]['user'].discriminator))
@@ -44,11 +44,11 @@ async def on_ready():
             for emote in avalonGame.emotes[:len(avalonGame.actors):]:
                 await client.add_reaction(avalonGame.leadmsg, emote)
             await avalonGame.updateTeam(client)
-        if avalonGame.status=='voting':
+        if avalonGame.state=='voting':
             await avalonGame.voteStage(client)
-        if avalonGame.status=='expedition':
+        if avalonGame.state=='expedition':
             await expeditionStart(client)
-        if avalonGame.status=='assassination':
+        if avalonGame.state=='assassination':
             await assassinationStart(client)
 @client.event
 async def on_message(message):
