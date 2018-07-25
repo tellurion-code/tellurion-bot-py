@@ -8,7 +8,7 @@ def saveObject(object, objectname):
 
 def loadObject(objectname):
     if saveExists(objectname):
-        with open("tmp/" + objectname + "tmp", "wb") as pickleFile:
+        with open("tmp/" + objectname + "tmp", "rb") as pickleFile:
             unpickler = pickle.Unpickler(pickleFile)
             return unpickler.load()
         call(['mv', "tmp/" + objectname + "tmp", "tmp/" + objectname])
