@@ -32,7 +32,24 @@ async def on_ready():
     if settings.login.enabled:
         await modules.login.print_user(client)
     if settings.newuser.enabled:
-        await modules.newuser.initscan(client)
+        await modules.newuser.initscan(client).
+    if settings.avalon.enabled:
+        if avalonGame.status=='composition':
+            playerstr=""
+            for i in range(len(avalonGame.actors)):
+                playerstr+=" {0} `{1}`\n".format(avalonGame.emotes[i], avalonGame.actors[i]['user'].display_name + '#' + str(avalonGame.actors[i]['user'].discriminator))
+            for i in range(len(avalonGame.actors)):
+                if i==avalonGame.leader:
+                    avalonGame.leadmsg = await client.send_message(avalonGame.actors[i]['user'], embed=discord.Embed(title="[AVALON] - Composition de l'équipe - Quête n°" + str(len(avalonGame.quests) + 1), description="Vous êtes le leader, vous devez choisir une équipe. Ajoutez les réactions correspondantes, puis validez.\n\nListe des joueurs :\n{0}".format(playerstr), color=0xddc860))
+            for emote in avalonGame.emotes[:len(avalonGame.actors):]:
+                await client.add_reaction(avalonGame.leadmsg, emote)
+            await avalonGame.updateTeam(client)
+        if avalonGame.status=='voting':
+            await avalonGame.voteStage(client)
+        if avalonGame.status=='expedition':
+            await expeditionStart(client)
+        if avalonGame.status=='assassination':
+            await assassinationStart(client)
 @client.event
 async def on_message(message):
     allowed=True
