@@ -9,10 +9,23 @@ import modules
 import utils.perms
 #init
 client = discord.Client(max_messages=100000)
-hitlerGame=modules.hitler.HitlerSave()
-ekiller = modules.ekiller.Ekiller()
-ekiller2 = modules.ekiller2.Ekiller()
-avalonGame=modules.avalon.AvalonSave()
+if modules.saving.saveExists("hitlerGame"):
+    hitlerGame=modules.saving.loadObject("hitlerGame")
+else:
+    hitlerGame=modules.hitler.HitlerSave()
+if modules.saving.saveExists("ekiller"):
+    ekiller=modules.saving.loadObject("ekiller")
+else:
+    ekiller= modules.ekiller.Ekiller()
+if modules.saving.saveExists("ekiller2"):
+    ekiller2=modules.saving.loadObject("ekiller2")
+else:
+    ekiller2= modules.ekiller2.Ekiller()
+if modules.saving.saveExists("avalonGame"):
+    avalonGame=modules.saving.loadObject("avalonGame")
+else:
+    avalonGame=modules.avalon.AvalonSave()
+
 #funcs
 @client.event
 async def on_ready():

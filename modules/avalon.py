@@ -47,6 +47,7 @@ async def commandHandler(client, message, avalonGame):
                     await client.send_message(message.channel, message.author.mention + " a quitté la partie.")
                 else:
                     await client.send_message(message.channel, message.author.mention + ", vous n'êtes pas dans la partie...")
+                modules.saving.saveObject(avalonGame, "avalonGame")
 
     #     -Player list command :
             if message.content=='/avalon players list':
@@ -73,6 +74,7 @@ async def commandHandler(client, message, avalonGame):
                                 await client.send_message(message.channel, message.author.mention + ", `{0}` n'a pas rejoint la partie...".format(user.display_name))
                         else:
                             await client.send_message(message.channel, message.author.mention + ", `{0}` n'est pas un id valide...".format(id))
+                        modules.saving.saveObject(avalonGame, "avalonGame")
 
     #     -Roles list command-
             if message.content=='/avalon roles list':
@@ -92,6 +94,7 @@ async def commandHandler(client, message, avalonGame):
                     await client.send_message(message.channel, message.author.mention + ",\n{0}".format(ans))
                 else:
                     await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique rôle ou une liste de rôles séparés par une virgule.")
+                modules.saving.saveObject(avalonGame, "avalonGame")
 
     #     -Auto role command-
             if message.content.startswith('/avalon roles auto') :
@@ -102,6 +105,7 @@ async def commandHandler(client, message, avalonGame):
                 for _ in range(repartition[1]) :
                     avalonGame.roles.append("mechant")
                 await client.send_message(message.channel, "Liste des rôles :\n```PYTHON\n{0}```".format(str(avalonGame.roles)))
+                modules.saving.saveObject(avalonGame, "avalonGame")
 
 
     #     -Remove role command-
@@ -118,6 +122,7 @@ async def commandHandler(client, message, avalonGame):
                     await client.send_message(message.channel, message.author.mention + ",\n{0}".format(ans))
                 else:
                     await client.send_message(message.channel, message.author.mention + ", veuillez préciser un unique rôle ou une liste de rôles séparés par une virgule.")
+                modules.saving.saveObject(avalonGame, "avalonGame")
 
     #     -Start game command-
             if (message.content=='/avalon start' or message.content.lower() == '/avalon sutaruto' or message.content.lower() == '/avalon staruto') :
@@ -138,7 +143,7 @@ async def commandHandler(client, message, avalonGame):
                         await client.send_message(message.channel, message.author.mention + ", le nombre de rôles est différent du nombre de joueurs... :/")
                 else:
                     await client.send_message(message.channel, message.author.mention + ", La partie nécessite 5 joueurs au minimum pour être lancée...")
-
+                modules.saving.saveObject(avalonGame, "avalonGame")
 
 async def reactionHandler(client, reaction, user, avalonGame, action):
     if not user==client.user:
@@ -156,6 +161,7 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                 if str(reaction.emoji) == '✅' and action=='add' and avalonGame.validteam:
                     avalonGame.state='voting'
                     await avalonGame.voteStageStart(client)
+                modules.saving.saveObject(avalonGame, "avalonGame")
         if avalonGame.state == 'voting':
             for group in avalonGame.votes.items():
                 if group[1]['message'].id == reaction.message.id and (not avalonGame.votes[group[0]]['voted']):
@@ -178,6 +184,7 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                     if str(reaction.emoji) == '⭕' and avalonGame.votes[group[0]]['values']['valid'] and action == 'add':
                         avalonGame.votes[group[0]].update({'voted':True})
                         await avalonGame.voteStageCheck(client)
+                    modules.saving.saveObject(avalonGame, "avalonGame")
         if avalonGame.state == 'expedition':
             for group in avalonGame.expedvotes.items():
                 if group[1]['message'].id == reaction.message.id and (not avalonGame.expedvotes[group[0]]['voted']):
@@ -200,6 +207,7 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                     if str(reaction.emoji) == '⭕' and avalonGame.expedvotes[group[0]]['values']['valid'] and action == 'add':
                         avalonGame.expedvotes[group[0]].update({'voted':True})
                         await avalonGame.expeditionStageCheck(client)
+                    modules.saving.saveObject(avalonGame, "avalonGame")
         if avalonGame.state == 'assassination':
             if reaction.message.id == avalonGame.assassinmsg.id :
                 if str(reaction.emoji) in avalonGame.emotes and avalonGame.emotes.index(str(reaction.emoji)) in avalonGame.assassinlist:
@@ -214,6 +222,7 @@ async def reactionHandler(client, reaction, user, avalonGame, action):
                     avalonGame.state=None
                     avalonGame.killed=avalonGame.assassinkilllist[0]
                     await avalonGame.endGame(client)
+                modules.saving.saveObject(avalonGame, "avalonGame")
 
 
 class AvalonSave:
@@ -244,6 +253,7 @@ class AvalonSave:
         self.assassinvalid=False
         self.teamvoteembed=None
         self.teamvotestatuschanmsg=None
+        modules.saving.saveObject(self, "avalonGame")
     async def nextLead(self):
         if self.leader+1==len(self.actors):
             self.leader=0
@@ -312,6 +322,7 @@ class AvalonSave:
             if self.quests.count(True) == 3 and 'assassin' in self.roles:
                 self.state='assassination'
                 await self.assassinationStart(client)
+                modules.saving.saveObject(self, "avalonGame")
             else:
                 await self.endGame(client)
             return
@@ -358,6 +369,7 @@ class AvalonSave:
         elif self.validteam:
             await client.remove_reaction(self.leadmsg, '✅', client.user)
             self.validteam=False
+        modules.saving.saveObject(self, "avalonGame")
 
     async def voteStageStart(self, client):
         teamstr=""
