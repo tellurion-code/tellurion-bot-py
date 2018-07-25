@@ -32,7 +32,7 @@ async def on_ready():
     if settings.login.enabled:
         await modules.login.print_user(client)
     if settings.newuser.enabled:
-        await modules.newuser.initscan(client).
+        await modules.newuser.initscan(client)
     if settings.avalon.enabled:
         if avalonGame.status=='composition':
             playerstr=""
