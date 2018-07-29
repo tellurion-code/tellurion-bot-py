@@ -40,7 +40,8 @@ libs/python: libs libs/get-pip.py dependencies.sha512
 
 libs: dependencies.sha512
 	cd $(mainDir);\
-	mkdir libs
+	mkdir libs;\
+	echo .
 
 dependencies.sha512: dependencies
 	cd $(mainDir);\
