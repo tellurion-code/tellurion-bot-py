@@ -27,7 +27,7 @@ libs/get-pip.py: libs
 	export PYTHONPATH=$(mainDir)/libs/python:${PYTHONPATH};\
 	python3 get-pip.py --user
 
-libs/python: libs libs/libgit2 libs/get-pip.py dependencies.sha512
+libs/python: libs libs/get-pip.py dependencies.sha512
 	cd $(mainDir);\
 	mkdir libs/python;\
 	rm -r libs/python;\
