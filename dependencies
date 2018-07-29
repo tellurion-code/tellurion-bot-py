@@ -1,4 +1,1 @@
-discord[voice]
-datetime
-async_lru
-pygit2==0.27.0
+https://github.com/Rapptz/discord.py/archive/rewrite.zip#egg=discord[voice]
