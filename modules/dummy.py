@@ -11,6 +11,7 @@ class MainClass():
 
         self.name="Dummy"
         self.description="Module d'exemple"
+        self.color=0x000000
         self.help="""
  Aucune fonction.
 """[1::]

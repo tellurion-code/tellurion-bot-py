@@ -16,9 +16,10 @@ class MainClass():
 
         self.name="Modules"
         self.description="Module de gestion des modules"
+        self.color=0x8f3196
         self.help="""
  /modules list
- => liste les modules ainsi que leurs états
+ => Liste les modules ainsi que leurs états
  
  /modules enable <module/modules>
  => Charge et active le / les modules spécifié(s)
@@ -30,7 +31,7 @@ class MainClass():
  => Désactive, puis décharge, puis recharge, puis réactive le / les modules spécifié(s)
  
  => <module/modules>
- ==> unique module ou liste de module séparés par des virgules
+ ==> Unique module ou liste de module séparés par des virgules
 """[1::]
         self.states.update({'modules': 'initialized'})
     async def on_message(self, message):
