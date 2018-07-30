@@ -8,6 +8,9 @@ class MainClass():
         for moduleName in os.listdir('modules'):
             if moduleName.endswith(".py"):
                 self.states.update({moduleName[:-3:]:'not loaded'})
+        for moduleName in list(modules.keys()):
+            if len(modules[moduleName]) == 2 :
+                self.states.update({moduleName:'initialized'})
         self.client = client
         self.modules = modules
         self.saves = saves

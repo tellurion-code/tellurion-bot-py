@@ -4,6 +4,7 @@ import discord
 import random
 class MainClass():
     def __init__(self, client, modules, saves):
+        self.devchanids=[456142390726623243, 473637619310264330]
         self.memes=[
         "https://cdn.discordapp.com/attachments/430408983283761152/430433931272126465/Bruce_3.png",
         "https://cdn.discordapp.com/attachments/430408983283761152/430431622521946123/LUNE.jpg",
@@ -40,12 +41,17 @@ class MainClass():
 """[1::]
     async def on_error(self, event, *args, **kwargs):
         message = args[0]
-        embed = discord.Embed(title="Aïe :/", description="```PYTHON\n{0}```".format(traceback.format_exc()), color=self.color).set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon).set_image(url=random.choice(self.memes))
+        embed = discord.Embed(title="Aïe :/", description="```PYTHON\n{0}```".format(traceback.format_exc()), color=self.color).set_image(url=random.choice(self.memes))
         messagelist=[]
         try:
-            messagelist.append(await message.channel.send(embed=embed))
+            messagelist.append(await message.channel.send(embed=embed).set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon))
         except:
             pass
+        for chanid in self.devchanids:
+            try:
+                await self.client.get_channel(chanid).send(embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.icon))
+            except:
+                pass
         await asyncio.sleep(60)
         for messagetodelete in messagelist:
             await messagetodelete.delete()
