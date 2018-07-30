@@ -452,6 +452,11 @@ class AvalonSave:
             await self.startTurn(client)
 
     async def assassinationStart(self, client):
+        self.killed=None
+        self.assassinmsg=None
+        self.assassinlist=[]
+        self.assassinkilllist=[]
+        self.assassinvalid=False
         playerstr=""
         for i in range(len(self.actors)):
             if not self.actors[i]['role'] in ['mechant', 'assassin', 'mordred', 'morgane', 'oberon'] :
@@ -473,5 +478,5 @@ class AvalonSave:
                 await client.add_reaction(self.assassinmsg, '✅')
                 self.assassinvalid=True
         elif self.assassinvalid :
-            await client.remove_reaction(self.assassinmsg, '✅')
+            await client.remove_reaction(self.assassinmsg, '✅', client.user)
             self.assassinvalid=False
