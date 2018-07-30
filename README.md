@@ -10,6 +10,9 @@ Installer le bot
 user : git clone https://github.com/epenserdiscord/epenser-bot-py.git
 ```
 Les dépendances seront installées au moment du lancement du bot.
+excepté python (faut pas abuser non plus),
+puisqu'on utilise la version rewrite de discord.py,
+il faut python >= 3.5.3
 
 Lancer le bot
 -

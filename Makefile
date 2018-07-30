@@ -1,12 +1,13 @@
 mainDir := $(shell pwd)
 
-run: libs/python
+run: libs/python libs/finaltouch
 	cd $(mainDir);\
 	export LD_LIBRARY_PATH=$(mainDir)/libs/libgit2/libgit2-0.27.0/installed/lib;\
 	export PYTHONPATH=$(mainDir)/libs/python:${PYTHONPATH};\
 	export LIBGIT2=$(mainDir)/libs/libgit2/libgit2-0.27.0/installed/;\
 	python3 -u main.py
-
+libs/finaltouch: libs/python
+	touch libs/python libs/get-pip.py
 libs/libgit2: libs
 	cd $(mainDir);\
 	cd $(mainDir)/libs;\
