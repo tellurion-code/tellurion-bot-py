@@ -2,6 +2,7 @@ import discord
 import asyncio
 import os
 import importlib
+import traceback
 class MainClass():
     def __init__(self, client, modules, saves):
         self.states={}
@@ -45,13 +46,13 @@ class MainClass():
                 self.load_module(fileName[:-3:])
                 self.init_module(fileName[:-3:])
             except:
-                raise
+                pass
 
     def load_module(self, moduleName):
         if moduleName + ".py" in os.listdir('modules'):
             if self.states[moduleName] == 'not loaded':
                 try:
-                    modules.update({moduleName:[importlib.import_module('modules.' + moduleName)]})
+                    self.modules.update({moduleName:[importlib.import_module('modules.' + moduleName)]})
                     print("Module {0} chargé.".format(moduleName))
                     self.states[moduleName] = 'loaded'
                 except:
@@ -62,7 +63,7 @@ class MainClass():
         if moduleName + ".py" in os.listdir('modules'):
             if self.states[moduleName] == 'loaded':
                 try:
-                    modules[moduleName].append(modules[moduleName][0].MainClass(self.client, self.modules, self.saves))
+                    self.modules[moduleName].append(self.modules[moduleName][0].MainClass(self.client, self.modules, self.saves))
                     print("Module {0} initialisé.".format(moduleName))
                     self.states[moduleName] = 'initialized'
                 except:
