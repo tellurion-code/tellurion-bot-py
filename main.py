@@ -12,21 +12,33 @@ saves={} #format : {'modulename':savedObject}
 @client.event
 async def on_ready():
     print("Bienvenue, {0.user}, l'heure est venue d'e-penser.".format(client))
-    #imports
-    for filename in os.listdir('modules'):
-        if filename.endswith('.py') and filename != '__init__.py':
+
+    async def panicLoad():
+        for filename in os.listdir('modules'):
+            if filename.endswith('.py'):
+                try:
+                    modules.update({filename[:-3:]:[importlib.import_module('modules.' + filename[:-3:])]})
+                    print("Module {0} chargé.".format(filename[:-3:]))
+                except:
+                    print("[ERROR] Le module {0} n'a pas pu être chargé.".format(filename))
+        #initialisation
+        for moduleName in list(modules.keys()):
             try:
-                modules.update({filename[:-3:]:[importlib.import_module('modules.' + filename[:-3:])]})
-                print("Module {0} chargé.".format(filename[:-3:]))
+                modules[moduleName].append(modules[moduleName][0].MainClass(client, modules, saves))
+                print("Module {0} initialisé.".format(moduleName))
             except:
-                print("[ERROR] Le module {0} n'a pas pu être chargé.".format(filename))
-    #initialisation
-    for moduleName in list(modules.keys()):
+                print("[ERROR] Le module {0} n'a pas pu être initialisé.".format(moduleName))
+
+    if 'modules.py' in os.listdir('modules'):
         try:
-            modules[moduleName].append(modules[moduleName][0].MainClass(client))
-            print("Module {0} initialisé.".format(moduleName))
+            modules.update({'modules':[importlib.import_module('modules.' + 'modules')]})
+            print("Module {0} chargé.".format('modules'))
         except:
-            print("[ERROR] Le module {0} n'a pas pu être initialisé.".format(moduleName))
+            print("[ERROR] Le module {0} n'a pas pu être chargé.".format(filename))
+            await panicLoad()
+    else:
+        await panicLoad()
+
 
     for moduleName in list(modules.keys()):
         if 'on_ready' in modules[moduleName][1].events:
@@ -59,7 +71,7 @@ async def on_typing(channel, user, when):
 @client.event
 async def on_message(message):
     for moduleName in list(modules.keys()):
-        if 'on_message' in modules[moduleName][1].events:
+        if 'on_message' in modules[moduleName][1].events and message.content.startswith(modules[moduleName][1].command):
             await modules[moduleName][1].on_message(message)
 
 @client.event
@@ -231,7 +243,7 @@ async def on_guild_role_update(before, after):
             await modules[moduleName][1].on_guild_role_update(before, after)
 
 @client.event
-async def on_guild_emojis_update(guild, before, after)):
+async def on_guild_emojis_update(guild, before, after):
     for moduleName in list(modules.keys()):
         if 'on_guild_emojis_update' in modules[moduleName][1].events:
             await modules[moduleName][1].on_guild_emojis_update(guild, before, after)
@@ -261,7 +273,7 @@ async def on_member_ban(guild, user):
             await modules[moduleName][1].on_member_ban(guild, user)
 
 @client.event
-async def on_member_unban(guild, user)):
+async def on_member_unban(guild, user):
     for moduleName in list(modules.keys()):
         if 'on_member_unban' in modules[moduleName][1].events:
             await modules[moduleName][1].on_member_unban(guild, user)
