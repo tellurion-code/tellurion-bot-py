@@ -2,7 +2,6 @@ import discord
 import asyncio
 import os
 import importlib
-import traceback
 class MainClass():
     def __init__(self, client, modules, saves):
         self.states={}
@@ -38,8 +37,39 @@ class MainClass():
         args = message.content.split(" ")
         if len(args) == 2 and args[1]=='list':
             await message.channel.send(embed=discord.Embed(title="[Modules] - Modules list", description="```PYTHON\n{0}```".format(str(self.states).replace(',', '\n,'))))
-        elif len(args) == 3 and args[2] in ['enable', 'disable', 'reload']:
-            pass
+        elif len(args) == 3 and args[1] in ['enable', 'disable', 'reload']:
+            if args[1]=='enable':
+                for moduleName in args[2].split(','):
+                    if moduleName + '.py' in os.listdir('modules'):
+                        try:
+                            self.enable_module(moduleName)
+                            await message.channel.send(message.author.mention + ", le module {0} a été activé".format(moduleName))
+                        except:
+                            await message.channel.send(message.author.mention + ", le module {0} **n'a pas pu être activé**".format(moduleName))
+                    else:
+                        await message.channel.send(message.author.mention + ", le module {0} n'existe pas.".format(moduleName))
+            elif args[1]=='disable':
+                for moduleName in args[2].split(','):
+                    if moduleName == 'modules':
+                        await message.channel.send(message.author.mention + ", le module {0} ne peut pas être désactivé car il est nécéssaire pour gérer les modules.".format(moduleName))
+                    else:
+                        if moduleName + '.py' in os.listdir('modules'):
+                            self.unload_module(moduleName)
+                            await message.channel.send(message.author.mention + ", le module {0} a été désactivé.".format(moduleName))
+                        else:
+                            await message.channel.send(message.author.mention + ", le module {0} n'existe pas.".format(moduleName))
+            elif args[1]=='reload':
+                for moduleName in args[2].split(','):
+                    if moduleName + '.py' in os.listdir('modules'):
+                        try:
+                            self.unload_module(moduleName)
+                            await message.channel.send(message.author.mention + ", le module {0} a été désactivé.".format(moduleName))
+                            self.enable_module(moduleName)
+                            await message.channel.send(message.author.mention + ", le module {0} a été activé".format(moduleName))
+                        except:
+                            await message.channel.send(message.author.mention + ", le module {0} **n'a pas pu être réactivé**".format(moduleName))
+                    else:
+                        await message.channel.send(message.author.mention + ", le module {0} n'existe pas.".format(moduleName))
     async def on_ready(self):
         for fileName in os.listdir('modules'):
             try:
@@ -47,7 +77,9 @@ class MainClass():
                 self.init_module(fileName[:-3:])
             except:
                 pass
-
+    def enable_module(self, moduleName):
+        self.load_module(moduleName)
+        self.init_module(moduleName)
     def load_module(self, moduleName):
         if moduleName + ".py" in os.listdir('modules'):
             if self.states[moduleName] == 'not loaded':

@@ -3,7 +3,6 @@ import discord
 import asyncio
 import os
 import importlib
-
 client=discord.Client()
 
 modules={} # format : {'modulename':[module, initializedclass]}
