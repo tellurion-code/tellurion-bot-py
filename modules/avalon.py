@@ -381,6 +381,7 @@ class AvalonSave:
         self.teamvotestatuschanmsg = await client.send_message(self.statuschan, embed=self.teamvoteembed)
         for i in range(len(self.actors)):
             self.votes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=self.teamvoteembed), 'values':{'Yes':False, 'No':False, 'valid':False}, 'voted':False}})
+        for i in range(len(self.actors)):
             for emote in ['✅', '❎'] :
                 await client.add_reaction(self.votes[i]['message'], emote)
     async def voteStageCheck(self, client):
@@ -400,7 +401,7 @@ class AvalonSave:
         await client.edit_message(self.teamvotestatuschanmsg, embed=self.teamvoteembed)
         for votegrp in self.votes.items():
             await client.edit_message(votegrp[1]['message'], embed=self.teamvoteembed)
-        if len(votes) == len(self.votes):
+        if len(votes) == len(self.actors):
             votesstr=""
             for i in range(len(self.votes)):
                 votesstr+=" {2} : {0} `{1}`\n".format(self.emotes[i], self.actors[i]['user'].display_name + '#' + str(self.actors[i]['user'].discriminator), {True:'✅', False:'❎'}[self.votes[i]['values']['Yes']])
@@ -421,6 +422,7 @@ class AvalonSave:
     async def expeditionStart(self,client):
         for i in self.team:
             self.expedvotes.update({i:{'message':await client.send_message(self.actors[i]['user'], embed=discord.Embed(title="[AVALON] - Expedition - Quête n°" + str(len(self.quests) + 1), description="Vous participez à une quête.\n**Étes vous pour la réussite de cette quête ?**", color=0xffffff)), 'values':{'Yes':False, 'No':False, 'valid':False}, 'voted':False}})
+        for i in self.team:
             for emote in ['✅', '❎'] :
                 await client.add_reaction(self.expedvotes[i]['message'], emote)
     async def expeditionStageCheck(self, client):
@@ -428,7 +430,7 @@ class AvalonSave:
         for playergrp in self.expedvotes.items():
             if playergrp[1]['voted']:
                 votes.append(playergrp[1]['values']['Yes'])
-        if len(votes) == len(self.expedvotes):
+        if len(votes) == len(self.team):
             self.questfailcount=votes.count(False)
             #await client.send_message(self.statuschan, 'self.quests=`{0}`\nvotefailcount=`{1}`\nvotes=`{2}`\nself.questvotes=`{3}`'.format(str(self.quests), str(self.questfailcount),str(votes), str(self.expedvotes)))
             if len(self.actors) >= 7:
