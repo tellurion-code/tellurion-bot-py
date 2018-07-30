@@ -14,6 +14,8 @@ async def on_ready():
     print("Bienvenue, {0.user}, l'heure est venue d'e-penser.".format(client))
 
     async def panicLoad():
+        print("--PANIC LOAD--")
+        modules={}
         for filename in os.listdir('modules'):
             if filename.endswith('.py'):
                 try:
@@ -28,13 +30,20 @@ async def on_ready():
                 print("Module {0} initialisé.".format(moduleName))
             except:
                 print("[ERROR] Le module {0} n'a pas pu être initialisé.".format(moduleName))
+                modules.pop(moduleName, None)
 
     if 'modules.py' in os.listdir('modules'):
         try:
             modules.update({'modules':[importlib.import_module('modules.' + 'modules')]})
             print("Module {0} chargé.".format('modules'))
+            try:
+                modules['modules'].append(modules['modules'][0].MainClass(client, modules, saves))
+                print("Module {0} initialisé.".format('modules'))
+            except:
+                print("[ERROR] Le module {0} n'a pas pu être initialisé.".format('modules'))
+                await panicLoad()
         except:
-            print("[ERROR] Le module {0} n'a pas pu être chargé.".format(filename))
+            print("[ERROR] Le module {0} n'a pas pu être chargé.".format('modules.py'))
             await panicLoad()
     else:
         await panicLoad()
