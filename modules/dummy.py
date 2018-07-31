@@ -11,9 +11,10 @@ class MainClass():
 
         self.name="Dummy"
         self.description="Module d'exemple"
+        self.interactive=False
         self.color=0x000000
-        self.help="""
+        self.help="""\
  Aucune fonction.
-"""[1::]
+"""
     async def on_message(self, message):
         print(message.content)

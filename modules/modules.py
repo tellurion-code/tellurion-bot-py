@@ -19,8 +19,9 @@ class MainClass():
 
         self.name="Modules"
         self.description="Module de gestion des modules"
+        self.interactive=True
         self.color=0x8f3196
-        self.help="""
+        self.help="""\
  /modules list
  => Liste les modules ainsi que leurs états
  
@@ -35,7 +36,7 @@ class MainClass():
  
  => <module/modules>
  ==> Unique module ou liste de module séparés par des virgules
-"""[1::]
+"""
         self.states.update({'modules': 'initialized'})
     async def on_message(self, message):
         args = message.content.split(" ")

@@ -35,10 +35,11 @@ class MainClass():
 
         self.name="Error Handling"
         self.description="Module de gestions des erreurs"
+        self.interactive=False
         self.color=0xdb1348
-        self.help="""
+        self.help="""\
  Aucune commande.
-"""[1::]
+"""
     async def on_error(self, event, *args, **kwargs):
         message = args[0]
         embed = discord.Embed(title="Aïe :/", description="```PYTHON\n{0}```".format(traceback.format_exc()), color=self.color).set_image(url=random.choice(self.memes))
