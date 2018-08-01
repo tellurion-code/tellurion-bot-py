@@ -36,3 +36,13 @@ class MainClass():
             for moduleName in list(self.modules.keys()):
                 if self.modules[moduleName][1].interactive:
                     await message.channel.send(embed=discord.Embed(title="[{0}] - Aide".format(moduleName.capitalize()), description=self.modules[moduleName][1].help, color=self.modules[moduleName][1].color))
+        else:
+            await self.modules['help'][1].send_help(message.channel, self)
+
+    async def send_help(self, channel, module):
+        moduleName=None
+        for name, listpck in self.modules.items():
+            if module == listpck[1]:
+                moduleName=name
+                break
+        await channel.send(embed=discord.Embed(title="[{0}] - Aide".format(moduleName.capitalize()), description=self.modules[moduleName][1].help, color=self.modules[moduleName][1].color))

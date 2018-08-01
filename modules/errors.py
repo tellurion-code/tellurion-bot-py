@@ -30,24 +30,29 @@ class MainClass():
         self.client = client
         self.modules = modules
         self.saves = saves
-        self.events=['on_error'] #events list
-        self.command="" #command prefix (can be empty to catch every single messages)
+        self.events=['on_error', 'on_message'] #events list
+        self.command="/licorne" #command prefix (can be empty to catch every single messages)
 
         self.name="Error Handling"
         self.description="Module de gestions des erreurs"
-        self.interactive=False
+        self.interactive=True
         self.color=0xdb1348
         self.help="""\
- Aucune commande.
+ /licorne
+ => Crée une erreur.
 """
+    async def on_message(self, message):
+        5/0
     async def on_error(self, event, *args, **kwargs):
-        message = args[0]
         embed = discord.Embed(title="Aïe :/", description="```PYTHON\n{0}```".format(traceback.format_exc()), color=self.color).set_image(url=random.choice(self.memes))
         messagelist=[]
         try:
-            messagelist.append(await message.channel.send(embed=embed).set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon))
+            messagelist.append(await args[0].channel.send(embed=embed.set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon)))
         except:
-            pass
+            try:
+                args[1].channel.send(embed=embed.set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon))
+            except:
+                pass
         for chanid in self.devchanids:
             try:
                 await self.client.get_channel(chanid).send(embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.icon))

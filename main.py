@@ -3,6 +3,7 @@ import discord
 import asyncio
 import os
 import importlib
+import traceback
 client=discord.Client()
 
 modules={} # format : {'modulename':[module, initializedclass]}
@@ -54,6 +55,7 @@ async def on_ready():
 
 @client.event
 async def on_error(event, *args, **kwargs):
+    print(traceback.format_exc())
     for moduleName in list(modules.keys()):
         if 'on_error' in modules[moduleName][1].events:
             await modules[moduleName][1].on_error(event, *args, **kwargs)

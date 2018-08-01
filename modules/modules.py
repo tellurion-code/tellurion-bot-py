@@ -39,6 +39,7 @@ class MainClass():
 """
         self.states.update({'modules': 'initialized'})
     async def on_message(self, message):
+        error=None
         args = message.content.split(" ")
         if len(args) == 2 and args[1]=='list':
             await message.channel.send(embed=discord.Embed(title="[Modules] - Modules list", description="```PYTHON\n{0}```".format(str(self.states).replace(',', '\n,'))))
@@ -49,7 +50,8 @@ class MainClass():
                         try:
                             self.enable_module(moduleName)
                             await message.channel.send(message.author.mention + ", le module {0} a été activé".format(moduleName))
-                        except:
+                        except Exception as e:
+                            error=e
                             await message.channel.send(message.author.mention + ", le module {0} **n'a pas pu être activé**".format(moduleName))
                     else:
                         await message.channel.send(message.author.mention + ", le module {0} n'existe pas.".format(moduleName))
@@ -71,17 +73,25 @@ class MainClass():
                             await message.channel.send(message.author.mention + ", le module {0} a été désactivé.".format(moduleName))
                             self.enable_module(moduleName)
                             await message.channel.send(message.author.mention + ", le module {0} a été activé".format(moduleName))
-                        except:
+                        except Exception as e:
+                            error=e
                             await message.channel.send(message.author.mention + ", le module {0} **n'a pas pu être réactivé**".format(moduleName))
                     else:
                         await message.channel.send(message.author.mention + ", le module {0} n'existe pas.".format(moduleName))
+        else:
+            await self.modules['help'][1].send_help(message.channel, self)
+        if error:
+            raise error
     async def on_ready(self):
+        error=None
         for fileName in os.listdir('modules'):
             try:
                 self.load_module(fileName[:-3:])
                 self.init_module(fileName[:-3:])
-            except:
-                pass
+            except Exception as e:
+                error=e
+        if error:
+            raise error
     def enable_module(self, moduleName):
         self.load_module(moduleName)
         self.init_module(moduleName)
