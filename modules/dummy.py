@@ -1,6 +1,5 @@
 #dummy module
 import asyncio
-
 class MainClass():
     def __init__(self, client, modules, saves):
         self.client = client

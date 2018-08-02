@@ -31,9 +31,6 @@ class MainClass():
  /modules disable <module/modules>
  => Désactive et décharge le / les modules spécifié(s)
  
- /modules reload <module/modules>
- => Désactive, puis décharge, puis recharge, puis réactive le / les modules spécifié(s)
- 
  => <module/modules>
  ==> Unique module ou liste de module séparés par des virgules
 """
@@ -65,17 +62,6 @@ class MainClass():
                             await message.channel.send(message.author.mention + ", le module {0} a été désactivé.".format(moduleName))
                         else:
                             await message.channel.send(message.author.mention + ", le module {0} n'existe pas.".format(moduleName))
-            elif args[1]=='reload':
-                for moduleName in args[2].split(','):
-                    if moduleName + '.py' in os.listdir('modules'):
-                        try:
-                            self.reload_module(moduleName)
-                            await message.channel.send(message.author.mention + ", le module {0} a été réactivé.".format(moduleName))
-                        except Exception as e:
-                            error=e
-                            await message.channel.send(message.author.mention + ", le module {0} **n'a pas pu être réactivé**".format(moduleName))
-                    else:
-                        await message.channel.send(message.author.mention + ", le module {0} n'existe pas.".format(moduleName))
         else:
             await self.modules['help'][1].send_help(message.channel, self)
         if error:
@@ -93,18 +79,7 @@ class MainClass():
     def enable_module(self, moduleName):
         self.load_module(moduleName)
         self.init_module(moduleName)
-    def reload_module(self, moduleName):
-        if moduleName + ".py" in os.listdir('modules'):
-            if self.states[moduleName] == 'loaded':
-                try:
-                    self.states[moduleName] = 'not loaded'
-                    self.load_module(moduleName)
-                    importlib.reload(modules[moduleName][0])
-                    self.init_module(moduleName)
-                except:
-                    print("[ERROR] Le module {0} n'a pas pu être rechargé.".format(moduleName))
-                    self.unload_module(moduleName)
-                    raise
+
     def load_module(self, moduleName):
         if moduleName + ".py" in os.listdir('modules'):
             if not moduleName in list(self.states.keys()) or self.states[moduleName] == 'not loaded':

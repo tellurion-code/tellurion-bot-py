@@ -50,7 +50,7 @@ class MainClass():
             messagelist.append(await args[0].channel.send(embed=embed.set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon)))
         except:
             try:
-                args[1].channel.send(embed=embed.set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon))
+                messagelist.append(args[1].channel.send(embed=embed.set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon)))
             except:
                 pass
         for chanid in self.devchanids:
