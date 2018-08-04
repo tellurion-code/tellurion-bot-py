@@ -3,7 +3,7 @@ import traceback
 import discord
 import random
 class MainClass():
-    def __init__(self, client, modules, saves):
+    def __init__(self, client, modules):
         self.devchanids=[456142390726623243, 473637619310264330, 474267318332030987]
         self.memes=[
         "https://cdn.discordapp.com/attachments/430408983283761152/430433931272126465/Bruce_3.png",
@@ -29,7 +29,6 @@ class MainClass():
         self.icon="https://cdn.discordapp.com/attachments/340620490009739265/431569015664803840/photo.png"
         self.client = client
         self.modules = modules
-        self.saves = saves
         self.events=['on_error', 'on_message'] #events list
         self.command="/licorne" #command prefix (can be empty to catch every single messages)
 

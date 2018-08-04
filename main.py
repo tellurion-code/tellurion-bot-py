@@ -7,7 +7,6 @@ import traceback
 client=discord.Client()
 
 modules={} # format : {'modulename':[module, initializedclass]}
-saves={} #format : {'modulename':savedObject}
 
 @client.event
 async def on_ready():
@@ -26,7 +25,7 @@ async def on_ready():
         #initialisation
         for moduleName in list(modules.keys()):
             try:
-                modules[moduleName].append(modules[moduleName][0].MainClass(client, modules, saves))
+                modules[moduleName].append(modules[moduleName][0].MainClass(client, modules))
                 print("Module {0} initialisé.".format(moduleName))
             except:
                 print("[ERROR] Le module {0} n'a pas pu être initialisé.".format(moduleName))
@@ -37,7 +36,7 @@ async def on_ready():
             modules.update({'modules':[importlib.import_module('modules.' + 'modules')]})
             print("Module {0} chargé.".format('modules'))
             try:
-                modules['modules'].append(modules['modules'][0].MainClass(client, modules, saves))
+                modules['modules'].append(modules['modules'][0].MainClass(client, modules))
                 print("Module {0} initialisé.".format('modules'))
             except:
                 print("[ERROR] Le module {0} n'a pas pu être initialisé.".format('modules'))

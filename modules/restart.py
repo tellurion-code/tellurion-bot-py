@@ -1,10 +1,9 @@
 import asyncio
 
 class MainClass():
-    def __init__(self, client, modules, saves):
+    def __init__(self, client, modules):
         self.client = client
         self.modules = modules
-        self.saves = saves
         self.events=['on_message'] #events list
         self.command="/restart" #command prefix (can be empty to catch every single messages)
 
