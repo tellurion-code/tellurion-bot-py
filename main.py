@@ -11,9 +11,10 @@ modules={} # format : {'modulename':[module, initializedclass]}
 @client.event
 async def on_ready():
     print("Bienvenue, {0.user}, l'heure est venue d'e-penser.".format(client))
-
+    panic=False
     async def panicLoad():
         print("--PANIC LOAD--")
+        panic=True
         modules={}
         for filename in os.listdir('modules'):
             if filename.endswith('.py'):
@@ -38,6 +39,7 @@ async def on_ready():
             try:
                 modules['modules'].append(modules['modules'][0].MainClass(client, modules))
                 print("Module {0} initialisé.".format('modules'))
+                await modules['modules'][1].on_ready()
             except:
                 print("[ERROR] Le module {0} n'a pas pu être initialisé.".format('modules'))
                 await panicLoad()
@@ -47,10 +49,14 @@ async def on_ready():
     else:
         await panicLoad()
 
-
-    for moduleName in list(modules.keys()):
-        if 'on_ready' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_ready()
+    if panic:
+        for moduleName in list(modules.keys()):
+            if 'on_ready' in modules[moduleName][1].events:
+                await modules[moduleName][1].on_ready()
+    else:
+        for moduleName in list(modules.keys()):
+            if (not moduleName=='modules') and 'on_ready' in modules[moduleName][1].events:
+                await modules[moduleName][1].on_ready()
 
 @client.event
 async def on_error(event, *args, **kwargs):

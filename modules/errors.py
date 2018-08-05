@@ -2,8 +2,26 @@ import asyncio
 import traceback
 import discord
 import random
+import pickle
+import os.path
+import collections
+from subprocess import call
 class MainClass():
+    def saveObject(self, object, objectname):
+        with open("storage/" + objectname + "tmp", "wb") as pickleFile:
+            pickler = pickle.Pickler(pickleFile)
+            pickler.dump(object)
+        call(['mv', "storage/" + objectname + "tmp", "storage/" + objectname])
+    def loadObject(self, objectname):
+        if self.saveExists(objectname):
+            with open("storage/" + objectname, "rb") as pickleFile:
+                unpickler = pickle.Unpickler(pickleFile)
+                return unpickler.load()
+
+    def saveExists(self, objectname):
+        return os.path.isfile("storage/" + objectname)
     def __init__(self, client, modules):
+        self.errorsDeque=None
         self.devchanids=[456142390726623243, 473637619310264330, 474267318332030987]
         self.memes=[
         "https://cdn.discordapp.com/attachments/430408983283761152/430433931272126465/Bruce_3.png",
@@ -29,7 +47,7 @@ class MainClass():
         self.icon="https://cdn.discordapp.com/attachments/340620490009739265/431569015664803840/photo.png"
         self.client = client
         self.modules = modules
-        self.events=['on_error', 'on_message'] #events list
+        self.events=['on_error', 'on_message', 'on_ready'] #events list
         self.command="/licorne" #command prefix (can be empty to catch every single messages)
 
         self.name="Error Handling"
@@ -40,16 +58,35 @@ class MainClass():
  /licorne
  => Crée une erreur.
 """
+    async def on_ready(self):
+        if self.saveExists('errorsDeque'):
+            self.errorsDeque=self.loadObject('errorsDeque')
+        else:
+            self.errorsDeque=collections.deque()
+        for i in range(len(self.errorsDeque)):
+            try:
+                messagelst=self.errorsDeque.popleft()
+                channel = self.client.get_channel(messagelst[0])
+                delete_message = await channel.get_message(messagelst[1])
+                await delete_message.delete()
+            except:
+                raise
+        self.saveObject(self.errorsDeque, 'errorsDeque')
     async def on_message(self, message):
         5/0
+
     async def on_error(self, event, *args, **kwargs):
         embed = discord.Embed(title="Aïe :/", description="```PYTHON\n{0}```".format(traceback.format_exc()), color=self.color).set_image(url=random.choice(self.memes))
-        messagelist=[]
+        messagelst = None
         try:
-            messagelist.append(await args[0].channel.send(embed=embed.set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon)))
+            message = await args[0].channel.send(embed=embed.set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon))
+            messagelst=[message.channel.id, message.id]
+            self.errorsDeque.append(messagelst)
         except:
             try:
-                messagelist.append(args[1].channel.send(embed=embed.set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon)))
+                message = args[1].channel.send(embed=embed.set_footer(text="Ce message s'autodétruira dans une minute.", icon_url=self.icon))
+                messagelst=[message.channel.id, message.id]
+                self.errorsDeque.append(messagelst)
             except:
                 pass
         for chanid in self.devchanids:
@@ -57,6 +94,17 @@ class MainClass():
                 await self.client.get_channel(chanid).send(embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.icon))
             except:
                 pass
+        self.saveObject(self.errorsDeque, 'errorsDeque')
         await asyncio.sleep(60)
-        for messagetodelete in messagelist:
-            await messagetodelete.delete()
+        try:
+            channel = self.client.get_channel(messagelst[0])
+            delete_message = await channel.get_message(messagelst[1])
+            await delete_message.delete()
+        except:
+            raise
+        finally:
+            try:
+                self.errorsDeque.remove(messagelst)
+            except:
+                pass
+        self.saveObject(self.errorsDeque, 'errorsDeque')
