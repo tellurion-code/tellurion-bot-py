@@ -1,0 +1,75 @@
+cd /home/suwako/dev/epenser-bot-py;\
+mkdir storage;\
+echo .
+.
+cd /home/suwako/dev/epenser-bot-py;\
+mkdir storage/libs;\
+echo .
+.
+cd /home/suwako/dev/epenser-bot-py;\
+cd storage/libs;\
+curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py;\
+export PYTHONPATH=/home/suwako/dev/epenser-bot-py/storage/libs/python:;\
+python3 get-pip.py --user
+Collecting pip
+  Using cached https://files.pythonhosted.org/packages/5f/25/e52d3f31441505a5f3af41213346e5b6c221c9e086a166f3703d2ddaf940/pip-18.0-py2.py3-none-any.whl
+Installing collected packages: pip
+  Found existing installation: pip 18.0
+    Uninstalling pip-18.0:
+      Successfully uninstalled pip-18.0
+Successfully installed pip-18.0
+cd /home/suwako/dev/epenser-bot-py;\
+sha512sum dependencies | cmp -s storage/libs/dependencies.sha512 -; if test $? -ne 0; then sha512sum dependencies > storage/libs/dependencies.sha512; fi
+cd /home/suwako/dev/epenser-bot-py;\
+mkdir storage/libs/python;\
+rm -r storage/libs/python;\
+mkdir storage/libs/python;\
+export LD_LIBRARY_PATH=/home/suwako/dev/epenser-bot-py/storage/libs/libgit2/libgit2-0.27.0/installed/lib;\
+export LIBGIT2=/home/suwako/dev/epenser-bot-py/storage/libs/libgit2/libgit2-0.27.0/installed/;\
+export PYTHONPATH=/home/suwako/dev/epenser-bot-py/storage/libs/python:;\
+~/.local/bin/pip3 install -U -t storage/libs/python -r dependencies
+Collecting discord.py[voice] from https://github.com/Rapptz/discord.py/archive/rewrite.zip#egg=discord.py[voice] (from -r dependencies (line 1))
+  Downloading https://github.com/Rapptz/discord.py/archive/rewrite.zip (1.1MB)
+Collecting tqdm (from -r dependencies (line 2))
+  Using cached https://files.pythonhosted.org/packages/7d/e6/19dfaff08fcbee7f3453e5b537e65a8364f1945f921a36d08be1e2ff3475/tqdm-4.24.0-py2.py3-none-any.whl
+Collecting aiohttp<3.4.0,>=3.3.0 (from discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/30/e7/73221dc4f32a5c34fa131d64d18003a8940d4f489607ae7f231e32d9d42c/aiohttp-3.3.2-cp35-cp35m-manylinux1_x86_64.whl
+Collecting websockets<7.0,>=6.0 (from discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/8e/e8/8c959153f7e36258b410b90869c46a3f881a5a345539bf6b2a16049ea5f0/websockets-6.0-cp35-cp35m-manylinux1_x86_64.whl
+Collecting PyNaCl==1.1.2 (from discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/8d/64/b8389487e69f8d8fe0a82272eb0f3d81c8df2f8df7a3c2180cfc19e7e840/PyNaCl-1.1.2-cp35-cp35m-manylinux1_x86_64.whl
+Collecting chardet<4.0,>=2.0 (from aiohttp<3.4.0,>=3.3.0->discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/bc/a9/01ffebfb562e4274b6487b4bb1ddec7ca55ec7510b22e4c51f14098443b8/chardet-3.0.4-py2.py3-none-any.whl
+Collecting yarl<2.0,>=1.0 (from aiohttp<3.4.0,>=3.3.0->discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/67/9b/8075ec8f51df63c09afcce59ddb325d57e4d0a3c03db794c9d58f7a1ca4f/yarl-1.2.6-cp35-cp35m-manylinux1_x86_64.whl
+Collecting attrs>=17.3.0 (from aiohttp<3.4.0,>=3.3.0->discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/41/59/cedf87e91ed541be7957c501a92102f9cc6363c623a7666d69d51c78ac5b/attrs-18.1.0-py2.py3-none-any.whl
+Collecting idna-ssl>=1.0 (from aiohttp<3.4.0,>=3.3.0->discord.py[voice]->-r dependencies (line 1))
+Collecting async-timeout<4.0,>=3.0 (from aiohttp<3.4.0,>=3.3.0->discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/96/0f/e6357458c87fb4ed8f3df215773f3caad40968f10e05552cbd8bd28415e4/async_timeout-3.0.0-py3-none-any.whl
+Collecting multidict<5.0,>=4.0 (from aiohttp<3.4.0,>=3.3.0->discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/52/30/43de13af5f2c54ea05cb0376cce635e1fdf192f651ddd59bdfa35c84d463/multidict-4.3.1-cp35-cp35m-manylinux1_x86_64.whl
+Collecting cffi>=1.4.1 (from PyNaCl==1.1.2->discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/59/cc/0e1635b4951021ef35f5c92b32c865ae605fac2a19d724fb6ff99d745c81/cffi-1.11.5-cp35-cp35m-manylinux1_x86_64.whl
+Collecting six (from PyNaCl==1.1.2->discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/67/4b/141a581104b1f6397bfa78ac9d43d8ad29a7ca43ea90a2d863fe3056e86a/six-1.11.0-py2.py3-none-any.whl
+Collecting idna>=2.0 (from yarl<2.0,>=1.0->aiohttp<3.4.0,>=3.3.0->discord.py[voice]->-r dependencies (line 1))
+  Using cached https://files.pythonhosted.org/packages/4b/2a/0276479a4b3caeb8a8c1af2f8e4355746a97fab05a372e4a2c6a6b876165/idna-2.7-py2.py3-none-any.whl
+Collecting pycparser (from cffi>=1.4.1->PyNaCl==1.1.2->discord.py[voice]->-r dependencies (line 1))
+Building wheels for collected packages: discord.py
+  Running setup.py bdist_wheel for discord.py: started
+  Running setup.py bdist_wheel for discord.py: finished with status 'done'
+  Stored in directory: /tmp/pip-ephem-wheel-cache-e7jz5kod/wheels/87/68/f7/a628b340c016ddd9f0bbc6e0e37a9fd70b03919e3336c46c39
+Successfully built discord.py
+Installing collected packages: chardet, multidict, idna, yarl, attrs, idna-ssl, async-timeout, aiohttp, websockets, pycparser, cffi, six, PyNaCl, discord.py, tqdm
+Successfully installed PyNaCl-1.1.2 aiohttp-3.3.2 async-timeout-3.0.0 attrs-18.1.0 cffi-1.11.5 chardet-3.0.4 discord.py-1.0.0a0 idna-2.7 idna-ssl-1.1.0 multidict-4.3.1 pycparser-2.18 six-1.11.0 tqdm-4.24.0 websockets-6.0 yarl-1.2.6
+touch /home/suwako/dev/epenser-bot-py/storage/libs/python
+touch storage/libs/python storage/libs/get-pip.py
+cd /home/suwako/dev/epenser-bot-py;\
+export LD_LIBRARY_PATH=/home/suwako/dev/epenser-bot-py/storage/libs/libgit2/libgit2-0.27.0/installed/lib;\
+export PYTHONPATH=/home/suwako/dev/epenser-bot-py/storage/libs/python:;\
+export LIBGIT2=/home/suwako/dev/epenser-bot-py/storage/libs/libgit2/libgit2-0.27.0/installed/;\
+python3 -u main.py
+Bienvenue, Jean-Luc#9201, l'heure est venue d'e-penser.
+Module modules chargé.
+Module modules initialisé.
