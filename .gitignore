@@ -46,3 +46,5 @@ __pycache__/*
 .directory
 storage/*
 *.sha512
+
+log
