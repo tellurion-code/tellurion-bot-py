@@ -38,7 +38,7 @@ class MainClass():
         byteImgIO = io.BytesIO()
         img = Image.new('RGB', (640,640), color=(200,200,200))
         draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("/usr/share/fonts/dejavu/DejaVuSerif-Bold.ttf", size=12)
+        font = ImageFont.truetype("assets/DejaVuSerif-Bold.ttf", size=12)
         for i in range(16):
             draw.line((i*40,20) + (i*40,620), fill=(128,128,128))
         for i in range(16):
