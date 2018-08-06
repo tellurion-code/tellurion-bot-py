@@ -39,7 +39,10 @@ async def on_ready():
             try:
                 modules['modules'].append(modules['modules'][0].MainClass(client, modules))
                 print("Module {0} initialisé.".format('modules'))
-                await modules['modules'][1].on_ready()
+                try:
+                    await modules['modules'][1].on_ready()
+                except:
+                    pass
             except:
                 print("[ERROR] Le module {0} n'a pas pu être initialisé.".format('modules'))
                 await panicLoad()

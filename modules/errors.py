@@ -6,21 +6,24 @@ import pickle
 import os.path
 import collections
 from subprocess import call
+moduleFiles="errors"
 class MainClass():
     def saveObject(self, object, objectname):
-        with open("storage/" + objectname + "tmp", "wb") as pickleFile:
+        with open("storage/%s/"%moduleFiles + objectname + "tmp", "wb") as pickleFile:
             pickler = pickle.Pickler(pickleFile)
             pickler.dump(object)
-        call(['mv', "storage/" + objectname + "tmp", "storage/" + objectname])
+        call(['mv', "storage/%s/"%moduleFiles + objectname + "tmp", "storage/%s/"%moduleFiles + objectname])
     def loadObject(self, objectname):
         if self.saveExists(objectname):
-            with open("storage/" + objectname, "rb") as pickleFile:
+            with open("storage/%s/"%moduleFiles + objectname, "rb") as pickleFile:
                 unpickler = pickle.Unpickler(pickleFile)
                 return unpickler.load()
 
     def saveExists(self, objectname):
-        return os.path.isfile("storage/" + objectname)
+        return os.path.isfile("storage/%s/"%moduleFiles + objectname)
     def __init__(self, client, modules):
+        if not os.path.isdir("storage/%s"%moduleFiles):
+            call(['mkdir', 'storage/%s'%moduleFiles])
         self.errorsDeque=None
         self.devchanids=[456142390726623243, 473637619310264330, 474267318332030987]
         self.memes=[
@@ -34,7 +37,6 @@ class MainClass():
         "https://cdn.discordapp.com/attachments/326742676672086018/431571655115145217/unknown.png",
         "https://cdn.discordapp.com/attachments/326742676672086018/431574206518525963/Bruce_troll_QHwYz39nj7i.png",
         "https://cdn.discordapp.com/attachments/326742676672086018/431572693910028289/telecharge_19.jpg"
-        "https://cdn.discordapp.com/attachments/434475794631360512/447168326582665241/2akl04.jpg",
         "https://cdn.discordapp.com/attachments/434475794631360512/447168326582665241/2akl04.jpg",
         "https://cdn.discordapp.com/attachments/434475794631360512/447168125067067394/20180519_004620.png",
         "https://cdn.discordapp.com/attachments/434475794631360512/446441679868788736/Sans_titre_0.png",
