@@ -4,6 +4,7 @@ import discord
 from PIL import Image, ImageDraw, ImageFont
 import io
 import random
+moduleFiles="errors"
 class MainClass():
     def saveObject(self, object, objectname):
         with open("storage/%s/"%moduleFiles + objectname + "tmp", "wb") as pickleFile:
@@ -18,21 +19,39 @@ class MainClass():
 
     def saveExists(self, objectname):
         return os.path.isfile("storage/%s/"%moduleFiles + objectname)
-    def __init__(self, client, modules):
+    def __init__(self, client, modules, owners):
+        self.save=None
         self.client = client
         self.modules = modules
+        self.owners = owners
         self.events=['on_message'] #events list
         self.command="/gomoku" #command prefix (can be empty to catch every single messages)
 
         self.name="Gomoku"
         self.description="Module du jeu Gomoku"
         self.interactive=True
-        self.color=0x000000
+        self.color=0xffff00
         self.help="""\
  Aucune fonction.
 """
+
+    async def on_ready(self):
+        if self.saveExists('errorsDeque'):
+            self.errorsDeque=self.loadObject('errorsDeque')
+        else:
+            self.errorsDeque=collections.deque()
+        for i in range(len(self.errorsDeque)):
+            try:
+                messagelst=self.errorsDeque.popleft()
+                channel = self.client.get_channel(messagelst[0])
+                delete_message = await channel.get_message(messagelst[1])
+                await delete_message.delete()
+            except:
+                raise
+        self.saveObject(self.errorsDeque, 'errorsDeque')
+
     async def on_message(self, message):
-        await message.channel.send(file=self.gen_img([['White' for i in range(15)] for i in range(15)]))
+        await message.channel.send(file=self.gen_img([[None for i in range(15)] for i in range(15)]))
 
     def gen_img(self, grid):
         byteImgIO = io.BytesIO()

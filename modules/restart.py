@@ -1,15 +1,17 @@
 import asyncio
 
 class MainClass():
-    def __init__(self, client, modules):
+    def __init__(self, client, modules, owners):
         self.client = client
         self.modules = modules
+        self.owners = owners
         self.events=['on_message'] #events list
         self.command="/restart" #command prefix (can be empty to catch every single messages)
 
-        self.name="Dummy"
-        self.description="Module d'exemple"
+        self.name="Restart"
+        self.description="Module gérant les redémarrages du bot"
         self.interactive=True
+        self.authlist=[431043517217898496]
         self.color=0x000000
         self.help="""\
  /restart

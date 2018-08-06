@@ -1,9 +1,10 @@
 #dummy module
 import asyncio
 class MainClass():
-    def __init__(self, client, modules):
+    def __init__(self, client, modules, owners):
         self.client = client
         self.modules = modules
+        self.owners = owners
         self.events=['on_message'] #events list
         self.command="/dummy" #command prefix (can be empty to catch every single messages)
 

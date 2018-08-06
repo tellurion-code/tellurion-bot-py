@@ -21,7 +21,7 @@ class MainClass():
 
     def saveExists(self, objectname):
         return os.path.isfile("storage/%s/"%moduleFiles + objectname)
-    def __init__(self, client, modules):
+    def __init__(self, client, modules, owners):
         if not os.path.isdir("storage/%s"%moduleFiles):
             call(['mkdir', 'storage/%s'%moduleFiles])
         self.errorsDeque=None
@@ -49,12 +49,14 @@ class MainClass():
         self.icon="https://cdn.discordapp.com/attachments/340620490009739265/431569015664803840/photo.png"
         self.client = client
         self.modules = modules
+        self.owners = owners
         self.events=['on_error', 'on_message', 'on_ready'] #events list
         self.command="/licorne" #command prefix (can be empty to catch every single messages)
 
         self.name="Error Handling"
         self.description="Module de gestions des erreurs"
         self.interactive=True
+        self.authlist=[431043517217898496]
         self.color=0xdb1348
         self.help="""\
  /licorne

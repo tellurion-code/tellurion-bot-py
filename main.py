@@ -7,7 +7,19 @@ import traceback
 client=discord.Client()
 
 modules={} # format : {'modulename':[module, initializedclass]}
-
+owners=owners=[281166473102098433, 118399702667493380]
+async def auth(user, moduleName):
+    if user.id in owners:
+        return True
+    try:
+        modules[moduleName][1].authlist
+    except:
+        return True
+    for guild in client.guilds:
+        if guild.get_member(user.id):
+            for roleid in modules[moduleName][1].authlist:
+                if roleid in [r.id for r in guild.get_member(user.id).roles]:
+                    return True
 @client.event
 async def on_ready():
     print("Bienvenue, {0.user}, l'heure est venue d'e-penser.".format(client))
@@ -26,7 +38,7 @@ async def on_ready():
         #initialisation
         for moduleName in list(modules.keys()):
             try:
-                modules[moduleName].append(modules[moduleName][0].MainClass(client, modules))
+                modules[moduleName].append(modules[moduleName][0].MainClass(client, modules, owners))
                 print("Module {0} initialisé.".format(moduleName))
             except:
                 print("[ERROR] Le module {0} n'a pas pu être initialisé.".format(moduleName))
@@ -37,7 +49,7 @@ async def on_ready():
             modules.update({'modules':[importlib.import_module('modules.' + 'modules')]})
             print("Module {0} chargé.".format('modules'))
             try:
-                modules['modules'].append(modules['modules'][0].MainClass(client, modules))
+                modules['modules'].append(modules['modules'][0].MainClass(client, modules, owners))
                 print("Module {0} initialisé.".format('modules'))
                 try:
                     await modules['modules'][1].on_ready()
@@ -90,7 +102,8 @@ async def on_typing(channel, user, when):
 async def on_message(message):
     for moduleName in list(modules.keys()):
         if 'on_message' in modules[moduleName][1].events and message.content.startswith(modules[moduleName][1].command):
-            await modules[moduleName][1].on_message(message)
+            if await auth(message.author, moduleName):
+                await modules[moduleName][1].on_message(message)
 
 @client.event
 async def on_message_delete(message):

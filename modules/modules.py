@@ -3,7 +3,7 @@ import asyncio
 import os
 import importlib
 class MainClass():
-    def __init__(self, client, modules):
+    def __init__(self, client, modules, owners):
         self.states={}
         for moduleName in os.listdir('modules'):
             if moduleName.endswith(".py"):
@@ -13,12 +13,14 @@ class MainClass():
                 self.states.update({moduleName:'initialized'})
         self.client = client
         self.modules = modules
+        self.owners = owners
         self.events=['on_message', 'on_ready'] #events list
         self.command="/modules" #command prefix (can be empty to catch every single messages)
 
         self.name="Modules"
         self.description="Module de gestion des modules"
         self.interactive=True
+        self.authlist=[431043517217898496]
         self.color=0x8f3196
         self.help="""\
  /modules list
@@ -94,7 +96,7 @@ class MainClass():
         if moduleName + ".py" in os.listdir('modules'):
             if self.states[moduleName] == 'loaded':
                 try:
-                    self.modules[moduleName].append(self.modules[moduleName][0].MainClass(self.client, self.modules))
+                    self.modules[moduleName].append(self.modules[moduleName][0].MainClass(self.client, self.modules, self.owners))
                     print("Module {0} initialisé.".format(moduleName))
                     self.states[moduleName] = 'initialized'
                 except:
