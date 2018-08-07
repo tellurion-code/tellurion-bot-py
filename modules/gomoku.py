@@ -96,7 +96,7 @@ class MainClass():
                         test=len(self.save['games'][gameid]['hist'])%2!=0
                     if test:
                         test=self.get_valid_coords(message.content, self.save['games'][gameid]['hist'])
-                        if test and not lock:
+                        if test and not self.save['games'][gameid]['lock']:
                             self.save['games'][gameid]['lock']=True
                             testmessage = await message.channel.send(file=self.gen_img_from_hist(self.save['games'][gameid]['hist'] + [test], test=True))
                             asyncio.ensure_future(self.send_reactions(testmessage, ['✅','❌']), loop=self.client.loop)
@@ -109,6 +109,9 @@ class MainClass():
                                 await message.channel.send("%s, c'est à votre tour !"%(self.client.get_user(self.save['games'][gameid]['White'] if self.save['games'][gameid]['Black']==message.author.id else self.save['games'][gameid]['Black']).mention), file=self.gen_img_from_hist(self.save['games'][gameid]['hist']))
                             if str(reaction.emoji)=='❌':
                                 await testmessage.delete()
+                            res=self.gen_grid_from_hist(self.save['games'][gameid]['hist'], fin=True)
+                            if any(res):
+                                await message.channel.send("%s a gagné, bravo à lui !"%self.client.get_user(self.save['games'][gameid][['Black','White'][res.index(True)]]).mention)
                             self.save['games'][gameid]['lock']=False
                 except:
                     raise
@@ -162,7 +165,9 @@ class MainClass():
         if not fin:
             return grid
         if fin:
-            return (cpgrid,grid,)
+            bwin=any([any([True if 'BlackW' == case else False for case in row]) for row in grid])
+            wwin=any([any([True if 'WhiteW' == case else False for case in row]) for row in grid])
+            return (bwin,wwin)
     def get_valid_coords(self, coordsin, hist):
         try:
             coords=coordsin.upper()
@@ -184,15 +189,15 @@ class MainClass():
     def gen_img(self, grid, test=False):
         img=None
         if test:
-            img = Image.new('RGBA', (640,640), color=(255,200,200,255))
+            img = Image.new('RGBA', (640,640), color=(255,200,200,200))
         else:
-            img = Image.new('RGBA', (640,640), color=(200,200,200,255))
+            img = Image.new('RGBA', (640,640), color=(200,200,200,200))
         draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("assets/DejaVuSerif-Bold.ttf", size=12)
+        font = ImageFont.truetype("assets/Hack-Bold.ttf", size=12)
         for i in range(16):
-            draw.line((i*40,20) + (i*40,620), fill=(128,128,128,255))
+            draw.line((i*40,20) + (i*40,620), fill=(50,50,50,255))
         for i in range(16):
-            draw.line((20,i*40) + (620,i*40), fill=(128,128,128,255))
+            draw.line((20,i*40) + (620,i*40), fill=(50,50,50,255))
         for i in range(1,16):
             draw.text((4, 40*i -6), str(i),font=font, fill=(255,0,0,255))
         lettres="ABCDEFGHIJKLMNO"
