@@ -56,8 +56,9 @@ class MainClass():
         for reaction in reactions:
             await message.add_reaction(reaction)
     async def on_message(self, message):
-        if self.save!=None:
+        if self.save==None:
             await self.on_ready()
+        else:
             if message.content.startswith('/gomoku'):
                 args=message.content.split()
                 if len(args)>1 and args[1]=='challenge':
@@ -74,7 +75,7 @@ class MainClass():
                                         break
                                 black=random.choice([message.author, message.mentions[0]])
                                 white=[message.author, message.mentions[0]][[message.author, message.mentions[0]].index(black)-1]
-                                self.save['games'].update({gameid:{'Black':black.id, 'White':white.id, 'hist':[]}})
+                                self.save['games'].update({gameid:{'lock':False, 'Black':black.id, 'White':white.id, 'hist':[]}})
                                 self.save['player_game'].update({message.author.id:gameid, message.mentions[0].id:gameid})
                                 await message.channel.send("C'est à %s de commencer"%black.mention, file=self.gen_img_from_hist(self.save['games'][gameid]['hist']))
                             else:
@@ -95,7 +96,8 @@ class MainClass():
                         test=len(self.save['games'][gameid]['hist'])%2!=0
                     if test:
                         test=self.get_valid_coords(message.content, self.save['games'][gameid]['hist'])
-                        if test:
+                        if test and not lock:
+                            self.save['games'][gameid]['lock']=True
                             testmessage = await message.channel.send(file=self.gen_img_from_hist(self.save['games'][gameid]['hist'] + [test], test=True))
                             asyncio.ensure_future(self.send_reactions(testmessage, ['✅','❌']), loop=self.client.loop)
                             def check(reaction, user):
@@ -104,9 +106,10 @@ class MainClass():
                             if str(reaction.emoji)=='✅':
                                 await testmessage.delete()
                                 self.save['games'][gameid]['hist'].append(test)
-                                await message.channel.send(file=self.gen_img_from_hist(self.save['games'][gameid]['hist']))
+                                await message.channel.send("%s, c'est à votre tour !"%(self.client.get_user(self.save['games'][gameid]['White'] if self.save['games'][gameid]['Black']==message.author.id else self.save['games'][gameid]['Black']).mention), file=self.gen_img_from_hist(self.save['games'][gameid]['hist']))
                             if str(reaction.emoji)=='❌':
                                 await testmessage.delete()
+                            self.save['games'][gameid]['lock']=False
                 except:
                     raise
     def is_win(self, grid, coords=None):
@@ -123,17 +126,19 @@ class MainClass():
             ver=[grid[i][Icase] for i in range(len(grid))]
             diag1=[[Iline-min(Iline,Icase) +i, Icase-min(Iline,Icase) +i]for i in range(15-max(Iline-min(Iline,Icase), Icase-min(Iline,Icase)))]
             diag2=[[Iline-min(Iline,14-Icase)+i, Icase+min(Iline,14-Icase)-i] for i in range(min(15-(Iline-min(Iline,14-Icase)), 15-(14-(Icase+min(Iline,14-Icase)))))]
-            return isWin(hor, Icase) and isWin(ver, Iline) and isWin([grid[coords[1]][coords[0]] for coords in diag1], diag1.index([Iline,Icase])) and isWin([grid[coords[1]][coords[0]] for coords in diag2], diag2.index([Iline,Icase]))
+            return isWin(hor, Icase) or isWin(ver, Iline) or isWin([grid[coords[1]][coords[0]] for coords in diag1], diag1.index([Iline,Icase])) or isWin([grid[coords[1]][coords[0]] for coords in diag2], diag2.index([Iline,Icase]))
         if coords==None:
             for Iline in range(len(grid)):
                 for Icase in range(len(grid[Iline])):
-                    return check_coords(Iline, Icase, grid)
+                    if check_coords(Iline, Icase, grid):
+                        return check_coords(Iline, Icase, grid)
         else:
-            Iline,Icase=coords
+            Icase,Iline=coords
             return check_coords(Iline, Icase, grid)
+        return False
     def gen_img_from_hist(self, hist, test=False):
         return self.gen_img(self.gen_grid_from_hist(hist), test=test)
-    def gen_grid_from_hist(self, hist):
+    def gen_grid_from_hist(self, hist, fin=False):
         grid=[[None for i in range(15)] for i in range(15)]
         i=0
         finalturn=None
@@ -142,13 +147,22 @@ class MainClass():
                 grid[turn[1]][turn[0]]='Black'
             else:
                 grid[turn[1]][turn[0]]='White'
-            if self.is_win(grid, coords=turn):
-                grid[turn[1]][turn[0]]+='W'
-            i+=1
             finalturn=turn
+            i+=1
+        cpgrid=cpgrid=[row.copy() for row in grid]
+        i=0
+        for turn in hist:
+            if self.is_win(cpgrid, coords=turn):
+                print("WIN")
+                grid[turn[1]][turn[0]]+='W'
+            finalturn=turn
+            i+=1
         if finalturn:
             grid[finalturn[1]][finalturn[0]]+='L'
-        return(grid)
+        if not fin:
+            return grid
+        if fin:
+            return (cpgrid,grid,)
     def get_valid_coords(self, coordsin, hist):
         try:
             coords=coordsin.upper()
