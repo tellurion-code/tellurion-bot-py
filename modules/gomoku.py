@@ -156,7 +156,6 @@ class MainClass():
         i=0
         for turn in hist:
             if self.is_win(cpgrid, coords=turn):
-                print("WIN")
                 grid[turn[1]][turn[0]]+='W'
             finalturn=turn
             i+=1
@@ -186,39 +185,41 @@ class MainClass():
                 return False
         except:
             return False
-    def gen_img(self, grid, test=False):
+    def gen_img(self, grid, test=False, m=2):
         img=None
         if test:
-            img = Image.new('RGBA', (640,640), color=(255,200,200,200))
+            img = Image.new('RGBA', (640*m,640*m), color=(255,200,200,255))
         else:
-            img = Image.new('RGBA', (640,640), color=(200,200,200,200))
+            img = Image.new('RGBA', (640*m,640*m), color=(200,200,200,255))
         draw = ImageDraw.Draw(img)
-        font = ImageFont.truetype("assets/Hack-Bold.ttf", size=12)
+        font = ImageFont.truetype("assets/Hack-Bold.ttf", size=12*m)
         for i in range(16):
-            draw.line((i*40,20) + (i*40,620), fill=(50,50,50,255))
+            draw.line((i*40*m,20*m) + (i*40*m,620*m), fill=(128,128,128,255), width=m-1)
         for i in range(16):
-            draw.line((20,i*40) + (620,i*40), fill=(50,50,50,255))
+            draw.line((20*m,i*40*m) + (620*m,i*40*m), fill=(128,128,128,255), width=m-1)
+        draw.ellipse([((7 +1)*40*m -6*m ,(7 +1) * 40*m - 6*m),((7 +1)*40*m + 6*m ,(7 +1) * 40*m + 6*m)], fill=(128,128,128,255))
         for i in range(1,16):
-            draw.text((4, 40*i -6), str(i),font=font, fill=(255,0,0,255))
+            draw.text((4*m, m*40*i -6*m), str(i),font=font, fill=(255,0,0,255))
         lettres="ABCDEFGHIJKLMNO"
         for i in range(1,16):
-            draw.text((40*i -4, 4), lettres[i-1],font=font, fill=(255,0,0,255))
+            draw.text((m*40*i -4*m, 4*m), lettres[i-1],font=font, fill=(255,0,0,255))
         for Iline in range(len(grid)):
             for Icase in range(len(grid[Iline])):
                 #print([((Icase +1)*40 -15 ,(Iline +1) * 40 - 15),((Icase +1)*40 + 15 ,(Iline +1) * 40 + 15)])
                 if grid[Iline][Icase] != None :
-                    if grid[Iline][Icase].startswith('White'):
-                        draw.ellipse([((Icase +1)*40 -15 ,(Iline +1) * 40 - 15),((Icase +1)*40 + 15 ,(Iline +1) * 40 + 15)], fill=(12,96,153,255))
-                    if grid[Iline][Icase].startswith('Black'):
-                        draw.ellipse([((Icase +1)*40 -15 ,(Iline +1) * 40 - 15),((Icase +1)*40 + 15 ,(Iline +1) * 40 + 15)], fill=(10,10,10,255))
-                    if 'W' in grid[Iline][Icase][5:]:
-                        draw.ellipse([((Icase +1)*40 -4 ,(Iline +1) * 40 - 4),((Icase +1)*40 + 4 ,(Iline +1) * 40 + 4)], fill=(194,45,48,255))
                     if 'L' in grid[Iline][Icase][5:]:
-                        draw.ellipse([((Icase +1)*40 -17 ,(Iline +1) * 40 - 17),((Icase +1)*40 + 17 ,(Iline +1) * 40 + 17)], outline=(54,122,57,255))
-                        draw.ellipse([((Icase +1)*40 -15 ,(Iline +1) * 40 - 15),((Icase +1)*40 + 15 ,(Iline +1) * 40 + 15)], outline=(54,122,57,255))
-                        draw.ellipse([((Icase +1)*40 -14 ,(Iline +1) * 40 - 14),((Icase +1)*40 + 14 ,(Iline +1) * 40 + 14)], outline=(54,122,57,255))
-                        draw.ellipse([((Icase +1)*40 -13 ,(Iline +1) * 40 - 13),((Icase +1)*40 + 13 ,(Iline +1) * 40 + 13)], outline=(54,122,57,255))
-                        draw.ellipse([((Icase +1)*40 -12 ,(Iline +1) * 40 - 12),((Icase +1)*40 + 12 ,(Iline +1) * 40 + 12)], outline=(54,122,57,255))
+                        draw.ellipse([((Icase +1)*40*m -17*m ,(Iline +1) * 40*m - 17*m),((Icase +1)*40*m + 17*m ,(Iline +1) * 40*m + 17*m)], fill=(54,122,57,255))
+                    if grid[Iline][Icase].startswith('White'):
+                        draw.ellipse([((Icase +1)*40*m -13*m ,(Iline +1) * 40*m - 13*m),((Icase +1)*40*m + 13*m ,(Iline +1) * 40*m + 13*m)], fill=(12,96,153,255))
+                    if grid[Iline][Icase].startswith('Black'):
+                        draw.ellipse([((Icase +1)*40*m -13*m ,(Iline +1) * 40*m - 13*m),((Icase +1)*40*m + 13*m ,(Iline +1) * 40*m + 13*m)], fill=(10,10,10,255))
+                    if 'W' in grid[Iline][Icase][5:]:
+                        draw.ellipse([((Icase +1)*40*m -4*m ,(Iline +1) * 40*m - 4*m),((Icase +1)*40*m + 4*m ,(Iline +1) * 40*m + 4*m)], fill=(194,45,48,255))
+                else:
+                    if [Iline,Icase]==[7,7]:
+                        draw.text(((Icase +1)*40*m -14*m ,(Iline +1) * 40*m -20*m), lettres[Icase] + str(Iline +1), font=font, fill=(128,128,128,255))
+                    else:
+                        draw.text(((Icase +1)*40*m -15*m ,(Iline +1) * 40*m -13*m), lettres[Icase] + str(Iline +1), font=font, fill=(128,128,128,255))
         tmpstr="/tmp/%s.png"%random.randint(1,10000000)
         img.save(tmpstr, "PNG")
         return discord.File(tmpstr)
