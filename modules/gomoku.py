@@ -129,7 +129,7 @@ class MainClass():
             ver=[grid[i][Icase] for i in range(len(grid))]
             diag1=[[Iline-min(Iline,Icase) +i, Icase-min(Iline,Icase) +i]for i in range(15-max(Iline-min(Iline,Icase), Icase-min(Iline,Icase)))]
             diag2=[[Iline-min(Iline,14-Icase)+i, Icase+min(Iline,14-Icase)-i] for i in range(min(15-(Iline-min(Iline,14-Icase)), 15-(14-(Icase+min(Iline,14-Icase)))))]
-            return isWin(hor, Icase) or isWin(ver, Iline) or isWin([grid[coords[1]][coords[0]] for coords in diag1], diag1.index([Iline,Icase])) or isWin([grid[coords[1]][coords[0]] for coords in diag2], diag2.index([Iline,Icase]))
+            return isWin(hor, Icase) or isWin(ver, Iline) or isWin([grid[coords[0]][coords[1]] for coords in diag1], diag1.index([Iline,Icase])) or isWin([grid[coords[0]][coords[1]] for coords in diag2], diag2.index([Iline,Icase]))
         if coords==None:
             for Iline in range(len(grid)):
                 for Icase in range(len(grid[Iline])):
