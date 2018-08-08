@@ -217,9 +217,9 @@ class MainClass():
                         draw.ellipse([((Icase +1)*40*m -4*m ,(Iline +1) * 40*m - 4*m),((Icase +1)*40*m + 4*m ,(Iline +1) * 40*m + 4*m)], fill=(194,45,48,255))
                 else:
                     if [Iline,Icase]==[7,7]:
-                        draw.text(((Icase +1)*40*m -14*m ,(Iline +1) * 40*m -20*m), lettres[Icase] + str(Iline +1), font=font, fill=(128,128,128,255))
+                        draw.text(((Icase +1)*40*m +5*m ,(Iline +1) * 40*m +5*m), lettres[Icase] + str(Iline +1), font=font, fill=(128,128,128,255))
                     else:
-                        draw.text(((Icase +1)*40*m -15*m ,(Iline +1) * 40*m -13*m), lettres[Icase] + str(Iline +1), font=font, fill=(128,128,128,255))
+                        draw.text(((Icase +1)*40*m +1*m ,(Iline +1) * 40*m -1*m), lettres[Icase] + str(Iline +1), font=font, fill=(128,128,128,255))
         tmpstr="/tmp/%s.png"%random.randint(1,10000000)
         img.save(tmpstr, "PNG")
         return discord.File(tmpstr)
