@@ -119,7 +119,8 @@ class MainClass():
                                     for user in condition:
                                         await user.send(messagestr, file=imgfile)
                                 asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]], messagestr, imgfile), loop=self.client.loop)
-                                del self.save['games'][gameid]
+                                if any(res):
+                                    del self.save['games'][gameid]
                             if str(reaction.emoji)=='❌':
                                 await testmessage.delete()
                 except:
