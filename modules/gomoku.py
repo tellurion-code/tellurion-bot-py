@@ -52,6 +52,8 @@ class MainClass():
             else:
                 self.save={'currently_playing':[], 'player_game':{}, 'games':{}}
             self.saveObject(self.save, 'save')
+        for gameid in self.save['games'].keys() :
+            self.save['games'][gameid]['lock']=False
     async def send_reactions(self, message, reactions):
         for reaction in reactions:
             await message.add_reaction(reaction)
@@ -98,7 +100,7 @@ class MainClass():
                         test=self.get_valid_coords(message.content, self.save['games'][gameid]['hist'])
                         if test and not self.save['games'][gameid]['lock']:
                             self.save['games'][gameid]['lock']=True
-                            testmessage = await message.channel.send(file=self.gen_img_from_hist(self.save['games'][gameid]['hist'] + [test], test=True))
+                            testmessage = await message.author.send(file=self.gen_img_from_hist(self.save['games'][gameid]['hist'] + [test], test=True))
                             asyncio.ensure_future(self.send_reactions(testmessage, ['✅','❌']), loop=self.client.loop)
                             def check(reaction, user):
                                 return reaction.message.id == testmessage.id and user.id == message.author.id and str(reaction.emoji) in ['✅','❌']
@@ -106,13 +108,20 @@ class MainClass():
                             if str(reaction.emoji)=='✅':
                                 await testmessage.delete()
                                 self.save['games'][gameid]['hist'].append(test)
-                                await message.channel.send("%s, c'est à votre tour !"%(self.client.get_user(self.save['games'][gameid]['White'] if self.save['games'][gameid]['Black']==message.author.id else self.save['games'][gameid]['Black']).mention), file=self.gen_img_from_hist(self.save['games'][gameid]['hist']))
+                                self.save['games'][gameid]['lock']=False
+                                res=self.gen_grid_from_hist(self.save['games'][gameid]['hist'], fin=True)
+                                if any(res):
+                                    messagestr="%s a gagné, bravo à lui !"%self.client.get_user(self.save['games'][gameid][['Black','White'][res.index(True)]]).mention
+                                else:
+                                    messagestr="%s, c'est à votre tour !"%(self.client.get_user(self.save['games'][gameid]['White'] if self.save['games'][gameid]['Black']==message.author.id else self.save['games'][gameid]['Black']).mention)
+                                imgfile=self.gen_img_from_hist(self.save['games'][gameid]['hist'])
+                                async def send_messages(condition, messagestr, imgfile):
+                                    for user in condition:
+                                        await user.send(messagestr, file=imgfile)
+                                asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]], messagestr, imgfile), loop=self.client.loop)
+                                del self.save['games'][gameid]
                             if str(reaction.emoji)=='❌':
                                 await testmessage.delete()
-                            res=self.gen_grid_from_hist(self.save['games'][gameid]['hist'], fin=True)
-                            if any(res):
-                                await message.channel.send("%s a gagné, bravo à lui !"%self.client.get_user(self.save['games'][gameid][['Black','White'][res.index(True)]]).mention)
-                            self.save['games'][gameid]['lock']=False
                 except:
                     raise
     def is_win(self, grid, coords=None):
