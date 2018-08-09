@@ -122,9 +122,11 @@ class MainClass():
                                 if any(res):
                                     del self.save['games'][gameid]
                             if str(reaction.emoji)=='❌':
+                                self.save['games'][gameid]['lock']=False
                                 await testmessage.delete()
+                            self.saveObject(self.save, 'save')
                 except:
-                    raise
+                    pass
     def is_win(self, grid, coords=None):
         def isWin(row,check):
             if row[check]!=None:
