@@ -120,6 +120,9 @@ class MainClass():
                                         await user.send(messagestr, file=imgfile)
                                 asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]], messagestr, imgfile), loop=self.client.loop)
                                 if any(res):
+                                    for playerid in [self.save['games'][gameid][color] for color in ['White', 'Black']]:
+                                        self.save['currently_playing'].remove(playerid)
+                                        del self.save['player_game'][playerid]
                                     del self.save['games'][gameid]
                             if str(reaction.emoji)=='❌':
                                 self.save['games'][gameid]['lock']=False
