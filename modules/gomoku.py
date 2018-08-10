@@ -216,7 +216,7 @@ class MainClass():
                 return False
         except:
             return False
-    def gen_img(self, grid, test=False, m=2):
+    def gen_img(self, grid, test=False, m=1):
         img=None
         if test:
             img = Image.new('RGBA', (640*m,640*m), color=(255,200,200,255))
