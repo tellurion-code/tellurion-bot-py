@@ -92,7 +92,7 @@ class MainClass():
                             await message.channel.send(message.author.mention + ", le joueur mentionné est déjà en train de jouer...")
                     except KeyError:
                         pass
-                elif args[1]=='leave':
+                elif len(args)==2 and args[1]=='leave':
                     if message.author.id in self.save['currently_playing']:
                         gameid=self.save['player_game'][message.author.id]
                         for playerid in [self.save['games'][gameid][color] for color in ['White', 'Black']]:
