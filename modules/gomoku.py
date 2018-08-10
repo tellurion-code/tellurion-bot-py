@@ -85,7 +85,7 @@ class MainClass():
                                 async def send_messages(condition, messagestr, imgfile):
                                     for user in condition:
                                         await user.send(messagestr, file=imgfile)
-                                asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]], "C'est à %s de commencer"%black.mention, file=self.gen_img_from_hist(self.save['games'][gameid]['hist'])), loop=self.client.loop)
+                                asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]], "C'est à %s de commencer"%black.mention, self.gen_img_from_hist(self.save['games'][gameid]['hist'])), loop=self.client.loop)
                             else:
                                 await message.channel.send(message.author.mention + ", vous êtes déjà dans une partie, finissez celle là pour commencer. ^^")
                         else:
