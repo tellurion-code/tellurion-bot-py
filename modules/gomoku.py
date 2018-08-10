@@ -100,6 +100,8 @@ class MainClass():
                             del self.save['player_game'][playerid]
                             await self.client.get_user(playerid).send("La partie de Gomoku a été annulée.")
                         del self.save['games'][gameid]
+                    else:
+                        await message.channel.send("%s, vous n'êtes pas dans une partie de Gomoku"%message.author.mention)
                 else:
                     await self.modules['help'][1].send_help(message.channel, self)
             elif message.author.id in self.save['currently_playing']:
