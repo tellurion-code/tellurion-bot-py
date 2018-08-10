@@ -66,7 +66,7 @@ class MainClass():
         else:
             if message.content.startswith('/gomoku'):
                 args=message.content.split()
-                if len(args)>1 and args[1]=='challenge':
+                if len(args)>1 and args[1]=='challenge' and not len(message.mentions)==0:
                     try:
                         if not message.mentions[0].id in self.save['currently_playing']:
                             if not message.author.id in self.save['currently_playing']:
