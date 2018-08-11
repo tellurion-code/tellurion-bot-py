@@ -39,12 +39,15 @@ class MainClass():
         self.help="""\
  /gomoku challenge <@mention>
  => Défie le joueur mentionné pour une partie de Gomoku
-
+ 
+ /gomoku spectate <@mention>
+ => Permet d'observer la partie d'un joueur en jeu
+ 
  /gomoku leave
- => quitte la partie en cours
-
+ => Quitte la partie en cours
+ 
  <coordonnées>
- => joue aux coordonnées spécifiées si c'est votre tour et que les coordonnées sont valides
+ => Joue aux coordonnées spécifiées si c'est votre tour et que les coordonnées sont valides
  
 """
 
@@ -80,16 +83,29 @@ class MainClass():
                                         break
                                 black=random.choice([message.author, message.mentions[0]])
                                 white=[message.author, message.mentions[0]][[message.author, message.mentions[0]].index(black)-1]
-                                self.save['games'].update({gameid:{'lock':False, 'Black':black.id, 'White':white.id, 'hist':[]}})
+                                self.save['games'].update({gameid:{'lock':False, 'specs':[], 'Black':black.id, 'White':white.id, 'hist':[]}})
                                 self.save['player_game'].update({message.author.id:gameid, message.mentions[0].id:gameid})
                                 async def send_messages(condition, messagestr, imgfile):
                                     for user in condition:
                                         await user.send(messagestr, file=imgfile)
-                                asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]], "C'est à %s de commencer"%black.mention, self.gen_img_from_hist(self.save['games'][gameid]['hist'])), loop=self.client.loop)
+                                asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]+ self.save['games'][gameid]['specs']], "C'est à %s de commencer"%black.mention, self.gen_img_from_hist(self.save['games'][gameid]['hist'])), loop=self.client.loop)
                             else:
                                 await message.channel.send(message.author.mention + ", vous êtes déjà dans une partie, finissez celle là pour commencer. ^^")
                         else:
                             await message.channel.send(message.author.mention + ", le joueur mentionné est déjà en train de jouer...")
+                    except KeyError:
+                        pass
+                elif len(args)>1 and args[1]=='spectate' and not len(message.mentions)==0:
+                    try:
+                        if message.mentions[0].id in self.save['currently_playing']:
+                            gameid = self.save['player_game'][message.mentions[0].id]
+                            if not message.mentions[0].id in self.save['games'][gameid]['specs']:
+                                self.save['games'][gameid]['specs'].append(message.mentions[0].id)
+                                await message.author.send("Vous observez maintenant une partie.", file=self.gen_img_from_hist(self.save['games'][gameid]['hist']))
+                            else:
+                                await message.channel.send(message.author.mention + ", vous êtes déjà en train d'observer cette partie...")
+                        else:
+                            await message.channel.send(message.author.mention + ", le joueur mentionné n'est pas dans une partie...")
                     except KeyError:
                         pass
                 elif len(args)==2 and args[1]=='leave':
@@ -127,14 +143,14 @@ class MainClass():
                                 self.save['games'][gameid]['lock']=False
                                 res=self.gen_grid_from_hist(self.save['games'][gameid]['hist'], fin=True)
                                 if any(res):
-                                    messagestr="%s a gagné, bravo à lui !"%self.client.get_user(self.save['games'][gameid][['Black','White'][res.index(True)]]).mention
+                                    messagestr="%s a gagné, bravo à cette personne !"%self.client.get_user(self.save['games'][gameid][['Black','White'][res.index(True)]]).mention
                                 else:
-                                    messagestr="%s, c'est à votre tour !"%(self.client.get_user(self.save['games'][gameid]['White'] if self.save['games'][gameid]['Black']==message.author.id else self.save['games'][gameid]['Black']).mention)
+                                    messagestr="C'est au tour de %s !"%(self.client.get_user(self.save['games'][gameid]['White'] if self.save['games'][gameid]['Black']==message.author.id else self.save['games'][gameid]['Black']).mention)
                                 imgfile=self.gen_img_from_hist(self.save['games'][gameid]['hist'])
                                 async def send_messages(condition, messagestr, imgfile):
                                     for user in condition:
                                         await user.send(messagestr, file=imgfile)
-                                asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]], messagestr, imgfile), loop=self.client.loop)
+                                asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']] + self.save['games'][gameid]['specs']], messagestr, imgfile), loop=self.client.loop)
                                 if any(res):
                                     for playerid in [self.save['games'][gameid][color] for color in ['White', 'Black']]:
                                         self.save['currently_playing'].remove(playerid)
@@ -145,7 +161,7 @@ class MainClass():
                                 await testmessage.delete()
                             self.saveObject(self.save, 'save')
                 except KeyError:
-                    pass
+                    raise
     def is_win(self, grid, coords=None):
         def isWin(row,check):
             if row[check]!=None:
