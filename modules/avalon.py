@@ -56,7 +56,7 @@ async def commandHandler(client, message, avalonGame):
                 players=[]
                 for user in avalonGame.players :
                     players.append(user.display_name)
-                await client.send_message(message.channel, "Liste des joueurs :\n```PYTHON\n{0}```".format(players))
+                await client.send_message(message.channel, "Liste des joueurs ({0}):\n```PYTHON\n{1}```".format(len(players),players))
 
     #     -Kick player command :
             if message.content.startswith('/avalon players kick'):
