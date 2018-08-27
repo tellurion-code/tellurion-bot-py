@@ -80,7 +80,7 @@ async def commandHandler(client, message, avalonGame):
 
     #     -Roles list command-
             if message.content=='/avalon roles list':
-                await client.send_message(message.channel, "Liste des rôles :\n```PYTHON\n{0}```".format(str(avalonGame.roles)))
+                await client.send_message(message.channel, "Liste des rôles ({0}):\n```PYTHON\n{1}```".format(len(avalonGame.roles),str(avalonGame.roles)))
 
     #     -Add Role command-
             if message.content.startswith('/avalon roles add'):
