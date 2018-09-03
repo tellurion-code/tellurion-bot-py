@@ -32,6 +32,10 @@ class MainClass():
 
         if len(args)>1 and args[1]=='*':
             #Archive server
+            try:
+                await message.delete()
+            except:
+                pass
             call(['mkdir', '-p', 'storage/%s/'%moduleFiles + randtimev + '/'])
             for chan in message.channel.guild.channels:
                 try:
@@ -46,6 +50,7 @@ class MainClass():
             call(['bash', '-c', 'zip storage/%s/'%moduleFiles + zipname + ' storage/%s/'%moduleFiles + randtimev + '/' + '*'])
             with open('storage/%s/'%moduleFiles + zipname, 'rb') as messlogzip:
                 await message.author.send(file=discord.File(messlogzip, filename=zipname))
+
         elif len(args)==1:
             #Archive channel
             try:
