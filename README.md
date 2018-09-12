@@ -4,125 +4,52 @@ Bot discord Python pour le serveur officiel d'e-penser
 Ce bot est un supplément au [Bot JS](https://github.com/epenserdiscord/epenser-bot)
 
 
-Installer le bot
--
-```BASH
-user : git clone https://github.com/epenserdiscord/epenser-bot-py.git
-```
-Les dépendances seront installées au moment du lancement du bot.
+## Installer le bot en environnement de développement
 
-Lancer le bot
--
-```BASH
-user : export DISCORD_TOKEN=token Remplacez par le token de votre bot.
-user : cd path/to/epenser-bot-py/
-user : while true ; do git fetch --all; git reset --hard origin/master; make; done
+Si vous souhaitez développer sur le bot sans vouloir le lancer en continue, vous avez juste à cloner ce repository en utilisant
+```sh
+git clone https://github.com/epenserdiscord/epenser-bot-py.git
 ```
-On peut aussi lancer le bot sans la boucle :
-```BASH
-user : export DISCORD_TOKEN=token Remplacez par le token de votre bot.
-user : cd path/to/epenser-bot-py/
-user : make
-```
-Daemoniser le bot
--
-Le bot est actuellement organisé de manière à ce que la commande `/restart` quitte le programme et ce qu'un script à part vienne le relancer après avoir, par exemple, mis à jour les sources. Par conséquent, nous avons besoin d'un tel script. Celui qui est utilisé actuellement est séparé en plusieurs parties pour gérer les deux sections (JS et Python) avec :
-
-`/home/epenser/run` (marqué en executable) 
-```BASH
-#!/bin/bash
+Vous pouvez ensuite le lancer en utilisant
+```sh
 export DISCORD_TOKEN=token
-export GITHUB_TOKEN=token
-sleep 20  #C'est pour le réseau :3
-bash /home/epenser/pybot.sh &
-bash /home/epenser/jsbot.sh
+make
 ```
-On ne s'intéresse ici pas au `jsbot.sh` mais uniquement `pybot.sh` :
+Remplacez seulement `token` par le token de votre bot, disponible sur https://discordapp.com/developers/applications/me.
 
-`/home/epenser/pybot.sh`
-```BASH
-#!/bin/bash
-set -o pipefail
-cd /home/epenser/epenser-bot/epenser-bot-py/
-while [ true ] ;do
-date >> log
-echo "---- git pull ----" >> log
-echo >> log
-git fetch --all 2>&1 | tee -a log
-git reset --hard origin/master 2>&1 | tee -a log
-echo >> log
-./main.py 2>&1 | tee -a log
-done
+Vous pouvez aussi utiliser [python-dotenv](https://github.com/theskumar/python-dotenv) (`sudo pip install -U "python-dotenv[cli]"`) et lancer avec `dotenv run make` pour charger votre token à partir du fichier `.env`.
+
+Contenu du `.env` :
+```sh
+DISCORD_TOKEN=token
 ```
-Le serveur utilisé pour hoster le bot est un raspberry sous raspbian. Il est donc sous systemd. Je ne me suis pas intéressé à Open-RC même si j'aurais pu.
+**Attention**, ne jamais commit le fichier `.env`.
 
-`/etc/init.d/epenser`
-```BASH
-#!/bin/sh -e
-### BEGIN INIT INFO
-# Default-Start: 2 3 4 5
-# Default-Stop: 0 1 6
-### END INIT INFO
-DAEMON="/home/epenser/run"
-daemon_OPT=""
-DAEMONUSER="epenser"
-daemon_NAME="run"
+## Installer le bot en environnement de production
 
-PATH="/sbin:/bin:/usr/sbin:/usr/bin"
+Si vous souhaitez utiliser le bot dans un milieu de production, vous pouvez utiliser un script systemd comme ceci :
+On utilise ici [python-dotenv](https://github.com/theskumar/python-dotenv) pour charger les variables d'environnement à partir du fichier `.env`.
 
-test -x $DAEMON || exit 0
-
-. /lib/lsb/init-functions
-
-d_start () {
-log_daemon_msg "Starting system $daemon_NAME Daemon"
-start-stop-daemon --background --name $daemon_NAME --start --quiet --chuid $DAEMONUSER --exec $DAEMON -- $daemon_OPT
-log_end_msg $?
-}
-
-d_stop () {
-log_daemon_msg "Stopping system $daemon_NAME Daemon"
-start-stop-daemon --name $daemon_NAME --stop --retry 5 --quiet --name $daemon_NAME
-log_end_msg $?
-}
-
-case "$1" in
-
-start|stop)
-d_${1}
-;;
-
-restart|reload|force-reload)
-d_stop
-d_start
-;;
-
-force-stop)
-d_stop
-killall -q $daemon_NAME || true
-sleep 2
-killall -q -9 $daemon_NAME || true
-;;
-
-status)
-status_of_proc "$daemon_NAME" "$DAEMON" "system-wide $daemon_NAME" && exit 0 || exit $?
-;;
-*)
-echo "Usage: /etc/init.d/$daemon_NAME {start|stop|force-stop|restart|reload|force-reload|status}"
-exit 1
-;;
-esac
-exit 0
 ```
-Pensez à remplacer les parties spécifiques.
+[Unit]
+Description=Epenser bot python
 
-(Il y a probablement des erreurs dans cette partie, j'ai jamais rien compris à systemD :( )
+[Service]
+Type=simple
+PIDFile=/run/epenser-bot-py.pid
+ExecStart=/usr/local/bin/dotenv run /user/bin/make 
+User=user
+Group=user
+WorkingDirectory=/path/to/epenser-bot-py
+Restart=always
+RestartSec=10
 
-```BASH
-root : systemctl daemon-reload
-root : systemctl enable epenser.service
-root : systemctl add-wants $(systemctl get-default) epenser.service
+[Install]
+WantedBy=multi-user.target
 ```
-En théorie, à partir de là, le service est installé. Si on redémarre le système, le service se lancera au démarrage.
-Seul problème : Impossible de l'arrêter.
-TODO : Modifier le script pour qu'on puisse l'arrêter.
+Remplacez `user` par l'utilisateur que vous utilisez, et `/path/to/epenser-bot-py` par l'emplacement du repository git.
+
+Ce fichier doit être écrit à l'emplacement `/etc/systemd/system/epenser-bot-py.service`.
+Vous devez ensuite lancer `sudo systemctl enable epenser-bot-py.service` pour activer le service.
+
+Le bot est installé, vous pouvez le démarrer avec `sudo service epenser-bot-py start`, le stopper, le redémarrer ou encore voir son status. Le bot redémarrera automatiquement et sera lancé automatiquement lors d'un redémarrage de la machine. 
