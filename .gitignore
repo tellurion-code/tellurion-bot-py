@@ -46,3 +46,5 @@ __pycache__/*
 .directory
 libs/*
 *.sha512
+
+.env
