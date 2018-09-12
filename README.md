@@ -30,9 +30,9 @@ DISCORD_TOKEN=token
 Si vous souhaitez utiliser le bot dans un milieu de production, vous pouvez utiliser un script systemd comme ceci :
 On utilise ici [python-dotenv](https://github.com/theskumar/python-dotenv) pour charger les variables d'environnement à partir du fichier `.env`.
 
-```toml
+```
 [Unit]
-Description=Jupyter Notebook
+Description=Epenser bot python
 
 [Service]
 Type=simple
