@@ -10,5 +10,6 @@ import modules.ekiller
 import modules.ekiller2
 import modules.testing
 import modules.avalon
+import modules.nessos
 import modules.newuser
 import modules.saving

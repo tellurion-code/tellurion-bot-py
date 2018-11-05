@@ -25,6 +25,10 @@ if modules.saving.saveExists("avalonGame"):
     avalonGame=modules.saving.loadObject("avalonGame")
 else:
     avalonGame=modules.avalon.AvalonSave()
+if modules.saving.saveExists("nessosGame"):
+    nessosGame=modules.saving.loadObject("nessosGame")
+else:
+    nessosGame=modules.nessos.Nessos()
 
 #funcs
 @client.event
@@ -79,6 +83,8 @@ async def on_message(message):
             await modules.testing.testsHandler(client, message)
         if settings.avalon.enabled:
             await modules.avalon.commandHandler(client, message, avalonGame)
+        if settings.nessos.enabled:
+            await modules.nessos.commandHandler(client, message, nessosGame)
 
 @client.event
 async def on_message_delete(message):
@@ -91,11 +97,16 @@ async def on_reaction_add(reaction, user):
         await modules.hitler.voteHandler(client, reaction, user, hitlerGame)
     if settings.avalon.enabled:
         await modules.avalon.reactionHandler(client, reaction, user, avalonGame, 'add')
+    if settings.nessos.enabled:
+        await modules.nessos.reactionHandler(client, reaction, user, nessosGame, 'add')
 
 @client.event
 async def on_reaction_remove(reaction, user):
     if settings.avalon.enabled:
         await modules.avalon.reactionHandler(client, reaction, user, avalonGame, 'remove')
+    if settings.nessos.enabled:
+        await modules.nessos.reactionHandler(client, reaction, user, nessosGame, 'remove')
+
 @client.event
 async def on_error(event, *args, **kwargs):
     if settings.embederror.enabled :
