@@ -1,2 +1,2 @@
 enabled = True
-debug = False
+debug = True
