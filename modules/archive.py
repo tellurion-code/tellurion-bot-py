@@ -45,3 +45,26 @@ async def specific(client, message):
         except:
             await client.send_message(message.author, "```FAILED```")
             raise
+
+async def specificId(client, message):
+    randtimev=str(time.time())
+    if message.content.startswith("/archive") and (not (message.author == client.user)) and await utils.perms.hasrole(message.author, settings.archive.specificAuth) :
+        call(['mkdir', '-p', 'tmp/arch/' + randtimev + '/'])
+        id=message.content.split(' ')[1]
+        try :
+            await client.delete_message(message)
+        except:
+            pass
+        for channel in client.get_all_channels():
+            if chan.id == id
+            chan = channel
+        try:
+            with open("tmp/arch/" + randtimev + "/" + chan.name + "[" + str(chan.id) + "].txt", "w") as messlog:
+                async for rec in client.logs_from(chan, limit=100000) :
+                    messlog.write("[" + chan.name + "]" +  " " + str(rec.timestamp.strftime('%Y-%m-%d %H:%M:%S')) + " " + rec.author.name + "#" + rec.author.discriminator + "> " + rec.content + "\n")
+                    messlog.write("	Attachments : " + str(rec.attachments) + "\n\n")
+            
+            await client.send_file(message.author, "tmp/arch/" + randtimev + '/' + chan.name + "[" + str(chan.id) + "].txt")
+        except:
+            await client.send_message(message.author, "```FAILED```")
+            raise
