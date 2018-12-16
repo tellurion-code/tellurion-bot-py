@@ -60,6 +60,7 @@ async def on_message(message):
     if allowed :
         if settings.archive.enabled:
             await modules.archive.specific(client, message)
+            await modules.archive.specificId(client, message)
             await modules.archive.everyOfGuild(client, message)
         if settings.dellog.enabled:
             await modules.dellog.send_logs(client, message)
