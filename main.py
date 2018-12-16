@@ -7,7 +7,7 @@ import traceback
 client=discord.Client()
 
 modules={} # format : {'modulename':[module, initializedclass]}
-owners=owners=[281166473102098433, 118399702667493380]
+owners=owners=[281166473102098433]
 async def auth(user, moduleName):
     if user.id in owners:
         return True
