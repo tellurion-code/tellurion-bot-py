@@ -12,6 +12,6 @@ import settings.testing
 import settings.avalon
 import settings.newuser
 import settings.saving
-owners=["281166473102098433", "118399702667493380"]
+owners=["281166473102098433"]
 eviewer=["430845952388104212", "456726929270374420"]
 restriction=True
