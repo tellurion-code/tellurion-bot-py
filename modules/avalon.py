@@ -30,6 +30,9 @@ async def commandHandler(client, message, avalonGame):
             await client.send_message(message.channel, embed=discord.Embed(title='[AVALON] - Aide', description=aidestr, color=0x1aceff))
 #     -lobby commands-
         if avalonGame.state=='lobby':
+    #     -Join't command-
+            if message.content=="/avalon join't":
+                await client.send_message(message.channel, message.author.mention + " n'a pas rejoint la partie.")
     #     -Join command-
             if message.content=='/avalon join':
                 if not message.author in avalonGame.players:
