@@ -31,7 +31,7 @@ async def commandHandler(client, message, avalonGame):
 #     -lobby commands-
         if avalonGame.state=='lobby':
     #     -Join't command-
-            if message.content=="/avalon join't":
+            if message.content in ["/avalon join't","/avalon't"]:
                 await client.send_message(message.channel, message.author.mention + " n'a pas rejoint la partie.")
     #     -Join command-
             if message.content=='/avalon join':
