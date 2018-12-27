@@ -10,7 +10,7 @@ import modules.saving
 async def commandHandler(client, message, avalonGame):
     if message.content.startswith('/avalon'):
 #     -general commands-
-        if message.content == '/avalon reset' and await utils.perms.hasrole(message.author, "1"):
+        if message.content == '/avalon reset' and await utils.perms.hasrole(message.author, ["431043517217898496","456142467666804746"]):
             avalonGame.__init__()
             await client.send_message(message.channel, message.author.mention + "La partie a été réinitialisée.")
         if message.content == '/avalon help' :
