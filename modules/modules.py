@@ -15,7 +15,7 @@ class MainClass():
         self.modules = modules
         self.owners = owners
         self.events=['on_message', 'on_ready'] #events list
-        self.command="/modules" #command prefix (can be empty to catch every single messages)
+        self.command="/module" #command prefix (can be empty to catch every single messages)
 
         self.name="Modules"
         self.description="Module de gestion des modules"
