@@ -26,11 +26,23 @@ class MainClass():
  /archive *
  => Archive tous les salons du serveur dans lequel la commande a été effectuée
 """
+    async def auth(self,user, role_list):
+        if user.id in self.owners:
+            return True
+        for guild in self.client.guilds:
+            if guild.get_member(user.id):
+                for roleid in role_list:
+                    if roleid in [r.id for r in guild.get_member(user.id).roles]:
+                        return True
+                    
     async def on_message(self, message):
         randtimev=str(time.time())
         args=message.content.split()
 
         if len(args)>1 and args[1]=='*':
+            if not await self.auth(message.author, [522918472548745217]):
+                await message.channel.send("Vous n'avez pas les permissions pour effectuer une sauvegarde complète.")
+                return
             #Archive server
             try:
                 await message.delete()

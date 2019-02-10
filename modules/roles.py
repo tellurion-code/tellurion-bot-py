@@ -12,7 +12,7 @@ class MainClass():
         self.name="Roles"
         self.description="Module d'auto-attribution des rôles"
         self.interactive=True
-        self.color=0x000000
+        self.color=0xffb593
         self.help="""\
  /role list
  => Affiche la liste des rôles
@@ -25,6 +25,7 @@ class MainClass():
             "clash-of-coders":[496372436967882774, "Permet d'être notifié pour les parties de clash-of-code"],
             "civ-e-lization":[513098739515392022, "Donne accès aux salons liés aux parties de Civilization"],
             }
+
     async def on_message(self, message):
         args = message.content.split()
         if len(args)==2:
