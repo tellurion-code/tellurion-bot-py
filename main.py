@@ -1,13 +1,12 @@
 #!/usr/bin/python3
 import discord
-import asyncio
 import os
 import importlib
 import traceback
-client=discord.Client()
+client = discord.Client()
 
 modules={} # format : {'modulename':[module, initializedclass]}
-owners=owners=[281166473102098433]
+owners=[281166473102098433]
 async def auth(user, moduleName):
     if user.id in owners:
         return True
@@ -20,6 +19,8 @@ async def auth(user, moduleName):
             for roleid in modules[moduleName][1].authlist:
                 if roleid in [r.id for r in guild.get_member(user.id).roles]:
                     return True
+
+
 @client.event
 async def on_ready():
     print("Bienvenue, {0.user}, l'heure est venue d'e-penser.".format(client))

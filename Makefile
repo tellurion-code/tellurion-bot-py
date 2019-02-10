@@ -6,6 +6,12 @@ run: storage/libs/python storage/libs/finaltouch
 	export PYTHONPATH=$(mainDir)/storage/libs/python:${PYTHONPATH};\
 	export LIBGIT2=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/;\
 	python3 -u main.py
+python: storage/libs/python storage/libs/finaltouch
+	cd $(mainDir);\
+	export LD_LIBRARY_PATH=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/lib;\
+	export PYTHONPATH=$(mainDir)/storage/libs/python:${PYTHONPATH};\
+	export LIBGIT2=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/;\
+	python3
 storage/libs/finaltouch: storage/libs/python
 	touch storage/libs/python storage/libs/get-pip.py
 storage/libs/libgit2: storage/libs

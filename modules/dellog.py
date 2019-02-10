@@ -27,7 +27,10 @@ class MainClass():
 
     async def on_message_delete(self, message):
         with open("storage/%s/delLog.txt"%moduleFiles, "a") as dellogfile:
-            dellogfile.write(str(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')) + " [" + str(message.channel.name) + "]" + " " + str(message.created_at.strftime('%Y-%m-%d %H:%M:%S')) +  " " + message.author.name + "#" + message.author.discriminator + "> " + str(message.content) + "\n")
+            if message.channel is discord.TextChannel:
+                dellogfile.write(str(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')) + " [" + str(message.channel.name) + "]" + " " + str(message.created_at.strftime('%Y-%m-%d %H:%M:%S')) +  " " + message.author.name + "#" + message.author.discriminator + "> " + str(message.content) + "\n")
+            else:
+                dellogfile.write(str(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')) + " [" + str("_DM_") + "]" + " " + str(message.created_at.strftime('%Y-%m-%d %H:%M:%S')) +  " " + message.author.name + "#" + message.author.discriminator + "> " + str(message.content) + "\n")
             dellogfile.write("	Attachments : " + str(message.attachments) + "\n\n")
 
     async def on_message(self, message):
