@@ -45,9 +45,10 @@ class MainClass():
         elif len(args)==2 and args[1] in list(self.modules.keys()) and self.modules[args[1]][1].interactive and await self.auth(message.author, args[1]):
             await message.channel.send(embed=discord.Embed(title="[{0}] - Aide".format(args[1].capitalize()), description=self.modules[args[1]][1].help, color=self.modules[args[1]][1].color))
         elif len(args)==2 and args[1]=='all':
-            for moduleName in list(self.modules.keys()):
-                if self.modules[moduleName][1].interactive and await self.auth(message.author, moduleName):
-                    await message.channel.send(embed=discord.Embed(title="[{0}] - Aide".format(moduleName.capitalize()), description=self.modules[moduleName][1].help, color=self.modules[moduleName][1].color))
+            async with message.channel.typing():
+                for moduleName in list(self.modules.keys()):
+                    if self.modules[moduleName][1].interactive and await self.auth(message.author, moduleName):
+                        await message.channel.send(embed=discord.Embed(title="[{0}] - Aide".format(moduleName.capitalize()), description=self.modules[moduleName][1].help, color=self.modules[moduleName][1].color))
         else:
             await self.modules['help'][1].send_help(message.channel, self)
 
