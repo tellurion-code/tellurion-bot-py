@@ -64,7 +64,7 @@ class MainClass():
                     to_append[2]+=time.mktime(message.created_at.timetuple()) - time.mktime(lastmessage.created_at.timetuple())
                     i+=1
             if i!=0:
-                to_append[2]=to_append[2]/i/60/60
+                to_append[2]=to_append[2]/(i*3600)
             else:
                 to_append[2]=0
             stats.append(to_append)
