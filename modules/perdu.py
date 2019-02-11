@@ -72,7 +72,7 @@ class MainClass():
         args=message.content.split()
         if len(args)==1:
             async with message.channel.typing():
-                await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores", description='\n'.join(["%s : %s a **perdu %s fois** durant les %s derniers jours à en moyenne **%s heures d'intervalle.**"%(["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],user[0],user[1],30,round(user[2],1)) for i,user in enumerate(await self.fetch_stats(30, message.created_at))]), color=self.color))
+                await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores", description='\n'.join(["%s : %s a **perdu %s fois** durant les %s derniers jours à en moyenne **%s heures d'intervalle.**"%(["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],user[0],user[1],7,round(user[2],1)) for i,user in enumerate(await self.fetch_stats(7, message.created_at))]), color=self.color))
         elif args[1]=="all":
             async with message.channel.typing():
                 await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores", description='\n'.join(["%s : %s a **perdu %s fois** depuis la création du salon à en moyenne **%s heures d'intervalle.**"%(["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],user[0],user[1],round(user[2],1)) for i,user in enumerate(await self.fetch_stats(1e1000, message.created_at))]), color=self.color))
