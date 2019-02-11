@@ -58,15 +58,12 @@ class MainClass():
             lastmessage=None
             i=0
             for message in user[1][1::] :
-                if lastmessage is None:
-                    lastmessage=message
-                else:
+                if lastmessage:
                     to_append[2]+=time.mktime(message.created_at.timetuple()) - time.mktime(lastmessage.created_at.timetuple())
                     i+=1
-            if i!=0:
+                lastmessage=message
+            if i:
                 to_append[2]=to_append[2]/(i*3600)
-            else:
-                to_append[2]=0
             stats.append(to_append)
         return stats[:10:]
 
