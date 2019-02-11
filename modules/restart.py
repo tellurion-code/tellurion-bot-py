@@ -12,5 +12,5 @@ async def restart_py(client, message):
                 await client.delete_message(message)
             except:
                 pass
-            await client.send_message(message.channel, message.author.mention + ", Le module Python va redémarrer...")
+            #await client.send_message(message.channel, message.author.mention + ", Le module Python va redémarrer...")
             await client.logout()
