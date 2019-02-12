@@ -19,7 +19,8 @@ class MainClass():
     async def on_message(self, message):
         args=message.content.split(" ")
         if args[0]=='/restart':
-            await message.channel.send(message.author.mention + ", le bot va redémarrer...")
+            if 'py' in args:
+                await message.channel.send(message.author.mention + ", Le bot va redémarrer...")
             await self.client.logout()
         else:
             await self.modules['help'][1].send_help(message.channel, self)

@@ -58,13 +58,8 @@ class MainClass():
             to_append=[user[1][0], len(user[1])-1, 0] #user mention, number of losses, average time between each loss
             lastmessage=None
             i=0
-            for message in user[1][1::] :
-                if lastmessage:
-                    to_append[2]+=time.mktime(message.created_at.timetuple()) - time.mktime(lastmessage.created_at.timetuple())
-                    i+=1
-                lastmessage=message
-            if i:
-                to_append[2]=to_append[2]/(i*3600)
+            if len(user[1][1::])>1:
+                to_append[2]=(time.mktime(user[1][1::][-1].created_at.timetuple()) - time.mktime(user[1][1::][0].created_at.timetuple()))/((len(user[1][1::])-1)*3600)
             stats.append(to_append)
         return stats[:10:]
 
