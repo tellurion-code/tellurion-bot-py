@@ -12,6 +12,7 @@ class MainClass():
         self.command="/perdu" #command prefix (can be empty to catch every single messages)
 
         self.channel=431016132040851459
+        self.lost_role=544845665910390784 #grand_perdant
 
         self.name="Perdu"
         self.description="Module donnant les statistiques sur les perdants"
@@ -54,7 +55,7 @@ class MainClass():
         sorted_by_losses=sorted(messagedicreduced.items(), key=lambda x: len(x[1]))[::-1]
         stats=[]
         for user in sorted_by_losses:
-            to_append=[user[1][0].mention, len(user[1])-1, 0] #user mention, number of losses, average time between each loss
+            to_append=[user[1][0], len(user[1])-1, 0] #user mention, number of losses, average time between each loss
             lastmessage=None
             i=0
             for message in user[1][1::] :
@@ -72,14 +73,20 @@ class MainClass():
         args=message.content.split()
         if len(args)==1:
             async with message.channel.typing():
-                await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores", description='\n'.join(["%s : %s a **perdu %s fois** durant les %s derniers jours à en moyenne **%s heures d'intervalle.**"%(["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],user[0],user[1],7,round(user[2],1)) for i,user in enumerate(await self.fetch_stats(7, message.created_at))]), color=self.color))
+                stats=await self.fetch_stats(7, message.created_at)
+                if not self.lost_role in [role.id for role in stats[0][0].roles]:
+                    for member in self.client.get_all_members():
+                        if self.lost_role in [role.id for role in member.roles]:
+                            await member.remove_roles(discord.utils.get(member.guild.roles, id=self.lost_role))
+                    await stats[0][0].add_roles(discord.utils.get(stats[0][0].guild.roles, id=self.lost_role))
+                await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores", description='\n'.join(["%s : %s a **perdu %s fois** durant les %s derniers jours à en moyenne **%s heures d'intervalle.**"%(["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],user[0].mention,user[1],7,round(user[2],1)) for i,user in enumerate(stats)]), color=self.color))
         elif args[1]=="all":
             async with message.channel.typing():
-                await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores", description='\n'.join(["%s : %s a **perdu %s fois** depuis la création du salon à en moyenne **%s heures d'intervalle.**"%(["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],user[0],user[1],round(user[2],1)) for i,user in enumerate(await self.fetch_stats(1e1000, message.created_at))]), color=self.color))
+                await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores", description='\n'.join(["%s : %s a **perdu %s fois** depuis la création du salon à en moyenne **%s heures d'intervalle.**"%(["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],user[0].mention,user[1],round(user[2],1)) for i,user in enumerate(await self.fetch_stats(1e1000, message.created_at))]), color=self.color))
         else:
             try:
                 int(args[1])
                 async with message.channel.typing():
-                    await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores", description='\n'.join(["%s : %s a **perdu %s fois** durant les %s derniers jours à en moyenne **%s heures d'intervalle.**"%(["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],user[0],user[1],int(args[1]),round(user[2],1)) for i,user in enumerate(await self.fetch_stats(int(args[1]), message.created_at))]), color=self.color))
+                    await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores", description='\n'.join(["%s : %s a **perdu %s fois** durant les %s derniers jours à en moyenne **%s heures d'intervalle.**"%(["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],user[0].mention,user[1],int(args[1]),round(user[2],1)) for i,user in enumerate(await self.fetch_stats(int(args[1]), message.created_at))]), color=self.color))
             except ValueError:
                 await self.modules['help'][1].send_help(message.channel, self)
