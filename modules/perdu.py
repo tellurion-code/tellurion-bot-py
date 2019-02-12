@@ -46,7 +46,7 @@ class MainClass():
             messagelist2=[messagelist[0].author]
             lastmessage=None
             for message in messagelist:
-                if (time.mktime(today.timetuple()) - time.mktime(message.created_at.timetuple()))/60/60/24 < upto and (lastmessage is None or ((time.mktime(message.created_at.timetuple())-time.mktime(lastmessage.created_at.timetuple()))/60 > 30)):
+                if (time.mktime(today.timetuple()) - time.mktime(message.created_at.timetuple()))/60/60/24 < upto and (lastmessage is None or ((time.mktime(message.created_at.timetuple())-time.mktime(lastmessage.created_at.timetuple()))/60 > 30)) and (not message.author.id==self.client.user.id):
                     messagelist2.append(message)
                     lastmessage=message
             messagelist=messagelist2
