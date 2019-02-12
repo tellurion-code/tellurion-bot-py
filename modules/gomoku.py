@@ -43,6 +43,9 @@ class MainClass():
  /gomoku spectate <@mention>
  => Permet d'observer la partie d'un joueur en jeu
  
+ /gomoku spectate stop
+ => Permet d'arrêter d'observer une partie
+ 
  /gomoku leave
  => Quitte la partie en cours
  
@@ -88,6 +91,8 @@ class MainClass():
                                 async def send_messages(condition, messagestr, imgfile):
                                     for user in condition:
                                         await user.send(messagestr, file=imgfile)
+                                print([self.save['games'][gameid][color] for color in ['Black','White']]+ self.save['games'][gameid]['specs'])
+                                print([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]+ self.save['games'][gameid]['specs']])
                                 asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]+ self.save['games'][gameid]['specs']], "C'est à %s de commencer"%black.mention, self.gen_img_from_hist(self.save['games'][gameid]['hist'])), loop=self.client.loop)
                             else:
                                 await message.channel.send(message.author.mention + ", vous êtes déjà dans une partie, finissez celle là pour commencer. ^^")
@@ -95,25 +100,37 @@ class MainClass():
                             await message.channel.send(message.author.mention + ", le joueur mentionné est déjà en train de jouer...")
                     except KeyError:
                         pass
-                elif len(args)>1 and args[1]=='spectate' and not len(message.mentions)==0:
-                    try:
-                        if message.mentions[0].id in self.save['currently_playing']:
-                            gameid = self.save['player_game'][message.mentions[0].id]
-                            if not message.mentions[0].id in self.save['games'][gameid]['specs']:
-                                self.save['games'][gameid]['specs'].append(message.mentions[0].id)
-                                await message.author.send("Vous observez maintenant une partie.", file=self.gen_img_from_hist(self.save['games'][gameid]['hist']))
-                            else:
-                                await message.channel.send(message.author.mention + ", vous êtes déjà en train d'observer cette partie...")
+                elif len(args)>1 and args[1]=='spectate' and (len(message.mentions)!=0 or "stop" in args):
+                    if "stop" in args:
+                        if message.author.id in [inner for outer in [game['specs'] for game in self.save['games'].values()] for inner in outer]:
+                            for gameid in self.save['games'].keys():
+                                if message.author.id in self.save['games'][gameid]['specs']:
+                                    self.save['games'][gameid]['specs'].remove(message.author.id)
+                                    await message.channel.send("Vous n'observez plus la partie n°%s"%gameid)
                         else:
-                            await message.channel.send(message.author.mention + ", le joueur mentionné n'est pas dans une partie...")
-                    except KeyError:
-                        pass
+                            await message.channel.send("Vous n'observez aucune partie.")
+                    else:
+                        try:
+                            if message.mentions[0].id in self.save['currently_playing']:
+                                gameid = self.save['player_game'][message.mentions[0].id]
+                                if not message.author.id in self.save['games'][gameid]['specs']:
+                                    self.save['games'][gameid]['specs'].append(message.author.id)
+                                    await message.author.send("Vous observez maintenant une partie.", file=self.gen_img_from_hist(self.save['games'][gameid]['hist']))
+                                else:
+                                    await message.channel.send(message.author.mention + ", vous êtes déjà en train d'observer cette partie...")
+                            else:
+                                await message.channel.send(message.author.mention + ", le joueur mentionné n'est pas dans une partie...")
+                        except KeyError:
+                            pass
                 elif len(args)==2 and args[1]=='leave':
                     if message.author.id in self.save['currently_playing']:
                         gameid=self.save['player_game'][message.author.id]
                         for playerid in [self.save['games'][gameid][color] for color in ['White', 'Black']]:
                             self.save['currently_playing'].remove(playerid)
-                            del self.save['player_game'][playerid]
+                            try:
+                                del self.save['player_game'][playerid]
+                            except KeyError:
+                                pass
                             await self.client.get_user(playerid).send("La partie de Gomoku a été annulée.")
                         del self.save['games'][gameid]
                     else:
@@ -124,11 +141,12 @@ class MainClass():
                 try:
                     gameid = self.save['player_game'][message.author.id]
                     test=None
+                    test2=None
                     if self.save['games'][gameid]['Black']==message.author.id:
                         test=len(self.save['games'][gameid]['hist'])%2==0
-                    else:
-                        test=len(self.save['games'][gameid]['hist'])%2!=0
-                    if test:
+                    if self.save['games'][gameid]['White']==message.author.id:
+                        test2=len(self.save['games'][gameid]['hist'])%2!=0
+                    if test or test2:
                         test=self.get_valid_coords(message.content, self.save['games'][gameid]['hist'])
                         if test and not self.save['games'][gameid]['lock']:
                             self.save['games'][gameid]['lock']=True
@@ -150,6 +168,8 @@ class MainClass():
                                 async def send_messages(condition, messagestr, imgfile):
                                     for user in condition:
                                         await user.send(messagestr, file=imgfile)
+                                print([self.save['games'][gameid][color] for color in ['Black','White']]+ self.save['games'][gameid]['specs'])
+                                print([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']]+ self.save['games'][gameid]['specs']])
                                 asyncio.ensure_future(send_messages([self.client.get_user(id) for id in [self.save['games'][gameid][color] for color in ['Black','White']] + self.save['games'][gameid]['specs']], messagestr, imgfile), loop=self.client.loop)
                                 if any(res):
                                     for playerid in [self.save['games'][gameid][color] for color in ['White', 'Black']]:
