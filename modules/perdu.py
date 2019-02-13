@@ -46,7 +46,7 @@ class MainClass():
             messagelist2=[messagelist[0].author]
             lastmessage=None
             for message in messagelist:
-                if (time.mktime(today.timetuple()) - time.mktime(message.created_at.timetuple()))/60/60/24 < upto and (lastmessage is None or ((time.mktime(message.created_at.timetuple())-time.mktime(lastmessage.created_at.timetuple()))/60 > 30)) and (not message.author.id==self.client.user.id):
+                if (time.mktime(today.timetuple()) - time.mktime(message.created_at.timetuple()))/60/60/24 < upto and (lastmessage is None or ((time.mktime(message.created_at.timetuple())-time.mktime(lastmessage.created_at.timetuple()))/60 > 26)) and (not message.author.id==self.client.user.id):
                     messagelist2.append(message)
                     lastmessage=message
             messagelist=messagelist2
@@ -61,7 +61,7 @@ class MainClass():
             if len(user[1][1::])>1:
                 to_append[2]=(time.mktime(user[1][1::][-1].created_at.timetuple()) - time.mktime(user[1][1::][0].created_at.timetuple()))/((len(user[1][1::])-1)*3600)
             stats.append(to_append)
-        return stats[:10:]
+        return sorted(sorted(stats[:10:], key=lambda x: x[2]), key=lambda x: x[1])
 
 
     async def on_message(self, message):
