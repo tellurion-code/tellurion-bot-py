@@ -61,7 +61,7 @@ class MainClass():
             if len(user[1][1::])>1:
                 to_append[2]=(time.mktime(user[1][1::][-1].created_at.timetuple()) - time.mktime(user[1][1::][0].created_at.timetuple()))/((len(user[1][1::])-1)*3600)
             stats.append(to_append)
-        return sorted(sorted(stats[:10:], key=lambda x: x[2])[::-1], key=lambda x: x[1])[::-1]
+        return sorted(sorted(stats, key=lambda x: x[2])[::-1], key=lambda x: x[1])[::-1][:10:]
 
 
     async def on_message(self, message):
