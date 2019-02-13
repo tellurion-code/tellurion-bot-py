@@ -13,6 +13,7 @@ class MainClass():
 
         self.channel=431016132040851459
         self.lost_role=544845665910390784 #grand_perdant
+        self.save={'last_occurence':None, 'messagedic':None }#To avoid calling the API each time.
 
         self.name="Perdu"
         self.description="Module donnant les statistiques sur les perdants"
@@ -29,29 +30,31 @@ class MainClass():
  => Donne les statistiques des perdants depuis la création du salon
 """
     async def fetch_stats(self, upto, today): #upto in days (integer)
+        if (not self.save['messagedic']) or (time.mktime(today.timetuple()) - time.mktime(self.save['last_occurence'].timetuple()))/60 > 15:
+            for channel in self.client.get_all_channels():
+                if channel.id==self.channel:
+                    break
 
-        for channel in self.client.get_all_channels():
-            if channel.id==self.channel:
-                break
-
-        messagedic={}
-        async for message in channel.history(limit=None):
-            if not message.author.id in messagedic.keys(): 
-                messagedic[message.author.id]=[message]
-            else:
-                messagedic[message.author.id].append(message)
-        messagedicreduced={}
-        for userid,messagelist in messagedic.items():
-            messagelist=messagelist[::-1]
-            messagelist2=[messagelist[0].author]
-            lastmessage=None
-            for message in messagelist:
-                if (time.mktime(today.timetuple()) - time.mktime(message.created_at.timetuple()))/60/60/24 < upto and (lastmessage is None or ((time.mktime(message.created_at.timetuple())-time.mktime(lastmessage.created_at.timetuple()))/60 > 26)) and (not message.author.id==self.client.user.id):
-                    messagelist2.append(message)
-                    lastmessage=message
-            messagelist=messagelist2
-            del messagelist2
-            messagedicreduced.update({userid:messagelist})
+            messagedic={}
+            async for message in channel.history(limit=None):
+                if not message.author.id in messagedic.keys(): 
+                    messagedic[message.author.id]=[message]
+                else:
+                    messagedic[message.author.id].append(message)
+            messagedicreduced={}
+            for userid,messagelist in messagedic.items():
+                messagelist=messagelist[::-1]
+                messagelist2=[messagelist[0].author]
+                lastmessage=None
+                for message in messagelist:
+                    if (time.mktime(today.timetuple()) - time.mktime(message.created_at.timetuple()))/60/60/24 < upto and (lastmessage is None or ((time.mktime(message.created_at.timetuple())-time.mktime(lastmessage.created_at.timetuple()))/60 > 26)) and (not message.author.id==self.client.user.id):
+                        messagelist2.append(message)
+                        lastmessage=message
+                messagelist=messagelist2
+                del messagelist2
+                messagedicreduced.update({userid:messagelist})
+            self.save.update({'messagedic':messagedicreduced, 'last_occurence':today})
+        messagedicreduced=self.save['messagedic']
         sorted_by_losses=sorted(messagedicreduced.items(), key=lambda x: len(x[1]))[::-1]
         stats=[]
         for user in sorted_by_losses:
