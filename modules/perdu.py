@@ -30,31 +30,33 @@ class MainClass():
  => Donne les statistiques des perdants depuis la création du salon
 """
     async def fetch_stats(self, upto, today): #upto in days (integer)
+        messagedic={}
         if (not self.save['messagedic']) or (time.mktime(today.timetuple()) - time.mktime(self.save['last_occurence'].timetuple()))/60 > 15:
             for channel in self.client.get_all_channels():
                 if channel.id==self.channel:
                     break
 
-            messagedic={}
             async for message in channel.history(limit=None):
                 if not message.author.id in messagedic.keys(): 
                     messagedic[message.author.id]=[message]
                 else:
                     messagedic[message.author.id].append(message)
-            messagedicreduced={}
-            for userid,messagelist in messagedic.items():
-                messagelist=messagelist[::-1]
-                messagelist2=[messagelist[0].author]
-                lastmessage=None
-                for message in messagelist:
-                    if (time.mktime(today.timetuple()) - time.mktime(message.created_at.timetuple()))/60/60/24 < upto and (lastmessage is None or ((time.mktime(message.created_at.timetuple())-time.mktime(lastmessage.created_at.timetuple()))/60 > 26)) and (not message.author.id==self.client.user.id):
-                        messagelist2.append(message)
-                        lastmessage=message
-                messagelist=messagelist2
-                del messagelist2
-                messagedicreduced.update({userid:messagelist})
-            self.save.update({'messagedic':messagedicreduced, 'last_occurence':today})
-        messagedicreduced=self.save['messagedic']
+            self.save.update({'messagedic':messagedic, 'last_occurence':today})
+        else:
+            messagedic=self.save['messagedic']
+        messagedicreduced={}
+        for userid,messagelist in messagedic.items():
+            messagelist=messagelist[::-1]
+            messagelist2=[messagelist[0].author]
+            lastmessage=None
+            for message in messagelist:
+                if (time.mktime(today.timetuple()) - time.mktime(message.created_at.timetuple()))/60/60/24 < upto and (lastmessage is None or ((time.mktime(message.created_at.timetuple())-time.mktime(lastmessage.created_at.timetuple()))/60 > 26)) and (not message.author.id==self.client.user.id):
+                    messagelist2.append(message)
+                    lastmessage=message
+            messagelist=messagelist2
+            del messagelist2
+            messagedicreduced.update({userid:messagelist})
+
         sorted_by_losses=sorted(messagedicreduced.items(), key=lambda x: len(x[1]))[::-1]
         stats=[]
         for user in sorted_by_losses:
