@@ -4,7 +4,7 @@ import os
 import importlib
 import traceback
 client = discord.Client()
-
+prefix='/'
 modules={} # format : {'modulename':[module, initializedclass]}
 owners=[281166473102098433]
 async def auth(user, moduleName):
@@ -39,7 +39,7 @@ async def on_ready():
         #initialisation
         for moduleName in list(modules.keys()):
             try:
-                modules[moduleName].append(modules[moduleName][0].MainClass(client, modules, owners))
+                modules[moduleName].append(modules[moduleName][0].MainClass(client, modules, owners, prefix))
                 print("Module {0} initialisé.".format(moduleName))
             except:
                 print("[ERROR] Le module {0} n'a pas pu être initialisé.".format(moduleName))
@@ -50,7 +50,7 @@ async def on_ready():
             modules.update({'modules':[importlib.import_module('modules.' + 'modules')]})
             print("Module {0} chargé.".format('modules'))
             try:
-                modules['modules'].append(modules['modules'][0].MainClass(client, modules, owners))
+                modules['modules'].append(modules['modules'][0].MainClass(client, modules, owners, prefix))
                 print("Module {0} initialisé.".format('modules'))
                 try:
                     await modules['modules'][1].on_ready()

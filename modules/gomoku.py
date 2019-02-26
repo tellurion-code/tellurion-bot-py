@@ -22,13 +22,14 @@ class MainClass():
 
     def saveExists(self, objectname):
         return os.path.isfile("storage/%s/"%moduleFiles + objectname)
-    def __init__(self, client, modules, owners):
+    def __init__(self, client, modules, owners, prefix):
         if not os.path.isdir("storage/%s"%moduleFiles):
             call(['mkdir', 'storage/%s'%moduleFiles])
         self.save=None # format : { 'currently_playing':[id,id,id], 'player_game':{id:gameid} 'games':{gameid:{'White':id,'Black':id, 'hist':['h8','h9']}}}
         self.client = client
         self.modules = modules
         self.owners = owners
+        self.prefix = prefix
         self.events=['on_message', 'on_ready'] #events list
         self.command="" #command prefix (can be empty to catch every single messages)
 
@@ -37,16 +38,16 @@ class MainClass():
         self.interactive=True
         self.color=0xffff00
         self.help="""\
- /gomoku challenge <@mention>
+ </prefix>gomoku challenge <@mention>
  => Défie le joueur mentionné pour une partie de Gomoku
  
- /gomoku spectate <@mention>
+ </prefix>gomoku spectate <@mention>
  => Permet d'observer la partie d'un joueur en jeu
  
- /gomoku spectate stop
+ </prefix>gomoku spectate stop
  => Permet d'arrêter d'observer une partie
  
- /gomoku leave
+ </prefix>gomoku leave
  => Quitte la partie en cours
  
  <coordonnées>
@@ -70,7 +71,7 @@ class MainClass():
         if self.save==None:
             await self.on_ready()
         else:
-            if message.content.startswith('/gomoku'):
+            if message.content.startswith('%sgomoku'%self.prefix):
                 args=message.content.split()
                 if len(args)>1 and args[1]=='challenge' and not len(message.mentions)==0:
                     try:

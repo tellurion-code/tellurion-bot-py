@@ -4,12 +4,13 @@ import datetime
 import time
 
 class MainClass():
-    def __init__(self, client, modules, owners):
+    def __init__(self, client, modules, owners, prefix):
         self.client = client
         self.modules = modules
         self.owners = owners
+        self.prefix = prefix
         self.events=['on_message'] #events list
-        self.command="/perdu" #command prefix (can be empty to catch every single messages)
+        self.command="%sperdu"%prefix #command prefix (can be empty to catch every single messages)
 
         self.channel=431016132040851459
         self.lost_role=544845665910390784 #grand_perdant
@@ -20,13 +21,13 @@ class MainClass():
         self.interactive=True
         self.color=0xff6ba6
         self.help="""\
- /perdu
+ </prefix>perdu
  => Donne les statistiques des perdants du dernier mois
  
- /perdu <durée en jours>
- => Donne les statistiques des perdants depuis la durée donnée (exemple /perdu 30 donnera les statistiques des 30 derniers jours.)
+ </prefix>perdu <durée en jours>
+ => Donne les statistiques des perdants depuis la durée donnée (exemple </prefix>perdu 30 donnera les statistiques des 30 derniers jours.)
  
- /perdu all
+ </prefix>perdu all
  => Donne les statistiques des perdants depuis la création du salon
 """
     async def fetch_stats(self, upto, today): #upto in days (integer)

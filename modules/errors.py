@@ -21,7 +21,7 @@ class MainClass():
 
     def saveExists(self, objectname):
         return os.path.isfile("storage/%s/"%moduleFiles + objectname)
-    def __init__(self, client, modules, owners):
+    def __init__(self, client, modules, owners, prefix):
         if not os.path.isdir("storage/%s"%moduleFiles):
             call(['mkdir', 'storage/%s'%moduleFiles])
         self.errorsDeque=None
@@ -50,8 +50,9 @@ class MainClass():
         self.client = client
         self.modules = modules
         self.owners = owners
+        self.prefix = prefix
         self.events=['on_error', 'on_message', 'on_ready'] #events list
-        self.command="/licorne" #command prefix (can be empty to catch every single messages)
+        self.command="%slicorne"%self.prefix #command prefix (can be empty to catch every single messages)
 
         self.name="Error Handling"
         self.description="Module de gestions des erreurs"
@@ -59,7 +60,7 @@ class MainClass():
         self.authlist=[431043517217898496]
         self.color=0xdb1348
         self.help="""\
- /licorne
+ </prefix>licorne
  => Crée une erreur.
 """
     async def on_ready(self):

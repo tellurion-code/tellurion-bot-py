@@ -7,12 +7,13 @@ from subprocess import call
 
 moduleFiles="archive"
 class MainClass():
-    def __init__(self, client, modules, owners):
+    def __init__(self, client, modules, owners, prefix):
         self.client = client
         self.modules = modules
         self.owners = owners
+        self.prefix = prefix
         self.events=['on_message'] #events list
-        self.command="/archive" #command prefix (can be empty to catch every single messages)
+        self.command="%sarchive"%self.prefix #command prefix (can be empty to catch every single messages)
 
         self.name="Archive"
         self.description="Module gérant l'archivage des messages"
@@ -20,10 +21,10 @@ class MainClass():
         self.authlist=[431043517217898496]
         self.color=0x137584
         self.help="""\
- /archive
+ </prefix>archive
  => Archive le salon dans lequel la commande a été éffectuée
  
- /archive *
+ </prefix>archive *
  => Archive tous les salons du serveur dans lequel la commande a été effectuée
 """
     async def auth(self,user, role_list):
@@ -52,7 +53,7 @@ class MainClass():
             for chan in message.channel.guild.channels:
                 try:
                     with open('storage/%s/'%moduleFiles + randtimev + '/' + chan.name + "[" + str(chan.id) + "].txt", "w") as messlog:
-                        async for rec in chan.history():
+                        async for rec in chan.history(limit=None):
                             messlog.write("[" + chan.name + "]" +  " " + str(rec.created_at.strftime('%Y-%m-%d %H:%M:%S')) + " " + str(rec.author) + "> " + rec.content + "\n")
                             messlog.write("	Attachments : " + str(rec.attachments) + "\n\n")
                     await message.author.send(chan.name + " `done.`")
@@ -72,9 +73,9 @@ class MainClass():
             call(['mkdir', '-p', 'storage/%s/'%moduleFiles + randtimev + '/'])
             try:
                 with open('storage/%s/'%moduleFiles + randtimev + '/' + message.channel.name + "[" + str(message.channel.id) + "].txt", "w") as messlog:
-                    async for rec in message.channel.history():
+                    async for rec in message.channel.history(limit=None):
                         messlog.write("[" + message.channel.name + "]" +  " " + str(rec.created_at.strftime('%Y-%m-%d %H:%M:%S')) + " " + str(rec.author) + "> " + rec.content + "\n")
-                        messlog.write("	Attachments : " + str(rec.attachments) + "\n\n")
+                        messlog.write("	Attachments : " + ' ;; '.join([str(i.url + ", " + i.proxy_url ) for i in rec.attachments]) + "\n\n")
                 with open('storage/%s/'%moduleFiles + randtimev + '/' + message.channel.name + "[" + str(message.channel.id) + "].txt", "rb") as messlog:
                     await message.author.send(file=discord.File(messlog, filename=message.channel.name + "[" + str(message.channel.id) + "].txt"))
             except:
