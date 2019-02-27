@@ -35,10 +35,8 @@ class MainClass():
                 number = int(args[1])
                 voice = await message.author.voice.channel.connect()
                 await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi.")
-                time.sleep(10)
+                voice.play(discord.FFmpegPCMAudio("/home/epenser/epenser-bot/soundbox/for-the-damaged-coda.mp3"))
                 if voice.is_connected():
                     await voice.disconnect()
             except ValueError:
                 await self.modules['help'][1].send_help(message.channel, self)
-            except:                
-                await message.channel.send(message.author.mention + ", ah, ici ça bug. C'est la connexion au vocal qui ne fonctionne pas.")
