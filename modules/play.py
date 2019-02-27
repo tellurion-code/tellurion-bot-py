@@ -40,7 +40,7 @@ class MainClass():
                 await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi.")
                 voice.play(discord.FFmpegPCMAudio("/home/epenser/epenser-bot/soundbox/for-the-damaged-coda.mp3"))
                 while voice.is_playing():
-                    pass
+                    await asyncio.sleep(1)
                 await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi. bis")
                 if voice.is_connected():
                     await voice.disconnect()
