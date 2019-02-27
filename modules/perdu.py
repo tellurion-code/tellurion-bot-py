@@ -22,7 +22,7 @@ class MainClass():
         self.color=0xff6ba6
         self.help="""\
  </prefix>perdu
- => Donne les statistiques des perdants du dernier mois
+ => Donne les statistiques des perdants de la semaine
  
  </prefix>perdu <durée en jours>
  => Donne les statistiques des perdants depuis la durée donnée (exemple </prefix>perdu 30 donnera les statistiques des 30 derniers jours.)
