@@ -36,6 +36,7 @@ class MainClass():
                 voice = await message.author.voice.channel.connect()
                 await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi.")
                 voice.play(discord.FFmpegPCMAudio("/home/epenser/epenser-bot/soundbox/for-the-damaged-coda.mp3"))
+                await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi. bis")
                 if voice.is_connected():
                     await voice.disconnect()
             except ValueError:
