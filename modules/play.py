@@ -42,9 +42,12 @@ class MainClass():
             except ValueError:
                 await self.modules['help'][1].send_help(message.channel, self)
             else:
-                voice = await message.author.voice.channel.connect()
-                voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("../assets/" + self.musics[number] + ".mp3"), volume=0.5))
-                while voice.is_playing():
-                    await asyncio.sleep(1)
-                if voice.is_connected():
-                    await voice.disconnect()
+                if number in range(len(self.musics)):
+                    voice = await message.author.voice.channel.connect()
+                    voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("../assets/" + self.musics[number] + ".mp3"), volume=0.5))
+                    while voice.is_playing():
+                        await asyncio.sleep(1)
+                    if voice.is_connected():
+                        await voice.disconnect()
+                else:
+                    await message.channel.send(message.author.mention + ", Veuillez préciser un nombre valide.")
