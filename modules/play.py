@@ -36,7 +36,6 @@ class MainClass():
                 voice = client.join_voice_channel(message.author.voice_channel)
                 await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi.")
                 time.sleep(10)
-                voice.disconnect()
             except ValueError:
                 await self.modules['help'][1].send_help(message.channel, self)
             except:                
