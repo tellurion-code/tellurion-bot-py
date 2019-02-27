@@ -39,4 +39,4 @@ class MainClass():
             except ValueError:
                 await self.modules['help'][1].send_help(message.channel, self)
             except:                
-                await message.channel.send(message.author.mention + ", ah, ici ça bug. C'est la connexion au vocal qui ne fonctionne pas.")
+                await message.channel.send(message.author.mention + ", ah, ici ça bug. C'est la connexion au vocal qui ne fonctionne pas.\n" + message.author.voice_channel)
