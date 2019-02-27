@@ -17,7 +17,8 @@ class MainClass():
             "see-you-again",
             "roundabout-long",
             "roundabout-short",
-            'pillar-men-theme'
+            'pillar-men-theme',
+            'ba-dum-tss'
         ]
 
         self.name="Play"
