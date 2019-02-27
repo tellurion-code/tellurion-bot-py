@@ -43,7 +43,8 @@ class MainClass():
                 await self.modules['help'][1].send_help(message.channel, self)
             else:
                 if number in range(len(self.musics)):
-                    voice = await message.author.voice.channel.connect()
+                    if not voice.is_connected():
+                        voice = await message.author.voice.channel.connect()
                     voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
                     while voice.is_playing():
                         await asyncio.sleep(1)
