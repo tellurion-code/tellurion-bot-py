@@ -15,8 +15,9 @@ class MainClass():
         self.musics = [
             "for-the-damaged-coda",
             "see-you-again",
-            "roundabout1",
-            "roundabout2"
+            "roundabout-long",
+            "roundabout-short",
+            'pillar-men-theme'
         ]
 
         self.name="Play"
