@@ -11,10 +11,19 @@ class MainClass():
         self.prefix = prefix
         self.events=['on_message'] #events list
         self.command="%splay"%prefix #command prefix (can be empty to catch every single messages)
+        self.voice = None
+        self.musics = [
+            "for-the-damaged-coda",
+            "see-you-again",
+            "roundabout-long",
+            "roundabout-short",
+            'pillar-men-theme'
+        ]
 
         self.name="Play"
         self.description="Module servant de soundboard"
         self.interactive=True
+        self.authlist=[431043517217898496, 456142467666804746]
         self.color=0xc72c48
         self.help="""\
  </prefix>play <nombre>
@@ -29,11 +38,21 @@ class MainClass():
         if len(args) != 2:
             await self.modules['help'][1].send_help(message.channel, self)
         elif args[1] == "list":
-            await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici.")
+            await message.channel.send(embed=discord.Embed(title="PLAY - Soundboard", description='\n'.join([str(i)+" : "+name for i,name in enumerate(self.musics)]), color=self.color))
         else:
             try:
                 number = int(args[1])
-                await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi.")
             except ValueError:
                 await self.modules['help'][1].send_help(message.channel, self)
-                
+            else:
+                if number in range(len(self.musics)):
+                    if not self.voice:
+                        self.voice = await message.author.voice.channel.connect()
+                        self.voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
+                    while self.voice.is_playing():
+                        await asyncio.sleep(1)
+                    if self.voice and self.voice.is_connected():
+                        await self.voice.disconnect()
+                        self.voice = None
+                else:
+                    await message.channel.send(message.author.mention + ", Veuillez préciser un nombre valide.")
