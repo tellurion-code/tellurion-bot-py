@@ -23,6 +23,7 @@ class MainClass():
         self.name="Play"
         self.description="Module servant de soundboard"
         self.interactive=True
+        self.authlist=[431043517217898496, 456142467666804746]
         self.color=0xc72c48
         self.help="""\
  </prefix>play <nombre>
