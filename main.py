@@ -4,7 +4,7 @@ import os
 import importlib
 import traceback
 client = discord.Client()
-prefix='/'
+prefix='!'
 modules={} # format : {'modulename':[module, initializedclass]}
 owners=[281166473102098433]
 async def auth(user, moduleName):
