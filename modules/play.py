@@ -33,7 +33,7 @@ class MainClass():
         else:
             try:
                 number = int(args[1])
-                voice = self.client.join_voice_channel(message.author.voice.channel)
+                voice = message.author.voice.channel.connect()
                 await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi.")
                 time.sleep(10)
                 if voice.is_connected():
@@ -41,4 +41,4 @@ class MainClass():
             except ValueError:
                 await self.modules['help'][1].send_help(message.channel, self)
             except:                
-                await message.channel.send(message.author.mention + ", ah, ici ça bug. C'est la connexion au vocal qui ne fonctionne pas.\n" + message.author.voice.channel)
+                await message.channel.send(message.author.mention + ", ah, ici ça bug. C'est la connexion au vocal qui ne fonctionne pas.")
