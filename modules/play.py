@@ -35,7 +35,7 @@ class MainClass():
         if len(args) != 2:
             await self.modules['help'][1].send_help(message.channel, self)
         elif args[1] == "list":
-            await message.channel.send(embed=discord.Embed(title="PLAY - Soundboard", description='\n'.join([i+" : "+name for i,name in enumerate(self.musics)]), color=self.color))
+            await message.channel.send(embed=discord.Embed(title="PLAY - Soundboard", description='\n'.join([str(i)+" : "+name for i,name in enumerate(self.musics)]), color=self.color))
         else:
             try:
                 number = int(args[1])
