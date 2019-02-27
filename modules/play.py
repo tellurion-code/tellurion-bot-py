@@ -11,6 +11,7 @@ class MainClass():
         self.prefix = prefix
         self.events=['on_message'] #events list
         self.command="%splay"%prefix #command prefix (can be empty to catch every single messages)
+        self.voice = None
         self.musics = [
             "for-the-damaged-coda",
             "see-you-again",
@@ -43,12 +44,13 @@ class MainClass():
                 await self.modules['help'][1].send_help(message.channel, self)
             else:
                 if number in range(len(self.musics)):
-                    if not voice.is_connected():
-                        voice = await message.author.voice.channel.connect()
-                    voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
-                    while voice.is_playing():
+                    if not self.voice:
+                        self.voice = await message.author.voice.channel.connect()
+                    self.voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
+                    while self.voice.is_playing():
                         await asyncio.sleep(1)
-                    if voice.is_connected():
-                        await voice.disconnect()
+                    if self.voice.is_connected():
+                        await self.voice.disconnect()
+                        self.voice = None
                 else:
                     await message.channel.send(message.author.mention + ", Veuillez préciser un nombre valide.")
