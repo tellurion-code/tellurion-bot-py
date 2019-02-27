@@ -44,7 +44,7 @@ class MainClass():
             else:
                 if number in range(len(self.musics)):
                     voice = await message.author.voice.channel.connect()
-                    voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("/home/epenser/epenser-bot/epenser-bot-py/assets/" + self.musics[number] + ".mp3"), volume=0.5))
+                    voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.5))
                     while voice.is_playing():
                         await asyncio.sleep(1)
                     if voice.is_connected():
