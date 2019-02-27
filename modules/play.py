@@ -33,11 +33,11 @@ class MainClass():
         else:
             try:
                 number = int(args[1])
-                voice = message.author.voice.channel.connect()
+                voice = await message.author.voice.channel.connect()
                 await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi.")
                 time.sleep(10)
                 if voice.is_connected():
-                    voice.disconnect()
+                    await voice.disconnect()
             except ValueError:
                 await self.modules['help'][1].send_help(message.channel, self)
             except:                
