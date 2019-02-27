@@ -49,7 +49,7 @@ class MainClass():
                         self.voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.05))
                     while self.voice.is_playing():
                         await asyncio.sleep(1)
-                    if self.voice.is_connected():
+                    if self.voice and self.voice.is_connected():
                         await self.voice.disconnect()
                         self.voice = None
                 else:
