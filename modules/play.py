@@ -11,6 +11,12 @@ class MainClass():
         self.prefix = prefix
         self.events=['on_message'] #events list
         self.command="%splay"%prefix #command prefix (can be empty to catch every single messages)
+        self.musics = [
+            "for-the-damaged-coda",
+            "see-you-again",
+            "roundabout1",
+            "roundabout2"
+        ]
 
         self.name="Play"
         self.description="Module servant de soundboard"
@@ -29,7 +35,7 @@ class MainClass():
         if len(args) != 2:
             await self.modules['help'][1].send_help(message.channel, self)
         elif args[1] == "list":
-            await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici.")
+            await message.channel.send(embed=discord.Embed(title="PLAY - Soundboard", description='\n'.join([str(i)+" : "+name for i,name in enumerate(self.musics)]), color=self.color))
         else:
             try:
                 number = int(args[1])
@@ -37,10 +43,8 @@ class MainClass():
                 await self.modules['help'][1].send_help(message.channel, self)
             else:
                 voice = await message.author.voice.channel.connect()
-                await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi.")
-                voice.play(discord.FFmpegPCMAudio("/home/epenser/epenser-bot/soundbox/for-the-damaged-coda.mp3"))
+                voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("../assets/" + self.musics[number] + ".mp3"), volume=0.5))
                 while voice.is_playing():
                     await asyncio.sleep(1)
-                await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi. bis")
                 if voice.is_connected():
                     await voice.disconnect()
