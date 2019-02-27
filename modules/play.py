@@ -33,7 +33,7 @@ class MainClass():
         else:
             try:
                 number = int(args[1])
-                voice = client.join_voice_channel(message.author.voice.voice_channel)
+                voice = self.client.join_voice_channel(message.author.voice.voice_channel)
                 await message.channel.send(message.author.mention + ", ça à l'air de fonctionner, ici aussi.")
                 time.sleep(10)
             except ValueError:
