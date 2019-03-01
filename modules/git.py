@@ -8,7 +8,7 @@ class MainClass():
         self.owners = owners
         self.prefix = prefix
         self.events=['on_message'] #events list
-        self.command="%sdummy"%self.prefix #command prefix (can be empty to catch every single messages)
+        self.command="%sgit"%self.prefix #command prefix (can be empty to catch every single messages)
 
         self.name="Git"
         self.description="Module de gestion de Git"
@@ -25,7 +25,8 @@ class MainClass():
     async def on_message(self, message):
         args=message.content.split(' ')
         if len(args)==2 and args[1]=='update':
-            call(['bash', '-c', '"git fetch --all;git reset --hard origin/master"'])
+            call('git fetch --all'.split(' '))
+            call('git reset --hard origin/testing'.split(' '))
             await message.channel.send(message.author.mention+", Le dépôt a été mis à jour (fetch + reset --hard).")
         else:
             await self.modules['help'][1].send_help(message.channel, self)
