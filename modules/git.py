@@ -17,7 +17,7 @@ class MainClass():
         self.color=0xdc0000
         self.help="""\
  </prefix>git update
- => Execute les commandes suivantes dans le dossier en cours:
+ => Execute les commandes suivantes dans le dossier du bot:
  ```BASH
  git fetch --all
  git reset --hard origin/<branch_name>```
