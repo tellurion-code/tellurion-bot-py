@@ -29,4 +29,4 @@ class MainClass():
 			"https://cdn.discordapp.com/attachments/326742676672086018/431569158170345472/telecharge_11.jpg"
             ]
     async def on_message(self, message):
-        await message.channel.send(message.mentions, embed=discord.Embed(title="Read da fu**ing GOOGLE DOCS {1}! (╯°□°）╯︵ ┻━┻", color=self.color).set_image(url=random.choice(self.meme)))
+        await message.channel.send(" ".join(member.mention for member in message.mentions), embed=discord.Embed(title="Read da fu**ing GOOGLE DOCS ! (╯°□°）╯︵ ┻━┻", color=self.color).set_image(url=random.choice(self.meme)))
