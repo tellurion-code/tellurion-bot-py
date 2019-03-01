@@ -31,4 +31,7 @@ class MainClass():
             ]
     async def on_message(self, message):
         await message.channel.send(" ".join(member.mention for member in message.mentions), embed=discord.Embed(title="Read da fu**ing GOOGLE DOCS ! (╯°□°）╯︵ ┻━┻", color=self.color).set_image(url=random.choice(self.meme)))
-        await message.delete()
+        try:
+		await message.delete()
+	except:
+		pass
