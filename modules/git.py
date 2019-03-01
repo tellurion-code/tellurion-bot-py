@@ -1,6 +1,6 @@
 #dummy module
 import asyncio
-from subprocess import call
+import os
 class MainClass():
     def __init__(self, client, modules, owners, prefix):
         self.client = client
@@ -20,13 +20,17 @@ class MainClass():
  => Execute les commandes suivantes dans le dossier en cours:
  ```BASH
  git fetch --all
- git reset --hard origin/master```
+ git reset --hard origin/<branch_name>```
 """
     async def on_message(self, message):
         args=message.content.split(' ')
         if len(args)==2 and args[1]=='update':
-            call('git fetch --all'.split(' '))
-            call('git reset --hard origin/testing'.split(' '))
+            with stdin as os.popen('git fetch --all'):
+                await message.channel.send(stdin.read())
+            with stdin as os.popen('git symbolic-ref HEAD 2>/dev/null'):
+                branch=stdin.read().replace('refs/heads/', '')
+            with stdin as os.popen('git reset --hard origin/%s'%branch):
+                await message.channel.send(stdin.read())
             await message.channel.send(message.author.mention+", Le dépôt a été mis à jour (fetch + reset --hard).")
         else:
             await self.modules['help'][1].send_help(message.channel, self)
