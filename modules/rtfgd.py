@@ -18,4 +18,4 @@ class MainClass():
  Aucune fonction.
 """
     async def on_message(self, message):
-        await message.channel.send(embed=discord.Embed("rtfgd", color=self.color).set_image(url="https://cdn.discordapp.com/attachments/326742676672086018/431574829607419914/telecharge_25.jpg"))
+        await message.channel.send(embed=discord.Embed(title="rtfgd", color=self.color).set_image(url="https://cdn.discordapp.com/attachments/326742676672086018/431574829607419914/telecharge_25.jpg"))
