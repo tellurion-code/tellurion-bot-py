@@ -16,7 +16,8 @@ class MainClass():
         self.interactive=True
         self.color=0x7289da
         self.help="""\
- Aucune fonction.
+ </prefix>rtfgd [mention]
+ => Incite les personnes mentionnées à lire les Google Docs
 """
         self.meme = meme = [
 			"https://i.imgflip.com/27tjun.gif",
