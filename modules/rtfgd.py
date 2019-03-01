@@ -19,7 +19,7 @@ class MainClass():
  </prefix>rtfgd [mention]
  => Incite les personnes mentionnées à lire les Google Docs
 """
-        self.meme = meme = [
+        self.meme = [
 			"https://i.imgflip.com/27tjun.gif",
 			"https://cdn.discordapp.com/attachments/326742676672086018/431574829607419914/telecharge_25.jpg",
 			"https://cdn.discordapp.com/attachments/326742676672086018/431575352381538304/telecharge_26.jpg",
