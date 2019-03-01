@@ -25,6 +25,7 @@ async def auth(user, moduleName):
 async def on_ready():
     print("Bienvenue, {0.user}, l'heure est venue d'e-penser.".format(client))
     panic=False
+    error=None
     async def panicLoad():
         print("--PANIC LOAD--")
         panic=True
@@ -54,14 +55,16 @@ async def on_ready():
                 print("Module {0} initialisé.".format('modules'))
                 try:
                     await modules['modules'][1].on_ready()
-                except:
-                    pass
-            except:
+                except Exception as e:
+                    error=e
+            except Exception as e:
                 print("[ERROR] Le module {0} n'a pas pu être initialisé.".format('modules'))
                 await panicLoad()
-        except:
+                error=e
+        except Exception as e:
             print("[ERROR] Le module {0} n'a pas pu être chargé.".format('modules.py'))
             await panicLoad()
+            error=e
     else:
         await panicLoad()
 
@@ -73,6 +76,8 @@ async def on_ready():
         for moduleName in list(modules.keys()):
             if (not moduleName=='modules') and 'on_ready' in modules[moduleName][1].events:
                 await modules[moduleName][1].on_ready()
+    if error:
+        raise error
 
 @client.event
 async def on_error(event, *args, **kwargs):
