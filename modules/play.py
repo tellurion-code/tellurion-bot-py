@@ -48,11 +48,19 @@ class MainClass():
                 if number in range(len(self.musics)):
                     if not self.voice:
                         self.voice = await message.author.voice.channel.connect()
+                        try:
+                            await message.delete()
+                        except:
+                            pass
                         self.voice.play(discord.PCMVolumeTransformer(discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
-                    while self.voice.is_playing():
-                        await asyncio.sleep(1)
-                    if self.voice and self.voice.is_connected():
-                        await self.voice.disconnect()
-                        self.voice = None
+                        while self.voice.is_playing():
+                            await asyncio.sleep(1)
+                        if self.voice and self.voice.is_connected():
+                            await self.voice.disconnect()
+                            self.voice = None
                 else:
                     await message.channel.send(message.author.mention + ", Veuillez préciser un nombre valide.")
+                    try:
+                        await message.delete()
+                    except:
+                        pass
