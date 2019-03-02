@@ -32,23 +32,23 @@ class MainClass:
 """
 
     async def fetch_stats(self, upto, today):  # upto in days (integer)
-        message_dict = {}
-        if (not self.save['message_dict']) or \
+        messages_dict = {}
+        if (not self.save['messages_dict']) or \
                 (time.mktime(today.timetuple()) - time.mktime(self.save['last_occurence'].timetuple())) / 60 > 15:
             for channel in self.client.get_all_channels():
                 if channel.id == self.channel:
                     break
 
             async for message in channel.history(limit=None):
-                if message.author.id not in message_dict.keys():
-                    message_dict[message.author.id] = [message]
+                if message.author.id not in messages_dict.keys():
+                    messages_dict[message.author.id] = [message]
                 else:
-                    message_dict[message.author.id].append(message)
-            self.save.update({'message_dict': message_dict, 'last_occurence': today})
+                    messages_dict[message.author.id].append(message)
+            self.save.update({'messages_dict': messages_dict, 'last_occurence': today})
         else:
-            message_dict = self.save['message_dict']
-        message_dict_reduced = {}
-        for user_id, message_list in message_dict.items():
+            messages_dict = self.save['messages_dict']
+        messages_dict_reduced = {}
+        for user_id, message_list in messages_dict.items():
             message_list = message_list[::-1]
             message_list_2 = [message_list[0].author]
             last_message = None
@@ -67,9 +67,9 @@ class MainClass:
                     last_message = message
             message_list = message_list_2
             del message_list_2
-            message_dict_reduced.update({user_id: message_list})
+            messages_dict_reduced.update({user_id: message_list})
 
-        sorted_by_losses = sorted(message_dict_reduced.items(), key=lambda x: len(x[1]))[::-1]
+        sorted_by_losses = sorted(messages_dict_reduced.items(), key=lambda x: len(x[1]))[::-1]
         stats = []
         for user in sorted_by_losses:
             # user mention, number of losses, average time between each loss
