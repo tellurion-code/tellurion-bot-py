@@ -29,7 +29,6 @@ class MainClass:
             "https://cdn.discordapp.com/attachments/326742676672086018/431572693910028289/telecharge_19.jpg",
             "https://cdn.discordapp.com/attachments/326742676672086018/431572366951448588/telecharge_18.jpg",
             "https://cdn.discordapp.com/attachments/326742676672086018/431569158170345472/telecharge_11.jpg"
-        ]
 
     async def on_message(self, message):
         await message.channel.send(" ".join(member.mention for member in message.mentions),
