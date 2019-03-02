@@ -1,4 +1,3 @@
-# dummy module
 class MainClass:
     def __init__(self, client, modules, owners, prefix):
         self.client = client
