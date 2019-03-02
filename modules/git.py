@@ -27,12 +27,12 @@ class MainClass:
     async def on_message(self, message):
         args = message.content.split(' ')
         if len(args) == 2 and args[1] == 'update':
-            with os.popen('git fetch --all') as std_in:
-                await message.channel.send(std_in.read())
-            with os.popen('git symbolic-ref HEAD 2>/dev/null') as std_in:
-                branch = std_in.read().replace('refs/heads/', '')
-            with os.popen('git reset --hard origin/%s' % branch) as std_in:
-                await message.channel.send(std_in.read())
+            with os.popen('git fetch --all') as std_out:
+                await message.channel.send(std_out.read())
+            with os.popen('git symbolic-ref HEAD 2>/dev/null') as std_out:
+                branch = std_out.read().replace('refs/heads/', '')
+            with os.popen('git reset --hard origin/%s' % branch) as std_out:
+                await message.channel.send(std_out.read())
             await message.channel.send(message.author.mention + ", Le dépôt a été mis à jour (fetch + reset --hard).")
         else:
             await self.modules['help'][1].send_help(message.channel, self)
