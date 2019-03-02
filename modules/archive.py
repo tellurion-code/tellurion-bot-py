@@ -1,33 +1,34 @@
-import discord
-import asyncio
-import datetime
 import time
-import traceback
 from subprocess import call
 
-moduleFiles="archive"
-class MainClass():
+import discord
+
+moduleFiles = "archive"
+
+
+class MainClass:
     def __init__(self, client, modules, owners, prefix):
         self.client = client
         self.modules = modules
         self.owners = owners
         self.prefix = prefix
-        self.events=['on_message'] #events list
-        self.command="%sarchive"%self.prefix #command prefix (can be empty to catch every single messages)
+        self.events = ['on_message']  # events list
+        self.command = "%sarchive" % self.prefix  # command prefix (can be empty to catch every single messages)
 
-        self.name="Archive"
-        self.description="Module gérant l'archivage des messages"
-        self.interactive=True
-        self.authlist=[431043517217898496]
-        self.color=0x137584
-        self.help="""\
+        self.name = "Archive"
+        self.description = "Module gérant l'archivage des messages"
+        self.interactive = True
+        self.authlist = [431043517217898496]
+        self.color = 0x137584
+        self.help = """\
  </prefix>archive
  => Archive le salon dans lequel la commande a été éffectuée
  
  </prefix>archive *
  => Archive tous les salons du serveur dans lequel la commande a été effectuée
 """
-    async def auth(self,user, role_list):
+
+    async def auth(self, user, role_list):
         if user.id in self.owners:
             return True
         for guild in self.client.guilds:
@@ -35,49 +36,62 @@ class MainClass():
                 for roleid in role_list:
                     if roleid in [r.id for r in guild.get_member(user.id).roles]:
                         return True
-                    
-    async def on_message(self, message):
-        randtimev=str(time.time())
-        args=message.content.split()
 
-        if len(args)>1 and args[1]=='*':
+    async def on_message(self, message):
+        current_time = str(time.time())
+        args = message.content.split()
+
+        if len(args) > 1 and args[1] == '*':
             if not await self.auth(message.author, [522918472548745217]):
                 await message.channel.send("Vous n'avez pas les permissions pour effectuer une sauvegarde complète.")
                 return
-            #Archive server
+            # Archive server
             try:
                 await message.delete()
             except:
                 pass
-            call(['mkdir', '-p', 'storage/%s/'%moduleFiles + randtimev + '/'])
+            call(['mkdir', '-p', 'storage/%s/' % moduleFiles + current_time + '/'])
             for chan in message.channel.guild.channels:
                 try:
-                    with open('storage/%s/'%moduleFiles + randtimev + '/' + chan.name + "[" + str(chan.id) + "].txt", "w") as messlog:
+                    with open(
+                            'storage/%s/' % moduleFiles + current_time + '/' + chan.name + "[" + str(chan.id) + "].txt",
+                            "w") as messlog:
                         async for rec in chan.history(limit=None):
-                            messlog.write("[" + chan.name + "]" +  " " + str(rec.created_at.strftime('%Y-%m-%d %H:%M:%S')) + " " + str(rec.author) + "> " + rec.content + "\n")
+                            messlog.write("[" + chan.name + "]" + " " + str(
+                                rec.created_at.strftime('%Y-%m-%d %H:%M:%S')) + " " + str(
+                                rec.author) + "> " + rec.content + "\n")
                             messlog.write("	Attachments : " + str(rec.attachments) + "\n\n")
                     await message.author.send(chan.name + " `done.`")
                 except:
                     pass
-            zipname = time.strftime('%Y-%m-%d.%H.%M.%S') + ".zip"
-            call(['bash', '-c', 'zip storage/%s/'%moduleFiles + zipname + ' storage/%s/'%moduleFiles + randtimev + '/' + '*'])
-            with open('storage/%s/'%moduleFiles + zipname, 'rb') as messlogzip:
-                await message.author.send(file=discord.File(messlogzip, filename=zipname))
+            zip_name = time.strftime('%Y-%m-%d.%H.%M.%S') + ".zip"
+            call(['bash', '-c',
+                  'zip storage/%s/' % moduleFiles + zip_name + ' storage/%s/' % moduleFiles + current_time + '/' + '*'])
+            with open('storage/%s/' % moduleFiles + zip_name, 'rb') as messlogzip:
+                await message.author.send(file=discord.File(messlogzip, filename=zip_name))
 
-        elif len(args)==1:
-            #Archive channel
+        elif len(args) == 1:
+            # Archive channel
             try:
                 await message.delete()
             except:
                 pass
-            call(['mkdir', '-p', 'storage/%s/'%moduleFiles + randtimev + '/'])
+            call(['mkdir', '-p', 'storage/%s/' % moduleFiles + current_time + '/'])
             try:
-                with open('storage/%s/'%moduleFiles + randtimev + '/' + message.channel.name + "[" + str(message.channel.id) + "].txt", "w") as messlog:
+                with open('storage/%s/' % moduleFiles + current_time + '/' + message.channel.name + "[" +
+                          str(message.channel.id) + "].txt", "w") as messlog:
                     async for rec in message.channel.history(limit=None):
-                        messlog.write("[" + message.channel.name + "]" +  " " + str(rec.created_at.strftime('%Y-%m-%d %H:%M:%S')) + " " + str(rec.author) + "> " + rec.content + "\n")
-                        messlog.write("	Attachments : " + ' ;; '.join([str(i.url + ", " + i.proxy_url ) for i in rec.attachments]) + "\n\n")
-                with open('storage/%s/'%moduleFiles + randtimev + '/' + message.channel.name + "[" + str(message.channel.id) + "].txt", "rb") as messlog:
-                    await message.author.send(file=discord.File(messlog, filename=message.channel.name + "[" + str(message.channel.id) + "].txt"))
+                        messlog.write("[" + message.channel.name + "]" + " " + str(
+                            rec.created_at.strftime('%Y-%m-%d %H:%M:%S')) + " " + str(
+                            rec.author) + "> " + rec.content + "\n")
+                        messlog.write("	Attachments : " + ' ;; '.join(
+                            [str(i.url + ", " + i.proxy_url) for i in rec.attachments]) + "\n\n")
+                with open('storage/%s/' % moduleFiles + current_time + '/' + message.channel.name + "[" +
+                          str(message.channel.id) + "].txt", "rb") as messlog:
+                    await message.author.send(
+                        file=discord.File(messlog,
+                                          filename=message.channel.name + "[" + str(message.channel.id) + "].txt")
+                    )
             except:
                 await message.author.send("```FAILED```")
                 raise
