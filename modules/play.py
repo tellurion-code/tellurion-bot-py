@@ -37,7 +37,7 @@ class MainClass(BaseClass):
 
     async def command(self, message, args, kwargs):
         try:
-            number = int(args[1])
+            number = int(args[0])
         except ValueError:
             await self.modules['help'][1].send_help(message.channel, self)
         else:
