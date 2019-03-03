@@ -1,0 +1,1117 @@
+2019-03-03 02:24:03,973 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:24:03,988 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:24:03,988 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:24:03,988 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:25:32,546 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:25:32,562 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:25:32,562 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:25:32,562 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:25:32,578 :: nikola_tesla :: ERROR :: Module restart doesn't have a MainClass
+2019-03-03 02:25:32,578 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:26:09,121 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:26:09,121 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:26:09,121 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:26:09,121 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:26:09,121 :: nikola_tesla :: ERROR :: Module restart doesn't have a MainClass
+2019-03-03 02:26:09,121 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:26:36,866 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:26:36,882 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:26:36,882 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:26:36,882 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:26:36,882 :: nikola_tesla :: ERROR :: Module restart doesn't have a MainClass
+2019-03-03 02:26:36,897 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:26:50,018 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:26:50,018 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:26:50,018 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:26:50,018 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:26:50,018 :: nikola_tesla :: ERROR :: Module restart doesn't have a MainClass
+2019-03-03 02:26:50,018 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:28:01,341 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:28:01,341 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:28:01,341 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:28:01,341 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:29:08,038 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:29:08,038 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:29:08,038 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:29:08,038 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:29:08,038 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:29:08,038 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:30:50,091 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:30:50,091 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:30:50,091 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:30:50,091 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:30:50,091 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:30:50,091 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:31:15,755 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:31:15,755 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:31:15,755 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:31:15,755 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:31:15,755 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:31:15,755 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:31:38,248 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:31:38,263 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:31:38,263 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:31:38,263 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:31:38,263 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:31:38,263 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:32:40,441 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:32:40,456 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:32:40,456 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:32:40,456 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:32:40,456 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:32:40,456 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:33:19,230 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:33:19,230 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:33:19,230 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:33:19,230 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:33:19,246 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:33:19,246 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:33:56,370 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:33:56,370 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:33:56,370 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:33:56,370 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:33:56,386 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:33:56,386 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:35:05,168 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:35:05,184 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:35:05,184 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:35:05,184 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:35:05,184 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:35:05,184 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:35:53,996 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:35:53,998 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:35:53,998 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:35:53,999 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:35:54,001 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:35:54,002 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:38:55,779 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:38:55,782 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:38:55,782 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:38:55,784 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:38:55,789 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:38:55,790 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:40:02,759 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:40:02,759 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:40:02,759 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:40:02,759 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:40:02,759 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:40:02,775 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:40:51,211 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:40:51,211 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:40:51,211 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:40:51,211 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:40:51,211 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:40:51,211 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:41:37,167 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:41:37,169 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:41:37,171 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:41:37,172 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:41:37,203 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:41:37,203 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:42:54,558 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:42:54,574 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:42:54,574 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:42:54,574 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:42:54,602 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:42:54,603 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 02:43:23,554 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 02:43:23,556 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 02:43:23,557 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 02:43:23,557 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 02:43:23,586 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 02:43:23,587 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:03:43,288 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:03:43,311 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:03:43,312 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:03:43,312 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:03:43,340 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:03:43,341 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:04:59,850 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:04:59,852 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:04:59,853 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:04:59,853 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:04:59,855 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:04:59,855 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:05:29,761 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:05:29,767 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:05:29,769 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:05:29,771 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:05:29,779 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:05:29,786 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:06:23,471 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:06:23,473 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:06:23,475 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:06:23,476 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:06:23,480 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:06:23,482 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:07:22,991 :: discord.client :: ERROR :: Attempting a reconnect in 1.10s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 03:07:47,060 :: discord.gateway :: WARNING :: Shard ID None has stopped responding to the gateway. Closing and restarting.
+2019-03-03 03:08:11,265 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:08:11,267 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:08:11,267 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:08:11,268 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:08:11,270 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:08:11,271 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:08:45,324 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:08:45,326 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:08:45,327 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:08:45,327 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:08:45,345 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:08:45,347 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:09:43,010 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:09:43,015 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:09:43,016 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:09:43,016 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:09:43,046 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:09:43,047 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:09:54,105 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:09:54,106 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:09:54,107 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:09:54,108 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:09:54,131 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:09:54,132 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:19:00,897 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:19:00,899 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:19:00,899 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:19:00,900 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:19:00,902 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:19:00,903 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:19:00,928 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:19:00,929 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:19:58,170 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:19:58,175 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:19:58,175 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:19:58,176 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:19:58,197 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:19:58,200 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:19:58,297 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:19:58,298 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:20:37,251 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:20:37,253 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:20:37,254 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:20:37,254 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:20:37,256 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:20:37,257 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:20:37,283 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:20:37,284 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:21:27,340 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:21:27,345 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:21:27,346 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:21:27,347 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:21:27,349 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:21:27,350 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:21:27,376 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:21:27,377 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:24:56,410 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:24:56,412 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:24:56,414 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:24:56,414 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:24:56,416 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:24:56,417 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:24:56,439 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:24:56,440 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:25:28,289 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:25:28,292 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:25:28,293 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:25:28,297 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:25:28,313 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:25:28,321 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:25:28,423 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:25:28,423 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:42:33,773 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:42:33,775 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:42:33,779 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:42:33,780 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:42:33,783 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:42:33,788 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:42:33,814 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:42:33,814 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:46:38,679 :: nikola_tesla :: INFO :: Start loading module enable...
+2019-03-03 03:46:38,695 :: nikola_tesla :: INFO :: Config successfully saved
+2019-03-03 03:46:38,699 :: nikola_tesla :: ERROR :: Module enable doesn't exists
+2019-03-03 03:47:09,015 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:47:09,019 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:47:09,021 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:47:09,021 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:47:09,026 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:47:09,027 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:47:09,050 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:47:09,050 :: nikola_tesla :: INFO :: Start loading module enable...
+2019-03-03 03:47:09,052 :: nikola_tesla :: ERROR :: Module enable doesn't exists
+2019-03-03 03:47:09,053 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:47:18,680 :: nikola_tesla :: INFO :: Start loading module enable...
+2019-03-03 03:47:18,681 :: nikola_tesla :: ERROR :: Module enable doesn't exists
+2019-03-03 03:48:35,402 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:48:35,404 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:48:35,405 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:48:35,406 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:48:35,409 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:48:35,410 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:48:35,495 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:48:35,496 :: nikola_tesla :: INFO :: Start loading module enable...
+2019-03-03 03:48:35,497 :: nikola_tesla :: ERROR :: Module enable doesn't exists
+2019-03-03 03:48:35,498 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:48:49,102 :: nikola_tesla :: INFO :: Start loading module gomoku...
+2019-03-03 03:48:49,130 :: nikola_tesla :: INFO :: Config successfully saved
+2019-03-03 03:48:49,210 :: nikola_tesla :: ERROR :: Module gomoku doesn't exists
+2019-03-03 03:49:40,412 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:49:40,416 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:49:40,417 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:49:40,418 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:49:40,420 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:49:40,421 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:49:40,422 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:49:40,423 :: nikola_tesla :: INFO :: Start loading module enable...
+2019-03-03 03:49:40,424 :: nikola_tesla :: ERROR :: Module enable doesn't exists
+2019-03-03 03:49:40,426 :: nikola_tesla :: INFO :: Start loading module gomoku...
+2019-03-03 03:49:40,438 :: nikola_tesla :: ERROR :: Module gomoku doesn't exists
+2019-03-03 03:49:40,439 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:50:08,748 :: nikola_tesla :: INFO :: Start loading module modules...
+2019-03-03 03:50:08,810 :: nikola_tesla :: ERROR :: Failed to import module modules
+2019-03-03 03:50:19,699 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:50:19,701 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:50:19,701 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:50:19,702 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:50:19,703 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:50:19,704 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:50:19,707 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:50:19,707 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:50:33,760 :: nikola_tesla :: INFO :: Start loading module errors...
+2019-03-03 03:50:33,806 :: nikola_tesla :: ERROR :: Failed to import module errors
+2019-03-03 03:50:42,369 :: nikola_tesla :: INFO :: Start loading module play...
+2019-03-03 03:50:42,437 :: nikola_tesla :: ERROR :: Failed to import module play
+2019-03-03 03:50:49,292 :: nikola_tesla :: INFO :: Start loading module perdu...
+2019-03-03 03:50:49,391 :: nikola_tesla :: ERROR :: Failed to import module perdu
+2019-03-03 03:53:21,936 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:53:21,939 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:53:21,941 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:53:21,942 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:53:21,945 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:53:21,946 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:53:21,989 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:53:21,990 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:53:49,144 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:53:49,147 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:53:49,148 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:53:49,149 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:53:49,152 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:53:49,152 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:53:49,189 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:53:49,189 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:54:00,489 :: nikola_tesla :: INFO :: Start unload module restart...
+2019-03-03 03:54:00,490 :: nikola_tesla :: ERROR :: Module {module} not loaded
+2019-03-03 03:54:19,271 :: nikola_tesla :: INFO :: Start unload module modules...
+2019-03-03 03:54:19,273 :: nikola_tesla :: ERROR :: Module {module} not loaded
+2019-03-03 03:55:21,142 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:55:21,144 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:55:21,144 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:55:21,147 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:55:21,159 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:55:21,161 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:55:21,252 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:55:21,254 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:55:27,474 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:55:27,476 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:55:27,476 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:55:27,477 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:55:27,479 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:55:27,480 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:55:27,519 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:55:27,521 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:55:53,349 :: nikola_tesla :: INFO :: Start unload module restart...
+2019-03-03 03:55:53,351 :: nikola_tesla :: ERROR :: Module {module} not loaded
+2019-03-03 03:56:30,335 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:56:30,337 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:56:30,337 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:56:30,338 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:56:30,343 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:56:30,344 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:56:30,366 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:56:30,366 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:56:41,349 :: nikola_tesla :: INFO :: Start unload module restart...
+2019-03-03 03:56:41,349 :: nikola_tesla :: ERROR :: Module {module} not loaded
+2019-03-03 03:57:32,248 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:57:32,250 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:57:32,251 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:57:32,251 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:57:32,253 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:57:32,254 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:57:32,256 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:57:32,259 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:57:49,806 :: nikola_tesla :: INFO :: Start unload module restart...
+2019-03-03 03:57:49,807 :: nikola_tesla :: ERROR :: Module restart not loaded
+2019-03-03 03:58:22,570 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:58:22,572 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:58:22,572 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:58:22,573 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:58:22,574 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:58:22,575 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:58:22,594 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:58:22,594 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:58:36,206 :: nikola_tesla :: INFO :: Start unload module restart...
+2019-03-03 03:58:36,208 :: nikola_tesla :: ERROR :: Module restart not loaded
+2019-03-03 03:59:26,660 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 03:59:26,662 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 03:59:26,663 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 03:59:26,663 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 03:59:26,665 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 03:59:26,666 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 03:59:26,668 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 03:59:26,669 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 03:59:31,904 :: nikola_tesla :: INFO :: Start unload module restart...
+2019-03-03 03:59:31,904 :: nikola_tesla :: ERROR :: Module restart not loaded
+2019-03-03 04:00:09,500 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 04:00:09,510 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 04:00:09,512 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 04:00:09,513 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 04:00:09,515 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 04:00:09,516 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 04:00:09,519 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 04:00:09,519 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 04:00:25,835 :: nikola_tesla :: INFO :: Start unload module restart...
+2019-03-03 04:00:25,838 :: nikola_tesla :: ERROR :: Module restart not loaded
+2019-03-03 04:00:41,177 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 04:00:41,180 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 04:00:41,181 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 04:00:41,182 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 04:00:41,184 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 04:00:41,184 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 04:00:41,187 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 04:00:41,187 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 04:00:49,950 :: nikola_tesla :: INFO :: Start unload module restart...
+2019-03-03 04:00:49,963 :: nikola_tesla :: INFO :: Config successfully saved
+2019-03-03 04:01:11,609 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 04:01:11,610 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 04:01:11,623 :: nikola_tesla :: INFO :: Config successfully saved
+2019-03-03 04:01:32,686 :: nikola_tesla :: INFO :: Start loading module Nikola...
+2019-03-03 04:01:32,688 :: nikola_tesla :: ERROR :: Module Nikola doesn't exists
+2019-03-03 04:02:16,304 :: nikola_tesla :: INFO :: Start unload module modulev2...
+2019-03-03 04:02:16,328 :: nikola_tesla :: INFO :: Config successfully saved
+2019-03-03 04:03:26,064 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 04:03:26,066 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 04:03:26,071 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 04:03:26,153 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 04:03:26,155 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 04:03:26,156 :: nikola_tesla :: INFO :: Start loading module modulev2...
+2019-03-03 04:03:26,166 :: nikola_tesla :: INFO :: Module modulev2 successfully imported
+2019-03-03 04:03:26,168 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 04:05:31,707 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 04:05:31,711 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 04:05:31,712 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 04:05:31,713 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 04:05:31,716 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 04:05:31,716 :: nikola_tesla :: INFO :: Start loading module modules...
+2019-03-03 04:05:31,750 :: nikola_tesla :: INFO :: Module modules successfully imported
+2019-03-03 04:05:31,751 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 04:08:17,828 :: discord.gateway :: WARNING :: Shard ID None has stopped responding to the gateway. Closing and restarting.
+2019-03-03 04:12:26,005 :: discord.gateway :: WARNING :: Shard ID None has stopped responding to the gateway. Closing and restarting.
+2019-03-03 04:14:40,476 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 04:14:40,483 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 04:14:40,484 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 04:14:40,484 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 04:14:40,488 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 04:14:40,488 :: nikola_tesla :: INFO :: Start loading module modules...
+2019-03-03 04:14:40,496 :: nikola_tesla :: INFO :: Module modules successfully imported
+2019-03-03 04:14:40,497 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 04:15:27,417 :: nikola_tesla :: INFO :: Start loading module git...
+2019-03-03 04:15:27,468 :: nikola_tesla :: INFO :: Module git successfully imported
+2019-03-03 04:15:27,489 :: nikola_tesla :: INFO :: Config successfully saved
+2019-03-03 04:16:08,112 :: nikola_tesla :: INFO :: Start unload module git...
+2019-03-03 04:16:08,117 :: nikola_tesla :: INFO :: Config successfully saved
+2019-03-03 04:16:14,251 :: nikola_tesla :: INFO :: Start loading module git...
+2019-03-03 04:16:14,252 :: nikola_tesla :: INFO :: Module git successfully imported
+2019-03-03 04:16:14,258 :: nikola_tesla :: INFO :: Config successfully saved
+2019-03-03 04:33:12,087 :: nikola_tesla :: INFO :: Start loading module rtfgd...
+2019-03-03 04:33:12,115 :: nikola_tesla :: INFO :: Module rtfgd successfully imported
+2019-03-03 04:33:12,136 :: nikola_tesla :: INFO :: Config successfully saved
+2019-03-03 04:34:30,102 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 04:34:30,105 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 04:34:30,105 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 04:34:30,106 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 04:34:30,108 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 04:34:30,108 :: nikola_tesla :: INFO :: Start loading module modules...
+2019-03-03 04:34:30,110 :: nikola_tesla :: INFO :: Module modules successfully imported
+2019-03-03 04:34:30,111 :: nikola_tesla :: INFO :: Start loading module git...
+2019-03-03 04:34:30,129 :: nikola_tesla :: INFO :: Module git successfully imported
+2019-03-03 04:34:30,130 :: nikola_tesla :: INFO :: Start loading module rtfgd...
+2019-03-03 04:34:30,132 :: nikola_tesla :: INFO :: Module rtfgd successfully imported
+2019-03-03 04:34:30,134 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 04:37:43,672 :: discord.client :: ERROR :: Attempting a reconnect in 0.79s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 04:37:45,295 :: discord.client :: ERROR :: Attempting a reconnect in 3.88s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 04:37:49,185 :: discord.client :: ERROR :: Attempting a reconnect in 7.48s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 04:38:38,707 :: discord.gateway :: WARNING :: Shard ID None has stopped responding to the gateway. Closing and restarting.
+2019-03-03 04:39:32,464 :: discord.client :: ERROR :: Attempting a reconnect in 7.55s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 04:41:26,460 :: discord.client :: ERROR :: Attempting a reconnect in 22.36s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 04:43:22,462 :: discord.client :: ERROR :: Attempting a reconnect in 60.54s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 04:45:18,315 :: discord.client :: ERROR :: Attempting a reconnect in 37.57s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 04:47:29,434 :: discord.client :: ERROR :: Attempting a reconnect in 41.41s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 05:01:54,510 :: discord.client :: ERROR :: Attempting a reconnect in 485.17s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 05:02:38,644 :: discord.gateway :: WARNING :: Shard ID None has stopped responding to the gateway. Closing and restarting.
+2019-03-03 05:12:12,854 :: discord.gateway :: WARNING :: Shard ID None has stopped responding to the gateway. Closing and restarting.
+2019-03-03 05:17:45,688 :: discord.gateway :: WARNING :: Shard ID None has stopped responding to the gateway. Closing and restarting.
+2019-03-03 05:20:42,213 :: discord.client :: ERROR :: Attempting a reconnect in 188.20s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 05:21:34,542 :: discord.gateway :: WARNING :: Shard ID None has stopped responding to the gateway. Closing and restarting.
+2019-03-03 05:24:27,356 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 05:24:27,358 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 05:24:27,358 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 05:24:27,359 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 05:24:27,370 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 05:24:27,371 :: nikola_tesla :: INFO :: Start loading module modules...
+2019-03-03 05:24:27,445 :: nikola_tesla :: INFO :: Module modules successfully imported
+2019-03-03 05:24:27,445 :: nikola_tesla :: INFO :: Start loading module git...
+2019-03-03 05:24:27,449 :: nikola_tesla :: INFO :: Module git successfully imported
+2019-03-03 05:24:27,451 :: nikola_tesla :: INFO :: Start loading module rtfgd...
+2019-03-03 05:24:27,455 :: nikola_tesla :: INFO :: Module rtfgd successfully imported
+2019-03-03 05:24:27,455 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 05:25:34,259 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 05:25:34,260 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 05:25:34,261 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 05:25:34,262 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 05:25:34,265 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 05:25:34,267 :: nikola_tesla :: INFO :: Start loading module modules...
+2019-03-03 05:25:34,270 :: nikola_tesla :: INFO :: Module modules successfully imported
+2019-03-03 05:25:34,271 :: nikola_tesla :: INFO :: Start loading module git...
+2019-03-03 05:25:34,273 :: nikola_tesla :: INFO :: Module git successfully imported
+2019-03-03 05:25:34,274 :: nikola_tesla :: INFO :: Start loading module rtfgd...
+2019-03-03 05:25:34,282 :: nikola_tesla :: INFO :: Module rtfgd successfully imported
+2019-03-03 05:25:34,283 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 05:26:22,350 :: discord.client :: ERROR :: Attempting a reconnect in 0.86s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 204, in from_client
+    ws = await websockets.connect(gateway, loop=client.loop, klass=cls, compression=None)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\websockets\py35\client.py", line 12, in __await_impl__
+    transport, protocol = await self._creating_connection
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+2019-03-03 05:28:11,292 :: discord.client :: ERROR :: Attempting a reconnect in 2.35s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 05:29:01,325 :: discord.client :: ERROR :: Attempting a reconnect in 7.19s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 204, in from_client
+    ws = await websockets.connect(gateway, loop=client.loop, klass=cls, compression=None)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\websockets\py35\client.py", line 12, in __await_impl__
+    transport, protocol = await self._creating_connection
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+2019-03-03 05:30:33,906 :: discord.gateway :: WARNING :: Shard ID None has stopped responding to the gateway. Closing and restarting.
+2019-03-03 05:32:28,250 :: discord.client :: ERROR :: Attempting a reconnect in 12.26s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 05:33:23,899 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 05:33:23,901 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 05:33:23,902 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 05:33:23,902 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 05:33:23,904 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 05:33:23,905 :: nikola_tesla :: INFO :: Start loading module modules...
+2019-03-03 05:33:23,908 :: nikola_tesla :: INFO :: Module modules successfully imported
+2019-03-03 05:33:23,909 :: nikola_tesla :: INFO :: Start loading module git...
+2019-03-03 05:33:23,911 :: nikola_tesla :: INFO :: Module git successfully imported
+2019-03-03 05:33:23,912 :: nikola_tesla :: INFO :: Start loading module rtfgd...
+2019-03-03 05:33:23,914 :: nikola_tesla :: INFO :: Module rtfgd successfully imported
+2019-03-03 05:33:23,915 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 05:34:43,191 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 05:34:43,201 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 05:34:43,202 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 05:34:43,202 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 05:34:43,212 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 05:34:43,219 :: nikola_tesla :: INFO :: Start loading module modules...
+2019-03-03 05:34:43,225 :: nikola_tesla :: INFO :: Module modules successfully imported
+2019-03-03 05:34:43,227 :: nikola_tesla :: INFO :: Start loading module git...
+2019-03-03 05:34:43,231 :: nikola_tesla :: INFO :: Module git successfully imported
+2019-03-03 05:34:43,233 :: nikola_tesla :: INFO :: Start loading module rtfgd...
+2019-03-03 05:34:43,238 :: nikola_tesla :: INFO :: Module rtfgd successfully imported
+2019-03-03 05:34:43,239 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 05:35:44,932 :: discord.client :: ERROR :: Attempting a reconnect in 1.03s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 204, in from_client
+    ws = await websockets.connect(gateway, loop=client.loop, klass=cls, compression=None)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\websockets\py35\client.py", line 12, in __await_impl__
+    transport, protocol = await self._creating_connection
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+ConnectionAbortedError: SSL handshake is taking longer than 60.0 seconds: aborting the connection
+2019-03-03 05:36:33,983 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 05:36:33,993 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 05:36:33,995 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 05:36:33,995 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 05:36:33,999 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 05:36:33,999 :: nikola_tesla :: INFO :: Start loading module modules...
+2019-03-03 05:36:34,002 :: nikola_tesla :: INFO :: Module modules successfully imported
+2019-03-03 05:36:34,002 :: nikola_tesla :: INFO :: Start loading module git...
+2019-03-03 05:36:34,005 :: nikola_tesla :: INFO :: Module git successfully imported
+2019-03-03 05:36:34,006 :: nikola_tesla :: INFO :: Start loading module rtfgd...
+2019-03-03 05:36:34,028 :: nikola_tesla :: INFO :: Module rtfgd successfully imported
+2019-03-03 05:36:34,028 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 05:37:27,024 :: discord.client :: WARNING :: PyNaCl is not installed, voice will NOT be supported
+2019-03-03 05:37:27,027 :: nikola_tesla :: INFO :: Config successfully loaded
+2019-03-03 05:37:27,028 :: nikola_tesla :: INFO :: Starts to load modules...
+2019-03-03 05:37:27,030 :: nikola_tesla :: INFO :: Start loading module restart...
+2019-03-03 05:37:27,037 :: nikola_tesla :: INFO :: Module restart successfully imported
+2019-03-03 05:37:27,037 :: nikola_tesla :: INFO :: Start loading module modules...
+2019-03-03 05:37:27,040 :: nikola_tesla :: INFO :: Module modules successfully imported
+2019-03-03 05:37:27,040 :: nikola_tesla :: INFO :: Start loading module git...
+2019-03-03 05:37:27,042 :: nikola_tesla :: INFO :: Module git successfully imported
+2019-03-03 05:37:27,042 :: nikola_tesla :: INFO :: Start loading module rtfgd...
+2019-03-03 05:37:27,045 :: nikola_tesla :: INFO :: Module rtfgd successfully imported
+2019-03-03 05:37:27,045 :: nikola_tesla :: INFO :: Finished to load all modules
+2019-03-03 05:38:51,236 :: discord.gateway :: WARNING :: Shard ID None has stopped responding to the gateway. Closing and restarting.

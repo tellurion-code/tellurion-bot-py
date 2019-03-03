@@ -13,7 +13,7 @@ class MainClass:
         self.owners = owners
         self.prefix = prefix
         self.events = ['on_message']  # events list
-        self.command = "%sarchive" % self.prefix  # command prefix (can be empty to catch every single messages)
+        self.command = "%sarchive" % self.prefix  # command_text prefix (can be empty to catch every single messages)
 
         self.name = "Archive"
         self.description = "Module gérant l'archivage des messages"

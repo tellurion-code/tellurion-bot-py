@@ -10,7 +10,7 @@ class MainClass:
         self.owners = owners
         self.prefix = prefix
         self.events = ['on_message']  # events list
-        self.command = "%splay" % prefix  # command prefix (can be empty to catch every single messages)
+        self.command = "%splay" % prefix  # command_text prefix (can be empty to catch every single messages)
         self.voice = None
         self.musics = [
             "for-the-damaged-coda",

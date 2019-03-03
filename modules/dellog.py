@@ -17,7 +17,7 @@ class MainClass():
         self.owners = owners
         self.prefix = prefix
         self.events = ['on_message', 'on_message_delete']  # events list
-        self.command = "%slogs" % prefix  # command prefix (can be empty to catch every single messages)
+        self.command = "%slogs" % prefix  # command_text prefix (can be empty to catch every single messages)
 
         self.name = "DelLog"
         self.description = "Module de la NSA (log des messages supprimés)"

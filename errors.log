@@ -1,0 +1,625 @@
+2019-03-03 02:25:32,578 :: nikola_tesla :: ERROR :: Module restart doesn't have a MainClass
+2019-03-03 02:26:09,121 :: nikola_tesla :: ERROR :: Module restart doesn't have a MainClass
+2019-03-03 02:26:36,882 :: nikola_tesla :: ERROR :: Module restart doesn't have a MainClass
+2019-03-03 02:26:50,018 :: nikola_tesla :: ERROR :: Module restart doesn't have a MainClass
+2019-03-03 03:07:22,991 :: discord.client :: ERROR :: Attempting a reconnect in 1.10s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 03:46:38,699 :: nikola_tesla :: ERROR :: Module enable doesn't exists
+2019-03-03 03:47:09,052 :: nikola_tesla :: ERROR :: Module enable doesn't exists
+2019-03-03 03:47:18,681 :: nikola_tesla :: ERROR :: Module enable doesn't exists
+2019-03-03 03:48:35,497 :: nikola_tesla :: ERROR :: Module enable doesn't exists
+2019-03-03 03:48:49,210 :: nikola_tesla :: ERROR :: Module gomoku doesn't exists
+2019-03-03 03:49:40,424 :: nikola_tesla :: ERROR :: Module enable doesn't exists
+2019-03-03 03:49:40,438 :: nikola_tesla :: ERROR :: Module gomoku doesn't exists
+2019-03-03 03:50:08,810 :: nikola_tesla :: ERROR :: Failed to import module modules
+2019-03-03 03:50:33,806 :: nikola_tesla :: ERROR :: Failed to import module errors
+2019-03-03 03:50:42,437 :: nikola_tesla :: ERROR :: Failed to import module play
+2019-03-03 03:50:49,391 :: nikola_tesla :: ERROR :: Failed to import module perdu
+2019-03-03 03:54:00,490 :: nikola_tesla :: ERROR :: Module {module} not loaded
+2019-03-03 03:54:19,273 :: nikola_tesla :: ERROR :: Module {module} not loaded
+2019-03-03 03:55:53,351 :: nikola_tesla :: ERROR :: Module {module} not loaded
+2019-03-03 03:56:41,349 :: nikola_tesla :: ERROR :: Module {module} not loaded
+2019-03-03 03:57:49,807 :: nikola_tesla :: ERROR :: Module restart not loaded
+2019-03-03 03:58:36,208 :: nikola_tesla :: ERROR :: Module restart not loaded
+2019-03-03 03:59:31,904 :: nikola_tesla :: ERROR :: Module restart not loaded
+2019-03-03 04:00:25,838 :: nikola_tesla :: ERROR :: Module restart not loaded
+2019-03-03 04:01:32,688 :: nikola_tesla :: ERROR :: Module Nikola doesn't exists
+2019-03-03 04:37:43,672 :: discord.client :: ERROR :: Attempting a reconnect in 0.79s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 04:37:45,295 :: discord.client :: ERROR :: Attempting a reconnect in 3.88s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 04:37:49,185 :: discord.client :: ERROR :: Attempting a reconnect in 7.48s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 04:39:32,464 :: discord.client :: ERROR :: Attempting a reconnect in 7.55s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 04:41:26,460 :: discord.client :: ERROR :: Attempting a reconnect in 22.36s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 04:43:22,462 :: discord.client :: ERROR :: Attempting a reconnect in 60.54s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 04:45:18,315 :: discord.client :: ERROR :: Attempting a reconnect in 37.57s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 04:47:29,434 :: discord.client :: ERROR :: Attempting a reconnect in 41.41s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 05:01:54,510 :: discord.client :: ERROR :: Attempting a reconnect in 485.17s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 05:20:42,213 :: discord.client :: ERROR :: Attempting a reconnect in 188.20s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
+2019-03-03 05:26:22,350 :: discord.client :: ERROR :: Attempting a reconnect in 0.86s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 204, in from_client
+    ws = await websockets.connect(gateway, loop=client.loop, klass=cls, compression=None)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\websockets\py35\client.py", line 12, in __await_impl__
+    transport, protocol = await self._creating_connection
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+2019-03-03 05:28:11,292 :: discord.client :: ERROR :: Attempting a reconnect in 2.35s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 05:29:01,325 :: discord.client :: ERROR :: Attempting a reconnect in 7.19s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 204, in from_client
+    ws = await websockets.connect(gateway, loop=client.loop, klass=cls, compression=None)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\websockets\py35\client.py", line 12, in __await_impl__
+    transport, protocol = await self._creating_connection
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+2019-03-03 05:32:28,250 :: discord.client :: ERROR :: Attempting a reconnect in 12.26s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 822, in _wrap_create_connection
+    return await self._loop.create_connection(*args, **kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\selector_events.py", line 812, in _read_ready__data_received
+    data = self._sock.recv(self.max_size)
+ConnectionResetError: [WinError 10054] Une connexion existante a dû être fermée par l’hôte distant
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 879, in _create_direct_connection
+    raise last_exc
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 862, in _create_direct_connection
+    req=req, client_error=client_error)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 829, in _wrap_create_connection
+    raise client_error(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [Une connexion existante a dû être fermée par l’hôte distant]
+2019-03-03 05:35:44,932 :: discord.client :: ERROR :: Attempting a reconnect in 1.03s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 364, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 204, in from_client
+    ws = await websockets.connect(gateway, loop=client.loop, klass=cls, compression=None)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\websockets\py35\client.py", line 12, in __await_impl__
+    transport, protocol = await self._creating_connection
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 970, in create_connection
+    ssl_handshake_timeout=ssl_handshake_timeout)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 998, in _create_connection_transport
+    await waiter
+ConnectionAbortedError: SSL handshake is taking longer than 60.0 seconds: aborting the connection

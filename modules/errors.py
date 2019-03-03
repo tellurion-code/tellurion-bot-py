@@ -58,7 +58,7 @@ class MainClass:
         self.owners = owners
         self.prefix = prefix
         self.events = ['on_error', 'on_message', 'on_ready']  # events list
-        self.command = "%slicorne" % self.prefix  # command prefix (can be empty to catch every single messages)
+        self.command = "%slicorne" % self.prefix  # command_text prefix (can be empty to catch every single messages)
 
         self.name = "Error Handling"
         self.description = "Module de gestions des erreurs"

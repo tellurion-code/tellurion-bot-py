@@ -1,398 +1,335 @@
 #!/usr/bin/python3
 import importlib
+import json
+import logging
+import logging.config
 import os
+import sys
 import traceback
 
 import discord
 
-client = discord.Client()
-prefix = '!'
-modules = {}  # format : {'modulename':[module, initializedclass]}
-owners = [281166473102098433, 118399702667493380, 95605730538684416] #Alix Should **not** be on this list on the master branch
+from modules.base import BaseClass
 
 
-async def auth(user, module_name):
-    if user.id in owners:
-        return True
-    try:
-        modules[module_name][1].authlist
-    except:
-        return True
-    for guild in client.guilds:
-        if guild.get_member(user.id):
-            for roleid in modules[module_name][1].authlist:
-                if roleid in [r.id for r in guild.get_member(user.id).roles]:
-                    return True
+def setup_logging(default_path='config/log_config.json', default_level=logging.INFO, env_key='LOG_CFG'):
+    """Setup logging configuration
+    """
+    path = default_path
+    value = os.getenv(env_key, None)
+    if value:
+        path = value
+    if os.path.exists(path):
+        with open(path, 'rt') as f:
+            config = json.load(f)
+        logging.config.dictConfig(config)
+    else:
+        logging.basicConfig(level=default_level)
 
 
-@client.event
-async def on_ready():
-    print("Bienvenue, {0.user}, l'heure est venue d'e-penser.".format(client))
-    panic = False
-    error = None
+setup_logging()
 
-    async def panic_load():
-        print("--PANIC LOAD--")
-        panic = True
-        modules = {}
-        for filename in os.listdir('modules'):
-            if filename.endswith('.py'):
-                try:
-                    modules.update({filename[:-3:]: [importlib.import_module('modules.' + filename[:-3:])]})
-                    print("Module {0} chargé.".format(filename[:-3:]))
-                except:
-                    print("[ERROR] Le module {0} n'a pas pu être chargé.".format(filename))
-        # initialisation
-        for module_name in list(modules.keys()):
-            try:
-                modules[module_name].append(modules[module_name][0].MainClass(client, modules, owners, prefix))
-                print("Module {0} initialisé.".format(module_name))
-            except:
-                print("[ERROR] Le module {0} n'a pas pu être initialisé.".format(module_name))
-                modules.pop(module_name, None)
+log_discord = logging.getLogger('discord')
+log_nokola_tesla = logging.getLogger('nikola_tesla')
 
-    if 'modules.py' in os.listdir('modules'):
+debug = log_nokola_tesla.debug
+info = log_nokola_tesla.info
+warning = log_nokola_tesla.warning
+error = log_nokola_tesla.error
+critical = log_nokola_tesla.critical
+
+
+class NikolaTesla(discord.Client):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.ready = False
+        # Content: {"module_name": {"module": imported module, "class": initialized class}}
+        self.modules = {}
+        self.config = {
+            "modules": ["modules"],
+            "prefix": "%",
+        }
+        self.load_config()
+        self.load_modules()
+
+    def load_config(self, config_file="config/config.json"):
+        if os.path.exists(config_file):
+            with open(config_file, 'rt') as f:
+                config = json.load(f)
+            self.config.update(config)
+            info("Config successfully loaded")
+        else:
+            with open(config_file, 'w') as f:
+                json.dump(self.config, f)
+            info("Config successfully created")
+
+    def save_config(self, config_file="config/config.json"):
+        with open(config_file, "w") as f:
+            json.dump(self.config, f)
+        info("Config successfully saved")
+
+    def load_modules(self):
+        info("Starts to load modules...")
+        e = {}
+        for module in self.config["modules"]:
+            e.update({module: self.load_module(module)})
+        info("Finished to load all modules")
+        return e
+
+    def load_module(self, module):
+        info("Start loading module {module}...".format(module=module))
         try:
-            modules.update({'modules': [importlib.import_module('modules.' + 'modules')]})
-            print("Module {0} chargé.".format('modules'))
+            imported = importlib.import_module('modules.' + module)
             try:
-                modules['modules'].append(modules['modules'][0].MainClass(client, modules, owners, prefix))
-                print("Module {0} initialisé.".format('modules'))
-                try:
-                    await modules['modules'][1].on_ready()
-                except Exception as e:
-                    error = e
-            except Exception as e:
-                print("[ERROR] Le module {0} n'a pas pu être initialisé.".format('modules'))
-                await panic_load()
-                error = e
+                initialized_class = imported.MainClass(self)
+                print("ok")
+                if isinstance(initialized_class, BaseClass):
+                    self.modules.update({module: {"imported": imported, "initialized_class": initialized_class}})
+                    info("Module {module} successfully imported".format(module=module))
+                    initialized_class.on_load()
+                    if module not in self.config["modules"]:
+                        self.config["modules"].append(module)
+                        self.save_config()
+                else:
+                    error("Module MainClass doesn't inherited from BaseClass")
+                    return ValueError("MainClass doesn't inherit from BaseClass")
+            except AttributeError as e:
+                error("Module {module} doesn't have a MainClass".format(module=module))
+                return e
+        except ModuleNotFoundError as e:
+            error("Module {module} doesn't exists".format(module=module))
+            return e
         except Exception as e:
-            print("[ERROR] Le module {0} n'a pas pu être chargé.".format('modules.py'))
-            await panic_load()
-            error = e
-    else:
-        await panic_load()
+            error("Failed to import module {module}".format(module=module))
+            return e
+
+    def unload_module(self, module):
+        info("Start unload module {module}...".format(module=module))
+        try:
+            del self.modules[module]
+            if module in self.config["modules"]:
+                self.config["modules"].remove(module)
+                self.save_config()
+        except KeyError as e:
+            error("Module {module} not loaded".format(module=module))
+            return e
+
+    async def on_socket_raw_receive(self, message):
+        for module in self.modules.values():
+            await module["initialized_class"].on_socket_raw_receive(message)
+
+    async def on_socket_raw_send(self, payload):
+        for module in self.modules.values():
+            await module["initialized_class"].on_socket_raw_send(payload)
+
+    async def on_typing(self, channel, user, when):
+        for module in self.modules.values():
+            await module["initialized_class"].on_typing(channel, user, when)
+
+    async def on_message(self, message):
+        print(message.content)
+        for module in self.modules.values():
+            await module["initialized_class"]._on_message(message)
+
+    async def on_message_delete(self, message):
+        for module in self.modules.values():
+            await module["initialized_class"].on_message_delete(message)
+
+    async def on_raw_message_delete(self, payload):
+        for module in self.modules.values():
+            await module["initialized_class"].on_raw_message_delete(payload)
+
+    async def on_raw_bulk_message_delete(self, payload):
+        for module in self.modules.values():
+            await module["initialized_class"].on_raw_bulk_message_delete(payload)
+
+    async def on_message_edit(self, before, after):
+        for module in self.modules.values():
+            await module["initialized_class"].on_message_edit(before, after)
+
+    async def on_raw_message_edit(self, payload):
+        for module in self.modules.values():
+            await module["initialized_class"].on_raw_message_edit(payload)
+
+    async def on_reaction_add(self, reaction, user):
+        for module in self.modules.values():
+            await module["initialized_class"].on_reaction_add(reaction, user)
+
+    async def on_raw_reaction_add(self, payload):
+        for module in self.modules.values():
+            await module["initialized_class"].on_raw_reaction_add(payload)
+
+    async def on_reaction_remove(self, reaction, user):
+        for module in self.modules.values():
+            await module["initialized_class"].on_reaction_remove(reaction, user)
+
+    async def on_raw_reaction_remove(self, payload):
+        for module in self.modules.values():
+            await module["initialized_class"].on_raw_reaction_remove(payload)
+
+    async def on_reaction_clear(self, message, reactions):
+        for module in self.modules.values():
+            await module["initialized_class"].on_reaction_clear(message, reactions)
+
+    async def on_raw_reaction_clear(self, payload):
+        for module in self.modules.values():
+            await module["initialized_class"].on_raw_reaction_clear(payload)
+
+    async def on_private_channel_delete(self, channel):
+        for module in self.modules.values():
+            await module["initialized_class"].on_private_channel_delete(channel)
+
+    async def on_private_channel_create(self, channel):
+        for module in self.modules.values():
+            await module["initialized_class"].on_private_channel_create(channel)
+
+    async def on_private_channel_update(self, before, after):
+        for module in self.modules.values():
+            await module["initialized_class"].on_private_channel_update(before, after)
+
+    async def on_private_channel_pins_update(self, channel, last_pin):
+        for module in self.modules.values():
+            await module["initialized_class"].on_private_channel_pins_update(channel, last_pin)
+
+    async def on_guild_channel_delete(self, channel):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_channel_delete(channel)
+
+    async def on_guild_channel_create(self, channel):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_channel_create(channel)
+
+    async def on_guild_channel_update(self, before, after):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_channel_update(before, after)
+
+    async def on_guild_channel_pins_update(self, channel, last_pin):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_channel_pins_update(channel, last_pin)
+
+    async def on_member_join(self, member):
+        for module in self.modules.values():
+            await module["initialized_class"].on_member_join(member)
+
+    async def on_member_remove(self, member):
+        for module in self.modules.values():
+            await module["initialized_class"].on_member_remove(member)
 
-    if panic:
-        for moduleName in list(modules.keys()):
-            if 'on_ready' in modules[moduleName][1].events:
-                await modules[moduleName][1].on_ready()
-    else:
-        for moduleName in list(modules.keys()):
-            if (not moduleName == 'modules') and 'on_ready' in modules[moduleName][1].events:
-                await modules[moduleName][1].on_ready()
-    if error:
-        raise error
-
-
-@client.event
-async def on_error(event, *args, **kwargs):
-    print(traceback.format_exc())
-    for moduleName in list(modules.keys()):
-        if 'on_error' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_error(event, *args, **kwargs)
-
-
-@client.event
-async def on_socket_raw_receive(msg):
-    for moduleName in list(modules.keys()):
-        if 'on_socket_raw_receive' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_socket_raw_receive(msg)
-
-
-@client.event
-async def on_socket_raw_send(payload):
-    for moduleName in list(modules.keys()):
-        if 'on_socket_raw_send' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_socket_raw_send(payload)
-
-
-@client.event
-async def on_typing(channel, user, when):
-    for moduleName in list(modules.keys()):
-        if 'on_typing' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_typing(channel, user, when)
-
-
-@client.event
-async def on_message(message):
-    for moduleName in list(modules.keys()):
-        if 'on_message' in modules[moduleName][1].events and message.content.startswith(modules[moduleName][1].command):
-            if await auth(message.author, moduleName):
-                await modules[moduleName][1].on_message(message)
-
-
-@client.event
-async def on_message_delete(message):
-    for moduleName in list(modules.keys()):
-        if 'on_message_delete' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_message_delete(message)
-
-
-@client.event
-async def on_raw_message_delete(payload):
-    for moduleName in list(modules.keys()):
-        if 'on_raw_message_delete' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_raw_message_delete(payload)
-
-
-@client.event
-async def on_raw_bulk_message_delete(payload):
-    for moduleName in list(modules.keys()):
-        if 'on_raw_bulk_message_delete' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_raw_bulk_message_delete(payload)
-
-
-@client.event
-async def on_message_edit(before, after):
-    for moduleName in list(modules.keys()):
-        if 'on_message_edit' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_message_edit(before, after)
-
-
-@client.event
-async def on_raw_message_edit(payload):
-    for moduleName in list(modules.keys()):
-        if 'on_raw_message_edit' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_raw_message_edit(payload)
-
-
-@client.event
-async def on_reaction_add(reaction, user):
-    for moduleName in list(modules.keys()):
-        if 'on_reaction_add' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_reaction_add(reaction, user)
-
-
-@client.event
-async def on_raw_reaction_add(payload):
-    for moduleName in list(modules.keys()):
-        if 'on_raw_reaction_add' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_raw_reaction_add(payload)
-
-
-@client.event
-async def on_reaction_remove(reaction, user):
-    for moduleName in list(modules.keys()):
-        if 'on_reaction_remove' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_reaction_remove(reaction, user)
-
-
-@client.event
-async def on_raw_reaction_remove(payload):
-    for moduleName in list(modules.keys()):
-        if 'on_raw_reaction_remove' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_raw_reaction_remove(payload)
-
-
-@client.event
-async def on_reaction_clear(message, reactions):
-    for moduleName in list(modules.keys()):
-        if 'on_reaction_clear' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_reaction_clear(message, reactions)
-
-
-@client.event
-async def on_raw_reaction_clear(payload):
-    for moduleName in list(modules.keys()):
-        if 'on_raw_reaction_clear' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_raw_reaction_clear(payload)
-
-
-@client.event
-async def on_private_channel_delete(channel):
-    for moduleName in list(modules.keys()):
-        if 'on_private_channel_delete' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_private_channel_delete(channel)
-
-
-@client.event
-async def on_private_channel_create(channel):
-    for moduleName in list(modules.keys()):
-        if 'on_private_channel_create' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_private_channel_create(channel)
-
-
-@client.event
-async def on_private_channel_update(before, after):
-    for moduleName in list(modules.keys()):
-        if 'on_private_channel_update' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_private_channel_update(before, after)
-
-
-@client.event
-async def on_private_channel_pins_update(channel, last_pin):
-    for moduleName in list(modules.keys()):
-        if 'on_private_channel_pins_update' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_private_channel_pins_update(channel, last_pin)
-
-
-@client.event
-async def on_guild_channel_delete(channel):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_channel_delete' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_channel_delete(channel)
-
-
-@client.event
-async def on_guild_channel_create(channel):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_channel_create' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_channel_create(channel)
-
-
-@client.event
-async def on_guild_channel_update(before, after):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_channel_update' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_channel_update(before, after)
-
-
-@client.event
-async def on_guild_channel_pins_update(channel, last_pin):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_channel_pins_update' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_channel_pins_update(channel, last_pin)
-
-
-@client.event
-async def on_member_join(member):
-    for moduleName in list(modules.keys()):
-        if 'on_member_join' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_member_join(member)
-
-
-@client.event
-async def on_member_remove(member):
-    for moduleName in list(modules.keys()):
-        if 'on_member_remove' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_member_remove(member)
-
-
-@client.event
-async def on_member_update(before, after):
-    for moduleName in list(modules.keys()):
-        if 'on_member_update' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_member_update(before, after)
-
-
-@client.event
-async def on_guild_join(guild):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_join' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_join(guild)
-
-
-@client.event
-async def on_guild_remove(guild):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_remove' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_remove(guild)
-
-
-@client.event
-async def on_guild_update(before, after):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_update' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_update(before, after)
-
-
-@client.event
-async def on_guild_role_create(role):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_role_create' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_role_create(role)
-
-
-@client.event
-async def on_guild_role_delete(role):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_role_delete' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_role_delete(role)
-
-
-@client.event
-async def on_guild_role_update(before, after):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_role_update' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_role_update(before, after)
-
-
-@client.event
-async def on_guild_emojis_update(guild, before, after):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_emojis_update' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_emojis_update(guild, before, after)
-
-
-@client.event
-async def on_guild_available(guild):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_available' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_available(guild)
-
-
-@client.event
-async def on_guild_unavailable(guild):
-    for moduleName in list(modules.keys()):
-        if 'on_guild_unavailable' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_guild_unavailable(guild)
-
-
-@client.event
-async def on_voice_state_update(member, before, after):
-    for moduleName in list(modules.keys()):
-        if 'on_voice_state_update' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_voice_state_update(member, before, after)
-
-
-@client.event
-async def on_member_ban(guild, user):
-    for moduleName in list(modules.keys()):
-        if 'on_member_ban' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_member_ban(guild, user)
-
-
-@client.event
-async def on_member_unban(guild, user):
-    for moduleName in list(modules.keys()):
-        if 'on_member_unban' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_member_unban(guild, user)
-
-
-@client.event
-async def on_group_join(channel, user):
-    for moduleName in list(modules.keys()):
-        if 'on_group_join' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_group_join(channel, user)
-
-
-@client.event
-async def on_group_remove(channel, user):
-    for moduleName in list(modules.keys()):
-        if 'on_group_remove' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_group_remove(channel, user)
-
-
-@client.event
-async def on_relationship_add(relationship):
-    for moduleName in list(modules.keys()):
-        if 'on_relationship_add' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_relationship_add(relationship)
-
-
-@client.event
-async def on_relationship_remove(relationship):
-    for moduleName in list(modules.keys()):
-        if 'on_relationship_remove' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_relationship_remove(relationship)
-
-
-@client.event
-async def on_relationship_update(before, after):
-    for moduleName in list(modules.keys()):
-        if 'on_relationship_update' in modules[moduleName][1].events:
-            await modules[moduleName][1].on_relationship_update(before, after)
-
-
-client.run(os.environ['DISCORD_TOKEN'])
+    async def on_member_update(self, before, after):
+        for module in self.modules.values():
+            await module["initialized_class"].on_member_update(before, after)
+
+    async def on_guild_join(self, guild):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_join(guild)
+
+    async def on_guild_remove(self, guild):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_remove(guild)
+
+    async def on_guild_update(self, before, after):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_update(before, after)
+
+    async def on_guild_role_create(self, role):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_role_create(role)
+
+    async def on_guild_role_delete(self, role):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_role_delete(role)
+
+    async def on_guild_role_update(self, before, after):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_role_update(before, after)
+
+    async def on_guild_emojis_update(self, guild, before, after):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_emojis_update(guild, before, after)
+
+    async def on_guild_available(self, guild):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_available(guild)
+
+    async def on_guild_unavailable(self, guild):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_unavailable(guild)
+
+    async def on_voice_state_update(self, member, before, after):
+        for module in self.modules.values():
+            await module["initialized_class"].on_voice_state_update(member, before, after)
+
+    async def on_member_ban(self, guild, user):
+        for module in self.modules.values():
+            await module["initialized_class"].on_member_ban(guild, user)
+
+    async def on_member_unban(self, guild, user):
+        for module in self.modules.values():
+            await module["initialized_class"].on_member_unban(guild, user)
+
+    async def on_group_join(self, channel, user):
+        for module in self.modules.values():
+            await module["initialized_class"].on_group_join(channel, user)
+
+    async def on_group_remove(self, channel, user):
+        for module in self.modules.values():
+            await module["initialized_class"].on_group_remove(channel, user)
+
+    async def on_relationship_add(self, relationship):
+        for module in self.modules.values():
+            await module["initialized_class"].on_relationship_add(relationship)
+
+    async def on_relationship_remove(self, relationship):
+        for module in self.modules.values():
+            await module["initialized_class"].on_relationship_remove(relationship)
+
+    async def on_relationship_update(self, before, after):
+        for module in self.modules.values():
+            await module["initialized_class"].on_relationship_update(before, after)
+
+    async def on_connect(self):
+        for module in self.modules.values():
+            await module["initialized_class"].on_connect()
+
+    async def on_shard_ready(self):
+        for module in self.modules.values():
+            await module["initialized_class"].on_shard_ready()
+
+    async def on_resumed(self):
+        for module in self.modules.values():
+            await module["initialized_class"].on_resumed()
+
+    async def on_error(self, event, *args, **kwargs):
+        print(event, *args, **kwargs)
+        print(traceback.format_exc())
+        for module in self.modules.values():
+            await module["initialized_class"].on_error(event, *args, **kwargs)
+
+    async def on_guild_integrations_update(self, guild):
+        for module in self.modules.values():
+            await module["initialized_class"].on_guild_integrations_update(guild)
+
+    async def on_webhooks_update(self, channel):
+        for module in self.modules.values():
+            await module["initialized_class"].on_webhooks_update(channel)
+
+
+client = NikolaTesla()
+# prefix = '/'
+# modules = {}  # format : {'modulename':[module, initializedclass]}
+# owners = [281166473102098433]
+#
+#
+# async def auth(user, module_name):
+#     if user.id in owners:
+#         return True
+#     try:
+#         modules[module_name][1].authlist
+#     except ValueError:
+#         return True
+#     for guild in client.guilds:
+#         if guild.get_member(user.id):
+#             for roleid in modules[module_name][1].authlist:
+#                 if roleid in [r.id for r in guild.get_member(user.id).roles]:
+#                     return True
+client.run("NDYwNzgyMTE4OTA2MTAxNzYy.D1y9jA.-ZvSdRAmpSzr9GP4aonjAS9P8Uo")

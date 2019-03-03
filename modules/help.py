@@ -21,7 +21,7 @@ class MainClass:
         self.owners = owners
         self.prefix = prefix
         self.events = ['on_message']  # events list
-        self.command = "%shelp" % self.prefix  # command prefix (can be empty to catch every single messages)
+        self.command = "%shelp" % self.prefix  # command_text prefix (can be empty to catch every single messages)
 
         self.name = "Aide"
         self.description = "Module d'aide"

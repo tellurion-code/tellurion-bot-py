@@ -1,26 +1,25 @@
+# dummy module
 import discord
 
 
 class MainClass:
-    def __init__(self, client, modules, owners, prefix):
-        self.client = client
-        self.modules = modules
-        self.owners = owners
-        self.prefix = prefix
-        self.events = ['on_message']  # events list
-        self.command = "%srole" % self.prefix  # command prefix (can be empty to catch every single messages)
+    name = "Role"
 
-        self.name = "Roles"
-        self.description = "Module d'auto-attribution des rôles"
-        self.interactive = True
-        self.color = 0xffb593
-        self.help = """\
- </prefix>role list
- => Affiche la liste des rôles
- 
- </prefix>role <nom du rôle>
- => Vous donne ou vous retire le rôle donné
-"""
+    super_users = []
+
+    color = 0xffb593
+
+    help_active = True
+    help = {
+        "description": "Modulé gérant l'attribution des roles",
+        "commands": {
+            "`{prefix}roles list`": "Liste les roles",
+            "`{prefix}roles <role>": "S'attribuer le role <role>"
+        }
+    }
+
+    def __init__(self, client):
+        super().__init__(client)
         self.RoleList = {
             "suspect": [435559220860157952, "Permet d'être notifié pour les mini-jeux"],
             "clash-of-coders": [496372436967882774, "Permet d'être notifié pour les parties de clash-of-code"],

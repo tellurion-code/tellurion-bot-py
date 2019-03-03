@@ -1,26 +1,26 @@
-class MainClass:
-    def __init__(self, client, modules, owners, prefix):
-        self.client = client
-        self.modules = modules
-        self.owners = owners
-        self.prefix = prefix
-        self.events = ['on_message']  # events list
-        self.command = "%srestart" % self.prefix  # command prefix (can be empty to catch every single messages)
+from .base import BaseClass
 
-        self.name = "Restart"
-        self.description = "Module gérant les redémarrages du bot"
-        self.interactive = True
-        self.authlist = [431043517217898496]
-        self.color = 0x000000
-        self.help = """\
- </prefix>restart
-"""
 
-    async def on_message(self, message):
-        args = message.content.split(" ")
-        if args[0] == '%srestart' % self.prefix:
-            if 'py' in args:
-                await message.channel.send(message.author.mention + ", Le bot va redémarrer...")
-            await self.client.logout()
-        else:
-            await self.modules['help'][1].send_help(message.channel, self)
+class MainClass(BaseClass):
+    name = "Restart"
+
+    super_users = [431043517217898496]
+
+    color = 0x000000
+
+    help_active = True
+    help = {
+        "description": "Module gérant les redémarages du bot",
+        "commands": {
+            "`{prefix}restart py`": "Redémare le bot",
+        }
+    }
+
+    command_text = "restart"
+
+    async def command(self, message, args, kwargs):
+        await message.channel.send(message.author.mention + ", vous devez utiliser {prefix}restart py pour redémarrer "
+                                                            "le bot".format(prefix=self.client.config["prefix"]))
+
+    async def com_py(self, message, args, kwargs):
+        await self.client.logout()

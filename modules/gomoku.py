@@ -1,3 +1,4 @@
+# dummy module
 import asyncio
 import os
 import pickle
@@ -37,7 +38,7 @@ class MainClass:
         self.owners = owners
         self.prefix = prefix
         self.events = ['on_message', 'on_ready']  # events list
-        self.command = ""  # command prefix (can be empty to catch every single messages)
+        self.command = ""  # command_text prefix (can be empty to catch every single messages)
 
         self.name = "Gomoku"
         self.description = "Module du jeu Gomoku"
