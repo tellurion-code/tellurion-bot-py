@@ -22,6 +22,8 @@ class MainClass(BaseClass):
     command_text = "archive"
 
     async def on_message(self, message):
+        if not message.content.startswith(self.command_text):
+            return
         current_time = str(time.time())
         args = message.content.split()
 

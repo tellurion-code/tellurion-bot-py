@@ -125,12 +125,12 @@ class BaseClass:
 
     def load_object(self, object_name):
         if self.save_exists(object_name):
-            with open(os.path.join("storage", self.name, "object_name"), "rb") as f:
+            with open(os.path.join("storage", self.name, object_name), "rb") as f:
                 unpickler = pickle.Unpickler(f)
                 return unpickler.load()
 
     def save_exists(self, object_name):
-        return os.path.join("storage", self.name, "object_name")
+        return os.path.join("storage", self.name, object_name)
 
     def on_load(self):
         pass
