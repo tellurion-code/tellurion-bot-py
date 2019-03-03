@@ -96,7 +96,7 @@ class NikolaTesla(discord.Client):
             except AttributeError as e:
                 error("Module {module} doesn't have a MainClass".format(module=module))
                 return e
-        except ModuleNotFoundError as e:
+        except ImportError as e:
             error("Module {module} doesn't exists".format(module=module))
             return e
         except Exception as e:
