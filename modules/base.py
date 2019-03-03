@@ -1,4 +1,6 @@
 """Base class for module, never use directly !!!"""
+import os
+import pickle
 
 
 class BaseClass:
@@ -20,6 +22,8 @@ class BaseClass:
         :param client: client instance
         :type client: discord.Client"""
         self.client = client
+        if not os.path.isdir(os.path.join("storage", self.name)):
+            os.mkdir(os.path.join("storage", self.name))
 
     async def parse_command(self, message):
         """Parse a command_text from received message and execute function
@@ -103,6 +107,20 @@ class BaseClass:
 
         Function which is executed for all command_text doesn't match with a `com_{subcommand}` function"""
         pass
+
+    def save_object(self, object_instance, object_name):
+        with open(os.path.join("storage", self.name, object_name), "wb") as f:
+            pickler = pickle.Pickler(f)
+            pickler.dump(object_instance)
+
+    def load_object(self, object_name):
+        if self.save_exists(object_name):
+            with open(os.path.join("storage", self.name, "object_name"), "rb") as f:
+                unpickler = pickle.Unpickler(f)
+                return unpickler.load()
+
+    def save_exists(self, object_name):
+        return os.path.join("storage", self.name, "object_name")
 
     def on_load(self):
         pass

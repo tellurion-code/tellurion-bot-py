@@ -332,4 +332,4 @@ client = NikolaTesla()
 #             for roleid in modules[module_name][1].authlist:
 #                 if roleid in [r.id for r in guild.get_member(user.id).roles]:
 #                     return True
-client.run("NDYwNzgyMTE4OTA2MTAxNzYy.D1y9jA.-ZvSdRAmpSzr9GP4aonjAS9P8Uo")
+client.run(os.environ['DISCORD_TOKEN'])
