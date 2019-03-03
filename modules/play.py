@@ -30,12 +30,11 @@ class MainClass(BaseClass):
             'ba-dum-tss'
         ]
         self.voice = None
-
+        self.playing = False
 
     async def com_list(self, message, args, kwargs):
         await message.channel.send(embed=discord.Embed(title="PLAY - Soundboard", description='\n'.join(
             [str(i) + " : " + name for i, name in enumerate(self.musics)]), color=self.color))
-
 
     async def command(self, message, args, kwargs):
         if len(args) == 0:
@@ -47,31 +46,27 @@ class MainClass(BaseClass):
             await message.channel.send("Vous devez rentrer un nombre valide")
         else:
             if number in range(len(self.musics)):
-                if not self.voice:
-                    self.voice = True
-                    await message.channel.send("yoooolo")
-                    await message.channel.send("yoooolo")
-                    self.voice = await message.author.voice.channel.connect()
-                    await message.channel.send("yoooolo")
-                    try:
-                        await message.channel.send("yoooolo")
-                        await message.delete()
-                        await message.channel.send("yoooolo")
-                    except discord.Forbidden:
-                        pass
-                    except discord.HTTPException:
-                        pass
+                self.voice = await message.author.voice.channel.connect()
+                try:
+                    await message.delete()
+                except discord.Forbidden:
+                    pass
+                except discord.HTTPException:
+                    pass
 
-                    await message.channel.send("yoooolo")
+                while self.playing:
+                    await asyncio.sleep(1)
+
+                if not self.playing:
+                    self.playing = True
                     self.voice.play(discord.PCMVolumeTransformer(
                         discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
-
-                    await message.channel.send("yoooolo")
                     while self.voice.is_playing():
                         await asyncio.sleep(1)
                     if self.voice and self.voice.is_connected():
                         await self.voice.disconnect()
                         self.voice = None
+                    self.playing = False
             else:
                 await message.channel.send(message.author.mention + ", Veuillez préciser un nombre valide.")
                 try:
