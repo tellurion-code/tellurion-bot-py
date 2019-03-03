@@ -24,6 +24,15 @@ class BaseClass:
         if not os.path.isdir(os.path.join("storage", self.name)):
             os.mkdir(os.path.join("storage", self.name))
 
+    async def auth(self, user, role_list):
+        if user.id in self.client.owners:
+            return True
+        for guild in self.client.guilds:
+            if guild.get_member(user.id):
+                for role_id in role_list:
+                    if role_id in [r.id for r in guild.get_member(user.id).roles]:
+                        return True
+
     async def parse_command(self, message):
         """Parse a command_text from received message and execute function
         %git update

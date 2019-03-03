@@ -7,7 +7,6 @@ from modules.base import BaseClass
 
 class MainClass(BaseClass):
     name = "play"
-    super_users = [431043517217898496]
     color = 0xc72c48
     help_active = True
     help = {

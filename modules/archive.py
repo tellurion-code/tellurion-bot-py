@@ -7,35 +7,17 @@ moduleFiles = "archive"
 
 
 class MainClass:
-    def __init__(self, client, modules, owners, prefix):
-        self.client = client
-        self.modules = modules
-        self.owners = owners
-        self.prefix = prefix
-        self.events = ['on_message']  # events list
-        self.command = "%sarchive" % self.prefix  # command_text prefix (can be empty to catch every single messages)
-
-        self.name = "Archive"
-        self.description = "Module gérant l'archivage des messages"
-        self.interactive = True
-        self.authlist = [431043517217898496]
-        self.color = 0x137584
-        self.help = """\
- </prefix>archive
- => Archive le salon dans lequel la commande a été éffectuée
- 
- </prefix>archive *
- => Archive tous les salons du serveur dans lequel la commande a été effectuée
-"""
-
-    async def auth(self, user, role_list):
-        if user.id in self.owners:
-            return True
-        for guild in self.client.guilds:
-            if guild.get_member(user.id):
-                for roleid in role_list:
-                    if roleid in [r.id for r in guild.get_member(user.id).roles]:
-                        return True
+    name = "Archive"
+    color = 0x137584
+    help_active = True
+    help = {
+        "description": "Module permettant d'archiver des salons",
+        "commands": {
+            "`{prefix}archive`": "Archive le salon courant",
+            "`{prefix}archive *`": "Archive tous les salons du serveurs",
+        }
+    }
+    command_text = "archive"
 
     async def on_message(self, message):
         current_time = str(time.time())
