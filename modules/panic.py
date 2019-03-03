@@ -17,5 +17,5 @@ class MainClass(BaseClass):
     async def command(self, message, args, kwargs):
         temperature = 0
         with open("/sys/class/thermal/thermal_zone0/temp") as f:
-            temperature = f.read()
+            temperature = int(f.read().rstrip("\n"))/1000
         await message.channel.send("Nikola est à {temperature}°C".format(temperature=temperature))
