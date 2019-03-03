@@ -15,5 +15,7 @@ class MainClass(BaseClass):
     command_text = "panic"
 
     async def command(self, message, args, kwargs):
-        temperature = subprocess.check_output(["cat", "/sys/class/thermal/thermal_zone0/temp "])
+        temperature = 0
+        with open("/sys/class/thermal/thermal_zone0/temp") as f:
+            temperature = f.read()
         await message.channel.send("Nikola est à {temperature}°C".format(temperature=temperature))
