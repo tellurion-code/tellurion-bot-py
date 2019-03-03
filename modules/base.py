@@ -40,7 +40,7 @@ class BaseClass:
             sub_command = "com_" + sub_command
             await message.channel.send(sub_command+str(args)+str(kwargs))
             if sub_command in dir(self):
-                await message.send(self.__getattribute__(sub_command))
+                await message.channel.send(self.__getattribute__(sub_command))
                 await self.__getattribute__(sub_command)(message, args, kwargs)
             else:
                 await self.command(message, args, kwargs)
