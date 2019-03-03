@@ -1,37 +1,29 @@
 import asyncio
 import collections
-import os.path
-import pickle
 import random
 import traceback
-from subprocess import call
 
 import discord
+
+from modules.base import BaseClass
 
 moduleFiles = "errors"
 
 
-class MainClass:
-    def save_object(self, object_instance, object_name):
-        with open("storage/%s/" % moduleFiles + object_name + "tmp", "wb") as pickleFile:
-            pickler = pickle.Pickler(pickleFile)
-            pickler.dump(object_instance)
-        call(['mv', "storage/%s/" % moduleFiles + object_name + "tmp", "storage/%s/" % moduleFiles + object_name])
+class MainClass(BaseClass):
+    name = "Error Handling"
+    description = "Module de gestions des erreurs"
+    interactive = True
+    super_users_list = [431043517217898496]
+    color = 0xdb1348
+    help = {"description": "Module gérant les erreurs",
+            "commands": {}}
+    command_text = "licorne"
 
-    def load_object(self, objectname):
-        if self.save_exists(objectname):
-            with open("storage/%s/" % moduleFiles + objectname, "rb") as pickleFile:
-                unpickler = pickle.Unpickler(pickleFile)
-                return unpickler.load()
-
-    def save_exists(self, objectname):
-        return os.path.isfile("storage/%s/" % moduleFiles + objectname)
-
-    def __init__(self, client, modules, owners, prefix):
-        if not os.path.isdir("storage/%s" % moduleFiles):
-            call(['mkdir', 'storage/%s' % moduleFiles])
+    def __init__(self, client):
+        super().__init__(client)
         self.errorsDeque = None
-        self.developpement_chan_id = [456142390726623243, 473637619310264330, 474267318332030987]
+        self.development_chan_id = [456142390726623243, 473637619310264330, 474267318332030987]
         self.memes = [
             "https://cdn.discordapp.com/attachments/430408983283761152/430433931272126465/Bruce_3.png",
             "https://cdn.discordapp.com/attachments/430408983283761152/430431622521946123/LUNE.jpg",
@@ -53,22 +45,6 @@ class MainClass:
             "https://cdn.discordapp.com/attachments/434475794631360512/460876662414901249/TeslaPLS.png"
         ]
         self.icon = "https://cdn.discordapp.com/attachments/340620490009739265/431569015664803840/photo.png"
-        self.client = client
-        self.modules = modules
-        self.owners = owners
-        self.prefix = prefix
-        self.events = ['on_error', 'on_message', 'on_ready']  # events list
-        self.command = "%slicorne" % self.prefix  # command_text prefix (can be empty to catch every single messages)
-
-        self.name = "Error Handling"
-        self.description = "Module de gestions des erreurs"
-        self.interactive = True
-        self.super_users_list = [431043517217898496]
-        self.color = 0xdb1348
-        self.help = """\
- </prefix>licorne
- => Crée une erreur.
-"""
 
     async def on_ready(self):
         if self.save_exists('errorsDeque'):
@@ -105,7 +81,7 @@ class MainClass:
                 self.errorsDeque.append(message_list)
             except:
                 pass
-        for chanid in self.developpement_chan_id:
+        for chanid in self.development_chan_id:
             try:
                 await self.client.get_channel(chanid).send(
                     embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.icon))
