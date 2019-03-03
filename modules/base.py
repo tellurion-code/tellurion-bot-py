@@ -67,44 +67,45 @@ class BaseClass:
             return "", [], []
         # Sub_command
         sub_command = content.split()[0]
-        # Take the other part of command_text
-        content = content.split(" ", 1)[1].replace("\"", "\"\"")
-        # Splitting around quotes
-        quotes = [element.split("\" ") for element in content.split(" \"")]
-        # Split all sub chains but brute chains and flat the resulting list
-        args = [item.split() if item[0] != "\"" else [item, ] for sublist in quotes for item in sublist]
-        # Second plating
-        args = [item for sublist in args for item in sublist]
-        # args_ are arguments, kwargs are options with arguments
         args_ = []
         kwargs = []
-        i = 0
-        while i < len(args):
-            if args[i].startswith("\""):
-                args_.append(args[i][1:-1])
-            elif args[i].startswith("--"):
-                if i + 1 >= len(args):
-                    kwargs.append((args[i].lstrip("-"), None))
-                    break
-                if args[i + 1][0] != "-":
-                    kwargs.append((args[i].lstrip("-"), args[i + 1].strip("\"")))
-                    i += 1
-                else:
-                    kwargs.append((args[i].lstrip("-"), None))
-            elif args[i].startswith("-"):
-                if len(args[i]) == 2:
+        if len(content.split()) >= 2:
+            # Take the other part of command_text
+            content = content.split(" ", 1)[1].replace("\"", "\"\"")
+            # Splitting around quotes
+            quotes = [element.split("\" ") for element in content.split(" \"")]
+            # Split all sub chains but brute chains and flat the resulting list
+            args = [item.split() if item[0] != "\"" else [item, ] for sublist in quotes for item in sublist]
+            # Second plating
+            args = [item for sublist in args for item in sublist]
+            # args_ are arguments, kwargs are options with arguments
+            i = 0
+            while i < len(args):
+                if args[i].startswith("\""):
+                    args_.append(args[i][1:-1])
+                elif args[i].startswith("--"):
                     if i + 1 >= len(args):
+                        kwargs.append((args[i].lstrip("-"), None))
                         break
                     if args[i + 1][0] != "-":
                         kwargs.append((args[i].lstrip("-"), args[i + 1].strip("\"")))
                         i += 1
                     else:
                         kwargs.append((args[i].lstrip("-"), None))
+                elif args[i].startswith("-"):
+                    if len(args[i]) == 2:
+                        if i + 1 >= len(args):
+                            break
+                        if args[i + 1][0] != "-":
+                            kwargs.append((args[i].lstrip("-"), args[i + 1].strip("\"")))
+                            i += 1
+                        else:
+                            kwargs.append((args[i].lstrip("-"), None))
+                    else:
+                        kwargs.extend([(arg, None) for arg in args[i][1:]])
                 else:
-                    kwargs.extend([(arg, None) for arg in args[i][1:]])
-            else:
-                args_.append(args[i])
-            i += 1
+                    args_.append(args[i])
+                i += 1
         return sub_command, args_, kwargs
 
     async def _on_message(self, message):
