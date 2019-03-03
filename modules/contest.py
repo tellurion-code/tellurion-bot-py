@@ -30,13 +30,16 @@ class MainClass(BaseClass):
         self.votes = {}
         self.channel = None
 
-    async def on_ready(self):
+    def on_load(self):
         if self.save is None:
             if self.save_exists('save'):
                 self.save = self.load_object('save')
             else:
                 self.save = {'players': {}, 'turn': 0}
             self.save_object(self.save, 'save')
+
+    async def on_ready(self):
+        self.on_load()
 
     async def send_reactions(self, message, reactions):
         for reaction in reactions:
