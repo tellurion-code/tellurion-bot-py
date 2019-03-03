@@ -4,7 +4,7 @@ from modules.base import BaseClass
 
 
 class MainClass(BaseClass):
-    nom = "Panic"
+    name = "Panic"
     help_active = True
     help = {
         "description": "Dans quel état est Nikola Tesla",

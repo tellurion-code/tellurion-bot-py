@@ -2,7 +2,7 @@ from modules.base import BaseClass
 
 
 class MainClass(BaseClass):
-    nom = "clean"
+    name = "clean"
     help = {
         "description": "Supprime des messages",
         "commands": {

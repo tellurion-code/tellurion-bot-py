@@ -4,7 +4,6 @@ import json
 import logging
 import logging.config
 import os
-import sys
 import traceback
 
 import discord
@@ -335,4 +334,4 @@ client = NikolaTesla()
 #             for roleid in modules[module_name][1].authlist:
 #                 if roleid in [r.id for r in guild.get_member(user.id).roles]:
 #                     return True
-client.run(os.environ['DISCORD_TOKEN'], max_messages = 500000)
+client.run(os.environ['DISCORD_TOKEN'], max_messages=500000)
