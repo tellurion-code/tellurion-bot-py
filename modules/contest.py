@@ -31,12 +31,12 @@ class MainClass(BaseClass):
         self.channel = None
 
     def on_load(self):
-        if self.save is None:
-            if self.save_exists('save'):
-                self.save = self.load_object('save')
-            else:
-                self.save = {'players': {}, 'turn': 0}
-            self.save_object(self.save, 'save')
+        print("onload")
+        if self.save_exists('save'):
+            self.save = self.load_object('save')
+        else:
+            self.save = {'players': {}, 'turn': 0}
+        self.save_object(self.save, 'save')
 
     async def on_ready(self):
         self.on_load()

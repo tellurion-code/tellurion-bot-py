@@ -82,7 +82,6 @@ class NikolaTesla(discord.Client):
             imported = importlib.import_module('modules.' + module)
             try:
                 initialized_class = imported.MainClass(self)
-                print("ok")
                 if isinstance(initialized_class, BaseClass):
                     self.modules.update({module: {"imported": imported, "initialized_class": initialized_class}})
                     info("Module {module} successfully imported".format(module=module))
