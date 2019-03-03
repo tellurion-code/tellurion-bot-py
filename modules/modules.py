@@ -32,11 +32,13 @@ class MainClass(BaseClass):
                 e = self.client.load_module(module)
                 if e:
                     await message.channel.send("Une erreur a eu lieu pendant le chargement du module {module}".format(module=module))
+            await self.com_list(message, args, kwargs)
+            return
         for arg in args:
             e = self.client.load_module(arg)
             if e:
                 await message.channel.send("Une erreur a eu lieu pendant le chargement du module {module}".format(module=arg))
-        await self.com_list(message, [], [])
+        await self.com_list(message, args, kwargs)
 
     async def com_disable(self, message, args, kwargs):
         args = args[1:]
