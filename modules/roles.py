@@ -4,11 +4,8 @@ import discord
 
 class MainClass:
     name = "Role"
-
     super_users = []
-
     color = 0xffb593
-
     help_active = True
     help = {
         "description": "Modulé gérant l'attribution des roles",

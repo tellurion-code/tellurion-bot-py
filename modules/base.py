@@ -26,7 +26,8 @@ class BaseClass:
 
     async def parse_command(self, message):
         """Parse a command_text from received message and execute function
-
+        %git update
+        com_update(m..)
         Parse message like `{prefix}{command_text} subcommand` and call class method `com_{subcommand}`.
 
         :param message: message to parse

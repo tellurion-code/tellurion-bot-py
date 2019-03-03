@@ -7,11 +7,8 @@ from modules.base import BaseClass
 
 class MainClass(BaseClass):
     name = "Read the fucking google doc"
-
     super_users = [431043517217898496]
-
     color = 0x7289da
-
     help_active = True
     help = {
         "description": "Module donnant les indications sur les googles docs (ou juste quand vous avez envie de crier sur"
@@ -20,7 +17,6 @@ class MainClass(BaseClass):
             "`{prefix}rtfgd <mention>`": "Essaye, tu verras"
         }
     }
-
     command_text = "rtfgd"
 
     def __init__(self, client):

@@ -8,11 +8,8 @@ from .base import BaseClass
 
 class MainClass(BaseClass):
     name = "Modules"
-
     super_users = [431043517217898496]
-
     color = 0x000000
-
     help_active = True
     help = {
         "description": "Module gérant les modules du bot",
@@ -23,7 +20,6 @@ class MainClass(BaseClass):
             # "`{prefix}modules reload <module>`": "Reload le module `<module>`",
         }
     }
-
     command_text = "modules"
 
     async def com_enable(self, message, args, kwargs):
