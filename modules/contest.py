@@ -102,9 +102,10 @@ class MainClass:
         elif args[1] == "start" and not self.save['turn']:
             if 2 < len(self.save['players']) < 11:
                 self.channel = message.channel
+                await message.channel.send(message.author.mention + ", la partie va commencer.")
                 pass
             else:
-                await message.channel.send(message.author.mention + ", vous devez être en 3 et 10 joueurs (compris).")
+                await message.channel.send(message.author.mention + ", vous devez être entre 3 et 10 joueurs (compris).")
         elif args[1] == "reset":
             self.save = {'players':{}, 'turn':0}
             self.save_object(self.save, 'save')
