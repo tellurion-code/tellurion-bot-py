@@ -11,7 +11,6 @@ class BaseClass:
     help_active = False
 
     color = 0x000000
-    events = []
     command_text = None
 
     def __init__(self, client):
