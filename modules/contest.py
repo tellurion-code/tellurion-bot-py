@@ -1,3 +1,5 @@
+import traceback
+
 from modules.base import BaseClass
 
 moduleFiles = "contest"
@@ -32,11 +34,15 @@ class MainClass(BaseClass):
 
     def on_load(self):
         print("onload")
-        if self.save_exists('save'):
-            self.save = self.load_object('save')
-        else:
-            self.save = {'players': {}, 'turn': 0}
-        self.save_object(self.save, 'save')
+        try:
+            if self.save_exists('save'):
+                self.save = self.load_object('save')
+            else:
+                self.save = {'players': {}, 'turn': 0}
+            self.save_object(self.save, 'save')
+        except Exception as e:
+            print(traceback.format_exc())
+            print(e)
 
     async def on_ready(self):
         self.on_load()
