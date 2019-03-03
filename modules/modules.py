@@ -31,7 +31,7 @@ class MainClass(BaseClass):
             for module in set([name[:-3] for name in os.listdir('modules') if name not in ["base.py", "__pycache__"]]):
                 e = self.client.load_module(module)
                 if e:
-                    await message.channel.send("Une erreur a eu lieu pendant le chargement du module {module}".format(module=arg))
+                    await message.channel.send("Une erreur a eu lieu pendant le chargement du module {module}".format(module=module))
         for arg in args:
             e = self.client.load_module(arg)
             if e:
