@@ -94,7 +94,7 @@ class MainClass:
                 await message.channel.send(message.author.mention + ", vous êtes déjà dans la liste d'attente.")
         elif args[1] == "leave" and not self.save['turn']:
             if message.author.id in self.save['players']:
-                self.save['player'].pop(message.author.id, None)
+                self.save['players'].pop(message.author.id, None)
                 await message.channel.send(message.author.mention
                                            + ", vous avez bien été retiré de la liste d'attente.")
             else:
