@@ -53,3 +53,4 @@ logs/
 .idea
 
 config/*
+*.json
