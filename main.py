@@ -335,4 +335,4 @@ client = NikolaTesla()
 #             for roleid in modules[module_name][1].authlist:
 #                 if roleid in [r.id for r in guild.get_member(user.id).roles]:
 #                     return True
-client.run(os.environ['DISCORD_TOKEN'])
+client.run(os.environ['DISCORD_TOKEN'], max_messages = 500000)
