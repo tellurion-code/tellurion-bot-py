@@ -61,7 +61,7 @@ class MainClass(BaseClass):
                 raise
         self.save_object(self.errorsDeque, 'errorsDeque')
 
-    async def command(self, message):
+    async def command(self, message, args, kwargs):
         5 / 0
 
     async def on_error(self, event, *args, **kwargs):
