@@ -32,8 +32,11 @@ class MainClass(BaseClass):
             await message.channel.send("Vous devez spécifier au moins un module")
             return
         for arg in args:
-            if self.client.load_module(arg):
+            e = self.client.load_module(arg)
+            if e:
                 await message.channel.send("Une erreur a eu lieu pendant le chargement du module {module}".format(module=arg))
+                await message.channel.send(e)
+                await message.channel.send(traceback.format_exc())
         await self.com_list(message, [], [])
 
     async def com_disable(self, message, args, kwargs):
