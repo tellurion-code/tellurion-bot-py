@@ -38,6 +38,8 @@ async def com_list(self, message, args, kwargs):
 
 
 async def command(self, message, args, kwargs):
+    print("yoloooo")
+    print("yoloooo")
     await message.channel.send(message.content+"..."+str(args)+str(kwargs))
     try:
         number = int(args[0])
