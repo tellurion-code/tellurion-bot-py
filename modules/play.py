@@ -38,18 +38,16 @@ class MainClass(BaseClass):
 
 
     async def command(self, message, args, kwargs):
-        print("yoloooo")
-        print("yoloooo")
-        await message.channel.send(message.content+"..."+str(args)+str(kwargs))
+        if len(args) == 0:
+            await self.com_list(message, args, kwargs)
+            return
         try:
             number = int(args[0])
         except ValueError:
-            await message.channel.send("fail to parse int")
+            await message.channel.send("Vous devez rentrer un nombre valide")
         else:
             if number in range(len(self.musics)):
-                await message.channel.send("..")
                 if not self.voice:
-                    await message.channel.send("ùù")
                     self.voice = True
                     self.voice = await message.author.voice.channel.connect()
                     try:
@@ -58,10 +56,8 @@ class MainClass(BaseClass):
                         pass
                     except discord.HTTPException:
                         pass
-                    await message.channel.send("hhui int")
                     self.voice.play(discord.PCMVolumeTransformer(
                         discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
-                    await message.channel.send("lkjhghjh")
                     while self.voice.is_playing():
                         await asyncio.sleep(1)
                     if self.voice and self.voice.is_connected():
