@@ -48,6 +48,7 @@ class MainClass(BaseClass):
         else:
             if number in range(len(self.musics)):
                 if not self.voice:
+                    await message.channel.send("yoooolo")
                     self.voice = True
                     self.voice = await message.author.voice.channel.connect()
                     try:
