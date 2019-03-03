@@ -1,8 +1,10 @@
 # dummy module
 import discord
 
+from modules.base import BaseClass
 
-class MainClass:
+
+class MainClass(BaseClass):
     name = "Role"
     super_users = []
     color = 0xffb593
