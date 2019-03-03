@@ -3,10 +3,12 @@ from subprocess import call
 
 import discord
 
+from modules.base import BaseClass
+
 moduleFiles = "archive"
 
 
-class MainClass:
+class MainClass(BaseClass):
     name = "Archive"
     color = 0x137584
     help_active = True
