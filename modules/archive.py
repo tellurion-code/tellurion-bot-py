@@ -81,4 +81,5 @@ class MainClass(BaseClass):
                 raise
 
         else:
-            await self.modules['help'][1].send_help(message.channel, self)
+            #await self.modules['help'][1].send_help(message.channel, self)
+            pass
