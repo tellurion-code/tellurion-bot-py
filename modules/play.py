@@ -48,17 +48,25 @@ class MainClass(BaseClass):
         else:
             if number in range(len(self.musics)):
                 if not self.voice:
-                    await message.channel.send("yoooolo")
                     self.voice = True
+                    await message.channel.send("yoooolo")
+                    await message.channel.send("yoooolo")
                     self.voice = await message.author.voice.channel.connect()
+                    await message.channel.send("yoooolo")
                     try:
+                        await message.channel.send("yoooolo")
                         await message.delete()
+                        await message.channel.send("yoooolo")
                     except discord.Forbidden:
                         pass
                     except discord.HTTPException:
                         pass
+
+                    await message.channel.send("yoooolo")
                     self.voice.play(discord.PCMVolumeTransformer(
                         discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
+
+                    await message.channel.send("yoooolo")
                     while self.voice.is_playing():
                         await asyncio.sleep(1)
                     if self.voice and self.voice.is_connected():
