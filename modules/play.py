@@ -45,20 +45,22 @@ class MainClass(BaseClass):
         except ValueError:
             await message.channel.send("Vous devez rentrer un nombre valide")
         else:
+
             if number in range(len(self.musics)):
-                self.voice = await message.author.voice.channel.connect()
-                try:
-                    await message.delete()
-                except discord.Forbidden:
-                    pass
-                except discord.HTTPException:
-                    pass
 
                 while self.playing:
                     await asyncio.sleep(1)
 
                 if not self.playing:
                     self.playing = True
+                    self.voice = await message.author.voice.channel.connect()
+                    try:
+                        await message.delete()
+                    except discord.Forbidden:
+                        pass
+                    except discord.HTTPException:
+                        pass
+
                     self.voice.play(discord.PCMVolumeTransformer(
                         discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
                     while self.voice.is_playing():
