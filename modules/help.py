@@ -1,52 +1,36 @@
 import discord
 
+from modules.base import BaseClass
 
-class MainClass:
-    def auth(self, user, moduleName):
-        if user.id in self.owners:
-            return True
-        try:
-            self.modules[moduleName][1].authlist
-        except:
-            return True
-        for guild in self.client.guilds:
-            if guild.get_member(user.id):
-                for role_id in self.modules[moduleName][1].authlist:
-                    if role_id in [r.id for r in guild.get_member(user.id).roles]:
-                        return True
 
-    def __init__(self, client, modules, owners, prefix):
-        self.client = client
-        self.modules = modules
-        self.owners = owners
-        self.prefix = prefix
-        self.events = ['on_message']  # events list
-        self.command = "%shelp" % self.prefix  # command_text prefix (can be empty to catch every single messages)
+class MainClass(BaseClass):
+    name = "Aide"
+    help_active = True
+    help = {
+        "description": "Module d'aide",
+        "commands": {
+            "`{prefix}help list`": "Affiche une liste des modules ainsi qu'une desription",
+            "`{prefix}help <module>": "Affiche l'aide sépcifique d'un module",
+            "`{prefix}help all`": "Affiche l'aide de tous les modules"
+        }
+    }
+    color = 0x3c9653
+    command_text = "help"
 
-        self.name = "Aide"
-        self.description = "Module d'aide"
-        self.interactive = True
-        self.color = 0x3c9653
-        self.help = """\
- </prefix>help list
- => Affiche une liste des modules ainsi qu'une description
- 
- </prefix>help <nom du module>
- => Affiche l'aide spécifique d'un module.
- 
- </prefix>help all
- => Affiche les aides de tous les modules
-"""
+    async def com_list(self, message, args, kwargs):
+        embed = discord.Embed(title="[Aide] - Liste des modules", color=self.color)
+        for moduleName in list(self.client.modules.keys()):
+            if self.client.modules[moduleName]["class"].help_active and \
+                    self.auth(message.author, moduleName):
+                embed.add_field(
+                    name=moduleName.capitalize(),
+                    value=self.client.modules[moduleName]["class"].help["description"])
+        await message.channel.send(embed=embed)
 
     async def on_message(self, message):
         args = message.content.lower().split(' ')
         if len(args) == 2 and args[1] == 'list':
-            embed = discord.Embed(title="[Aide] - Liste des modules", color=self.color)
-            for moduleName in list(self.modules.keys()):
-                if self.modules[moduleName][1].interactive and \
-                        self.auth(message.author, moduleName):
-                    embed.add_field(name=moduleName.capitalize(), value=self.modules[moduleName][1].description)
-            await message.channel.send(embed=embed)
+            pass
         elif len(args) == 2 and args[1] in list(self.modules.keys()) and \
                 self.modules[args[1]][1].interactive and \
                 self.auth(message.author, args[1]):

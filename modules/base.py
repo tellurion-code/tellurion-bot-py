@@ -6,12 +6,11 @@ import pickle
 class BaseClass:
     """Base class for all modules, Override it to make submodules"""
     name = ""
-
     help = ""
     help_active = False
-
     color = 0x000000
     command_text = None
+    authorized_roles = []
 
     def __init__(self, client):
         """Initialize module class
@@ -25,13 +24,28 @@ class BaseClass:
             os.mkdir(os.path.join("storage", self.name))
 
     async def auth(self, user, role_list):
-        if user.id in self.client.owners:
-            return True
-        for guild in self.client.guilds:
-            if guild.get_member(user.id):
-                for role_id in role_list:
-                    if role_id in [r.id for r in guild.get_member(user.id).roles]:
-                        return True
+        if type(role_list) == list:
+            if user.id in self.client.owners:
+                return True
+            for guild in self.client.guilds:
+                if guild.get_member(user.id):
+                    for role_id in role_list:
+                        if role_id in [r.id for r in guild.get_member(user.id).roles]:
+                            return True
+        elif type(role_list) == str:
+            moduleName = role_list
+            if user.id in self.owners:
+                return True
+            authorized_roles = self.client.modules[moduleName]["class"].authorized_roles
+            if len(authorized_roles):
+                for guild in self.client.guilds:
+                    if guild.get_member(user.id):
+                        for role_id in authorized_roles:
+                            if role_id in [r.id for r in guild.get_member(user.id).roles]:
+                                return True
+            else:
+                return True
+            return False
 
     async def parse_command(self, message):
         """Parse a command_text from received message and execute function
