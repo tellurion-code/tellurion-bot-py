@@ -35,14 +35,15 @@ class BaseClass:
         if message.content.startswith(self.client.config["prefix"] + (self.command_text if self.command_text else "")):
 
             content = message.content.lstrip(self.client.config["prefix"] + (self.command_text if self.command_text else ""))
-            await message.channel.send(content)
+            await message.channel.send("++"+content)
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
-            await message.channel.send(sub_command+str(args)+str(kwargs))
+            await message.channel.send('to'+sub_command+'tt'+str(args)+'tt'+str(kwargs))
             if sub_command in dir(self):
                 await message.channel.send(self.__getattribute__(sub_command))
                 await self.__getattribute__(sub_command)(message, args, kwargs)
             else:
+                await message.channel.send('rr')
                 await self.command(message, args, kwargs)
 
     @staticmethod
