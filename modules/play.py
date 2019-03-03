@@ -31,6 +31,10 @@ class MainClass(BaseClass):
         ]
         self.voice = None
         self.playing = False
+        self.stop = False
+
+    async def com_stop(self, messag, args, kwargs):
+        self.stop = True
 
     async def com_list(self, message, args, kwargs):
         await message.channel.send(embed=discord.Embed(title="PLAY - Soundboard", description='\n'.join(
@@ -45,12 +49,13 @@ class MainClass(BaseClass):
         except ValueError:
             await message.channel.send("Vous devez rentrer un nombre valide")
         else:
-
             if number in range(len(self.musics)):
-
+                if self.stop:
+                    self.stop = False
                 while self.playing:
+                    if self.stop:
+                        return
                     await asyncio.sleep(1)
-
                 if not self.playing:
                     self.playing = True
                     self.voice = await message.author.voice.channel.connect()
@@ -60,7 +65,6 @@ class MainClass(BaseClass):
                         pass
                     except discord.HTTPException:
                         pass
-
                     self.voice.play(discord.PCMVolumeTransformer(
                         discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
                     while self.voice.is_playing():

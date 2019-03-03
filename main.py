@@ -127,9 +127,11 @@ class NikolaTesla(discord.Client):
             await module["initialized_class"].on_typing(channel, user, when)
 
     async def on_message(self, message):
-        print(message.content)
-        for module in self.modules.values():
-            await module["initialized_class"]._on_message(message)
+        try:
+            for module in self.modules.values():
+                await module["initialized_class"]._on_message(message)
+        except RuntimeError:
+            info("Liste des modules changée pendant l'execution d'un on_message")
 
     async def on_message_delete(self, message):
         for module in self.modules.values():
