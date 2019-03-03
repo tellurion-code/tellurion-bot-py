@@ -15,5 +15,5 @@ class MainClass(BaseClass):
         def is_me(m):
             return m.author == self.client.user
 
-        deleted = await message.channel.purge(limit=100, check=is_me)
+        deleted = await message.channel.purge(limit=10000000, check=is_me)
         await message.channel.send('Deleted {} message(s)'.format(len(deleted)))
