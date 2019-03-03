@@ -32,14 +32,13 @@ class BaseClass:
 
         :param message: message to parse
         :type message: discord.Message"""
-        await message.channel.send(message.content)
         if message.content.startswith(self.client.config["prefix"] + (self.command_text if self.command_text else "")):
 
             content = message.content.lstrip(self.client.config["prefix"] + (self.command_text if self.command_text else ""))
             await message.channel.send(content)
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
-            await message.channel.send(sub_command+str(args)+str(kwarg))
+            await message.channel.send(sub_command+str(args)+str(kwargs))
             if sub_command in dir(self):
                 await self.__getattribute__(sub_command)(message, args, kwargs)
             else:
