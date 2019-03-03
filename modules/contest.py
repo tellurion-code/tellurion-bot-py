@@ -113,8 +113,7 @@ class MainClass:
             players=[]
             for id in self.save['players'].keys() :
                 players.append(self.client.get_user(id).display_name)
-            await client.send_message(message.channel,
-                                      "Liste d'attente ({0}):\n```PYTHON\n{1}\n```".format(len(players),players))
+            await message.channel.send("Liste d'attente ({0}):\n```PYTHON\n{1}\n```".format(len(players),players))
         elif args[1] == "stats":
             await message.channel.send(message.author.mention + ", cette fonction n'est pas encore disponible.")
         else:
