@@ -51,3 +51,5 @@ log
 logs/
 
 .idea
+
+config/
