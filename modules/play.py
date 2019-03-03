@@ -21,7 +21,6 @@ class MainClass(BaseClass):
 
     def __init__(self, client):
         self.client = client
-        self.voice = None
         self.musics = [
             "for-the-damaged-coda",
             "see-you-again",
@@ -39,10 +38,12 @@ class MainClass(BaseClass):
         try:
             number = int(args[0])
         except ValueError:
-            await self.modules['help'][1].send_help(message.channel, self)
+            await message.channel.send("fail to parse int")
         else:
             if number in range(len(self.musics)):
+                await message.channel.send("..")
                 if not self.voice:
+                    await message.channel.send("ùù")
                     self.voice = True
                     self.voice = await message.author.voice.channel.connect()
                     try:
@@ -51,8 +52,10 @@ class MainClass(BaseClass):
                         pass
                     except discord.HTTPException:
                         pass
+                    await message.channel.send("hhui int")
                     self.voice.play(discord.PCMVolumeTransformer(
                         discord.FFmpegPCMAudio("assets/" + self.musics[number] + ".mp3"), volume=0.1))
+                    await message.channel.send("lkjhghjh")
                     while self.voice.is_playing():
                         await asyncio.sleep(1)
                     if self.voice and self.voice.is_connected():
