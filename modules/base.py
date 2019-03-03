@@ -130,7 +130,7 @@ class BaseClass:
                 return unpickler.load()
 
     def save_exists(self, object_name):
-        return os.path.join("storage", self.name, object_name)
+        return so.path.exists(os.path.join("storage", self.name, object_name))
 
     def on_load(self):
         pass
