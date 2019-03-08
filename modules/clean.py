@@ -6,7 +6,7 @@ class MainClass(BaseClass):
     help = {
         "description": "Supprime des messages",
         "commands": {
-            "`{prefix}clean`": "Supprime tous les messages du bot dans le salon"
+            "`{prefix}{command}`": "Supprime tous les messages du bot dans le salon"
         }
     }
     command_text = "clean"

@@ -39,6 +39,13 @@ critical = log_nokola_tesla.critical
 
 
 class NikolaTesla(discord.Client):
+    base_path = "storage"
+    debug = log_nokola_tesla.debug
+    info = log_nokola_tesla.info
+    warning = log_nokola_tesla.warning
+    error = log_nokola_tesla.error
+    critical = log_nokola_tesla.critical
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.ready = False
@@ -77,30 +84,23 @@ class NikolaTesla(discord.Client):
         return e
 
     def load_module(self, module):
-        info("Start loading module {module}...".format(module=module))
         try:
+            info("Start loading module {module}...".format(module=module))
             imported = importlib.import_module('modules.' + module)
-            try:
+            if issubclass(imported.MainClass, BaseClass):
                 initialized_class = imported.MainClass(self)
-                if isinstance(initialized_class, BaseClass):
-                    self.modules.update({module: {"imported": imported, "initialized_class": initialized_class}})
-                    info("Module {module} successfully imported".format(module=module))
-                    initialized_class.on_load()
-                    if module not in self.config["modules"]:
-                        self.config["modules"].append(module)
-                        self.save_config()
-                else:
-                    error("Module MainClass doesn't inherited from BaseClass")
-                    return ValueError("MainClass doesn't inherit from BaseClass")
-            except AttributeError as e:
-                error("Module {module} doesn't have a MainClass".format(module=module))
-                return e
-        except ImportError as e:
-            error("Module {module} doesn't exists".format(module=module))
+                self.modules.update({module: {"imported": imported, "initialized_class": initialized_class}})
+                info("Module {module} successfully imported".format(module=module))
+                initialized_class._on_load()
+                if module not in self.config["modules"]:
+                    self.config["modules"].append(module)
+                    self.save_config()
+            else:
+                error("Module {module} isn't an instance of BaseClass".format(module=module))
+        except AttributeError as e:
+            error("Module {module} doesn't have MainClass".format(module=module))
             return e
-        except Exception as e:
-            error("Failed to import module {module}".format(module=module))
-            return e
+
 
     def unload_module(self, module):
         info("Start unload module {module}...".format(module=module))
@@ -333,4 +333,4 @@ client = NikolaTesla()
 #             for roleid in modules[module_name][1].authlist:
 #                 if roleid in [r.id for r in guild.get_member(user.id).roles]:
 #                     return True
-client.run(os.environ['DISCORD_TOKEN'], max_messages=500000)
+client.run('NDgxNDQ4MTYyMjM4NjYwNjA5.D2AZsQ.yyznCNE33CMJZ6CywuAKsArSPRw', max_messages=500000)

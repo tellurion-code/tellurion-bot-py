@@ -12,10 +12,11 @@ class MainClass(BaseClass):
     help = {
         "description": "Modulé gérant l'attribution des roles",
         "commands": {
-            "`{prefix}roles list`": "Liste les roles",
-            "`{prefix}roles <role>": "S'attribuer le role <role>"
+            "`{prefix}{command} list`": "Liste les roles",
+            "`{prefix}{command} <role>": "S'attribuer le role <role>"
         }
     }
+    command_text = "roles"
 
     def __init__(self, client):
         super().__init__(client)
@@ -26,6 +27,8 @@ class MainClass(BaseClass):
         }
 
     async def on_message(self, message):
+        if not message.content.startswith(self.command_text):
+            return
         args = message.content.split()
         if len(args) == 2:
             if args[1] == 'list':

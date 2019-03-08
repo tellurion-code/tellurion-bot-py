@@ -1,5 +1,4 @@
 import os
-import traceback
 
 import discord
 
@@ -14,9 +13,9 @@ class MainClass(BaseClass):
     help = {
         "description": "Module gérant les modules du bot",
         "commands": {
-            "`{prefix}modules list`": "Liste les modules",
-            "`{prefix}modules enable <module>`": "Active le module `<module>`",
-            "`{prefix}modules disable <module>`": "Désactive le module `<module>`",
+            "`{prefix}{command} list`": "Liste les modules",
+            "`{prefix}{command} enable <module>`": "Active le module `<module>`",
+            "`{prefix}{command} disable <module>`": "Désactive le module `<module>`",
             # "`{prefix}modules reload <module>`": "Reload le module `<module>`",
         }
     }
@@ -28,16 +27,19 @@ class MainClass(BaseClass):
             await message.channel.send("Vous devez spécifier au moins un module")
             return
         if len(args) == 1 and args[0] == "*":
-            for module in set([name[:-3] for name in os.listdir('modules') if name not in ["base.py", "__pycache__"]]):
+            for module in set([name[:-3] for name in os.listdir('modules') if
+                               name not in ["base.py", "__pycache__", "__init__.py"]]):
                 e = self.client.load_module(module)
                 if e:
-                    await message.channel.send("Une erreur a eu lieu pendant le chargement du module {module}".format(module=module))
+                    await message.channel.send(
+                        "Une erreur a eu lieu pendant le chargement du module {module}".format(module=module))
             await self.com_list(message, args, kwargs)
             return
         for arg in args:
             e = self.client.load_module(arg)
             if e:
-                await message.channel.send("Une erreur a eu lieu pendant le chargement du module {module}".format(module=arg))
+                await message.channel.send(
+                    "Une erreur a eu lieu pendant le chargement du module {module}".format(module=arg))
         await self.com_list(message, args, kwargs)
 
     async def com_disable(self, message, args, kwargs):
@@ -49,12 +51,13 @@ class MainClass(BaseClass):
             print(arg)
             e = self.client.unload_module(arg)
             if e:
-                await message.channel.send("Une erreur a eu lieu pendant le déchargement du module {module}".format(module=arg))
+                await message.channel.send(
+                    "Une erreur a eu lieu pendant le déchargement du module {module}".format(module=arg))
         await self.com_list(message, [], [])
 
-
     async def com_list(self, message, args, kwargs):
-        list_files = set([name[:-3] for name in os.listdir('modules') if name not in ["base.py", "__pycache__"]])
+        list_files = set(
+            [name[:-3] for name in os.listdir('modules') if name not in ["base.py", "__pycache__", "__init__.py"]])
         activated = set(self.client.config["modules"])
         activated_string = "\n+ " + "\n+ ".join(activated)
         deactivated_string = "- " + "\n- ".join(list_files.difference(activated))

@@ -1,5 +1,4 @@
 # dummy module
-import os
 
 from modules.base import BaseClass
 
@@ -15,10 +14,10 @@ class MainClass(BaseClass):
     help = {
         "description": "Module gérant les redémarages du bot",
         "commands": {
-            "`{prefix}git update`": "=> Execute les commandes suivantes dans le dossier du bot:"
-                                    "```BASH\n"
-                                    "git fetch --all "
-                                    "git reset --hard origin/<branch_name>```",
+            "`{prefix}{command} update`": "Execute les commandes suivantes dans le dossier du bot:"
+                                          "```BASH\n"
+                                          "git fetch --all "
+                                          "git reset --hard origin/<branch_name>```",
         }
     }
 

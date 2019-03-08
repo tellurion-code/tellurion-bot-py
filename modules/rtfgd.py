@@ -11,10 +11,10 @@ class MainClass(BaseClass):
     color = 0x7289da
     help_active = True
     help = {
-        "description": "Module donnant les indications sur les googles docs (ou juste quand vous avez envie de crier sur"
-                       " quelqu'un)",
+        "description": "Module donnant les indications sur les googles docs (ou juste quand vous avez envie de crier "
+                       "sur quelqu'un)",
         "commands": {
-            "`{prefix}rtfgd <mention>`": "Essaye, tu verras"
+            "`{prefix}{command} <mention>`": "Essaye, tu verras"
         }
     }
     command_text = "rtfgd"

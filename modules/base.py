@@ -1,12 +1,51 @@
 """Base class for module, never use directly !!!"""
 import os
 import pickle
+import zipfile
+
+import discord
+
+
+class Storage:
+    def __init__(self, base_path, client):
+        self.client = client
+        self.base_path = base_path
+        try:
+            os.makedirs(base_path)
+        except FileExistsError:
+            self.client.info("Le dossier {dossier} a déjà été créé".format(dossier=self.base_path))
+
+    def mkdir(self, directory):
+        try:
+            os.makedirs(self.path(directory))
+        except FileExistsError:
+            self.client.info("Le dossier {dossier} a déjà été créé".format(dossier=directory))
+
+    def mkzip(self, files, name):
+        with zipfile.ZipFile(self.path(files), 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            for file in files:
+                zip_file.write(self.path(file), compress_type=zipfile.ZIP_DEFLATED)
+        return name
+
+    def open(self, filename, *args, **kwargs):
+        return open(self.path(filename), *args, **kwargs)
+
+    def path(self, filename):
+        return os.path.join(self.base_path, filename)
+
+    def exists(self, filename):
+        return os.path.exists(self.path(filename))
 
 
 class BaseClass:
     """Base class for all modules, Override it to make submodules"""
     name = ""
-    help = ""
+    help = {
+        "description": "",
+        "commands": {
+
+        }
+    }
     help_active = False
     color = 0x000000
     command_text = None
@@ -18,10 +57,23 @@ class BaseClass:
         Initialize module class, always call it to set self.client when you override it.
 
         :param client: client instance
-        :type client: discord.Client"""
+        :type client: NikolaTesla"""
         self.client = client
         if not os.path.isdir(os.path.join("storage", self.name)):
-            os.mkdir(os.path.join("storage", self.name))
+            os.makedirs(os.path.join("storage", self.name))
+        self.storage = Storage(os.path.join(self.client.base_path, self.name), client)
+
+    async def send_help(self, channel):
+        embed = discord.Embed(
+            title="[{nom}] - Aide".format(nom=self.name),
+            description=self.help["description"].format(prefix=self.client.config['prefix']),
+            color=self.color
+        )
+        for command, description in self.help["commands"].items():
+            embed.add_field(name=command.format(prefix=self.client.config['prefix'], command=self.command_text),
+                            value=description.format(prefix=self.client.config['prefix'], command=self.command_text),
+                            inline=False)
+        await channel.send(embed=embed)
 
     async def auth(self, user, role_list):
         if type(role_list) == list:
@@ -33,10 +85,10 @@ class BaseClass:
                         if role_id in [r.id for r in guild.get_member(user.id).roles]:
                             return True
         elif type(role_list) == str:
-            moduleName = role_list
+            module_name = role_list
             if user.id in self.owners:
                 return True
-            authorized_roles = self.client.modules[moduleName]["class"].authorized_roles
+            authorized_roles = self.client.modules[module_name]["class"].authorized_roles
             if len(authorized_roles):
                 for guild in self.client.guilds:
                     if guild.get_member(user.id):
@@ -57,7 +109,8 @@ class BaseClass:
         :type message: discord.Message"""
         if message.content.startswith(self.client.config["prefix"] + (self.command_text if self.command_text else "")):
 
-            content = message.content.lstrip(self.client.config["prefix"] + (self.command_text if self.command_text else ""))
+            content = message.content.lstrip(
+                self.client.config["prefix"] + (self.command_text if self.command_text else ""))
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
             if sub_command in dir(self):
@@ -83,7 +136,7 @@ class BaseClass:
         sub_command = content.split()[0]
         args_ = []
         kwargs = []
-        if len(content.split()) >= 2:
+        if len(content.split()) > 1:
             # Take the other part of command_text
             content = content.split(" ", 1)[1].replace("\"", "\"\"")
             # Splitting around quotes
@@ -134,20 +187,28 @@ class BaseClass:
         pass
 
     def save_object(self, object_instance, object_name):
-        with open(os.path.join("storage", self.name, object_name), "wb") as f:
+        """Save object into pickle file"""
+        with self.storage.open(object_name, "wb") as f:
             pickler = pickle.Pickler(f)
             pickler.dump(object_instance)
 
     def load_object(self, object_name):
+        """Load object from pickle file"""
         if self.save_exists(object_name):
-            with open(os.path.join("storage", self.name, object_name), "rb") as f:
+            with self.storage.open(object_name, "rb") as f:
                 unpickler = pickle.Unpickler(f)
                 return unpickler.load()
 
     def save_exists(self, object_name):
-        return os.path.exists(os.path.join("storage", self.name, object_name))
+        """Check if pickle file exists"""
+        return self.storage.exists(object_name)
+
+    def _on_load(self):
+        self.on_load()
+        self.on_ready()
 
     def on_load(self):
+        """This function is called when module is loaded"""
         pass
 
     async def on_socket_raw_receive(self, message):

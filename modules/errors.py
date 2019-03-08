@@ -16,8 +16,12 @@ class MainClass(BaseClass):
     interactive = True
     super_users_list = [431043517217898496]
     color = 0xdb1348
-    help = {"description": "Module gérant les erreurs",
-            "commands": {}}
+    help = {
+        "description": "Module gérant les erreurs",
+        "commands": {
+            "`{prefix}{command}`": "Retourne une erreur",
+        }
+    }
     command_text = "licorne"
 
     def __init__(self, client):

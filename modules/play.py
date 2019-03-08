@@ -12,8 +12,8 @@ class MainClass(BaseClass):
     help = {
         "description": "Module permettant de jouer des fichier audios",
         "commands": {
-            "`{prefix}play list`": "Liste les fichiers disponibles",
-            "`{prefix}play <numero>`": "Joue le fichier numéroté",
+            "`{prefix}{command} list`": "Liste les fichiers disponibles",
+            "`{prefix}{command} <numero>`": "Joue le fichier numéroté",
         }
     }
     command_text = "play"

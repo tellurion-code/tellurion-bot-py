@@ -9,7 +9,7 @@ class MainClass(BaseClass):
     help = {
         "description": "Dans quel état est Nikola Tesla",
         "commands": {
-            "`{prefix}panic`": "Donne l'état actuel de Nikola Tesla",
+            "`{prefix}{command}`": "Donne l'état actuel de Nikola Tesla",
         }
     }
     command_text = "panic"

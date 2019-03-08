@@ -12,7 +12,7 @@ class MainClass(BaseClass):
     help = {
         "description": "Module gérant les redémarages du bot",
         "commands": {
-            "`{prefix}restart py`": "Redémare le bot",
+            "`{prefix}{command} py`": "Redémare le bot",
         }
     }
 

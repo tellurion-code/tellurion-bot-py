@@ -12,12 +12,12 @@ class MainClass(BaseClass):
     help = {
         "description": "Module du jeu Contest",
         "commands": {
-            "`{prefix}contest join`": "Rejoindre la liste d'attente",
-            "`{prefix}contest leave`": "Quitte la liste d'attente",
-            "`{prefix}contest players`": "Affiche la liste d'attente",
-            "`{prefix}contest start`": "Lance la partie",
-            "`{prefix}contest reset`": "Réinitialise la partie",
-            "`{prefix}contest stats`": "Affiche les stats",
+            "`{prefix}{command} join`": "Rejoindre la liste d'attente",
+            "`{prefix}{command} leave`": "Quitte la liste d'attente",
+            "`{prefix}{command} players`": "Affiche la liste d'attente",
+            "`{prefix}{command} start`": "Lance la partie",
+            "`{prefix}{command} reset`": "Réinitialise la partie",
+            "`{prefix}{command} stats`": "Affiche les stats",
         }
     }
     command_text = "contest"
