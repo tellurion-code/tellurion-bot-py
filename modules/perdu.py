@@ -119,7 +119,7 @@ class MainClass:
                     ]
                 )
                 await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
-                                                               description='\n'.embed_description,
+                                                               description='\n'+embed_description,
                                                                color=self.color))
         else:
             try:
