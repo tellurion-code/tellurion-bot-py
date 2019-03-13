@@ -48,6 +48,7 @@ class NikolaTesla(discord.Client):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.id = ClientById(self)
         self.ready = False
         # Content: {"module_name": {"module": imported module, "class": initialized class}}
         self.modules = {}
@@ -100,7 +101,6 @@ class NikolaTesla(discord.Client):
         except AttributeError as e:
             error("Module {module} doesn't have MainClass".format(module=module))
             return e
-
 
     def unload_module(self, module):
         info("Start unload module {module}...".format(module=module))
@@ -315,22 +315,56 @@ class NikolaTesla(discord.Client):
             await module["initialized_class"].on_webhooks_update(channel)
 
 
+class ClientById:
+    client: NikolaTesla
+
+    def __init__(self, client_):
+        self.client = client_
+
+    async def get_message(self, id_, *args, **kwargs):
+        """Find a message by id
+
+        :param id_: Id of message to find
+        :type id_: int
+
+        :raises discord.NotFound: This exception is raised when a message is not found (or not accessible by bot)
+
+        :rtype: discord.Message
+        :return: discord.Message instance if message is found.
+        """
+        msg = None
+        for channel in self.client.get_all_channels():
+            try:
+                return await channel.get_message(id_, *args, **kwargs)
+            except discord.NotFound:
+                continue
+        if msg is None:
+            raise discord.NotFound(None, "Message not found")
+
+    async def edit_message(self, id_, *args, **kwargs):
+        """Edit message by id_
+
+        :param id_: Id of the message to edit
+        :type id_: int"""
+        message = await self.get_message(id_)
+        return await message.edit(*args, **kwargs)
+
+    async def remove_reaction(self, id_message, *args, **kwargs):
+        """Remove reaction from message by id
+
+        :param id_message: Id of message
+        :type id_message: int"""
+        message = await self.get_message(id_message)
+        return await message.remove_reaction(*args, **kwargs)
+
+    async def send_message(self, id_, *args, **kwargs):
+        """Send message by channel id
+
+        :param id_: Id of channel where to send message
+        :type id_: int"""
+        channel = self.client.get_channel(id_)
+        return channel.send(*args, **kwargs)
+
+
 client = NikolaTesla()
-# prefix = '/'
-# modules = {}  # format : {'modulename':[module, initializedclass]}
-# owners = [281166473102098433]
-#
-#
-# async def auth(user, module_name):
-#     if user.id in owners:
-#         return True
-#     try:
-#         modules[module_name][1].authlist
-#     except ValueError:
-#         return True
-#     for guild in client.guilds:
-#         if guild.get_member(user.id):
-#             for roleid in modules[module_name][1].authlist:
-#                 if roleid in [r.id for r in guild.get_member(user.id).roles]:
-#                     return True
 client.run('NDgxNDQ4MTYyMjM4NjYwNjA5.D2AZsQ.yyznCNE33CMJZ6CywuAKsArSPRw', max_messages=500000)
