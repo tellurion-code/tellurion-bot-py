@@ -19,6 +19,8 @@ class MainClass:
             "roundabout-short",
             'pillar-men-theme',
             'ba-dum-tss',
+            'zelda-secret',
+            'motus-boule-noire',
             'run'
         ]
 
