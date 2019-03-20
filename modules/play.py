@@ -18,7 +18,10 @@ class MainClass:
             "roundabout-long",
             "roundabout-short",
             'pillar-men-theme',
-            'ba-dum-tss'
+            'ba-dum-tss',
+            'zelda-secret',
+            'motus-boule-noire',
+            'run'
         ]
 
         self.name = "Play"
