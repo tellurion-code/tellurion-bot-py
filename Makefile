@@ -5,13 +5,13 @@ run: storage/libs/python storage/libs/finaltouch
 	export LD_LIBRARY_PATH=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/lib;\
 	export PYTHONPATH=$(mainDir)/storage/libs/python:${PYTHONPATH};\
 	export LIBGIT2=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/;\
-	python3 -u main.py
+	python3.6 -u main.py
 python: storage/libs/python storage/libs/finaltouch
 	cd $(mainDir);\
 	export LD_LIBRARY_PATH=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/lib;\
 	export PYTHONPATH=$(mainDir)/storage/libs/python:${PYTHONPATH};\
 	export LIBGIT2=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/;\
-	python3
+	python3.6
 storage/libs/finaltouch: storage/libs/python
 	touch storage/libs/python storage/libs/get-pip.py
 storage/libs/libgit2: storage/libs
@@ -32,7 +32,7 @@ storage/libs/get-pip.py: storage/libs
 	cd storage/libs;\
 	curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py;\
 	export PYTHONPATH=$(mainDir)/storage/libs/python:${PYTHONPATH};\
-	python3 get-pip.py --user
+	python3.6 get-pip.py --user
 
 storage/libs/python: storage/libs storage/libs/get-pip.py storage/libs/dependencies.sha512
 	cd $(mainDir);\
