@@ -86,7 +86,7 @@ class BaseClass:
                             return True
         elif type(role_list) == str:
             module_name = role_list
-            if user.id in self.owners:
+            if user.id in self.client.owners:
                 return True
             authorized_roles = self.client.modules[module_name]["class"].authorized_roles
             if len(authorized_roles):
@@ -116,7 +116,7 @@ class BaseClass:
             if sub_command in dir(self):
                 await self.__getattribute__(sub_command)(message, args, kwargs)
             else:
-                await self.command(message, args, kwargs)
+                await self.command(message, [sub_command[4:]]+args, kwargs)
 
     @staticmethod
     def _parse_command_content(content):

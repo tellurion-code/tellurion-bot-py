@@ -33,7 +33,6 @@ class MainClass(BaseClass):
         self.channel = None
 
     def on_load(self):
-        print("onload")
         try:
             if self.save_exists('save'):
                 self.save = self.load_object('save')
@@ -90,7 +89,9 @@ class MainClass(BaseClass):
         await message.channel.send(message.author.mention + ", cette fonction n'est pas encore disponible.")
 
     async def command(self, message, args, kwargs):
-        await self.modules['help'][1].send_help(message.channel, self)
+        await self.client.modules['help'][1].send_help(message.channel, self)
+
+
 """
     def turn(self):
         points = ceil((self.save['turn'] + 1) / 3.0)

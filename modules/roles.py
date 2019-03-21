@@ -13,7 +13,7 @@ class MainClass(BaseClass):
         "description": "Modulé gérant l'attribution des roles",
         "commands": {
             "`{prefix}{command} list`": "Liste les roles",
-            "`{prefix}{command} <role>": "S'attribuer le role <role>"
+            "`{prefix}{command} <role>`": "S'attribuer le role <role>"
         }
     }
     command_text = "roles"

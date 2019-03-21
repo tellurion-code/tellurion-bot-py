@@ -1609,3 +1609,96 @@ aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordap
 2019-03-07 23:49:59,003 :: nikola_tesla :: ERROR :: Module gomoku isn't an instance of BaseClass
 2019-03-08 00:49:37,422 :: nikola_tesla :: ERROR :: Module dellog isn't an instance of BaseClass
 2019-03-08 01:06:29,269 :: nikola_tesla :: ERROR :: Module dellog isn't an instance of BaseClass
+2019-03-21 11:33:20,422 :: discord.client :: ERROR :: Attempting a reconnect in 1.86s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 448, in poll_event
+    msg = await self.recv()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\websockets\protocol.py", line 350, in recv
+    yield from self.ensure_open()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\websockets\protocol.py", line 512, in ensure_open
+    self.close_code, self.close_reason) from self.transfer_data_exc
+websockets.exceptions.ConnectionClosed: WebSocket connection is closed: code = 1000 (OK), no reason
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 367, in _connect
+    await self.ws.poll_event()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 456, in poll_event
+    raise ConnectionClosed(exc, shard_id=self.shard_id) from exc
+discord.errors.ConnectionClosed: WebSocket connection is closed: code = 1000 (OK), no reason
+2019-03-21 11:37:24,825 :: nikola_tesla :: ERROR :: Module restart doesn't have MainClass
+2019-03-21 11:37:24,825 :: nikola_tesla :: ERROR :: Module modules doesn't have MainClass
+2019-03-21 11:37:24,829 :: nikola_tesla :: ERROR :: Module errors doesn't have MainClass
+2019-03-21 11:37:24,833 :: nikola_tesla :: ERROR :: Module git doesn't have MainClass
+2019-03-21 11:37:24,833 :: nikola_tesla :: ERROR :: Module archive doesn't have MainClass
+2019-03-21 11:37:24,837 :: nikola_tesla :: ERROR :: Module roles doesn't have MainClass
+2019-03-21 11:37:24,841 :: nikola_tesla :: ERROR :: Module help doesn't have MainClass
+2019-03-21 11:37:24,845 :: nikola_tesla :: ERROR :: Module contest doesn't have MainClass
+2019-03-21 11:37:24,845 :: nikola_tesla :: ERROR :: Module play doesn't have MainClass
+2019-03-21 11:37:24,849 :: nikola_tesla :: ERROR :: Module dummy doesn't have MainClass
+2019-03-21 11:37:24,853 :: nikola_tesla :: ERROR :: Module clean doesn't have MainClass
+2019-03-21 11:37:24,853 :: nikola_tesla :: ERROR :: Module panic doesn't have MainClass
+2019-03-21 11:37:24,857 :: nikola_tesla :: ERROR :: Module rtfgd doesn't have MainClass
+2019-03-21 11:37:24,865 :: nikola_tesla :: ERROR :: Module perdu doesn't have MainClass
+2019-03-21 11:37:24,869 :: nikola_tesla :: ERROR :: Module dellog doesn't have MainClass
+2019-03-21 17:11:32,637 :: nikola_tesla :: ERROR :: Module restart doesn't have MainClass
+2019-03-21 17:11:32,637 :: nikola_tesla :: ERROR :: Module modules doesn't have MainClass
+2019-03-21 17:11:32,653 :: nikola_tesla :: ERROR :: Module errors doesn't have MainClass
+2019-03-21 17:11:32,653 :: nikola_tesla :: ERROR :: Module archive doesn't have MainClass
+2019-03-21 17:11:32,653 :: nikola_tesla :: ERROR :: Module roles doesn't have MainClass
+2019-03-21 17:11:32,653 :: nikola_tesla :: ERROR :: Module help doesn't have MainClass
+2019-03-21 17:11:32,653 :: nikola_tesla :: ERROR :: Module contest doesn't have MainClass
+2019-03-21 17:11:32,653 :: nikola_tesla :: ERROR :: Module play doesn't have MainClass
+2019-03-21 17:11:32,669 :: nikola_tesla :: ERROR :: Module dummy doesn't have MainClass
+2019-03-21 17:11:32,669 :: nikola_tesla :: ERROR :: Module clean doesn't have MainClass
+2019-03-21 17:11:32,674 :: nikola_tesla :: ERROR :: Module panic doesn't have MainClass
+2019-03-21 17:11:32,678 :: nikola_tesla :: ERROR :: Module rtfgd doesn't have MainClass
+2019-03-21 17:11:32,678 :: nikola_tesla :: ERROR :: Module perdu doesn't have MainClass
+2019-03-21 17:11:32,682 :: nikola_tesla :: ERROR :: Module dellog doesn't have MainClass
+2019-03-21 17:11:32,686 :: nikola_tesla :: ERROR :: Module gomoku doesn't have MainClass
+2019-03-21 17:11:35,422 :: nikola_tesla :: ERROR :: Module git doesn't have MainClass
+2019-03-21 17:14:15,376 :: discord.client :: ERROR :: Attempting a reconnect in 0.93s
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 843, in _create_direct_connection
+    traces=traces), loop=self._loop)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 730, in _resolve_host
+    self._resolver.resolve(host, port, family=self._family)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\resolver.py", line 30, in resolve
+    host, port, type=socket.SOCK_STREAM, family=family)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\base_events.py", line 773, in getaddrinfo
+    None, getaddr_func, host, port, family, type, proto, flags)
+  File "C:\Program Files (x86)\Python37-32\Lib\concurrent\futures\thread.py", line 57, in run
+    result = self.fn(*self.args, **self.kwargs)
+  File "C:\Program Files (x86)\Python37-32\Lib\socket.py", line 748, in getaddrinfo
+    for res in _socket.getaddrinfo(host, port, family, type, proto, flags):
+socket.gaierror: [Errno 11001] getaddrinfo failed
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 402, in connect
+    await self._connect()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\client.py", line 372, in _connect
+    self.ws = await asyncio.wait_for(coro, timeout=180.0, loop=self.loop)
+  File "C:\Program Files (x86)\Python37-32\Lib\asyncio\tasks.py", line 412, in wait_for
+    return fut.result()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\gateway.py", line 203, in from_client
+    gateway = await client.http.get_gateway()
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 745, in get_gateway
+    data = await self.request(Route('GET', '/gateway'))
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\discord\http.py", line 154, in request
+    async with self._session.request(method, url, **kwargs) as r:
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 843, in __aenter__
+    self._resp = await self._coro
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\client.py", line 366, in _request
+    timeout=timeout
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 445, in connect
+    proto = await self._create_connection(req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 757, in _create_connection
+    req, traces, timeout)
+  File "D:\Users\louis chauvet\.virtualenvs\foBot-IGeze7Ft\lib\site-packages\aiohttp\connector.py", line 847, in _create_direct_connection
+    raise ClientConnectorError(req.connection_key, exc) from exc
+aiohttp.client_exceptions.ClientConnectorError: Cannot connect to host discordapp.com:443 ssl:None [getaddrinfo failed]
