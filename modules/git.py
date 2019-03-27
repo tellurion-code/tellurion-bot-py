@@ -24,11 +24,11 @@ class MainClass(BaseClass):
     command_text = "git"
 
     async def com_update(self, message, args, kwargs):
-        # with os.popen('git fetch --all') as std_in:
-        #     await message.channel.send(std_in.read())
-        # with os.popen('git symbolic-ref HEAD 2>/dev/null') as std_in:
-        #     branch = std_in.read().replace('refs/heads/', '')
-        # with os.popen('git reset --hard origin/%s' % branch) as std_in:
-        #     await message.channel.send(std_in.read())
-        # await message.channel.send(message.author.mention + ", Le dépôt a été mis à jour (fetch + reset --hard).")
+        with os.popen('git fetch --all') as std_in:
+            await message.channel.send(std_in.read())
+        with os.popen('git symbolic-ref HEAD 2>/dev/null') as std_in:
+            branch = std_in.read().replace('refs/heads/', '')
+        with os.popen('git reset --hard origin/%s' % branch) as std_in:
+            await message.channel.send(std_in.read())
+        await message.channel.send(message.author.mention + ", Le dépôt a été mis à jour (fetch + reset --hard).")
         print("git update")
