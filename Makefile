@@ -1,6 +1,6 @@
 mainDir := $(shell pwd)
 
-run: storage/libs/python3.6 storage/libs/finaltouch
+run: storage/libs/python3.6 storage/libs/finaltouch storage/.log/errors.log storage/.log/info.log
 	cd $(mainDir);\
 	export LD_LIBRARY_PATH=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/lib;\
 	export PYTHONPATH=$(mainDir)/storage/libs/python3.6:${PYTHONPATH};\
@@ -52,6 +52,14 @@ storage/libs: storage
 	cd $(mainDir);\
 	mkdir storage/libs;\
 	echo .
+storage/.log: storage
+	cd $(mainDir);\
+	mkdir storage/.log;\
+	echo .
+storage/.log/errors.log: storage/.log
+	touch $(mainDir)/storage/.log/errors.log
+storage/.log/info.log: storage/.log
+	touch $(mainDir)/storage/.log/info.log
 
 storage/libs/dependencies.sha512: dependencies storage/libs
 	cd $(mainDir);\

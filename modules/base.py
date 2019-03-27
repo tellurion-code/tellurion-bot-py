@@ -203,10 +203,6 @@ class BaseClass:
         """Check if pickle file exists"""
         return self.storage.exists(object_name)
 
-    def _on_load(self):
-        self.on_load()
-        self.on_ready()
-
     def on_load(self):
         """This function is called when module is loaded"""
         pass

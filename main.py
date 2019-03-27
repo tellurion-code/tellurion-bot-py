@@ -56,9 +56,9 @@ class NikolaTesla(discord.Client):
         self.modules = {}
         self.config = {
             "modules": ["modules"],
-            "prefix": "%",
+            "prefix": "!",
         }
-        self.owners = [281166473102098433, 318866596502306816]
+        self.owners = [281166473102098433, 318866596502306816, 118399702667493380]
         self.load_config()
         self.load_modules()
 
@@ -117,7 +117,7 @@ class NikolaTesla(discord.Client):
                 initialized_class = imported.MainClass(self)
                 self.modules.update({module: {"imported": imported, "initialized_class": initialized_class}})
                 info("Module {module} successfully imported".format(module=module))
-                initialized_class._on_load()
+                initialized_class.on_load()
                 if module not in self.config["modules"]:
                     self.config["modules"].append(module)
                     self.save_config()
@@ -151,6 +151,11 @@ class NikolaTesla(discord.Client):
         self.modules = {}
 
     @event
+    async def on_ready(self):
+        for module in self.modules.values():
+            await module["initialized_class"].on_ready()
+
+    @event
     async def on_socket_raw_receive(self, message):
         for module in self.modules.values():
             await module["initialized_class"].on_socket_raw_receive(message)
@@ -167,11 +172,8 @@ class NikolaTesla(discord.Client):
 
     @event
     async def on_message(self, message):
-        try:
-            for module in self.modules.values():
-                await module["initialized_class"]._on_message(message)
-        except RuntimeError:
-            info("Liste des modules changée pendant l'execution d'un on_message")
+        for module in self.modules.values():
+            await module["initialized_class"]._on_message(message)
 
     @event
     async def on_message_delete(self, message):
