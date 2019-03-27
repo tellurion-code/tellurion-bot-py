@@ -10,7 +10,7 @@ class MainClass(BaseClass):
         "description": "Module d'aide",
         "commands": {
             "`{prefix}{command} list`": "Affiche une liste des modules ainsi qu'une desription",
-            "`{prefix}{command} <module>": "Affiche l'aide sépcifique d'un module",
+            "`{prefix}{command} <module>`": "Affiche l'aide sépcifique d'un module",
             "`{prefix}{command} all`": "Affiche l'aide de tous les modules"
         }
     }

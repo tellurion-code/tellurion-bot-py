@@ -56,7 +56,7 @@ class NikolaTesla(discord.Client):
         self.modules = {}
         self.config = {
             "modules": ["modules"],
-            "prefix": "!",
+            "prefix": "%",
         }
         self.owners = [281166473102098433, 318866596502306816, 118399702667493380]
         self.load_config()
