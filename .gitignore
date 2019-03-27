@@ -48,5 +48,9 @@ storage/*
 *.sha512
 
 log
+logs/
 
 .idea
+
+config/*
+*.json

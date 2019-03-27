@@ -1,26 +1,25 @@
+# dummy module
 import discord
 
+from modules.base import BaseClass
 
-class MainClass:
-    def __init__(self, client, modules, owners, prefix):
-        self.client = client
-        self.modules = modules
-        self.owners = owners
-        self.prefix = prefix
-        self.events = ['on_message']  # events list
-        self.command = "%srole" % self.prefix  # command prefix (can be empty to catch every single messages)
 
-        self.name = "Roles"
-        self.description = "Module d'auto-attribution des rôles"
-        self.interactive = True
-        self.color = 0xffb593
-        self.help = """\
- </prefix>role list
- => Affiche la liste des rôles
- 
- </prefix>role <nom du rôle>
- => Vous donne ou vous retire le rôle donné
-"""
+class MainClass(BaseClass):
+    name = "Role"
+    super_users = []
+    color = 0xffb593
+    help_active = True
+    help = {
+        "description": "Modulé gérant l'attribution des roles",
+        "commands": {
+            "`{prefix}{command} list`": "Liste les roles",
+            "`{prefix}{command} <role>`": "S'attribuer le role <role>"
+        }
+    }
+    command_text = "roles"
+
+    def __init__(self, client):
+        super().__init__(client)
         self.RoleList = {
             "suspect": [435559220860157952, "Permet d'être notifié pour les mini-jeux"],
             "clash-of-coders": [496372436967882774, "Permet d'être notifié pour les parties de clash-of-code"],
@@ -28,6 +27,8 @@ class MainClass:
         }
 
     async def on_message(self, message):
+        if not message.content.startswith(self.command_text):
+            return
         args = message.content.split()
         if len(args) == 2:
             if args[1] == 'list':

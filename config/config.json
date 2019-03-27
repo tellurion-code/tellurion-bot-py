@@ -1,0 +1,1 @@
+{"modules": ["archive", "clean", "roles", "rtfgd", "git", "dummy", "help", "dellog", "panic", "contest", "play", "errors", "perdu", "gomoku", "restart", "modules"], "prefix": "%"}

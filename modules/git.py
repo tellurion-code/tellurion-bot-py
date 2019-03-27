@@ -1,37 +1,34 @@
-import os
+# dummy module
+
+from modules.base import BaseClass
 
 
-class MainClass:
-    def __init__(self, client, modules, owners, prefix):
-        self.client = client
-        self.modules = modules
-        self.owners = owners
-        self.prefix = prefix
-        self.events = ['on_message']  # events list
-        self.command = "%sgit" % self.prefix  # command prefix (can be empty to catch every single messages)
+class MainClass(BaseClass):
+    name = "Git"
 
-        self.name = "Git"
-        self.description = "Module de gestion de Git"
-        self.interactive = True
-        self.authlist = []
-        self.color = 0xdc0000
-        self.help = """\
- </prefix>git update
- => Execute les commandes suivantes dans le dossier du bot:
- ```BASH
- git fetch --all
- git reset --hard origin/<branch_name>```
-"""
+    super_users = [431043517217898496]
 
-    async def on_message(self, message):
-        args = message.content.split(' ')
-        if len(args) == 2 and args[1] == 'update':
-            with os.popen('git fetch --all') as std_out:
-                await message.channel.send(std_out.read())
-            with os.popen('git symbolic-ref HEAD 2>/dev/null') as std_out:
-                branch = std_out.read().replace('refs/heads/', '')
-            with os.popen('git reset --hard origin/%s' % branch) as std_out:
-                await message.channel.send(std_out.read())
-            await message.channel.send(message.author.mention + ", Le dépôt a été mis à jour (fetch + reset --hard).")
-        else:
-            await self.modules['help'][1].send_help(message.channel, self)
+    color = 0x000000
+
+    help_active = True
+    help = {
+        "description": "Module gérant les redémarages du bot",
+        "commands": {
+            "`{prefix}{command} update`": "Execute les commandes suivantes dans le dossier du bot:"
+                                          "```BASH\n"
+                                          "git fetch --all "
+                                          "git reset --hard origin/<branch_name>```",
+        }
+    }
+
+    command_text = "git"
+
+    async def com_update(self, message, args, kwargs):
+        # with os.popen('git fetch --all') as std_in:
+        #     await message.channel.send(std_in.read())
+        # with os.popen('git symbolic-ref HEAD 2>/dev/null') as std_in:
+        #     branch = std_in.read().replace('refs/heads/', '')
+        # with os.popen('git reset --hard origin/%s' % branch) as std_in:
+        #     await message.channel.send(std_in.read())
+        # await message.channel.send(message.author.mention + ", Le dépôt a été mis à jour (fetch + reset --hard).")
+        print("git update")
