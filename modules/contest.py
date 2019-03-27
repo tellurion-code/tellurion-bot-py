@@ -89,7 +89,7 @@ class MainClass(BaseClass):
         await message.channel.send(message.author.mention + ", cette fonction n'est pas encore disponible.")
 
     async def command(self, message, args, kwargs):
-        await self.client.modules['help'][1].send_help(message.channel, self)
+        await self.send_help(message.channel)
 
 
 """
