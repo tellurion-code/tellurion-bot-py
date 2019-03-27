@@ -10,7 +10,7 @@ class MainClass:
         self.name = "Restart"
         self.description = "Module gérant les redémarrages du bot"
         self.interactive = True
-        self.authlist = [431043517217898496]
+        self.authlist = [431043517217898496, 456142467666804746]
         self.color = 0x000000
         self.help = """\
  </prefix>restart

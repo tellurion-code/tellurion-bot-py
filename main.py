@@ -6,9 +6,9 @@ import traceback
 import discord
 
 client = discord.Client()
-prefix = '!'
+prefix = '/'
 modules = {}  # format : {'modulename':[module, initializedclass]}
-owners = [281166473102098433, 118399702667493380, 95605730538684416] #Alix Should **not** be on this list on the master branch
+owners = [281166473102098433] #non-staff Should **not** be on this list on the master branch
 
 
 async def auth(user, module_name):
