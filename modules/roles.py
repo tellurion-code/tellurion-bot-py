@@ -22,7 +22,7 @@ class MainClass:
  => Vous donne ou vous retire le rôle donné
 """
         self.RoleList = {
-            "jeux": [435559220860157952, "Permet d'être notifié pour les mini-jeux/jeux"]
+            "joueur": [435559220860157952, "Permet d'être notifié pour les mini-jeux/jeux"]
         }
 
     async def on_message(self, message):
