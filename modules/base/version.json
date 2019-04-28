@@ -1,0 +1,10 @@
+{
+  "version":"0.1.0",
+  "dependencies": {
+
+  },
+  "bot_version": {
+    "min": "0.1.0",
+    "max": "0.1.0"
+  }
+}
