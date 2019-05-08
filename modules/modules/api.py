@@ -30,5 +30,5 @@ class Api:
 
     async def download(self, module, version):
         await self._download("modules/"+module+"/"+version, filename="temp.zip")
-        with zipfile.ZipFile('test.zip', "r") as z:
+        with zipfile.ZipFile('temp.zip', "r") as z:
             z.extractall(os.path.join("modules", module))

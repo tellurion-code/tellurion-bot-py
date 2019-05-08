@@ -118,3 +118,6 @@ class MainClass(BaseClass):
         for module, versions in modules.items():
             text += module + " - " + ", ".join(versions)
         await message.channel.send(text)
+
+    async def com_web_dl(self, message, args, kwargs):
+        await self.api.download(args[1], args[2])
