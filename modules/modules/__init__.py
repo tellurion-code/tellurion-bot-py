@@ -3,7 +3,7 @@ import os
 import discord
 
 from modules.base import BaseClass
-
+from modules.modules.api import Api
 
 
 class MainClass(BaseClass):
@@ -25,6 +25,7 @@ class MainClass(BaseClass):
     def __init__(self, client):
         super().__init__(client)
         self.storage.mkdir("modules")
+        self.api = Api()
 
     def get_all_modules(self):
         all_items = os.listdir("modules")
@@ -112,4 +113,8 @@ class MainClass(BaseClass):
         await message.channel.send(embed=embed)
 
     async def com_web_list(self, message, args, kwargs):
-        pass
+        modules = self.api.list()
+        text = ""
+        for module, versions in modules.items():
+            text += module + " - " + ", ".join(versions)
+        await message.channel.send(text)

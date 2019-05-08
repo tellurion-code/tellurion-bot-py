@@ -63,3 +63,8 @@ target/
 .*.kate-swp
 .swp.*
 
+temp.zip
+storage/*
+config/*
+.idea/*
+

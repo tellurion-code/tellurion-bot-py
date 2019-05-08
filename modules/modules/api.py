@@ -5,7 +5,7 @@ import aiofiles
 import zipfile
 
 class Api:
-    def __init__(self, host):
+    def __init__(self, host="localhost:8000"):
         self.host = host
         self.basepath = "http://"+host+"/api/current"
 
