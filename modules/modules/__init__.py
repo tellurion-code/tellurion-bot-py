@@ -113,7 +113,7 @@ class MainClass(BaseClass):
         await message.channel.send(embed=embed)
 
     async def com_web_list(self, message, args, kwargs):
-        modules = self.api.list()
+        modules = await self.api.list()
         text = ""
         for module, versions in modules.items():
             text += module + " - " + ", ".join(versions)

@@ -9,12 +9,14 @@ class Api:
         self.host = host
         self.basepath = "http://"+host+"/api/current"
 
-    def _get(self, endpoint):
+    async def _get(self, endpoint):
+        if endpoint[0] != "/":
+            endpoint = "/" + endpoint
         async with aiohttp.ClientSession() as session:
             async with session.get(self.basepath+endpoint) as response:
                 return await response.json()
 
-    def _download(self, endpoint, filename="temp"):
+    async def _download(self, endpoint, filename="temp"):
         if endpoint[0] != "/":
             endpoint = "/" + endpoint
         async with aiohttp.ClientSession() as session:
