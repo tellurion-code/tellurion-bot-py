@@ -6,6 +6,8 @@ name = "pypi"
 [packages]
 packaging = "*"
 discord-py = {extras = ["voice"],git = "https://github.com/Rapptz/discord.py",ref = "84c1eac62a775a37b03bd0971b221b0c50724630"}
+aiohttp = "*"
+aiofiles = "*"
 
 [dev-packages]
 
