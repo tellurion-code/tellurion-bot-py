@@ -1,11 +1,14 @@
 #!/usr/bin/python3
-
+import asyncio
+import concurrent
 import importlib
 import json
 import logging
 import logging.config
 import os
 import traceback
+from concurrent.futures.process import ProcessPoolExecutor
+from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Dict
 
 import discord
@@ -550,6 +553,7 @@ class LBI(discord.Client):
 
     @event
     async def on_resumed(self):
+        print("resumed")
         for module in self.modules.values():
             await module["initialized_class"].on_resumed()
 
@@ -569,6 +573,10 @@ class LBI(discord.Client):
     async def on_webhooks_update(self, channel):
         for module in self.modules.values():
             await module["initialized_class"].on_webhooks_update(channel)
+
+    @event
+    async def on_toto(self, data):
+        print(data)
 
 
 class ClientById:
@@ -623,4 +631,41 @@ class ClientById:
 
 
 client = LBI()
-client.run('NTUwMDkxOTAyMDY2ODg0NjA4.XKpsPQ.T5emitHQDrt7SxfUNgY1awzX-OY', max_messages=500000)
+
+
+def read_sock():
+    print("connect")
+    import socket, os
+    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+    try:
+        os.remove("/tmp/bot.sock")  # TODO: Changer le nom du socket car il en faut un par bot
+    except OSError:
+        pass
+    s.bind("/tmp/bot.sock")  # TODO: Voir ici aussi
+    s.listen(1)
+    conn, addr = s.accept()
+    while 1:
+        data = conn.recv(1024)
+        print(data)
+        content = data.decode("utf8")
+        if content.startswith("send"):
+            print("okip")
+            client.dispatch("toto", data)
+        conn.send(data)
+
+
+async def start_bot():
+    await client.start('TOKEN', max_messages=500000)
+
+
+async def stop_bot():
+    await client.logout()
+
+
+async def main():
+    loop = asyncio.get_running_loop()
+    with concurrent.futures.ProcessPoolExecutor() as pool:
+        await loop.run_in_executor(pool, start_bot)
+        await loop.run_in_executor(pool, read_sock)
+
+asyncio.run(main())
