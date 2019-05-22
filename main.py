@@ -189,13 +189,7 @@ setup_logging()
 
 log_discord = logging.getLogger('discord')
 log_LBI = logging.getLogger('LBI')
-
-debug = log_LBI.debug
-info = log_LBI.info
-warning = log_LBI.warning
-error = log_LBI.error
-critical = log_LBI.critical
-
+log_communication = logging.getLogger('communication')
 
 def load_modules_info():
     for mod in os.listdir("modules"):
@@ -318,265 +312,10 @@ class LBI(discord.Client):
         self.modules = {}
 
     @event
-    async def on_ready(self):
+    async def dispatch(self, event, *args, **kwargs):
+        super().dispatch(event, *args, **kwargs)
         for module in self.modules.values():
-            await module["initialized_class"].on_ready()
-
-    @event
-    async def on_socket_raw_receive(self, message):
-        for module in self.modules.values():
-            await module["initialized_class"].on_socket_raw_receive(message)
-
-    @event
-    async def on_socket_raw_send(self, payload):
-        for module in self.modules.values():
-            await module["initialized_class"].on_socket_raw_send(payload)
-
-    @event
-    async def on_typing(self, channel, user, when):
-        for module in self.modules.values():
-            await module["initialized_class"].on_typing(channel, user, when)
-
-    @event
-    async def on_message(self, message):
-        print(message.content)
-        try:
-            for module in self.modules.values():
-                await module["initialized_class"]._on_message(message)
-        except RuntimeError:
-            info("Liste des modules changée pendant l'execution d'un on_message")
-
-    @event
-    async def on_message_delete(self, message):
-        for module in self.modules.values():
-            await module["initialized_class"].on_message_delete(message)
-
-    @event
-    async def on_raw_message_delete(self, payload):
-        for module in self.modules.values():
-            await module["initialized_class"].on_raw_message_delete(payload)
-
-    @event
-    async def on_raw_bulk_message_delete(self, payload):
-        for module in self.modules.values():
-            await module["initialized_class"].on_raw_bulk_message_delete(payload)
-
-    @event
-    async def on_message_edit(self, before, after):
-        for module in self.modules.values():
-            await module["initialized_class"].on_message_edit(before, after)
-
-    @event
-    async def on_raw_message_edit(self, payload):
-        for module in self.modules.values():
-            await module["initialized_class"].on_raw_message_edit(payload)
-
-    @event
-    async def on_reaction_add(self, reaction, user):
-        for module in self.modules.values():
-            await module["initialized_class"].on_reaction_add(reaction, user)
-
-    @event
-    async def on_raw_reaction_add(self, payload):
-        for module in self.modules.values():
-            await module["initialized_class"].on_raw_reaction_add(payload)
-
-    @event
-    async def on_reaction_remove(self, reaction, user):
-        for module in self.modules.values():
-            await module["initialized_class"].on_reaction_remove(reaction, user)
-
-    @event
-    async def on_raw_reaction_remove(self, payload):
-        for module in self.modules.values():
-            await module["initialized_class"].on_raw_reaction_remove(payload)
-
-    @event
-    async def on_reaction_clear(self, message, reactions):
-        for module in self.modules.values():
-            await module["initialized_class"].on_reaction_clear(message, reactions)
-
-    @event
-    async def on_raw_reaction_clear(self, payload):
-        for module in self.modules.values():
-            await module["initialized_class"].on_raw_reaction_clear(payload)
-
-    @event
-    async def on_private_channel_delete(self, channel):
-        for module in self.modules.values():
-            await module["initialized_class"].on_private_channel_delete(channel)
-
-    @event
-    async def on_private_channel_create(self, channel):
-        for module in self.modules.values():
-            await module["initialized_class"].on_private_channel_create(channel)
-
-    @event
-    async def on_private_channel_update(self, before, after):
-        for module in self.modules.values():
-            await module["initialized_class"].on_private_channel_update(before, after)
-
-    @event
-    async def on_private_channel_pins_update(self, channel, last_pin):
-        for module in self.modules.values():
-            await module["initialized_class"].on_private_channel_pins_update(channel, last_pin)
-
-    @event
-    async def on_guild_channel_delete(self, channel):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_channel_delete(channel)
-
-    @event
-    async def on_guild_channel_create(self, channel):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_channel_create(channel)
-
-    @event
-    async def on_guild_channel_update(self, before, after):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_channel_update(before, after)
-
-    @event
-    async def on_guild_channel_pins_update(self, channel, last_pin):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_channel_pins_update(channel, last_pin)
-
-    @event
-    async def on_member_join(self, member):
-        for module in self.modules.values():
-            await module["initialized_class"].on_member_join(member)
-
-    @event
-    async def on_member_remove(self, member):
-        for module in self.modules.values():
-            await module["initialized_class"].on_member_remove(member)
-
-    @event
-    async def on_member_update(self, before, after):
-        for module in self.modules.values():
-            await module["initialized_class"].on_member_update(before, after)
-
-    @event
-    async def on_guild_join(self, guild):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_join(guild)
-
-    @event
-    async def on_guild_remove(self, guild):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_remove(guild)
-
-    @event
-    async def on_guild_update(self, before, after):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_update(before, after)
-
-    @event
-    async def on_guild_role_create(self, role):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_role_create(role)
-
-    @event
-    async def on_guild_role_delete(self, role):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_role_delete(role)
-
-    @event
-    async def on_guild_role_update(self, before, after):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_role_update(before, after)
-
-    @event
-    async def on_guild_emojis_update(self, guild, before, after):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_emojis_update(guild, before, after)
-
-    @event
-    async def on_guild_available(self, guild):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_available(guild)
-
-    @event
-    async def on_guild_unavailable(self, guild):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_unavailable(guild)
-
-    @event
-    async def on_voice_state_update(self, member, before, after):
-        for module in self.modules.values():
-            await module["initialized_class"].on_voice_state_update(member, before, after)
-
-    @event
-    async def on_member_ban(self, guild, user):
-        for module in self.modules.values():
-            await module["initialized_class"].on_member_ban(guild, user)
-
-    @event
-    async def on_member_unban(self, guild, user):
-        for module in self.modules.values():
-            await module["initialized_class"].on_member_unban(guild, user)
-
-    @event
-    async def on_group_join(self, channel, user):
-        for module in self.modules.values():
-            await module["initialized_class"].on_group_join(channel, user)
-
-    @event
-    async def on_group_remove(self, channel, user):
-        for module in self.modules.values():
-            await module["initialized_class"].on_group_remove(channel, user)
-
-    @event
-    async def on_relationship_add(self, relationship):
-        for module in self.modules.values():
-            await module["initialized_class"].on_relationship_add(relationship)
-
-    @event
-    async def on_relationship_remove(self, relationship):
-        for module in self.modules.values():
-            await module["initialized_class"].on_relationship_remove(relationship)
-
-    @event
-    async def on_relationship_update(self, before, after):
-        for module in self.modules.values():
-            await module["initialized_class"].on_relationship_update(before, after)
-
-    @event
-    async def on_connect(self):
-        for module in self.modules.values():
-            await module["initialized_class"].on_connect()
-
-    @event
-    async def on_shard_ready(self):
-        for module in self.modules.values():
-            await module["initialized_class"].on_shard_ready()
-
-    @event
-    async def on_resumed(self):
-        print("resumed")
-        for module in self.modules.values():
-            await module["initialized_class"].on_resumed()
-
-    @event
-    async def on_error(self, event_, *args, **kwargs):
-        print(event_, *args, **kwargs)
-        print(traceback.format_exc())
-        for module in self.modules.values():
-            await module["initialized_class"].on_error(event_, *args, **kwargs)
-
-    @event
-    async def on_guild_integrations_update(self, guild):
-        for module in self.modules.values():
-            await module["initialized_class"].on_guild_integrations_update(guild)
-
-    @event
-    async def on_webhooks_update(self, channel):
-        for module in self.modules.values():
-            await module["initialized_class"].on_webhooks_update(channel)
-
-    @event
-    async def on_toto(self, data):
-        print(data)
+            await module["initialized_class"].dispatch(event, *args, **kwargs)
 
 
 class ClientById:
@@ -629,33 +368,51 @@ class ClientById:
         channel = self.client.get_channel(id_)
         return channel.send(*args, **kwargs)
 
+    async def get_role(self, id_):
+        for guild in self.client.guilds:
+            role = discord.utils.get(guild.roles, id=id_)
+            if role:
+                return role
+        return None
+
+class Communication:
+    debug = log_communication.debug
+    info = log_communication.info
+    warning = log_communication.warning
+    error = log_communcation.error
+    critical = log_communication.critical
+    def __init__(self, client, sock_file=os.path.join("tmp", os.path.dirname(os.path.realpath(__file__))+".sock")):
+        self.sock_file = sock_file
+        self.client = client
+
+    async def start():
+        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        try:
+            os.remove(self.sock_file)
+        except OSError:
+            pass
+        s.bind(sock_file)
+        while True:
+            data = conn.recv(1024)
+            content = data.decode("utf8")
+            log("Received:"+content)
+            if content.startwith("setparam"):
+                await parse_set_param(content)
+
+    async def parse_set_param(self, data):
+        content = content[8:]
+        values = content.split("$¤$")
+        for value in values:
+            await client.dispatch("setparam", *values.split("$=$"))
 
 client = LBI()
-
-
-def read_sock():
-    print("connect")
-    import socket, os
-    s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-    try:
-        os.remove("/tmp/bot.sock")  # TODO: Changer le nom du socket car il en faut un par bot
-    except OSError:
-        pass
-    s.bind("/tmp/bot.sock")  # TODO: Voir ici aussi
-    s.listen(1)
-    conn, addr = s.accept()
-    while 1:
-        data = conn.recv(1024)
-        print(data)
-        content = data.decode("utf8")
-        if content.startswith("send"):
-            print("okip")
-            client.dispatch("toto", data)
-        conn.send(data)
-
+communication = Communication()
 
 async def start_bot():
     await client.start('TOKEN', max_messages=500000)
+
+async def start_communication():
+    await communication.start()
 
 
 async def stop_bot():
@@ -666,6 +423,6 @@ async def main():
     loop = asyncio.get_running_loop()
     with concurrent.futures.ProcessPoolExecutor() as pool:
         await loop.run_in_executor(pool, start_bot)
-        await loop.run_in_executor(pool, read_sock)
+        await loop.run_in_executor(pool, start_communication)
 
 asyncio.run(main())

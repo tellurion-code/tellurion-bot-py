@@ -1,40 +1,16 @@
 """Base class for module, never use directly !!!"""
+import asyncio
+import sys
+
 import os
 import pickle
+import traceback
 import zipfile
 
 import discord
 
-
-class Storage:
-    def __init__(self, base_path, client):
-        self.client = client
-        self.base_path = base_path
-        try:
-            os.makedirs(base_path)
-        except FileExistsError:
-            self.client.info("Le dossier {dossier} a déjà été créé.".format(dossier=self.base_path))
-
-    def mkdir(self, directory):
-        try:
-            os.makedirs(self.path(directory))
-        except FileExistsError:
-            self.client.info("Le dossier {dossier} a déjà été créé.".format(dossier=directory))
-
-    def mkzip(self, files, name):
-        with zipfile.ZipFile(self.path(files), 'w', zipfile.ZIP_DEFLATED) as zip_file:
-            for file in files:
-                zip_file.write(self.path(file), compress_type=zipfile.ZIP_DEFLATED)
-        return name
-
-    def open(self, filename, *args, **kwargs):
-        return open(self.path(filename), *args, **kwargs)
-
-    def path(self, filename):
-        return os.path.join(self.base_path, filename)
-
-    def exists(self, filename):
-        return os.path.exists(self.path(filename))
+from storage import FSStorage
+from storage.path import join
 
 
 class BaseClass:
@@ -49,6 +25,7 @@ class BaseClass:
     help_active = False
     color = 0x000000
     command_text = None
+    super_users = []
     authorized_roles = []
 
     def __init__(self, client):
@@ -61,7 +38,7 @@ class BaseClass:
         self.client = client
         if not os.path.isdir(os.path.join("storage", self.name)):
             os.makedirs(os.path.join("storage", self.name))
-        self.storage = Storage(os.path.join(self.client.base_path, self.name), client)
+        self.storage = FSStorage(join(self.client.base_path, self.name))
 
     async def send_help(self, channel):
         embed = discord.Embed(
@@ -175,10 +152,9 @@ class BaseClass:
                 i += 1
         return sub_command, args_, kwargs
 
-    async def _on_message(self, message):
+    async def on_message(self, message):
         """Override this function to deactivate command_text parsing"""
         await self.parse_command(message)
-        await self.on_message(message)
 
     async def command(self, message, args, kwargs):
         """Override this function to handle all messages starting with `{prefix}{command_text}`
@@ -203,206 +179,34 @@ class BaseClass:
         """Check if pickle file exists"""
         return self.storage.exists(object_name)
 
-    def on_load(self):
-        """This function is called when module is loaded"""
-        pass
+    def dispatch(self, event, *args, **kwargs):
+        # Method to call
+        method = 'on_' + event
+        try:
+            # Try to get coro, if not exists pass without raise an error
+            coro = getattr(self, method)
+        except AttributeError:
+            pass
+        else:
+            # Run event
+            asyncio.ensure_future(self._run_event(coro, method, *args, **kwargs), loop=self.loop)
 
-    async def on_socket_raw_receive(self, message):
-        """Override this function to handle this event."""
-        pass
+    async def _run_event(self, coro, event_name, *args, **kwargs):
+        # Run event
+        try:
+            await coro(*args, **kwargs)
+        except asyncio.CancelledError:
+            # If function is cancelled pass silently
+            pass
+        except Exception:
+            try:
+                # Call error function
+                await self.on_error(event_name, *args, **kwargs)
+            except asyncio.CancelledError:
+                # If error event is canceled pass silently
+                pass
 
-    async def on_socket_raw_send(self, payload):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_typing(self, channel, user, when):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_message(self, message):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_message_delete(self, message):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_raw_message_delete(self, payload):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_raw_bulk_message_delete(self, payload):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_message_edit(self, before, after):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_raw_message_edit(self, payload):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_reaction_add(self, reaction, user):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_raw_reaction_add(self, payload):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_reaction_remove(self, reaction, user):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_raw_reaction_remove(self, payload):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_reaction_clear(self, message, reactions):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_raw_reaction_clear(self, payload):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_private_channel_delete(self, channel):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_private_channel_create(self, channel):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_private_channel_update(self, before, after):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_private_channel_pins_update(self, channel, last_pin):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_channel_delete(self, channel):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_channel_create(self, channel):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_channel_update(self, before, after):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_channel_pins_update(self, channel, last_pin):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_member_join(self, member):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_member_remove(self, member):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_member_update(self, before, after):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_join(self, guild):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_remove(self, guild):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_update(self, before, after):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_role_create(self, role):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_role_delete(self, role):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_role_update(self, before, after):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_emojis_update(self, guild, before, after):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_available(self, guild):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_unavailable(self, guild):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_voice_state_update(self, member, before, after):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_member_ban(self, guild, user):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_member_unban(self, guild, user):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_group_join(self, channel, user):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_group_remove(self, channel, user):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_relationship_add(self, relationship):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_relationship_remove(self, relationship):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_relationship_update(self, before, after):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_ready(self):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_connect(self):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_shard_ready(self):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_resumed(self):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_error(self, event, *args, **kwargs):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_guild_integrations_update(self, guild):
-        """Override this function to handle this event."""
-        pass
-
-    async def on_webhooks_update(self, channel):
-        """Override this function to handle this event."""
-        pass
+    async def on_error(self, event_method, *args, **kwargs):
+        # Basic error handler
+        print('Ignoring exception in {}'.format(event_method), file=sys.stderr)
+        traceback.print_exc()

@@ -64,7 +64,6 @@ target/
 .swp.*
 
 temp.zip
-storage/*
 config/*
 .idea/*
 
