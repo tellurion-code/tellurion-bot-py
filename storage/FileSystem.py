@@ -11,7 +11,7 @@ class FSStorage(Storage):
     def __init__(self, base_path="storage"):
         super().__init__()
         self.base_path = os.path.abspath(base_path)
-        os.makedirs(self.base_path)
+        os.makedirs(self.base_path, exist_ok=True)
         self.current_dir = "/"
 
     def _topath(self, path):
@@ -41,7 +41,10 @@ class FSStorage(Storage):
     def listdir(self, path="."):
         return os.listdir(self._topath(path))
 
-    def mkdir(self, path):
+    def mkdir(self, path, exist_ok=False):
+        if exist_ok:
+            if self.exists(path):
+                return self._topath(path)
         os.mkdir(self._topath(path))
         return self._topath(path)
 
@@ -67,3 +70,6 @@ class FSStorage(Storage):
 
     def exists(self, path):
         return os.path.exists(path)
+
+    def isdir(self, path):
+        return os.path.isdir(self._topath(path))

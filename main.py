@@ -6,6 +6,8 @@ import json
 import logging
 import logging.config
 import os
+import signal
+import socket
 import traceback
 from concurrent.futures.process import ProcessPoolExecutor
 from concurrent.futures.thread import ThreadPoolExecutor
@@ -191,6 +193,7 @@ log_discord = logging.getLogger('discord')
 log_LBI = logging.getLogger('LBI')
 log_communication = logging.getLogger('communication')
 
+
 def load_modules_info():
     for mod in os.listdir("modules"):
         Module(mod)
@@ -224,24 +227,24 @@ class LBI(discord.Client):
             with open(config_file, 'rt') as f:
                 config = json.load(f)
             self.config.update(config)
-            info("Config successfully loaded.")
+            self.info("Config successfully loaded.")
         else:
             with open(config_file, 'w') as f:
                 json.dump(self.config, f)
-            info("Config successfully created.")
+            self.info("Config successfully created.")
 
     def save_config(self, config_file="config/config.json"):
         with open(config_file, "w") as f:
             json.dump(self.config, f)
-        info("Config successfully saved.")
+        self.info("Config successfully saved.")
 
     @modules_edit
     def load_modules(self):
-        info("Starts to load modules...")
+        self.info("Starts to load modules...")
         e = {}
         for module in self.config["modules"]:
             e.update({module: self.load_module(module)})
-        info("Finished to load all modules.")
+        self.info("Finished to load all modules.")
         return e
 
     @modules_edit
@@ -273,24 +276,24 @@ class LBI(discord.Client):
             if dep not in self.modules.keys():
                 self.load_module(dep)
         try:
-            info("Start loading module {module}...".format(module=module))
+            self.info("Start loading module {module}...".format(module=module))
             imported = importlib.import_module('modules.' + module)
             importlib.reload(imported)
             initialized_class = imported.MainClass(self)
             self.modules.update({module: {"imported": imported, "initialized_class": initialized_class}})
-            info("Module {module} successfully imported.".format(module=module))
+            self.info("Module {module} successfully imported.".format(module=module))
             initialized_class.on_load()
             if module not in self.config["modules"]:
                 self.config["modules"].append(module)
                 self.save_config()
         except AttributeError as e:
-            error("Module {module} doesn't have MainClass.".format(module=module))
+            self.error("Module {module} doesn't have MainClass.".format(module=module))
             return e
         return 0
 
     @modules_edit
     def unload_module(self, module):
-        info("Start unload module {module}...".format(module=module))
+        self.info("Start unload module {module}...".format(module=module))
         try:
             if module in self.config["modules"]:
                 self.config["modules"].remove(module)
@@ -298,7 +301,7 @@ class LBI(discord.Client):
                 self.unload_all()
                 self.load_modules()
         except KeyError as e:
-            error("Module {module} not loaded.").format(module=module)
+            self.error("Module {module} not loaded.").format(module=module)
             return e
 
     @modules_edit
@@ -312,10 +315,10 @@ class LBI(discord.Client):
         self.modules = {}
 
     @event
-    async def dispatch(self, event, *args, **kwargs):
+    def dispatch(self, event, *args, **kwargs):
         super().dispatch(event, *args, **kwargs)
         for module in self.modules.values():
-            await module["initialized_class"].dispatch(event, *args, **kwargs)
+            module["initialized_class"].dispatch(event, *args, **kwargs)
 
 
 class ClientById:
@@ -375,54 +378,75 @@ class ClientById:
                 return role
         return None
 
-class Communication:
+
+client1 = LBI()
+
+
+class Communication(asyncio.Protocol):
     debug = log_communication.debug
     info = log_communication.info
     warning = log_communication.warning
-    error = log_communcation.error
+    error = log_communication.error
     critical = log_communication.critical
-    def __init__(self, client, sock_file=os.path.join("tmp", os.path.dirname(os.path.realpath(__file__))+".sock")):
-        self.sock_file = sock_file
-        self.client = client
+    name = "Communication"
 
-    async def start():
-        s = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
-        try:
-            os.remove(self.sock_file)
-        except OSError:
-            pass
-        s.bind(sock_file)
-        while True:
-            data = conn.recv(1024)
-            content = data.decode("utf8")
-            log("Received:"+content)
-            if content.startwith("setparam"):
-                await parse_set_param(content)
+    def __init__(self, client=client1):
+        print("créé")
+        self.client = client
+        self.transport = None
+
+    def connection_made(self, transport):
+        print('%s: connection made' % self.name)
+        self.transport = transport
+
+    def data_received(self, data):
+        print('%s: data received: %r' % (self.name, data))
+
+    def eof_received(self):
+        pass
+
+    def connection_lost(self, exc):
+        print('%s: connection lost: %s' % (self.name, exc))
 
     async def parse_set_param(self, data):
-        content = content[8:]
-        values = content.split("$¤$")
+        values = data[8:].split("$¤$")
         for value in values:
-            await client.dispatch("setparam", *values.split("$=$"))
+            value = value.replace(r"\$¤$", "$¤$")
+            await self.client.dispatch("setparam",
+                                       value.split("$=$")[0].replace(r"\$=$", "$=$"),
+                                       value.split("$=$")[1].replace(r"\$=$", "$=$"))
 
-client = LBI()
-communication = Communication()
+
+# os.path.join("tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock")
+
+communication = Communication(client1)
+
 
 async def start_bot():
-    await client.start('TOKEN', max_messages=500000)
+    await client1.start('TOKEN', max_messages=500000)
+
+
+def communication_execption_handler(loop, context):
+    print('%s: %s' % ('Connection', context['exception']))
+    traceback.print_exc()
+
 
 async def start_communication():
-    await communication.start()
+    pass
+    # loop.run_until_complete(f)
+    # print('Server running on %s forwarding to %s' % (proxy_in_addr, proxy_out_addr))
 
 
-async def stop_bot():
-    await client.logout()
+print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))
 
+loop = asyncio.get_event_loop()
+loop.add_signal_handler(signal.SIGINT, loop.stop)
+loop.set_exception_handler(communication_execption_handler)
+t = loop.create_unix_server(Communication,
+                            path=os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))
+loop.run_until_complete(t)
+loop.create_task(start_bot())
+loop.run_forever()
 
-async def main():
-    loop = asyncio.get_running_loop()
-    with concurrent.futures.ProcessPoolExecutor() as pool:
-        await loop.run_in_executor(pool, start_bot)
-        await loop.run_in_executor(pool, start_communication)
-
-asyncio.run(main())
+# loop = asyncio.get_event_loop()
+# loop.run_forever()

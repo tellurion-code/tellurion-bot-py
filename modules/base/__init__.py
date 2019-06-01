@@ -1,16 +1,13 @@
 """Base class for module, never use directly !!!"""
 import asyncio
 import sys
-
-import os
 import pickle
 import traceback
-import zipfile
 
 import discord
 
 from storage import FSStorage
-from storage.path import join
+import storage.path as path
 
 
 class BaseClass:
@@ -36,9 +33,9 @@ class BaseClass:
         :param client: client instance
         :type client: NikolaTesla"""
         self.client = client
-        if not os.path.isdir(os.path.join("storage", self.name)):
-            os.makedirs(os.path.join("storage", self.name))
-        self.storage = FSStorage(join(self.client.base_path, self.name))
+        self.storage = FSStorage(path.join(self.client.base_path, self.name))
+        if not self.storage.isdir(path.join("storage", self.name)):
+            self.storage.makedirs(path.join("storage", self.name), exist_ok=True)
 
     async def send_help(self, channel):
         embed = discord.Embed(

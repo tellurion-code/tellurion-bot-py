@@ -105,3 +105,11 @@ class Storage:
         :return: True if file exists
         """
         pass
+
+    async def isdir(self, path):
+        """
+        Return if path is a directory
+        :param path: Path to test
+        :return: True if path is a directory
+        """
+        pass

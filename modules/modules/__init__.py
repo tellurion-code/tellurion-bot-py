@@ -24,7 +24,7 @@ class MainClass(BaseClass):
 
     def __init__(self, client):
         super().__init__(client)
-        self.storage.mkdir("modules")
+        self.storage.mkdir("modules", exist_ok=True)
         self.api = Api()
 
     def get_all_modules(self):
