@@ -53,6 +53,7 @@ class MainClass(BaseClassPython):
             return
         for arg in args:
             e = self.client.load_module(arg)
+            print(e)
             if e:
                 await message.channel.send("An error occurred during the loading of the module {module}."
                                            .format(module=arg))

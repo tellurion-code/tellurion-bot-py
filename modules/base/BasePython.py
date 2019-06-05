@@ -186,7 +186,7 @@ class BaseClassPython:
             pass
         else:
             # Run event
-            asyncio.ensure_future(self._run_event(coro, method, *args, **kwargs), loop=self.loop)
+            asyncio.ensure_future(self._run_event(coro, method, *args, **kwargs), loop=self.client.loop)
 
     async def _run_event(self, coro, event_name, *args, **kwargs):
         # Run event

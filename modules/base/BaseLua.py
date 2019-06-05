@@ -39,10 +39,9 @@ class BaseClassLua:
             self.storage.makedirs(path.join("storage", self.name), exist_ok=True)
         # Get lua globals
         self.lua = lupa.LuaRuntime(unpack_returned_tuples=True)
-        self.luaMethods = self.lua.eval("require \"main\"")
+        self.luaMethods = self.lua.require("modules/test_lua/main")
 
     def dispatch(self, event, *args, **kwargs):
-        print(self.luaMethods)
-        print(self.luaMethods.__dict__)
-        print(dict(self.luaMethods))
+        if self.luaMethods["on_"+event] is not None:
+            self.luaMethods["on_"+event](asyncio.ensure_future, self.client, *args, **kwargs)
 

@@ -281,7 +281,7 @@ class LBI(discord.Client):
             initialized_class = imported.MainClass(self)
             self.modules.update({module: {"imported": imported, "initialized_class": initialized_class}})
             self.info("Module {module} successfully imported.".format(module=module))
-            initialized_class.on_load()
+            initialized_class.dispatch("load")
             if module not in self.config["modules"]:
                 self.config["modules"].append(module)
                 self.save_config()
@@ -315,7 +315,6 @@ class LBI(discord.Client):
 
     @event
     def dispatch(self, event, *args, **kwargs):
-        print(event)
         super().dispatch(event, *args, **kwargs)
         for module in self.modules.values():
             module["initialized_class"].dispatch(event, *args, **kwargs)
