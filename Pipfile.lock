@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "e5ce2d692a19fe61098fd4a82500439d23c83afcc1f305cbe84a1c774fcf3505"
+            "sha256": "d554d2ea6c77f139d26001582b17e7ca5430ed151ab8e92f8f7354c8d59438d4"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
@@ -11,7 +11,7 @@
             "platform_python_implementation": "CPython",
             "platform_release": "4.19.27-gentoo-r1",
             "platform_system": "Linux",
-            "platform_version": "#1 SMP Wed May 1 11:50:20 CEST 2019",
+            "platform_version": "#1 SMP Sat Jun 1 19:49:57 CEST 2019",
             "python_full_version": "3.7.3",
             "python_version": "3.7",
             "sys_platform": "linux"
@@ -64,6 +64,10 @@
             "hashes": [],
             "markers": "python_version < '3.7'",
             "version": "==1.1.0"
+        },
+        "lupa": {
+            "hashes": [],
+            "version": "==1.8"
         },
         "multidict": {
             "hashes": [],

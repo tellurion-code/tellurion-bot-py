@@ -2,11 +2,11 @@ import os
 
 import discord
 
-from modules.base import BaseClass
+from modules.base import BaseClassPython
 from modules.modules.api import Api
 
 
-class MainClass(BaseClass):
+class MainClass(BaseClassPython):
     name = "modules"
 
     command_text = "modules"

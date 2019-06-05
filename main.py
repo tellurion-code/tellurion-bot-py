@@ -17,7 +17,7 @@ import discord
 from packaging.version import Version
 
 from errors import IncompatibleModule
-from modules.base import BaseClass
+from modules.base import BaseClassPython
 
 __version__ = "0.1.0"
 
@@ -408,40 +408,24 @@ class Communication(asyncio.Protocol):
     def connection_lost(self, exc):
         print('%s: connection lost: %s' % (self.name, exc))
 
-    async def parse_set_param(self, data):
-        values = data[8:].split("$¤$")
-        for value in values:
-            value = value.replace(r"\$¤$", "$¤$")
-            await self.client.dispatch("setparam",
-                                       value.split("$=$")[0].replace(r"\$=$", "$=$"),
-                                       value.split("$=$")[1].replace(r"\$=$", "$=$"))
-
-
-# os.path.join("tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock")
 
 communication = Communication(client1)
 
 
 async def start_bot():
-    await client1.start('TOKEN', max_messages=500000)
+    await client1.start(os.environ.get("DISCORD_TOKEN"), max_messages=500000)
 
 
-def communication_execption_handler(loop, context):
+def execption_handler(loop, context):
     print('%s: %s' % ('Connection', context['exception']))
     traceback.print_exc()
 
 
-async def start_communication():
-    pass
-    # loop.run_until_complete(f)
-    # print('Server running on %s forwarding to %s' % (proxy_in_addr, proxy_out_addr))
-
-
-print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))
+print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock")
 
 loop = asyncio.get_event_loop()
 loop.add_signal_handler(signal.SIGINT, loop.stop)
-loop.set_exception_handler(communication_execption_handler)
+loop.set_exception_handler(execption_handler)
 t = loop.create_unix_server(Communication,
                             path=os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))
 loop.run_until_complete(t)
