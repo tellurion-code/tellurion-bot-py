@@ -17,7 +17,6 @@ import discord
 from packaging.version import Version
 
 from errors import IncompatibleModule
-from modules.base import BaseClassPython
 
 __version__ = "0.1.0"
 
@@ -316,6 +315,7 @@ class LBI(discord.Client):
 
     @event
     def dispatch(self, event, *args, **kwargs):
+        print(event)
         super().dispatch(event, *args, **kwargs)
         for module in self.modules.values():
             module["initialized_class"].dispatch(event, *args, **kwargs)
@@ -424,7 +424,7 @@ def execption_handler(loop, context):
 print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock")
 
 loop = asyncio.get_event_loop()
-loop.add_signal_handler(signal.SIGINT, loop.stop)
+#loop.add_signal_handler(signal.SIGINT, loop.stop)
 loop.set_exception_handler(execption_handler)
 t = loop.create_unix_server(Communication,
                             path=os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))

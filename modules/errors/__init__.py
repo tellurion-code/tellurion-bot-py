@@ -5,10 +5,10 @@ import traceback
 import collections
 import discord
 
-from modules.base import BaseClass
+from modules.base import BaseClassPython
 
 
-class MainClass(BaseClass):
+class MainClass(BaseClassPython):
     name = "errors"
     description = "Error handling"
     interactive = True
