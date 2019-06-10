@@ -50,7 +50,8 @@ class MainClass:
             "https://cdn.discordapp.com/attachments/297868535076749323/445789702373638164/image.png",
             "https://cdn.discordapp.com/attachments/297868535076749323/297875363160129540/unknown.png",
             "https://cdn.discordapp.com/attachments/326742316456869888/447887603664945163/unknown.png",
-            "https://cdn.discordapp.com/attachments/434475794631360512/460876662414901249/TeslaPLS.png"
+            "https://cdn.discordapp.com/attachments/434475794631360512/460876662414901249/TeslaPLS.png",
+            "https://cdn.discordapp.com/attachments/297868535076749323/587687801844269169/C-658VsXoAo3ovC.jpg"
         ]
         self.icon = "https://cdn.discordapp.com/attachments/340620490009739265/431569015664803840/photo.png"
         self.client = client
