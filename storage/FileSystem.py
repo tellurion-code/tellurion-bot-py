@@ -1,7 +1,6 @@
 import os
 
-from storage.base import Storage
-
+from storage.base import Storage, Objects
 
 class FSStorage(Storage):
     """
@@ -73,3 +72,6 @@ class FSStorage(Storage):
 
     def isdir(self, path):
         return os.path.isdir(self._topath(path))
+
+class FSObjects(Objects):
+    pass

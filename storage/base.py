@@ -1,3 +1,8 @@
+import pickle
+
+from storage import path as pth
+
+
 class Storage:
     """Basic class for storage interface
 
@@ -52,6 +57,7 @@ class Storage:
     async def makedirs(self, path, exist_ok=False):
         """
         Create directory `path`
+        :param exist_ok: Not return error if dir exists
         :param path: directory to create
         :return: Path to new directory
         """
@@ -113,3 +119,25 @@ class Storage:
         :return: True if path is a directory
         """
         pass
+
+
+class Objects:
+    def __init__(self, storage):
+        self.storage = storage
+
+    def save_object(self, object_name, object_instance):
+        """Save object into pickle file"""
+        with self.storage.open(pth.join("objects", object_name), "wb") as f:
+            pickler = pickle.Pickler(f)
+            pickler.dump(object_instance)
+
+    def load_object(self, object_name):
+        """Load object from pickle file"""
+        if self.save_exists(object_name):
+            with self.storage.open(pth.join("objects", object_name), "rb") as f:
+                unpickler = pickle.Unpickler(f)
+                return unpickler.load()
+
+    def save_exists(self, object_name):
+        """Check if pickle file exists"""
+        return self.storage.exists(pth.join("objects", object_name))

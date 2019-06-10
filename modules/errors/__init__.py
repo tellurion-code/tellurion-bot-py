@@ -32,8 +32,8 @@ class MainClass(BaseClassPython):
         self.icon = ""
 
     async def on_ready(self):
-        if self.save_exists('errorsDeque'):
-            self.errorsDeque = self.load_object('errorsDeque')
+        if self.objects.save_exists('errorsDeque'):
+            self.errorsDeque = self.objects.load_object('errorsDeque')
         else:
             self.errorsDeque = collections.deque()
         for i in range(len(self.errorsDeque)):
@@ -44,7 +44,7 @@ class MainClass(BaseClassPython):
                 await delete_message.delete()
             except:
                 raise
-        self.save_object(self.errorsDeque, 'errorsDeque')
+        self.objects.save_object(self.errorsDeque, 'errorsDeque')
 
     async def command(self, message, args, kwargs):
         raise Exception("Si cette erreur apparait, alors tout est normal")
@@ -72,7 +72,7 @@ class MainClass(BaseClassPython):
                     embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.icon))
             except:
                 pass
-        self.save_object(self.errorsDeque, 'errorsDeque')
+        self.objects.save_object(self.errorsDeque, 'errorsDeque')
         await asyncio.sleep(60)
         try:
             channel = self.client.get_channel(message_list[0])
@@ -85,4 +85,4 @@ class MainClass(BaseClassPython):
                 self.errorsDeque.remove(message_list)
             except ValueError:
                 pass
-        self.save_object(self.errorsDeque, 'errorsDeque')
+        self.objects.save_object(self.errorsDeque, 'errorsDeque')

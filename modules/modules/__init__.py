@@ -17,7 +17,7 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} list`": "List of available modules.",
             "`{prefix}{command} enable <module>`": "Enable module `<module>`.",
             "`{prefix}{command} disable <module>`": "Disable module `<module>`.",
-            "`{prefix}{command} reload <module>`":"Reload module `<module>`",
+            "`{prefix}{command} reload <module>`": "Reload module `<module>`",
             "`{prefix}{command} web_list`": "List all available modules from repository",
         }
     }

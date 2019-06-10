@@ -35,6 +35,20 @@ class Module:
         MODULES.update({self.name: self})
 
     @property
+    def type(self) -> str:
+        """
+        Return module type. It can be python or lua
+
+        :return: Module type
+        :rtype: str
+        """
+        if not os.path.exists(os.path.join("modules", self.name, "version.json")):
+            return ""
+        with open(os.path.join("modules", self.name, "version.json")) as file:
+            versions = json.load(file)
+        return versions["type"]
+
+    @property
     def exists(self) -> bool:
         """
         Check if module exists
@@ -64,6 +78,8 @@ class Module:
         if "dependencies" not in versions.keys():
             return False
         if "bot_version" not in versions.keys():
+            return False
+        if "type" not in versions.keys():
             return False
         return True
 
@@ -274,21 +290,34 @@ class LBI(discord.Client):
         for dep in deps.keys():
             if dep not in self.modules.keys():
                 self.load_module(dep)
-        try:
-            self.info("Start loading module {module}...".format(module=module))
-            imported = importlib.import_module('modules.' + module)
+        if MODULES[module].type == "python":
+            try:
+                self.info("Start loading module {module}...".format(module=module))
+                imported = importlib.import_module('modules.' + module)
+                importlib.reload(imported)
+                initialized_class = imported.MainClass(self)
+                self.modules.update({module: {"imported": imported, "initialized_class": initialized_class}})
+                self.info("Module {module} successfully imported.".format(module=module))
+                initialized_class.dispatch("load")
+                if module not in self.config["modules"]:
+                    self.config["modules"].append(module)
+                    self.save_config()
+            except AttributeError as e:
+                self.error("Module {module} doesn't have MainClass.".format(module=module))
+                return e
+            return 0
+        elif MODULES[module].type == "lua":
+            self.info(f"Start loading module {module}...")
+            imported = importlib.import_module('modules.base.BaseLua')
             importlib.reload(imported)
-            initialized_class = imported.MainClass(self)
+            initialized_class = imported.BaseClassLua(self, path=f"modules/{module}/main")
             self.modules.update({module: {"imported": imported, "initialized_class": initialized_class}})
-            self.info("Module {module} successfully imported.".format(module=module))
+            self.info(f"Module {module} successfully imported.")
             initialized_class.dispatch("load")
             if module not in self.config["modules"]:
                 self.config["modules"].append(module)
                 self.save_config()
-        except AttributeError as e:
-            self.error("Module {module} doesn't have MainClass.".format(module=module))
-            return e
-        return 0
+            return 0
 
     @modules_edit
     def unload_module(self, module):
