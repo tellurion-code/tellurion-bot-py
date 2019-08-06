@@ -1,24 +1,24 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "dd053e5278c2cb31bdbe5787dc6523a4d59516cf164947f235b5c1946b700a34"
+            "sha256": "1901951610fda0eb7321334adcf2ae967cf0033fa44692270d4f74d1a981fbd5"
         },
         "host-environment-markers": {
             "implementation_name": "cpython",
-            "implementation_version": "3.7.4",
+            "implementation_version": "3.6.9",
             "os_name": "posix",
             "platform_machine": "x86_64",
             "platform_python_implementation": "CPython",
             "platform_release": "5.2.2-gentoo-fomys",
             "platform_system": "Linux",
             "platform_version": "#2 SMP Tue Jul 23 20:31:46 CEST 2019",
-            "python_full_version": "3.7.4",
-            "python_version": "3.7",
+            "python_full_version": "3.6.9",
+            "python_version": "3.6",
             "sys_platform": "linux"
         },
         "pipfile-spec": 6,
         "requires": {
-            "python_version": "3.7"
+            "python_version": "3.6"
         },
         "sources": [
             {
