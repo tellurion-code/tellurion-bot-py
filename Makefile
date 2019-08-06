@@ -1,19 +1,19 @@
 mainDir := $(shell pwd)
 
-run: storage/libs/python storage/libs/finaltouch
+run: storage/libs/python3.6 storage/libs/finaltouch storage/.log/errors.log storage/.log/info.log
 	cd $(mainDir);\
 	export LD_LIBRARY_PATH=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/lib;\
-	export PYTHONPATH=$(mainDir)/storage/libs/python:${PYTHONPATH};\
+	export PYTHONPATH=$(mainDir)/storage/libs/python3.6:${PYTHONPATH};\
 	export LIBGIT2=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/;\
-	python3 -u main.py
-python: storage/libs/python storage/libs/finaltouch
+	python3.6 -u main.py
+python3.6: storage/libs/python3.6 storage/libs/finaltouch
 	cd $(mainDir);\
 	export LD_LIBRARY_PATH=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/lib;\
-	export PYTHONPATH=$(mainDir)/storage/libs/python:${PYTHONPATH};\
+	export PYTHONPATH=$(mainDir)/storage/libs/python3.6:${PYTHONPATH};\
 	export LIBGIT2=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/;\
-	python3
-storage/libs/finaltouch: storage/libs/python
-	touch storage/libs/python storage/libs/get-pip.py
+	python3.6
+storage/libs/finaltouch: storage/libs/python3.6
+	touch storage/libs/python3.6 storage/libs/get-pip.py
 storage/libs/libgit2: storage/libs
 	cd $(mainDir);\
 	cd $(mainDir)/storage/libs;\
@@ -31,19 +31,19 @@ storage/libs/get-pip.py: storage/libs
 	cd $(mainDir);\
 	cd storage/libs;\
 	curl https://bootstrap.pypa.io/get-pip.py -o get-pip.py;\
-	export PYTHONPATH=$(mainDir)/storage/libs/python:${PYTHONPATH};\
-	python3 get-pip.py --user
+	export PYTHONPATH=$(mainDir)/storage/libs/python3.6:${PYTHONPATH};\
+	python3.6 get-pip.py --user
 
-storage/libs/python: storage/libs storage/libs/get-pip.py storage/libs/dependencies.sha512
+storage/libs/python3.6: storage/libs storage/libs/get-pip.py storage/libs/dependencies.sha512
 	cd $(mainDir);\
-	mkdir storage/libs/python;\
-	rm -r storage/libs/python;\
-	mkdir storage/libs/python;\
+	mkdir storage/libs/python3.6;\
+	rm -r storage/libs/python3.6;\
+	mkdir storage/libs/python3.6;\
 	export LD_LIBRARY_PATH=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/lib;\
 	export LIBGIT2=$(mainDir)/storage/libs/libgit2/libgit2-0.27.0/installed/;\
-	export PYTHONPATH=$(mainDir)/storage/libs/python:${PYTHONPATH};\
-	~/.local/bin/pip3 install -U -t storage/libs/python -r dependencies
-	touch $(mainDir)/storage/libs/python
+	export PYTHONPATH=$(mainDir)/storage/libs/python3.6:${PYTHONPATH};\
+	~/.local/bin/pip3 install -U -t storage/libs/python3.6 -r dependencies
+	touch $(mainDir)/storage/libs/python3.6
 storage:
 	cd $(mainDir);\
 	mkdir storage;\
@@ -52,6 +52,14 @@ storage/libs: storage
 	cd $(mainDir);\
 	mkdir storage/libs;\
 	echo .
+storage/.log: storage
+	cd $(mainDir);\
+	mkdir storage/.log;\
+	echo .
+storage/.log/errors.log: storage/.log
+	touch $(mainDir)/storage/.log/errors.log
+storage/.log/info.log: storage/.log
+	touch $(mainDir)/storage/.log/info.log
 
 storage/libs/dependencies.sha512: dependencies storage/libs
 	cd $(mainDir);\

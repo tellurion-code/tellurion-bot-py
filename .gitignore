@@ -48,5 +48,12 @@ storage/*
 *.sha512
 
 log
+logs/
 
 .idea
+
+config/*
+config/config.json
+*.json
+Pipfile.lock
+
