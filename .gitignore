@@ -54,3 +54,5 @@ logs/
 
 config/*
 *.json
+Pipfile.lock
+
