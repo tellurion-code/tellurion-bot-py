@@ -455,4 +455,4 @@ class ClientById:
 
 
 client = NikolaTesla()
-client.run(os.environ['DISCORD_TOKEN'], max_messages=500000)
+client.run(os.environ['DISCORD_TOKEN'])
