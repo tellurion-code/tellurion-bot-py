@@ -46,6 +46,7 @@ class MainClass(BaseClass):
 
     async def com_challenge(self, message, args, kwargs):
         try:
+ 
             if message.mentions[0].id not in self.save['currently_playing']:
                 if message.author.id not in self.save['currently_playing']:
                     self.save['currently_playing'] += [message.author.id, message.mentions[0].id]
@@ -62,7 +63,7 @@ class MainClass(BaseClass):
 
                     async def send_messages(condition, message_str, image_file):
                         for user in condition:
-                            await user.send(message_str, file=image_file)
+                            await user.send(message_str, file=discord.File(image_file))
 
                     asyncio.ensure_future(
                         send_messages(
@@ -104,8 +105,8 @@ class MainClass(BaseClass):
                     if message.author.id not in self.save['games'][game_id]['specs']:
                         self.save['games'][game_id]['specs'].append(message.author.id)
                         await message.author.send("Vous observez maintenant une partie.",
-                                                  file=self.gen_img_from_hist(
-                                                      self.save['games'][game_id]['hist'])
+                                                  file=discord.File(self.gen_img_from_hist(
+                                                      self.save['games'][game_id]['hist']))
                                                   )
                     else:
                         await message.channel.send(
@@ -148,7 +149,7 @@ class MainClass(BaseClass):
                     if test and not self.save['games'][game_id]['lock']:
                         self.save['games'][game_id]['lock'] = True
                         validate_message = await message.author.send(
-                            file=self.gen_img_from_hist(self.save['games'][game_id]['hist'] + [test], test=True))
+                            file=discord.File(self.gen_img_from_hist(self.save['games'][game_id]['hist'] + [test], test=True)))
                         asyncio.ensure_future(self.send_reactions(validate_message, ['✅', '❌']),
                                               loop=self.client.loop)
 
@@ -174,7 +175,7 @@ class MainClass(BaseClass):
 
                             async def send_messages(condition, message_text, file_name):
                                 for user in condition:
-                                    await user.send(message_text, file=file_name)
+                                    await user.send(message_text, file=discord.File(file_name))
 
                             asyncio.ensure_future(
                                 send_messages(
@@ -339,6 +340,6 @@ class MainClass(BaseClass):
                     else:
                         draw.text(((index_case + 1) * 40 * m + 1 * m, (index_line + 1) * 40 * m - 1 * m),
                                   letters[index_case] + str(index_line + 1), font=font, fill=(128, 128, 128, 255))
-        file_name = "/tmp/%s.bmp" % random.randint(1, 10000000)
+        file_name = "/tmp/%s.png" % random.randint(1, 10000000)
         img.save(file_name)
-        return discord.File(file_name)
+        return file_name

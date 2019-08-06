@@ -60,6 +60,10 @@ class MainClass(BaseClass):
                     await asyncio.sleep(1)
                 if not self.playing:
                     self.playing = True
+                    if message.author.voice is None:
+                        await message.channel.send(message.author.mention + ", Vous devez être dans un salon vocal")
+                        self.playing = False
+                        return
                     self.voice = await message.author.voice.channel.connect()
                     try:
                         await message.delete()
