@@ -94,9 +94,10 @@ class MainClass(BaseClass):
         self.save_object(self.errorsDeque, 'errorsDeque')
         await asyncio.sleep(60)
         try:
-            channel = self.client.get_channel(message_list[0])
-            delete_message = await channel.fetch_message(message_list[1])
-            await delete_message.delete()
+            if message_list is not None:
+                channel = self.client.get_channel(message_list[0])
+                delete_message = await channel.fetch_message(message_list[1])
+                await delete_message.delete()
         except:
             raise
         finally:
