@@ -21,7 +21,7 @@ class MainClass(BaseClass):
         embed = discord.Embed(title="[Aide] - Liste des modules", color=self.color)
         for moduleName in list(self.client.modules.keys()):
             if self.client.modules[moduleName]["initialized_class"].help_active and \
-                    self.auth(message.author, moduleName):
+                    await self.auth(message.author, moduleName):
                 embed.add_field(
                     name=moduleName.capitalize(),
                     value=self.client.modules[moduleName]["initialized_class"].help["description"])

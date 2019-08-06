@@ -454,5 +454,5 @@ class ClientById:
         return channel.send(*args, **kwargs)
 
 
-client = NikolaTesla()
+client = NikolaTesla(max_messages=500000)
 client.run(os.environ['DISCORD_TOKEN'])

@@ -22,7 +22,7 @@ class Storage:
             self.client.info("Le dossier {dossier} a déjà été créé".format(dossier=directory))
 
     def mkzip(self, files, name):
-        with zipfile.ZipFile(self.path(files), 'w', zipfile.ZIP_DEFLATED) as zip_file:
+        with zipfile.ZipFile(self.path(name), 'w', zipfile.ZIP_DEFLATED) as zip_file:
             for file in files:
                 zip_file.write(self.path(file), compress_type=zipfile.ZIP_DEFLATED)
         return name
