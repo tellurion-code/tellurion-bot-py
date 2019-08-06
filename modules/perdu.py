@@ -73,6 +73,9 @@ class MainClass(BaseClass):
         return sorted(sorted(stats, key=lambda x: x[2])[::-1], key=lambda x: x[1])[::-1][:10:]
 
     async def com_all(self, message, args, kwargs):
+        if self.client.get_channel(self.channel) is None:
+            await message.channel.send("Désolé ce module est indisponible")
+            return
         async with message.channel.typing():
             embed_description = '\n'.join(
                 [
@@ -90,6 +93,9 @@ class MainClass(BaseClass):
                                                            color=self.color))
 
     async def command(self, message, args, kwargs):
+        if self.client.get_channel(self.channel) is None:
+            await message.channel.send("Désolé ce module est indisponible")
+            return
         async with message.channel.typing():
             number = 7
             try:
