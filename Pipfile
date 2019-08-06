@@ -8,8 +8,7 @@ name = "pypi"
 [packages]
 
 pillow = "*"
-"discord.py" = "*"
-
+"discord.py" = {version = "*", extras = ["voice",]}
 
 [dev-packages]
 
