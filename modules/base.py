@@ -77,7 +77,7 @@ class BaseClass:
 
     async def auth(self, user, role_list):
         if type(role_list) == list:
-            if user.id in self.client.owners:
+            if user.id in self.client.config["owners"]:
                 return True
             for guild in self.client.guilds:
                 if guild.get_member(user.id):
@@ -86,7 +86,7 @@ class BaseClass:
                             return True
         elif type(role_list) == str:
             module_name = role_list
-            if user.id in self.client.owners:
+            if user.id in self.client.config["owners"]:
                 return True
             authorized_roles = self.client.modules[module_name]["class"].authorized_roles
             if len(authorized_roles):
