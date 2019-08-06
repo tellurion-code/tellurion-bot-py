@@ -53,6 +53,7 @@ logs/
 .idea
 
 config/*
+config/config.json
 *.json
 Pipfile.lock
 
