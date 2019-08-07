@@ -59,16 +59,19 @@ class MainClass(BaseClass):
             return files
         self.storage.mkdir(str(current_time))
         with self.storage.open(os.path.join(str(current_time), str(channel.id) + ".txt"), "bw") as file:
-            if type(channel) == discord.TextChannel:
-                async for rec in channel.history(limit=None):
-                    file.write(b"[" + bytes(rec.created_at.strftime('%d-%m-%Y %H:%M:%S'), "utf8") + b"] " +
-                               bytes(str(rec.author), "utf8") +
-                               b">>>\n")
-                    file.write(b"    Content: \n")
-                    for line in rec.content.split("\n"):
-                        file.write(b"             " + line.encode('UTF-8') + b"\n")
-                    file.write(b"	Attachments: \n")
-                    for attachment in rec.attachments:
-                        file.write(b"              - " + bytes(attachment.url, "utf8") + b", " +
-                                   bytes(attachment.proxy_url, "utf8") + b"\n")
+            if type(channel) is discord.TextChannel:
+                try:
+                    async for rec in channel.history(limit=None):
+                        file.write(b"[" + bytes(rec.created_at.strftime('%d-%m-%Y %H:%M:%S'), "utf8") + b"] " +
+                                bytes(str(rec.author), "utf8") +
+                                b">>>\n")
+                        file.write(b"    Content: \n")
+                        for line in rec.content.split("\n"):
+                            file.write(b"             " + line.encode('UTF-8') + b"\n")
+                        file.write(b"	Attachments: \n")
+                        for attachment in rec.attachments:
+                            file.write(b"              - " + bytes(attachment.url, "utf8") + b", " +
+                                    bytes(attachment.proxy_url, "utf8") + b"\n")
+                except discord.Forbidden:
+                    file.write('Forbidden')
         return os.path.join(str(current_time), str(channel.id) + ".txt")

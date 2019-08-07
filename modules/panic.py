@@ -26,7 +26,7 @@ class MainClass(BaseClass):
             load_average = [ "**"+str(round((val/cpu_count)*100,1))+'%**' for val in map(float, f.read().split(' ')[0:3])]
         with open("/proc/uptime") as f:
             uptime =  time.gmtime(float(f.read().split(' ')[0]))
-            uptime = str(int(time.strftime('%-m', uptime))-1) + " mois, " + str(int(time.strftime('%-d', uptime))-1) + " jours, " + time.strftime('%H heures, %M minutes, %S secondes.', uptime)
+            uptime = "**"+str(int(time.strftime('%-m', uptime))-1) + "** mois, **" + str(int(time.strftime('%-d', uptime))-1) + "** jours, " + time.strftime('**%H** heures, **%M** minutes, **%S** secondes.', uptime)
         embed.add_field(
             name="Température",
             value="Nikola est à **{temperature}°C**".format(temperature=temperature))
