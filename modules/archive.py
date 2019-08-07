@@ -73,5 +73,5 @@ class MainClass(BaseClass):
                             file.write(b"              - " + bytes(attachment.url, "utf8") + b", " +
                                     bytes(attachment.proxy_url, "utf8") + b"\n")
                 except discord.Forbidden:
-                    file.write('Forbidden')
+                    file.write(b"Forbidden")
         return os.path.join(str(current_time), str(channel.id) + ".txt")
