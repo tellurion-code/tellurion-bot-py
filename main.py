@@ -125,6 +125,11 @@ class NikolaTesla(discord.Client):
                 error("Module {module} isn't an instance of BaseClass".format(module=module))
         except AttributeError as e:
             error("Module {module} doesn't have MainClass".format(module=module))
+            self.unload_module(module)
+            return e
+        except SyntaxError as e:
+            error("Module {module} has a SyntaxError".format(module=module))
+            self.unload_module(module)
             return e
 
     @modules_edit
