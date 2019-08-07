@@ -50,6 +50,11 @@ class MainClass(BaseClass):
             "https://cdn.discordapp.com/attachments/297868535076749323/587687801844269169/C-658VsXoAo3ovC.jpg"
         ]
         self.icon = "https://cdn.discordapp.com/attachments/340620490009739265/431569015664803840/photo.png"
+    async def get_message(self, channel, message_id) :
+        async for message in channel.history(limit=None):
+            if message_id==message.id :
+                return message
+        return None
 
     async def on_ready(self):
         if self.save_exists('errorsDeque'):
@@ -60,8 +65,9 @@ class MainClass(BaseClass):
             try:
                 messagelst = self.errorsDeque.popleft()
                 channel = self.client.get_channel(messagelst[0])
-                delete_message = await channel.get_message(messagelst[1])
-                await delete_message.delete()
+                delete_message = await self.get_message(channel, messagelst[1])
+                if delete_message is not None :
+                    await delete_message.delete()
             except:
                 raise
         self.save_object(self.errorsDeque, 'errorsDeque')

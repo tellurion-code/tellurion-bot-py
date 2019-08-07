@@ -58,7 +58,7 @@ class MainClass(BaseClass):
                 files.append(await self.save_channel(chan, current_time))
             return files
         self.storage.mkdir(str(current_time))
-        with self.storage.open(os.path.join(str(current_time), str(channel.id) + ".txt"), "bw") as file:
+        with self.storage.open(os.path.join(str(current_time), channel.name + " [" str(channel.id) + "]" + ".txt"), "bw") as file:
             if type(channel) is discord.TextChannel:
                 try:
                     async for rec in channel.history(limit=None):
