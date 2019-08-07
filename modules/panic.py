@@ -1,7 +1,7 @@
 import subprocess
 import discord
 from modules.base import BaseClass
-
+import time
 
 class MainClass(BaseClass):
     name = "Panic"
@@ -24,6 +24,9 @@ class MainClass(BaseClass):
         embed = discord.Embed(title="[Panic] - Infos", color=self.color)
         with open("/proc/loadavg") as f:
             load_average = [ "**"+str(round((val/cpu_count)*100,1))+'%**' for val in map(float, f.read().split(' ')[0:3])]
+        with open("/proc/uptime") as f:
+            uptime =  time.gmtime(float(f.read().split(' ')[0]))
+            uptime = str(int(time.strftime('%-m', uptime))-1) + " mois, " + str(int(time.strftime('%-d', uptime))-1) + " jours, " + time.strftime('%H heures, %M minutes, %S secondes.', uptime)
         embed.add_field(
             name="Température",
             value="Nikola est à **{temperature}°C**".format(temperature=temperature))
@@ -31,4 +34,8 @@ class MainClass(BaseClass):
         embed.add_field(
             name="Charge moyenne",
             value="Nikola est en moyenne, utilisé à :\n sur une minute : %s\n sur cinq minutes : %s\n sur quinze minutes : %s" % tuple(load_average) )
+        
+        embed.add_field(
+            name="Temps d'éveil",
+            value="Nikola est éveillé depuis {uptime}".format(uptime=uptime)  )
         await message.channel.send(embed=embed)

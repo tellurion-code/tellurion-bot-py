@@ -21,7 +21,7 @@ class MainClass(BaseClass):
 
     async def on_message_delete(self, message):
         with self.storage.open("delLog.txt", "a") as dellogfile:
-            if message.channel is discord.TextChannel:
+            if type(message.channel) is discord.TextChannel:
                 dellogfile.write(
                     str(datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')) +
                     " [" + str(message.channel.name) + "] " +
