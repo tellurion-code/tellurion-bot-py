@@ -55,6 +55,7 @@ class MainClass(BaseClass):
                         message.author.mention + ", ce rôle n'est pas disponible à l'auto-attribution. Vous pouvez "
                                                  "obtenir la liste des rôles disponibles grâce à la commande `{prefix}{commande} "
                                                  "list`.".format(prefix=self.client.config['prefix'], commande=self.command_text))
+                    raise
             else:
                 try:
                     for member in self.client.get_all_members():
