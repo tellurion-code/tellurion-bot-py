@@ -11,6 +11,7 @@ moduleFiles = "dellog"
 class MainClass(BaseClass):
     name = "Dellog"
     command_text = "logs"
+    help_active = True
     help = {
         "description": "Module de la NSA (log des messages supprimés)",
         "commands": {

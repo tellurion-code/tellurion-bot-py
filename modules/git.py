@@ -6,7 +6,7 @@ from modules.base import BaseClass
 class MainClass(BaseClass):
     name = "Git"
 
-    super_users = [431043517217898496]
+    authorized_roles = [431043517217898496]
 
     color = 0x000000
 

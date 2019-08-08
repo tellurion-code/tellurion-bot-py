@@ -76,18 +76,20 @@ class BaseClass:
         await channel.send(embed=embed)
 
     async def auth(self, user, role_list):
+        if user.id in self.client.config["owners"]:
+            return True
         if type(role_list) == list:
-            if user.id in self.client.config["owners"]:
+            if len(role_list):
+                for guild in self.client.guilds:
+                    if guild.get_member(user.id):
+                        for role_id in role_list:
+                            if role_id in [r.id for r in guild.get_member(user.id).roles]:
+                                return True
+                return False
+            else:
                 return True
-            for guild in self.client.guilds:
-                if guild.get_member(user.id):
-                    for role_id in role_list:
-                        if role_id in [r.id for r in guild.get_member(user.id).roles]:
-                            return True
         elif type(role_list) == str:
             module_name = role_list
-            if user.id in self.client.config["owners"]:
-                return True
             authorized_roles = self.client.modules[module_name]["initialized_class"].authorized_roles
             if len(authorized_roles):
                 for guild in self.client.guilds:
@@ -107,7 +109,7 @@ class BaseClass:
 
         :param message: message to parse
         :type message: discord.Message"""
-        if message.content.startswith(self.client.config["prefix"] + (self.command_text if self.command_text else "")):
+        if message.content.startswith(self.client.config["prefix"] + (self.command_text if self.command_text else "")) and await self.auth(message.author, self.authorized_roles):
 
             content = message.content.lstrip(
                 self.client.config["prefix"] + (self.command_text if self.command_text else ""))

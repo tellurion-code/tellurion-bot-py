@@ -7,7 +7,7 @@ from modules.base import BaseClass
 
 class MainClass(BaseClass):
     name = "Read the fucking google doc"
-    super_users = [431043517217898496]
+    authorized_roles = [431043517217898496]
     color = 0x7289da
     help_active = True
     help = {

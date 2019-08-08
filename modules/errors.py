@@ -14,7 +14,7 @@ class MainClass(BaseClass):
     name = "Error Handling"
     description = "Module de gestions des erreurs"
     interactive = True
-    super_users_list = [431043517217898496]
+    authorized_roles = [431043517217898496]
     color = 0xdb1348
     help = {
         "description": "Module gérant les erreurs",
