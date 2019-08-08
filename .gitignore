@@ -67,3 +67,5 @@ temp.zip
 config/*
 .idea/*
 
+venv/*
+data/*

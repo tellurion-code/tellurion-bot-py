@@ -35,8 +35,9 @@ class BaseClass:
         self.client = client
         self.storage = FSStorage(path.join(self.client.base_path, self.name))
         self.objects = FSObjects(self.storage)
-        if not self.storage.isdir(path.join("storage", self.name)):
-            self.storage.makedirs(path.join("storage", self.name), exist_ok=True)
+        # Non necessaire car géré par fsstorage
+        #if not self.storage.isdir(path.join("storage", self.name)):
+        #    self.storage.makedirs(path.join("storage", self.name), exist_ok=True)
 
     async def send_help(self, channel):
         embed = discord.Embed(
@@ -50,7 +51,9 @@ class BaseClass:
                             inline=False)
         await channel.send(embed=embed)
 
-    async def auth(self, user, role_list):
+    async def auth(self, user, role_list=None):
+        if role_list is None:
+            role_list = self.authorized_roles
         if type(role_list) == list:
             if user.id in self.client.owners:
                 return True
@@ -88,10 +91,13 @@ class BaseClass:
                 self.client.config["prefix"] + (self.command_text if self.command_text else ""))
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
-            if sub_command in dir(self):
-                await self.__getattribute__(sub_command)(message, args, kwargs)
+            if await self.auth(message.author):
+                if sub_command in dir(self):
+                    await self.__getattribute__(sub_command)(message, args, kwargs)
+                else:
+                    await self.command(message, [sub_command[4:]] + args, kwargs)
             else:
-                await self.command(message, [sub_command[4:]] + args, kwargs)
+                await self.unauthorized(message, [sub_command[4:]] + args, kwargs)
 
     @staticmethod
     def _parse_command_content(content):
@@ -160,7 +166,8 @@ class BaseClass:
         Function which is executed for all command_text doesn't match with a `com_{subcommand}` function"""
         pass
 
-
+    async def unauthorized(self, message):
+        await message.channel.send("Vous n'êtes pas autorisé à effectuer cette commande")
 
     def dispatch(self, event, *args, **kwargs):
         # Method to call
@@ -172,22 +179,7 @@ class BaseClass:
             pass
         else:
             # Run event
-            asyncio.ensure_future(self._run_event(coro, method, *args, **kwargs), loop=self.client.loop)
-
-    async def _run_event(self, coro, event_name, *args, **kwargs):
-        # Run event
-        try:
-            await coro(*args, **kwargs)
-        except asyncio.CancelledError:
-            # If function is cancelled pass silently
-            pass
-        except Exception:
-            try:
-                # Call error function
-                await self.on_error(event_name, *args, **kwargs)
-            except asyncio.CancelledError:
-                # If error event is canceled pass silently
-                pass
+            asyncio.ensure_future(self.client._run_event(coro, method, *args, **kwargs), loop=self.client.loop)
 
     async def on_error(self, event_method, *args, **kwargs):
         # Basic error handler

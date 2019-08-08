@@ -215,7 +215,7 @@ def load_modules_info():
 
 
 class LBI(discord.Client):
-    base_path = "storage"
+    base_path = "data"
     debug = log_LBI.debug
     info = log_LBI.info
     warning = log_LBI.warning
@@ -344,9 +344,17 @@ class LBI(discord.Client):
 
     @event
     def dispatch(self, event, *args, **kwargs):
+        # Dispatch to handle wait_* commands
         super().dispatch(event, *args, **kwargs)
+        # Dispatch to modules
         for module in self.modules.values():
             module["initialized_class"].dispatch(event, *args, **kwargs)
+
+    @event
+    async def on_error(self, event_method, *args, **kwargs):
+        # This event is special because it is call directly
+        for module in self.modules.values():
+            await module["initialized_class"].on_error(event_method, *args, **kwargs)
 
 
 class ClientById:
@@ -453,7 +461,7 @@ print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock
 
 loop = asyncio.get_event_loop()
 #loop.add_signal_handler(signal.SIGINT, loop.stop)
-loop.set_exception_handler(execption_handler)
+#loop.set_exception_handler(execption_handler)
 t = loop.create_unix_server(Communication,
                             path=os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))
 loop.run_until_complete(t)

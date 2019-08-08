@@ -44,10 +44,10 @@ class MainClass(BaseClassPython):
                 await delete_message.delete()
             except:
                 raise
-        self.objects.save_object(self.errorsDeque, 'errorsDeque')
+        self.objects.save_object('errorsDeque', self.errorsDeque)
 
     async def command(self, message, args, kwargs):
-        raise Exception("Si cette erreur apparait, alors tout est normal")
+        raise Exception("KERNEL PANIC!!!")
 
     async def on_error(self, event, *args, **kwargs):
         embed = discord.Embed(title="Aïe :/", description="```PYTHON\n{0}```".format(traceback.format_exc()),
@@ -72,7 +72,7 @@ class MainClass(BaseClassPython):
                     embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.icon))
             except:
                 pass
-        self.objects.save_object(self.errorsDeque, 'errorsDeque')
+        self.objects.save_object('errorsDeque', self.errorsDeque)
         await asyncio.sleep(60)
         try:
             channel = self.client.get_channel(message_list[0])
@@ -85,4 +85,4 @@ class MainClass(BaseClassPython):
                 self.errorsDeque.remove(message_list)
             except ValueError:
                 pass
-        self.objects.save_object(self.errorsDeque, 'errorsDeque')
+        self.objects.save_object('errorsDeque', self.errorsDeque)

@@ -19,6 +19,9 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} disable <module>`": "Disable module `<module>`.",
             "`{prefix}{command} reload <module>`": "Reload module `<module>`",
             "`{prefix}{command} web_list`": "List all available modules from repository",
+            # "`{prefix}{command} web_source`": "List all source repositories",
+            # "`{prefix}{command} web_source remove <url>`": "Remove url from repository list",
+            # "`{prefix}{command} web_source add <url>`": "Add url to repository list",
         }
     }
 
@@ -27,7 +30,8 @@ class MainClass(BaseClassPython):
         self.storage.mkdir("modules", exist_ok=True)
         self.api = Api()
 
-    def get_all_modules(self):
+    @staticmethod
+    def get_all_modules():
         all_items = os.listdir("modules")
         modules = []
         for item in all_items:

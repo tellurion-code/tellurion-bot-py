@@ -41,35 +41,48 @@ class BaseClassLua(BaseClass):
         print(os.path.abspath(path))
         self.luaMethods = self.lua.require(path)
 
+    def call(self, method, *args, **kwargs):
+        # Try to run lua method then python one
+        if self.luaMethods[method] is not None:
+            async def coro(*args, **kwargs):
+                self.luaMethods[method](self, asyncio.ensure_future, discord, *args, *kwargs)
+            asyncio.ensure_future(self.client._run_event(coro, method, *args, **kwargs), loop=self.client.loop)
+        try:
+            coro = getattr(self, method)
+        except AttributeError:
+            pass
+        else:
+            asyncio.ensure_future(self.client._run_event(coro, method, *args, **kwargs), loop=self.client.loop)
+
     def dispatch(self, event, *args, **kwargs):
         method = "on_"+event
         if self.luaMethods[method] is not None:
-            self.luaMethods[method](asyncio.ensure_future, self, *args, **kwargs)
-        else: # If lua methods not found, dispatch to python methods
+            async def coro(*args, **kwargs):
+                self.luaMethods[method](self, asyncio.ensure_future, discord, *args, **kwargs)
+            asyncio.ensure_future(self.client._run_event(coro, method, *args, **kwargs), loop=self.client.loop)
+        else: # If lua method not found, pass
             super().dispatch(event, *args, **kwargs)
 
-    async def _run_event(self, coro, event_name, *args, **kwargs):
-        # Overide here to execute lua on_error if it exists
-        # Run event
-        try:
-            await coro(*args, **kwargs)
-        except asyncio.CancelledError:
-            # If function is cancelled pass silently
-            pass
-        except Exception:
-            try:
-                # Call error function
-                if self.luaMethods["on_error"] is not None:
-                    self.luaMethods["on_error"](self, asyncio.ensure_future, discord, *args, **kwargs)
-                else:
-                    await self.on_error(event_name, *args, **kwargs)
-            except asyncio.CancelledError:
-                # If error event is canceled pass silently
-                pass
+    async def parse_command(self, message):
+        """Parse a command_text from received message and execute function
+        %git update
+        com_update(m..)
+        Parse message like `{prefix}{command_text} subcommand` and call class method `com_{subcommand}`.
 
-    async def on_error(self, event_method, *args, **kwargs):
-        # Base on_error event, executed if lua not provide it
-        # Basic error handler
-        print('Ignoring exception in {}'.format(event_method), file=sys.stderr)
-        traceback.print_exc()
+        :param message: message to parse
+        :type message: discord.Message"""
+        if message.content.startswith(self.client.config["prefix"] + (self.command_text if self.command_text else "")):
+
+            content = message.content.lstrip(
+                self.client.config["prefix"] + (self.command_text if self.command_text else ""))
+            sub_command, args, kwargs = self._parse_command_content(content)
+            sub_command = "com_" + sub_command
+            if await self.auth(message.user):
+                if self.luaMethods[sub_command] is not None:
+                    self.luaMethods[sub_command](self, asyncio.ensure_future, discord, message, args, kwargs)
+                else:
+                    if self.luaMethods["command"] is not None:
+                        self.luaMethods["command"](self, asyncio.ensure_future, discord, message, [sub_command[4:]] + args, kwargs)
+            else:
+                await self.unautorized(message, [sub_command[4:]] + args, kwargs)
 

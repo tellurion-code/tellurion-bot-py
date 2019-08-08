@@ -122,8 +122,11 @@ class Storage:
 
 
 class Objects:
-    def __init__(self, storage):
+    storage: Storage
+
+    def __init__(self, storage: Storage):
         self.storage = storage
+        self.storage.makedirs("objects", exist_ok=True)
 
     def save_object(self, object_name, object_instance):
         """Save object into pickle file"""

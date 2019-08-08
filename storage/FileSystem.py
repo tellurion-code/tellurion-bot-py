@@ -15,6 +15,7 @@ class FSStorage(Storage):
 
     def _topath(self, path):
         """Transform a path to a full path"""
+        return os.path.join(self.base_path, path) # TODO: Modifier ca
         if path.startswith("/"):
             return os.path.join(self.base_path,  # Always add baspath to avoid going outside protected zone
                                 os.path.abspath(os.path.join(self.base_path,
@@ -65,10 +66,10 @@ class FSStorage(Storage):
         os.sync()
 
     def open(self, path, mode):
-        return open(path, mode)
+        return open(self._topath(path), mode)
 
     def exists(self, path):
-        return os.path.exists(path)
+        return os.path.exists(self._topath(path))
 
     def isdir(self, path):
         return os.path.isdir(self._topath(path))
