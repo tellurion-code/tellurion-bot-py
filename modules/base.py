@@ -88,7 +88,7 @@ class BaseClass:
             module_name = role_list
             if user.id in self.client.config["owners"]:
                 return True
-            authorized_roles = self.client.modules[module_name]["class"].authorized_roles
+            authorized_roles = self.client.modules[module_name]["initialized_class"].authorized_roles
             if len(authorized_roles):
                 for guild in self.client.guilds:
                     if guild.get_member(user.id):
