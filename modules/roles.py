@@ -44,12 +44,12 @@ class MainClass(BaseClass):
                         await message.author.remove_roles(
                             discord.utils.get(message.guild.roles, id=self.RoleList[args[0]][0]))
                         await message.channel.send(
-                            message.author.mention + ", Vous avez perdu le rôle {args[0]}.".format())
+                            message.author.mention + ", Vous avez perdu le rôle {}.".format(args[0]))
                     else:
                         await message.author.add_roles(
                             discord.utils.get(message.guild.roles, id=self.RoleList[args[0]][0]))
                         await message.channel.send(
-                            message.author.mention + ", Vous avez reçu le rôle {args[0]}.".format())
+                            message.author.mention + ", Vous avez reçu le rôle {}.".format(args[0]))
                 except KeyError:
                     await message.channel.send(
                         message.author.mention + ", ce rôle n'est pas disponible à l'auto-attribution. Vous pouvez "
