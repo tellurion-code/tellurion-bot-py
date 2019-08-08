@@ -54,6 +54,9 @@ class BaseClass:
     async def auth(self, user, role_list=None):
         if role_list is None:
             role_list = self.authorized_roles
+            if len(role_list) == 0:
+                # Everyone can use this command
+                return True
         if type(role_list) == list:
             if user.id in self.client.owners:
                 return True

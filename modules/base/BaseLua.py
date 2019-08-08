@@ -56,12 +56,7 @@ class BaseClassLua(BaseClass):
 
     def dispatch(self, event, *args, **kwargs):
         method = "on_"+event
-        if self.luaMethods[method] is not None:
-            async def coro(*args, **kwargs):
-                self.luaMethods[method](self, asyncio.ensure_future, discord, *args, **kwargs)
-            asyncio.ensure_future(self.client._run_event(coro, method, *args, **kwargs), loop=self.client.loop)
-        else: # If lua method not found, pass
-            super().dispatch(event, *args, **kwargs)
+        self.call(method, *args, **kwargs)
 
     async def parse_command(self, message):
         """Parse a command_text from received message and execute function
@@ -78,11 +73,7 @@ class BaseClassLua(BaseClass):
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
             if await self.auth(message.user):
-                if self.luaMethods[sub_command] is not None:
-                    self.luaMethods[sub_command](self, asyncio.ensure_future, discord, message, args, kwargs)
-                else:
-                    if self.luaMethods["command"] is not None:
-                        self.luaMethods["command"](self, asyncio.ensure_future, discord, message, [sub_command[4:]] + args, kwargs)
+               self.call(sub_command, args, kwargs)
             else:
-                await self.unautorized(message, [sub_command[4:]] + args, kwargs)
+                await self.unauthorized(message)
 
