@@ -61,15 +61,18 @@ class MainClass(BaseClass):
             self.errorsDeque = self.load_object('errorsDeque')
         else:
             self.errorsDeque = collections.deque()
-        for i in range(len(self.errorsDeque)):
-            try:
-                messagelst = self.errorsDeque.popleft()
-                channel = self.client.get_channel(messagelst[0])
-                delete_message = await self.get_message(channel, messagelst[1])
-                if delete_message is not None :
-                    await delete_message.delete()
-            except:
-                raise
+        if self.errorsDeque is not None:
+            for i in range(len(self.errorsDeque)):
+                try:
+                    messagelst = self.errorsDeque.popleft()
+                    channel = self.client.get_channel(messagelst[0])
+                    delete_message = await self.get_message(channel, messagelst[1])
+                    if delete_message is not None :
+                        await delete_message.delete()
+                except:
+                    raise
+        else:
+            self.errorsDeque = collections.deque()
         self.save_object(self.errorsDeque, 'errorsDeque')
 
     async def command(self, message, args, kwargs):
