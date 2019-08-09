@@ -14,9 +14,9 @@ class MainClass(BaseClass):
     help = {
         "description": "Module donnant les statistiques sur les perdants",
         "commands": {
-            "`{prefix}{command}`": "Donne les statistuqes des perdants de la semaine",
-            "`{prefix}{command} all`": "Donne le nombre de perdants",
-            "`{prefix}{command} <nombre de jours>`": "Donne le nombre de perdants sur la durée spécifiée",
+            "`{prefix}{command}`": "Donne les statistiques des perdants de la semaine",
+            "`{prefix}{command} all`": "Donne les statistiques des perdants depuis toujours",
+            "`{prefix}{command} <nombre de jours>`": "Donne les statistiques des perdants sur la durée spécifiée",
         }
     }
 
