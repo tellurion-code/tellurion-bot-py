@@ -16,6 +16,7 @@ from typing import Dict
 import discord
 from packaging.version import Version
 
+from config.FileSystem import FSConfig
 from errors import IncompatibleModule
 
 __version__ = "0.1.0"
@@ -228,29 +229,11 @@ class LBI(discord.Client):
         self.ready = False
         # Content: {"module_name": {"module": imported module, "class": initialized class}}
         self.modules = {}
-        self.config = {
-            "modules": ["modules"],
-            "prefix": "%",
-            "owners": [],
-        }
-        self.load_config()
+        self.config = FSConfig(path="data/config.yml")
+        self.config["modules"] = self.config["modules"] if self.config["modules"] is not None else ["modules","errors"]
+        self.config["prefix"] = self.config["prefix"] or "%"
+        self.config["owners"] = self.config["owners"] or []
         self.load_modules()
-
-    def load_config(self, config_file="config/config.json"):
-        if os.path.exists(config_file):
-            with open(config_file, 'rt') as f:
-                config = json.load(f)
-            self.config.update(config)
-            self.info("Config successfully loaded.")
-        else:
-            with open(config_file, 'w') as f:
-                json.dump(self.config, f)
-            self.info("Config successfully created.")
-
-    def save_config(self, config_file="config/config.json"):
-        with open(config_file, "w") as f:
-            json.dump(self.config, f)
-        self.info("Config successfully saved.")
 
     @modules_edit
     def load_modules(self):
@@ -290,6 +273,7 @@ class LBI(discord.Client):
             if dep not in self.modules.keys():
                 if dep != "base":
                     self.load_module(dep)
+
         if MODULES[module].type == "python":
             try:
                 self.info("Start loading module {module}...".format(module=module))
@@ -299,11 +283,13 @@ class LBI(discord.Client):
                 self.modules.update({module: {"imported": imported, "initialized_class": initialized_class}})
                 self.info("Module {module} successfully imported.".format(module=module))
                 initialized_class.dispatch("load")
+
                 if module not in self.config["modules"]:
                     self.config["modules"].append(module)
-                    self.save_config()
+                    self.config.save()
             except AttributeError as e:
                 self.error("Module {module} doesn't have MainClass.".format(module=module))
+                raise
                 return e
             return 0
         elif MODULES[module].type == "lua":
@@ -316,7 +302,6 @@ class LBI(discord.Client):
             initialized_class.dispatch("load")
             if module not in self.config["modules"]:
                 self.config["modules"].append(module)
-                self.save_config()
             return 0
 
     @modules_edit
@@ -325,7 +310,7 @@ class LBI(discord.Client):
         try:
             if module in self.config["modules"]:
                 self.config["modules"].remove(module)
-                self.save_config()
+                self.config.save()
                 self.unload_all()
                 self.load_modules()
         except KeyError as e:
@@ -415,7 +400,7 @@ class ClientById:
         return None
 
 
-client1 = LBI()
+client1 = LBI(max_messages=500000)
 
 
 class Communication(asyncio.Protocol):
@@ -448,7 +433,7 @@ communication = Communication(client1)
 
 
 async def start_bot():
-    await client1.start(os.environ.get("DISCORD_TOKEN"), max_messages=500000)
+    await client1.start(os.environ.get("DISCORD_TOKEN"))
 
 print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock")
 

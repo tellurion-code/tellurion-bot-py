@@ -7,6 +7,7 @@ from typing import List
 
 import discord
 
+from config.base import Config
 from storage import FSStorage, FSObjects
 import storage.path as path
 
@@ -36,6 +37,7 @@ class BaseClass:
         self.client = client
         self.storage = FSStorage(path.join(self.client.base_path, self.name))
         self.objects = FSObjects(self.storage)
+        self.config = Config(parent=self.client.config, name="mod-"+self.name)
         # Non necessaire car géré par fsstorage
         #if not self.storage.isdir(path.join("storage", self.name)):
         #    self.storage.makedirs(path.join("storage", self.name), exist_ok=True)

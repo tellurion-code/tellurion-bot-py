@@ -64,8 +64,10 @@ target/
 .swp.*
 
 temp.zip
-config/*
 .idea/*
 
 venv/*
 data/*
+*.yml
+*.json
+

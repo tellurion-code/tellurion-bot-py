@@ -5,6 +5,7 @@ import traceback
 import collections
 import discord
 
+from config.base import Config
 from modules.base import BaseClassPython
 
 
@@ -25,12 +26,10 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
+        self.config["dev_chan"] = self.config["dev_chan"] or []
+        self.config["meme"] = [""]
+        self.config["icon"] = ""
         self.errorsDeque = None
-        self.development_chan_id = []
-        self.memes = [
-            "",
-        ]
-        self.icon = ""
 
     async def on_ready(self):
         if self.objects.save_exists('errorsDeque'):
@@ -67,7 +66,7 @@ class MainClass(BaseClassPython):
                 self.errorsDeque.append(message_list)
             except:
                 pass
-        for chanid in self.development_chan_id:
+        for chanid in self.config["dev_chan"]:
             try:
                 await self.client.get_channel(chanid).send(
                     embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.icon))
