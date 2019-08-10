@@ -119,12 +119,12 @@ class MainClass(BaseClass):
             p1 = plt.bar(ind, list(map(len,week_list)), width)
             plt.ylabel('Scores')
             plt.title('Scores par semaine au cours du temps')
-            plt.xticks(ind, [time.strftime("%d/\n%m\n%y" , time.localtime(time.mktime(today.timetuple()) + 86400*7*(-i-1))) for i in list(range(N))[::-1]])
+            plt.xticks(ind, [time.strftime("%d/\n%m/\n%y" , time.localtime(time.mktime(today.timetuple()) + 86400*7*(-i-1))) for i in list(range(N))[::-1]])
             plt.yticks(np.arange(0, max(list(map(len,week_list))), int(max(list(map(len,week_list)))/10)))
             file_name = "/tmp/%s.png" % random.randint(1, 10000000)
             plt.savefig(file_name)
             response = await message.channel.send(embed=discord.Embed(title="G-Perdu - Statistiques individuelles", description="Calcul en cours...", color=self.color), file=discord.File(file_name))
-            stats=[({7:"dans la semaine",30:"dans le mois",1e1000:"depuis la création du salon"}[i], await reduce_stats(await self.fetch_stats(7, today)), target_user) for i in [7,30,1e1000]]
+            stats=[({7:"dans la semaine",30:"dans le mois",1e1000:"depuis la création du salon"}[i], await self.reduce_stats(await self.fetch_stats(7, today)), target_user) for i in [7,30,1e1000]]
             embed=discord.Embed(title="G-Perdu - Statistiques individuelles", color=self.color)
             for element in stats:
                 if element[1] is not None:
