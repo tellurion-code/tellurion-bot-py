@@ -131,7 +131,7 @@ class MainClass(BaseClass):
                     embed.add_field(
                         name="Classement "+element[0],
                         value='\n'.join([
-                            "%s : %s a **perdu %s fois** %s **%s heures "
+                            "%s : %s a **perdu %s fois** %s à en moyenne **%s heures "
                             "d'intervalle.**" % (
                                 ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],
                                 user[0].mention,
