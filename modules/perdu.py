@@ -92,12 +92,13 @@ class MainClass(BaseClass):
         if self.client.get_channel(self.channel) is None:
             await message.channel.send("Désolé ce module est indisponible")
             return
-        if message.mentions:
-            target_user=message.mentions[0]
-        else:
-            target_user=message.author
-        week_list=await self.fetch_stats(1e1000, message.created_at, user=target_user)
-        await message.channel.send(str(map(len,week_list)) + str(week_list[-1][0].content))
+        async with message.channel.typing():
+            if message.mentions:
+                target_user=message.mentions[0]
+            else:
+                target_user=message.author
+            week_list=await self.fetch_stats(1e1000, message.created_at, user=target_user)
+            await message.channel.send(str(list(map(len,week_list))) +" : "+ str(week_list[-1][0].content))
         
 
     async def com_all(self, message, args, kwargs):
