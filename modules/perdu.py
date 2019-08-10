@@ -112,7 +112,7 @@ class MainClass(BaseClass):
             plt.yticks(np.arange(0, max(list(map(len,week_list))), int(max(list(map(len,week_list)))/10)))
             file_name = "/tmp/%s.png" % random.randint(1, 10000000)
             plt.savefig(file_name)
-            await message.channel.send(file=discord.File(file_name), embed=Discord.Embed(title="G-Perdu - Graphique individuel", description="Voilà tout.")
+            await message.channel.send(file=discord.File(file_name), embed=Discord.Embed(title="G-Perdu - Graphique individuel", description="Voilà tout."))
         
 
     async def com_all(self, message, args, kwargs):
