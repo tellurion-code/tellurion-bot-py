@@ -68,7 +68,7 @@ class MainClass(BaseClass):
             while remaining:
                 week_messages=[]
                 remaining=[]
-                for message in message_dict_reduced[user.id]:
+                for message in message_dict_reduced[user.id][1:]:
                     if time.mktime(today.timetuple()) + 86400*7*i > time.mktime(message.created_at.timetuple()) > time.mktime(today.timetuple()) + 86400*7*(i-1):
                         week_messages.append(message)
                     elif time.mktime(message.created_at.timetuple()) < time.mktime(today.timetuple()) + 86400*7*(i-1):
