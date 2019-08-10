@@ -4,6 +4,8 @@ import discord
 
 from modules.base import BaseClass
 
+import numpy as np
+import matplotlib.pyplot as plt
 
 class MainClass(BaseClass):
     name = "Perdu"
@@ -97,8 +99,20 @@ class MainClass(BaseClass):
                 target_user=message.mentions[0]
             else:
                 target_user=message.author
-            week_list=await self.fetch_stats(1e1000, message.created_at, user=target_user)
-            await message.channel.send(str(list(map(len,week_list))) +" : "+ str(week_list[-1][0].content))
+            today=message.created_at
+            week_list=await self.fetch_stats(1e1000, today, user=target_user)[::-1]
+            N = len(week_list)
+            ind = np.arange(N)
+            width = 0.35
+            plt.figure(num=None, figsize=(25, 6), dpi=120, facecolor='w', edgecolor='k')
+            p1 = plt.bar(ind, list(map(len,week_list)), width)
+            plt.ylabel('Scores')
+            plt.title('Scores par semaine au cours du temps')
+            plt.xticks(ind, [time.strftime("%-m/\n%-d" , time.mktime(today.timetuple()) + 86400*7*(-i-1)) for i in list(range(N))[::-1]])
+            plt.yticks(np.arange(0, max(list(map(len,week_list))), int(max(list(map(len,week_list)))/10)))
+            file_name = "/tmp/%s.png" % random.randint(1, 10000000)
+            plt.savefig(file_name)
+            await message.channel.send(file=discord.File(file_name), embed=Discord.Embed(title="G-Perdu - Graphique individuel", description="Voilà tout.")
         
 
     async def com_all(self, message, args, kwargs):
