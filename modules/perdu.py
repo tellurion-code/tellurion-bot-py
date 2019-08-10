@@ -151,6 +151,6 @@ class MainClass(BaseClass):
                 await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
                                                             description=embed_description,
                                                             color=self.color))
-            else:
-                await self.com_stats(message, args, kwargs)
+        else:
+            await self.com_stats(message, args, kwargs)
                 
