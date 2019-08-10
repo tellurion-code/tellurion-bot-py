@@ -6,9 +6,6 @@ from storage import path as pth
 class Storage:
     """Basic class for storage interface
 
-    When implementing function be precautionous to forbidden going outside restricted storage zone (storage/modulename
-    for example).
-
     All path are on unix format (`/folder1/folder2/file`)
     """
 

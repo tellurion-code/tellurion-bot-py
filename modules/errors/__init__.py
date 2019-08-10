@@ -5,7 +5,7 @@ import traceback
 import collections
 import discord
 
-from config.base import Config
+from config.Base import Config
 from modules.base import BaseClassPython
 
 

@@ -1,13 +1,10 @@
 """Base class for module, never use directly !!!"""
 import asyncio
-import sys
-import pickle
-import traceback
 from typing import List
 
 import discord
 
-from config.base import Config
+from config import Config
 from storage import FSStorage, FSObjects
 import storage.path as path
 
@@ -38,9 +35,8 @@ class BaseClass:
         self.storage = FSStorage(path.join(self.client.base_path, self.name))
         self.objects = FSObjects(self.storage)
         self.config = Config(parent=self.client.config, name="mod-"+self.name)
-        # Non necessaire car géré par fsstorage
-        #if not self.storage.isdir(path.join("storage", self.name)):
-        #    self.storage.makedirs(path.join("storage", self.name), exist_ok=True)
+        self.config["authorized_roles"] = self.config["authorized_roles"] or self.authorized_roles
+        self.config["authorized_users"] = self.config["authorized_users"] or self.authorized_users
 
     async def send_help(self, channel):
         embed = discord.Embed(
@@ -61,7 +57,7 @@ class BaseClass:
         :param user_list: List of authorized users, if not specified use self.authorized_users
         :param role_list: list of authorized roles, if not specified use self.authorized_roles
         :type user_list: List[Int]
-        :type role_list: List[int]
+        :type role_list: List[Int]
         :type user: discord.User
         """
         if role_list is None:

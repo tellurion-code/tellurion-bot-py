@@ -222,14 +222,16 @@ class LBI(discord.Client):
     error = log_LBI.error
     critical = log_LBI.critical
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self, config=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        if config is None:
+            config = FSConfig(path="data/config.yml")
         self.reloading = False
         self.id = ClientById(self)
         self.ready = False
         # Content: {"module_name": {"module": imported module, "class": initialized class}}
         self.modules = {}
-        self.config = FSConfig(path="data/config.yml")
+        self.config = config
         self.config["modules"] = self.config["modules"] if self.config["modules"] is not None else ["modules","errors"]
         self.config["prefix"] = self.config["prefix"] or "%"
         self.config["owners"] = self.config["owners"] or []

@@ -2,7 +2,7 @@ import os
 from aiofile import AIOFile, Reader, Writer
 import yaml
 
-from config.base import Config
+from config.Base import Config
 
 
 class FSConfig(Config):
