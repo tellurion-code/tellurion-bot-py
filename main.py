@@ -180,7 +180,6 @@ def setup_logging(default_path='config/log_config.json', default_level=logging.I
 
 def modules_edit(func):
     def wrapper(self, *args, **kwargs):
-        print(func.__name__, ":", self.reloading)
         if self.reloading:
             return func(self, *args, **kwargs)
         else:
