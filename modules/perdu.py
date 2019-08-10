@@ -108,7 +108,7 @@ class MainClass(BaseClass):
             p1 = plt.bar(ind, list(map(len,week_list)), width)
             plt.ylabel('Scores')
             plt.title('Scores par semaine au cours du temps')
-            plt.xticks(ind, [time.strftime("%-m/\n%-d" , time.mktime(today.timetuple()) + 86400*7*(-i-1)) for i in list(range(N))[::-1]])
+            plt.xticks(ind, [time.strftime("%-m/\n%-d" , time.localtime(time.mktime(today.timetuple()) + 86400*7*(-i-1))) for i in list(range(N))[::-1]])
             plt.yticks(np.arange(0, max(list(map(len,week_list))), int(max(list(map(len,week_list)))/10)))
             file_name = "/tmp/%s.png" % random.randint(1, 10000000)
             plt.savefig(file_name)
