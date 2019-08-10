@@ -138,7 +138,7 @@ class MainClass(BaseClass):
                                 user[1],
                                 element[0],
                                 round(user[2], 1)
-                            ) for i, user in element[1]
+                            ) for i, user in enumerate(element[1])
                         ]
                     )
             await response.edit(embed=embed)
