@@ -78,17 +78,28 @@ class MainClass(BaseClass):
                 user_activity.append(week_messages)
                 i=i-1
             return user_activity
-            pass
         sorted_by_losses = sorted(message_dict_reduced.items(), key=lambda x: len(x[1]))[::-1]
         stats = []
         for user in sorted_by_losses:
-            # user mention, number of losses, average time between each loss
+            # user, number of losses, average time between each loss
             to_append = [user[1][0], len(user[1]) - 1, 0]
             if len(user[1][1::]) > 1:
                 to_append[2] = (time.mktime(user[1][1::][-1].created_at.timetuple()) -
                                 time.mktime(user[1][1::][0].created_at.timetuple())) / ((len(user[1][1::]) - 1) * 3600)
             stats.append(to_append)
-        return sorted(sorted(stats, key=lambda x: x[2])[::-1], key=lambda x: x[1])[::-1][:10:]
+        return sorted(sorted(stats, key=lambda x: x[2])[::-1], key=lambda x: x[1])[::-1]
+    
+    async def reduce_stats(self, stats, user):
+        if len(stats)<5:
+            return stats
+        else:
+            if user.id in [element[0].id for element in stats[:2]] :
+                return stats[:5]
+            else:
+                for i in range(len(stats)):
+                    if stats[i][0].id==user.id:
+                        return stats[i-2:i+1]
+        return None
 
     async def com_stats(self, message, args, kwargs):
         if self.client.get_channel(self.channel) is None:
@@ -108,11 +119,29 @@ class MainClass(BaseClass):
             p1 = plt.bar(ind, list(map(len,week_list)), width)
             plt.ylabel('Scores')
             plt.title('Scores par semaine au cours du temps')
-            plt.xticks(ind, [time.strftime("%-m/\n%-d" , time.localtime(time.mktime(today.timetuple()) + 86400*7*(-i-1))) for i in list(range(N))[::-1]])
+            plt.xticks(ind, [time.strftime("%d/\n%m\n%y" , time.localtime(time.mktime(today.timetuple()) + 86400*7*(-i-1))) for i in list(range(N))[::-1]])
             plt.yticks(np.arange(0, max(list(map(len,week_list))), int(max(list(map(len,week_list)))/10)))
             file_name = "/tmp/%s.png" % random.randint(1, 10000000)
             plt.savefig(file_name)
-            await message.channel.send(file=discord.File(file_name), embed=discord.Embed(title="G-Perdu - Graphique individuel", description="Voilà tout."))
+            response = await message.channel.send(embed=discord.Embed(title="G-Perdu - Statistiques individuelles", description="Calcul en cours...", color=self.color), file=discord.File(file_name))
+            stats=[({7:"dans la semaine",30:"dans le mois",1e1000:"depuis la création du salon"}[i], await reduce_stats(await self.fetch_stats(7, today)), target_user) for i in [7,30,1e1000]]
+            embed=discord.Embed(title="G-Perdu - Statistiques individuelles", color=self.color)
+            for element in stats:
+                if element[1] is not None:
+                    embed.add_field(
+                        name="Classement "+element[0],
+                        value=[
+                            "%s : %s a **perdu %s fois** %s **%s heures "
+                            "d'intervalle.**" % (
+                                ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],
+                                user[0].mention,
+                                user[1],
+                                element[0],
+                                round(user[2], 1)
+                            ) for i, user in element[1]
+                        ]
+                    )
+            await response.edit(embed=embed)
         
 
     async def com_all(self, message, args, kwargs):
@@ -128,7 +157,7 @@ class MainClass(BaseClass):
                         user[0].mention,
                         user[1],
                         round(user[2], 1)
-                    ) for i, user in enumerate(await self.fetch_stats(1e1000, message.created_at))
+                    ) for i, user in enumerate(list(await self.fetch_stats(1e1000, message.created_at))[:10:])
                 ]
             )
             await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
@@ -146,13 +175,13 @@ class MainClass(BaseClass):
                     number = int(args[0])
                 except ValueError:
                     pass
-                stats = await self.fetch_stats(7, message.created_at)
+                stats = list(await self.fetch_stats(7, message.created_at))[:10:]
                 if self.lost_role not in [role.id for role in stats[0][0].roles]:
                     for member in self.client.get_all_members():
                         if self.lost_role in [role.id for role in member.roles]:
                             await member.remove_roles(discord.utils.get(member.guild.roles, id=self.lost_role))
                     await stats[0][0].add_roles(discord.utils.get(stats[0][0].guild.roles, id=self.lost_role))
-                stats = await self.fetch_stats(number, message.created_at)
+                stats = list(await self.fetch_stats(number, message.created_at))[:10:]
                 embed_description = '\n'.join(
                     [
                         "%s : %s a **perdu %s fois** durant les %s derniers jours à en moyenne **%s "
