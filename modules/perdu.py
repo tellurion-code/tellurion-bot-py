@@ -124,7 +124,7 @@ class MainClass(BaseClass):
             file_name = "/tmp/%s.png" % random.randint(1, 10000000)
             plt.savefig(file_name)
             response = await message.channel.send(embed=discord.Embed(title="G-Perdu - Statistiques individuelles", description="Calcul en cours...", color=self.color), file=discord.File(file_name))
-            stats=[({7:"dans la semaine",30:"dans le mois",1e1000:"depuis la création du salon"}[i], await self.reduce_stats(await self.fetch_stats(7, today)), target_user) for i in [7,30,1e1000]]
+            stats=[({7:"dans la semaine",30:"dans le mois",1e1000:"depuis la création du salon"}[i], await self.reduce_stats(await self.fetch_stats(7, today), target_user)) for i in [7,30,1e1000]]
             embed=discord.Embed(title="G-Perdu - Statistiques individuelles", color=self.color)
             for element in stats:
                 if element[1] is not None:
