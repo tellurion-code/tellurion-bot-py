@@ -1,6 +1,7 @@
 import os
 
 import discord
+from aiohttp import ClientConnectorError
 
 from modules.base import BaseClassPython
 from modules.modules.api import Api
@@ -118,11 +119,18 @@ class MainClass(BaseClassPython):
         await message.channel.send(embed=embed)
 
     async def com_web_list(self, message, args, kwargs):
-        modules = await self.api.list()
+        try:
+            modules = await self.api.list()
+        except ClientConnectorError:
+            await message.channel.send("Connection impossible au serveur.")
+            return
         text = ""
         for module, versions in modules.items():
             text += module + " - " + ", ".join(versions)
         await message.channel.send(text)
 
     async def com_web_dl(self, message, args, kwargs):
-        await self.api.download(args[1], args[2])
+        try:
+            await self.api.download(args[1], args[2])
+        except ClientConnectorError:
+            await message.channel.send("Connection impossible au serveur.")
