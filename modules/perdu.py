@@ -91,14 +91,14 @@ class MainClass(BaseClass):
     
     async def reduce_stats(self, stats, user):
         if len(stats)<5:
-            return 0,stats
+            return (0,stats)
         else:
             if user.id in [element[0].id for element in stats[:2]] :
-                return 0,stats[:5]
+                return (0,stats[:5])
             else:
                 for i in range(len(stats)):
                     if stats[i][0].id==user.id:
-                        return i-3,stats[i-3:i+2]
+                        return (i-3,stats[i-3:i+2])
         return None
 
     async def com_stats(self, message, args, kwargs):
