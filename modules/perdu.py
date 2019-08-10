@@ -73,7 +73,7 @@ class MainClass(BaseClass):
                         week_messages.append(message)
                     elif time.mktime(message.created_at.timetuple()) < time.mktime(today.timetuple()) + 86400*7*(i-1):
                         remaining.append(message)
-                user_activity.append(len(week_messages))
+                user_activity.append(week_messages)
                 i=i-1
             return user_activity
             pass
@@ -96,7 +96,8 @@ class MainClass(BaseClass):
             target_user=message.mentions[0]
         else:
             target_user=message.author
-        await message.channel.send(str(await self.fetch_stats(1e1000, message.created_at, user=target_user)))
+        week_list=await self.fetch_stats(1e1000, message.created_at, user=target_user)
+        await message.channel.send(str(map(len,week_list)) + str(week_list[-1][0].content))
         
 
     async def com_all(self, message, args, kwargs):
