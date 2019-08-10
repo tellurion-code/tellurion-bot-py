@@ -428,7 +428,6 @@ class Communication(asyncio.Protocol):
     name = "Communication"
 
     def __init__(self, client=client1):
-        print("créé")
         self.client = client
         self.transport = None
 
@@ -451,12 +450,6 @@ communication = Communication(client1)
 
 async def start_bot():
     await client1.start(os.environ.get("DISCORD_TOKEN"), max_messages=500000)
-
-
-def execption_handler(loop, context):
-    print('%s: %s' % ('Connection', context['exception']))
-    traceback.print_exc()
-
 
 print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock")
 

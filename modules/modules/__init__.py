@@ -58,10 +58,9 @@ class MainClass(BaseClassPython):
             return
         for arg in args:
             e = self.client.load_module(arg)
-            print(e)
             if e:
-                await message.channel.send("An error occurred during the loading of the module {module}."
-                                           .format(module=arg))
+                await message.channel.send("An error occurred during the loading of the module {module}: {error}."
+                                           .format(module=arg, error=e))
         await self.com_list(message, args, kwargs)
 
     async def com_reload(self, message, args, kwargs):
@@ -78,7 +77,6 @@ class MainClass(BaseClassPython):
             await self.com_list(message, args, kwargs)
             return
         for arg in args:
-            print(arg)
             e = self.client.unload_module(arg)
             if e:
                 await message.channel.send("An error occurred during the loading of the module {module}."
@@ -99,11 +97,10 @@ class MainClass(BaseClassPython):
             await self.com_list(message, args, kwargs)
             return
         for arg in args:
-            print(arg)
             e = self.client.unload_module(arg)
             if e:
-                await message.channel.send("An error occurred during the loading of the module {module}."
-                                           .format(module=arg))
+                await message.channel.send("An error occurred during the loading of the module {module}: {error}."
+                                           .format(module=arg, error=e))
         await self.com_list(message, [], [])
 
     async def com_list(self, message, args, kwargs):

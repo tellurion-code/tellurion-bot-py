@@ -183,8 +183,3 @@ class BaseClass:
         else:
             # Run event
             asyncio.ensure_future(self.client._run_event(coro, method, *args, **kwargs), loop=self.client.loop)
-
-    async def on_error(self, event_method, *args, **kwargs):
-        # Basic error handler
-        print('Ignoring exception in {}'.format(event_method), file=sys.stderr)
-        traceback.print_exc()

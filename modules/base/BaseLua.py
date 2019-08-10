@@ -39,7 +39,6 @@ class BaseClassLua(BaseClass):
         super().__init__(client)
         # Get lua globals
         self.lua = lupa.LuaRuntime(unpack_returned_tuples=True)
-        print(os.path.abspath(path))
         self.luaMethods = self.lua.require(path)
 
     def call(self, method, *args, **kwargs):
