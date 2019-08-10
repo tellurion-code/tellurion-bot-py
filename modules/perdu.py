@@ -100,7 +100,7 @@ class MainClass(BaseClass):
             else:
                 target_user=message.author
             today=message.created_at
-            week_list=await self.fetch_stats(1e1000, today, user=target_user)[::-1]
+            week_list=list(await self.fetch_stats(1e1000, today, user=target_user))[::-1]
             N = len(week_list)
             ind = np.arange(N)
             width = 0.35
