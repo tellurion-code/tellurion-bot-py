@@ -91,14 +91,14 @@ class MainClass(BaseClass):
     
     async def reduce_stats(self, stats, user):
         if len(stats)<5:
-            return stats
+            return 0,stats
         else:
             if user.id in [element[0].id for element in stats[:2]] :
-                return stats[:5]
+                return 0,stats[:5]
             else:
                 for i in range(len(stats)):
                     if stats[i][0].id==user.id:
-                        return stats[i-3:i+2]
+                        return i-3,stats[i-3:i+2]
         return None
 
     async def com_stats(self, message, args, kwargs):
@@ -124,7 +124,7 @@ class MainClass(BaseClass):
             file_name = "/tmp/%s.png" % random.randint(1, 10000000)
             plt.savefig(file_name)
             response = await message.channel.send(embed=discord.Embed(title="G-Perdu - Statistiques individuelles", description="Calcul en cours...", color=self.color), file=discord.File(file_name))
-            stats=[({7:"dans la semaine",30:"dans le mois",1e1000:"depuis la création du salon"}[i], await self.reduce_stats(await self.fetch_stats(7, today), target_user)) for i in [7,30,1e1000]]
+            stats=[({7:"dans la semaine",30:"dans le mois",1e1000:"depuis la création du salon"}[i], await self.reduce_stats(await self.fetch_stats(i, today), target_user)) for i in [7,30,1e1000]]
             embed=discord.Embed(title="G-Perdu - Statistiques individuelles", color=self.color)
             for element in stats:
                 if element[1] is not None:
@@ -138,7 +138,7 @@ class MainClass(BaseClass):
                                 user[1],
                                 element[0],
                                 round(user[2], 1)
-                            ) for i, user in enumerate(element[1])
+                            ) for i, user in enumerate(element[1][1])
                         ])
                     )
             await response.edit(embed=embed)
