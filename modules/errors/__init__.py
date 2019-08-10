@@ -12,7 +12,8 @@ class MainClass(BaseClassPython):
     name = "errors"
     description = "Error handling"
     interactive = True
-    super_users_list = [431043517217898496]
+    authorized_users = [431043517217898496]
+    authorized_roles = []
     color = 0xdb1348
     help = {
         "description": "Montre toutes les erreurs du bot dans discord.",

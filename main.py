@@ -232,8 +232,8 @@ class LBI(discord.Client):
         self.config = {
             "modules": ["modules"],
             "prefix": "%",
+            "owners": [],
         }
-        self.owners = [281166473102098433, 318866596502306816]
         self.load_config()
         self.load_modules()
 
@@ -289,7 +289,8 @@ class LBI(discord.Client):
         deps = MODULES[module].dependencies
         for dep in deps.keys():
             if dep not in self.modules.keys():
-                self.load_module(dep)
+                if dep != "base":
+                    self.load_module(dep)
         if MODULES[module].type == "python":
             try:
                 self.info("Start loading module {module}...".format(module=module))

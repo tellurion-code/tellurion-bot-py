@@ -25,8 +25,9 @@ class BaseClassLua(BaseClass):
     help_active = False
     color = 0x000000
     command_text = None
-    super_users = []
+    authorized_users = []
     authorized_roles = []
+    command_text = "lua"
 
     def __init__(self, client, path):
         """Initialize module class
@@ -72,7 +73,7 @@ class BaseClassLua(BaseClass):
                 self.client.config["prefix"] + (self.command_text if self.command_text else ""))
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
-            if await self.auth(message.user):
+            if await self.auth(message.author):
                self.call(sub_command, args, kwargs)
             else:
                 await self.unauthorized(message)

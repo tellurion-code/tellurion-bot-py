@@ -3,6 +3,7 @@ import asyncio
 import sys
 import pickle
 import traceback
+from typing import List
 
 import discord
 
@@ -22,7 +23,7 @@ class BaseClass:
     help_active = False
     color = 0x000000
     command_text = None
-    super_users = []
+    authorized_users = []
     authorized_roles = []
 
     def __init__(self, client):
@@ -51,34 +52,33 @@ class BaseClass:
                             inline=False)
         await channel.send(embed=embed)
 
-    async def auth(self, user, role_list=None):
+    async def auth(self, user: discord.User, role_list: List[int] = None, user_list: List[int] = None):
+        """
+        Return True if user is an owner of the bot or in authorized_users or he have a role in authorized_roles.
+
+        :param user_list: List of authorized users, if not specified use self.authorized_users
+        :param role_list: list of authorized roles, if not specified use self.authorized_roles
+        :type user_list: List[Int]
+        :type role_list: List[int]
+        :type user: discord.User
+        """
         if role_list is None:
             role_list = self.authorized_roles
-            if len(role_list) == 0:
-                # Everyone can use this command
-                return True
-        if type(role_list) == list:
-            if user.id in self.client.owners:
-                return True
-            for guild in self.client.guilds:
-                if guild.get_member(user.id):
-                    for role_id in role_list:
-                        if role_id in [r.id for r in guild.get_member(user.id).roles]:
-                            return True
-        elif type(role_list) == str:
-            module_name = role_list
-            if user.id in self.client.owners:
-                return True
-            authorized_roles = self.client.modules[module_name]["class"].authorized_roles
-            if len(authorized_roles):
-                for guild in self.client.guilds:
-                    if guild.get_member(user.id):
-                        for role_id in authorized_roles:
-                            if role_id in [r.id for r in guild.get_member(user.id).roles]:
-                                return True
-            else:
-                return True
-            return False
+        if user_list is None:
+            user_list = self.authorized_users
+        if len(role_list) == 0 and len(user_list) == 0:
+            # Everyone can use this command
+            return True
+        if user.id in self.client.config["owners"]:
+            return True
+        if user.id in user_list:
+            return True
+        for guild in self.client.guilds:
+            if guild.get_member(user.id):
+                for role_id in role_list:
+                    if role_id in [r.id for r in guild.get_member(user.id).roles]:
+                        return True
+        return False
 
     async def parse_command(self, message):
         """Parse a command_text from received message and execute function
@@ -100,7 +100,7 @@ class BaseClass:
                 else:
                     await self.command(message, [sub_command[4:]] + args, kwargs)
             else:
-                await self.unauthorized(message, [sub_command[4:]] + args, kwargs)
+                await self.unauthorized(message)
 
     @staticmethod
     def _parse_command_content(content):
