@@ -98,7 +98,7 @@ class MainClass(BaseClass):
             else:
                 for i in range(len(stats)):
                     if stats[i][0].id==user.id:
-                        return stats[i-2:i+1]
+                        return stats[i-3:i+2]
         return None
 
     async def com_stats(self, message, args, kwargs):
@@ -130,7 +130,7 @@ class MainClass(BaseClass):
                 if element[1] is not None:
                     embed.add_field(
                         name="Classement "+element[0],
-                        value=[
+                        value='\n'.join([
                             "%s : %s a **perdu %s fois** %s **%s heures "
                             "d'intervalle.**" % (
                                 ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],
@@ -139,7 +139,7 @@ class MainClass(BaseClass):
                                 element[0],
                                 round(user[2], 1)
                             ) for i, user in enumerate(element[1])
-                        ]
+                        ])
                     )
             await response.edit(embed=embed)
         
