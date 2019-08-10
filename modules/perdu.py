@@ -1,7 +1,7 @@
 import time
 
 import discord
-improt random
+import random
 from modules.base import BaseClass
 
 import numpy as np
