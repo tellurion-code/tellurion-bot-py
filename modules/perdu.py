@@ -71,7 +71,7 @@ class MainClass(BaseClass):
                 for message in message_dict_reduced[user.id]:
                     if time.mktime(today.timetuple()) + 86400*7*i < time.mktime(message.created_at.timetuple()) < time.mktime(today.timetuple()) + 86400*7*(i+1):
                         week_messages.append(message)
-                    elif time.mktime(message.created_at.timetuple()) > time.mktime(today.timetuple()) + 86400*7*(i+1)
+                    elif time.mktime(message.created_at.timetuple()) > time.mktime(today.timetuple()) + 86400*7*(i+1):
                         remaining.append(message)
                 user_activity.append(len(week_messages))
             return user_activity
