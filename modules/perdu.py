@@ -130,17 +130,29 @@ class MainClass(BaseClass):
                 if element[1] is not None:
                     embed.add_field(
                         name="Classement "+element[0],
-                        value='\n'.join([
+                        value='\n'.join(
+                            [
                             "%s : %s a **perdu %s fois** %s à en moyenne **%s heures "
                             "d'intervalle.**" % (
-                                ["1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣", "🔟"][i],
-                                user[0].mention,
-                                user[1],
+                                ''.join([["0️⃣", "1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣"][t] for t in str(1+i+user[0])]),
+                                user[1][0].mention,
+                                user[1][1],
                                 element[0],
                                 round(user[2], 1)
-                            ) for i, user in enumerate(element[1][1])
-                        ])
+                            ) for i, user in enumerate(element[1])
+                            ]
+                        )
                     )
+                    print([
+                            "%s : %s a **perdu %s fois** %s à en moyenne **%s heures "
+                            "d'intervalle.**" % (
+                                ''.join([["0️⃣", "1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣"][t] for t in str(1+i+user[0])]),
+                                user[1][0].mention,
+                                user[1][1],
+                                element[0],
+                                round(user[2], 1)
+                            ) for i, user in enumerate(element[1])
+                            ])
             await response.edit(embed=embed)
         
 
