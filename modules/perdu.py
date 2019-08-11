@@ -120,7 +120,10 @@ class MainClass(BaseClass):
             plt.ylabel('Scores')
             plt.title('Scores par semaine au cours du temps')
             plt.xticks(ind, [time.strftime("%d/\n%m/\n%y" , time.localtime(time.mktime(today.timetuple()) + 86400*7*(-i-1))) for i in list(range(N))[::-1]])
-            plt.yticks(np.arange(0, max(list(map(len,week_list))), int(max(list(map(len,week_list)))/10)))
+            step=int(max(list(map(len,week_list)))/10)
+            if step==0:
+                step=1
+            plt.yticks(np.arange(0, max(list(map(len,week_list))), ))
             file_name = "/tmp/%s.png" % random.randint(1, 10000000)
             plt.savefig(file_name)
             response = await message.channel.send(embed=discord.Embed(title="G-Perdu - Statistiques individuelles", description="Calcul en cours...", color=self.color), file=discord.File(file_name))
@@ -143,16 +146,6 @@ class MainClass(BaseClass):
                             ]
                         )
                     )
-                    print([
-                            "%s : %s a **perdu %s fois** %s à en moyenne **%s heures "
-                            "d'intervalle.**" % (
-                                ''.join([["\N{DIGIT ZERO}\N{COMBINING ENCLOSING KEYCAP}", "1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣"][int(t)] for t in str(1+i+element[1][0])]),
-                                user[0].mention,
-                                user[1],
-                                element[0],
-                                round(user[2], 1)
-                            ) for i, user in enumerate(element[1][1])
-                            ])
             await response.edit(embed=embed)
         
 
