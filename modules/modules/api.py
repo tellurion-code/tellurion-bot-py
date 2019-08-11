@@ -1,11 +1,12 @@
 import os
+import shutil
 
 import aiohttp
 import aiofiles
 import zipfile
 
 class Api:
-    def __init__(self, host="localhost:8000"):
+    def __init__(self, host="localhost:5000"):
         self.host = host
         self.basepath = "http://"+host+"/api/current"
 
@@ -30,6 +31,6 @@ class Api:
 
     async def download(self, module, version):
         await self._download("modules/"+module+"/"+version, filename="temp.zip")
+        shutil.rmtree(os.path.join("modules, module"))
         with zipfile.ZipFile('temp.zip', "r") as z:
             z.extractall(os.path.join("modules", module))
-#78.200.118.13:8000

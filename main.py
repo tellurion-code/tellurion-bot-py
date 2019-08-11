@@ -74,6 +74,7 @@ class Module:
             return False
         with open(os.path.join("modules", self.name, "version.json")) as file:
             versions = json.load(file)
+        print(versions)
         if "version" not in versions.keys():
             return False
         if "dependencies" not in versions.keys():
@@ -275,7 +276,6 @@ class LBI(discord.Client):
             if dep not in self.modules.keys():
                 if dep != "base":
                     self.load_module(dep)
-
         if MODULES[module].type == "python":
             try:
                 self.info("Start loading module {module}...".format(module=module))

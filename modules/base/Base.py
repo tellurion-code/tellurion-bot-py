@@ -181,3 +181,6 @@ class BaseClass:
         else:
             # Run event
             asyncio.ensure_future(self.client._run_event(coro, method, *args, **kwargs), loop=self.client.loop)
+
+    async def on_error(self, event_method, *args, **kwargs):
+        pass
