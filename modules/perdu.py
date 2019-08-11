@@ -62,7 +62,8 @@ class MainClass(BaseClass):
                     last_message = message
             message_list = message_list_2
             del message_list_2
-            message_dict_reduced.update({user_id: message_list})
+            if len(message_list)>1:
+                message_dict_reduced.update({user_id: message_list})
         if user is not None:
             user_activity=[] #order : recent -> older
             i=0
