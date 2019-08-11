@@ -6,6 +6,7 @@ from modules.base import BaseClass
 
 import numpy as np
 import matplotlib.pyplot as plt
+import asyncio
 
 class MainClass(BaseClass):
     name = "Perdu"
@@ -29,17 +30,26 @@ class MainClass(BaseClass):
         self.channel = 431016132040851459
         self.lost_role = 544845665910390784  # grand_perdant
         self.save = {'last_occurence': None, 'message_dict': None}  # To avoid calling the API each time.
+        self.lock = False
 
     async def fetch_stats(self, upto, today, user=None):
         message_dict = {}
         if (not self.save['message_dict']) or \
                 (time.mktime(today.timetuple()) - time.mktime(self.save['last_occurence'].timetuple())) / 60 > 15:
-            async for message in self.client.get_channel(self.channel).history(limit=None):
-                if message.author.id not in message_dict.keys():
-                    message_dict[message.author.id] = [message]
-                else:
-                    message_dict[message.author.id].append(message)
-            self.save.update({'message_dict': message_dict, 'last_occurence': today})
+            while self.lock:
+                await asyncio.sleep(1)
+            try:
+                self.lock = True
+                async for message in self.client.get_channel(self.channel).history(limit=None):
+                    if message.author.id not in message_dict.keys():
+                        message_dict[message.author.id] = [message]
+                    else:
+                        message_dict[message.author.id].append(message)
+                self.save.update({'message_dict': message_dict, 'last_occurence': today})
+            except:
+                self.lock = False
+                raise
+            self.lock = False
         else:
             message_dict = self.save['message_dict']
         message_dict_reduced = {}
