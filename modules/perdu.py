@@ -34,10 +34,10 @@ class MainClass(BaseClass):
 
     async def fetch_stats(self, upto, today, user=None):
         message_dict = {}
+        while self.lock:
+            await asyncio.sleep(1)
         if (not self.save['message_dict']) or \
                 (time.mktime(today.timetuple()) - time.mktime(self.save['last_occurence'].timetuple())) / 60 > 15:
-            while self.lock:
-                await asyncio.sleep(1)
             try:
                 self.lock = True
                 async for message in self.client.get_channel(self.channel).history(limit=None):
