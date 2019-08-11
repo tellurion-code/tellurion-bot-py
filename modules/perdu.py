@@ -124,7 +124,7 @@ class MainClass(BaseClass):
             step=int(max(list(map(len,week_list)))/10)
             if step==0:
                 step=1
-            plt.yticks(np.arange(0, max(list(map(len,week_list))), ))
+            plt.yticks(np.arange(0, max(list(map(len,week_list))), step))
             file_name = "/tmp/%s.png" % random.randint(1, 10000000)
             plt.savefig(file_name)
             response = await message.channel.send(embed=discord.Embed(title="G-Perdu - Statistiques individuelles", description="Calcul en cours...", color=self.color), file=discord.File(file_name))
