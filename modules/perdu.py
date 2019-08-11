@@ -93,12 +93,12 @@ class MainClass(BaseClass):
         if len(stats)<5:
             return (0,stats)
         else:
-            if user.id in [element[0].id for element in stats[:2]] :
+            if user.id in [element[0].id for element in stats[:3]] :
                 return (0,stats[:5])
             else:
                 for i in range(len(stats)):
                     if stats[i][0].id==user.id:
-                        return (i-3,stats[i-3:i+2])
+                        return (i-2,stats[i-2:i+3])
         return None
 
     async def com_stats(self, message, args, kwargs):
@@ -134,7 +134,7 @@ class MainClass(BaseClass):
                             [
                             "%s : %s a **perdu %s fois** %s à en moyenne **%s heures "
                             "d'intervalle.**" % (
-                                ''.join([["0️⃣", "1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣"][int(t)] for t in str(1+i+element[1][0])]),
+                                ''.join([["\N{DIGIT ZERO}\N{COMBINING ENCLOSING KEYCAP}", "1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣"][int(t)] for t in str(1+i+element[1][0])]),
                                 user[0].mention,
                                 user[1],
                                 element[0],
@@ -146,7 +146,7 @@ class MainClass(BaseClass):
                     print([
                             "%s : %s a **perdu %s fois** %s à en moyenne **%s heures "
                             "d'intervalle.**" % (
-                                ''.join([["0️⃣", "1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣"][int(t)] for t in str(1+i+element[1][0])]),
+                                ''.join([["\N{DIGIT ZERO}\N{COMBINING ENCLOSING KEYCAP}", "1⃣", "2⃣", "3⃣", "4⃣", "5⃣", "6⃣", "7⃣", "8⃣", "9⃣"][int(t)] for t in str(1+i+element[1][0])]),
                                 user[0].mention,
                                 user[1],
                                 element[0],
