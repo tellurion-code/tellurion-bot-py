@@ -33,6 +33,7 @@ class MainClass(BaseClass):
         self.lock = False
 
     async def fetch_stats(self, upto, today, user=None):
+        #Actually fetching the messages / checking if we already got them
         message_dict = {}
         while self.lock:
             await asyncio.sleep(1)
@@ -52,10 +53,13 @@ class MainClass(BaseClass):
             self.lock = False
         else:
             message_dict = self.save['message_dict']
+            
+        #Filtering unrelevant messages (thoses which does not count as losses)
+        
         message_dict_reduced = {}
         for user_id, message_list in message_dict.items():
             message_list = message_list[::-1]
-            message_list_2 = [message_list[0].author]
+            message_list_2 = [message_list[0].author] #we keep the author as the first item for later use. I found it was the best way to pass the user object even if it messes with the types of the elements of the list
             last_message = None
             for message in message_list:
                 # 86400 = 60*60*24 (nombre de secondes par jour)
@@ -74,6 +78,8 @@ class MainClass(BaseClass):
             del message_list_2
             if len(message_list)>1:
                 message_dict_reduced.update({user_id: message_list})
+        
+        # If user karg is specified, it means we want weekly stats for a specific user -> Splitting the user's messages by week
         if user is not None:
             user_activity=[] #order : recent -> older
             i=0
@@ -89,10 +95,12 @@ class MainClass(BaseClass):
                 user_activity.append(week_messages)
                 i=i-1
             return user_activity
+        
+        # If user karg is not specified, it means we want global stats up to a certain number of days and getting them sorted in descending order
         sorted_by_losses = sorted(message_dict_reduced.items(), key=lambda x: len(x[1]))[::-1]
         stats = []
         for user in sorted_by_losses:
-            # user, number of losses, average time between each loss
+            # user, number of losses, average time between each loss (format of each element of stats)
             to_append = [user[1][0], len(user[1]) - 1, 0]
             if len(user[1][1::]) > 1:
                 to_append[2] = (time.mktime(user[1][1::][-1].created_at.timetuple()) -
@@ -101,16 +109,16 @@ class MainClass(BaseClass):
         return sorted(sorted(stats, key=lambda x: x[2])[::-1], key=lambda x: x[1])[::-1]
     
     async def reduce_stats(self, stats, user):
-        if len(stats)<5:
+        if len(stats)<5: #If there are less than five losers, then show them all.
             return (0,stats)
         else:
-            if user.id in [element[0].id for element in stats[:3]] :
+            if user.id in [element[0].id for element in stats[:3]] : #If the target user is within the first 3 losers, show the first five losers.
                 return (0,stats[:5])
-            else:
+            else: # Otherwise, show the two below and above the target user.
                 for i in range(len(stats)):
                     if stats[i][0].id==user.id:
                         return (i-2,stats[i-2:i+3])
-        return None
+        return None # If the target user is not in the stats, then don't show anything at all.
 
     async def com_stats(self, message, args, kwargs):
         if self.client.get_channel(self.channel) is None:
