@@ -1,34 +1,77 @@
-import asyncio
+from __future__ import annotations
+
+from typing import Dict, Any, Optional
 
 
 class Config:
-    def __init__(self, config: dict = None, parent = None, name: str = None):
-        if config is None:
-            config = {}
-        self.config = config
-        self.parent = parent
-        self.cache = []
-        if self.parent:
-            self.parent = parent
-            self.name = name
-            self.parent.config[self.name] = self.config
+    name: Optional[str]
+    parent: Optional[Config]
+    config: Dict[Any, Any]
 
-    async def _save(self):
+    def __init__(self, parent: Config = None, name: str = None):
+        """Create Config
+
+        :param parent: Parent configuration
+        :param name: Configuration name
+        :type parent: Config
+        :type name: str"""
+        self.parent = parent
+        self.config = dict()
+        self.name = None
+        if self.parent:
+            self.name = name
+
+    def init(self, config):
+        """Load default configuration
+
+        :param config: Default configuration
+        :type config: dict
+        :return: None"""
+        # Load data from config file before initialisation
+        self.load()
+        # Get data from parent
+        if self.parent is not None:
+            self.parent.config[self.name] = self.parent.config.get(self.name) if self.parent.config.get(
+                self.name) is not None else self.config
+            self.config = self.parent.config[self.name]
+        # Set config only if not already defined
+        for k, v in config.items():
+            self.config[k] = self.config.get(k) if self.config.get(k) is not None else v
+        # Save new datas
+        self.save()
+
+    def _save(self):
+        """Internal function for save
+
+        Must be overridden by all type of config to handle saving"""
+        # Call parent save if necessary
         if self.parent:
             self.parent.save()
 
     def save(self):
-        loop = asyncio.get_event_loop()
-        asyncio.ensure_future(self._save(), loop=loop)
+        """Public save function
 
-    async def _load(self):
+        Do not override"""
+        self._save()
+
+    def _load(self):
+        """Internal function for load
+
+        Mus be overridden by all type of config to handle loading"""
+        # Load parent if necessary
         if self.parent:
             self.parent.load()
-            self.config = self.parent.config[self.name]
+            self.config = self.parent.config.get(self.name)
+            # Initialize parent if necessary
+            if self.config is None:
+                self.parent.config[self.name] = {}
+                self.config = {}
 
     def load(self):
-        loop = asyncio.get_event_loop()
-        asyncio.ensure_future(self._load(), loop=loop)
+        """Public load function
+
+        Do not override"""
+        self._load()
 
     def __getitem__(self, item):
         return self.config.get(item)
