@@ -233,9 +233,7 @@ class LBI(discord.Client):
         # Content: {"module_name": {"module": imported module, "class": initialized class}}
         self.modules = {}
         self.config = config
-        self.config["modules"] = self.config["modules"] if self.config["modules"] is not None else ["modules","errors"]
-        self.config["prefix"] = self.config["prefix"] or "%"
-        self.config["owners"] = self.config["owners"] or []
+        self.config.init({"modules": ["modules", "errors"], "prefix": "%", "owners": []})
         self.load_modules()
 
     @modules_edit
