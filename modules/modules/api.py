@@ -31,6 +31,10 @@ class Api:
 
     async def download(self, module, version):
         await self._download("modules/"+module+"/"+version, filename="temp.zip")
-        shutil.rmtree(os.path.join("modules, module"))
+        # TODO: Supprimer le dossier ici
+        try:
+            shutil.rmtree(os.path.join("modules", module))
+        except:
+            print('Error while deleting directory')
         with zipfile.ZipFile('temp.zip', "r") as z:
             z.extractall(os.path.join("modules", module))

@@ -12,11 +12,15 @@ aiohttp = "*"
 aiofiles = "*"
 lupa = "*"
 aiofile = "*"
-pyyaml = "*"
+toml = "*"
 "discord.py" = {version = "*", extras = ["voice",]}
 
 [dev-packages]
 
+
+
 [requires]
 
 python_version = "3.7"
+
+

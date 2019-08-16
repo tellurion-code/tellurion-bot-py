@@ -30,13 +30,12 @@ class BaseClass:
         Initialize module class, always call it to set self.client when you override it.
 
         :param client: client instance
-        :type client: NikolaTesla"""
+        :type client: LBI"""
         self.client = client
         self.storage = FSStorage(path.join(self.client.base_path, self.name))
         self.objects = FSObjects(self.storage)
         self.config = Config(parent=self.client.config, name="mod-"+self.name)
-        self.config["authorized_roles"] = self.config["authorized_roles"] or self.authorized_roles
-        self.config["authorized_users"] = self.config["authorized_users"] or self.authorized_users
+        self.config.init({"authorized_roles": self.authorized_roles, "authorized_users": self.authorized_users})
 
     async def send_help(self, channel):
         embed = discord.Embed(
@@ -61,9 +60,9 @@ class BaseClass:
         :type user: discord.User
         """
         if role_list is None:
-            role_list = self.authorized_roles
+            role_list = self.config["authorized_roles"]
         if user_list is None:
-            user_list = self.authorized_users
+            user_list = self.config["authorized_users"]
         if len(role_list) == 0 and len(user_list) == 0:
             # Everyone can use this command
             return True

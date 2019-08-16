@@ -36,7 +36,7 @@ class MainClass(BaseClassPython):
         all_items = os.listdir("modules")
         modules = []
         for item in all_items:
-            if item not in ["__init__.py", "base", "__pycache__", "dummy"]:
+            if item not in ["__init__.py", "base", "__pycache__"]:
                 if os.path.isfile(os.path.join("modules", item)):
                     modules.append(item[:-3])
                 else:
@@ -58,7 +58,9 @@ class MainClass(BaseClassPython):
             return
         for arg in args:
             e = self.client.load_module(arg)
-            if e:
+            if e == 2:
+                await message.channel.send("Module {module} is incompatible.")
+            elif e:
                 await message.channel.send("An error occurred during the loading of the module {module}: {error}."
                                            .format(module=arg, error=e))
         await self.com_list(message, args, kwargs)
@@ -106,10 +108,16 @@ class MainClass(BaseClassPython):
     async def com_list(self, message, args, kwargs):
         list_files = self.get_all_modules()
         activated = set(self.client.config["modules"])
-        activated_string = "\n+ " + "\n+ ".join(activated)
-        deactivated_string = "- " + "\n- ".join(list_files.difference(activated))
+        if len(activated):
+            activated_string = "\n+ " + "\n+ ".join(activated)
+        else:
+            activated_string = ""
+        if len(activated) != len(list_files):
+            deactivated_string = "\n- " + "\n- ".join(list_files.difference(activated))
+        else:
+            deactivated_string = ""
         embed = discord.Embed(title="[Modules] - Liste des modules",
-                              description="```diff\n{activated}\n{deactivated}```".format(
+                              description="```diff{activated}{deactivated}```".format(
                                   activated=activated_string,
                                   deactivated=deactivated_string)
                               )

@@ -1,11 +1,14 @@
 import asyncio
+import time
+
+import datetime
 import random
 import traceback
 
 import collections
 import discord
+from discord import Message
 
-from config.Base import Config
 from modules.base import BaseClassPython
 
 
@@ -26,9 +29,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config["dev_chan"] = self.config["dev_chan"] or []
-        self.config["meme"] = [""]
-        self.config["icon"] = ""
+        self.config.init({"dev_chan":[], "memes":[""], "icon":""})
         self.errorsDeque = None
 
     async def on_ready(self):
@@ -38,10 +39,10 @@ class MainClass(BaseClassPython):
             self.errorsDeque = collections.deque()
         for i in range(len(self.errorsDeque)):
             try:
-                messagelst = self.errorsDeque.popleft()
-                channel = self.client.get_channel(messagelst[0])
-                delete_message = await channel.fetch_message(messagelst[1])
-                await delete_message.delete()
+                msg_id = self.errorsDeque.popleft()
+                channel = self.client.get_channel(msg_id["channel_id"])
+                to_delete = await channel.fetch_message(msg_id["msg_id"])
+                await to_delete.delete()
             except:
                 raise
         self.objects.save_object('errorsDeque', self.errorsDeque)
@@ -50,39 +51,59 @@ class MainClass(BaseClassPython):
         raise Exception("KERNEL PANIC!!!")
 
     async def on_error(self, event, *args, **kwargs):
-        embed = discord.Embed(title="Aïe :/", description="```PYTHON\n{0}```".format(traceback.format_exc()),
-                              color=self.color).set_image(url=random.choice(self.memes))
+        """Send error message"""
+        # Search first channel instance found in arg, then search in kwargs
+        channel = None
+        for arg in args:
+            if type(arg) == Message:
+                channel = arg.channel
+                break
+            if type(arg) == discord.TextChannel:
+                channel = arg
+                break
+        if channel is None:
+            for _,v in kwargs.items():
+                if type(v) == discord.Message:
+                    channel = v.channel
+                    break
+                if type(v) == discord.TextChannel:
+                    channel = v
+                    break# Create embed
+        embed = discord.Embed(
+            title="[Erreur] Aïe :/",
+            description="```python\n{0}```".format(traceback.format_exc()),
+            color=self.color)
+        embed.set_image(url=random.choice(self.config["memes"]))
         message_list = None
-        try:
-            message = await args[0].channel.send(
-                embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute.", icon_url=self.icon))
-            message_list = [message.channel.id, message.id]
-            self.errorsDeque.append(message_list)
-        except:
-            try:
-                message = args[1].channel.send(
-                    embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute.", icon_url=self.icon))
-                message_list = [message.channel.id, message.id]
-                self.errorsDeque.append(message_list)
-            except:
-                pass
+
+        # Send message to dev channels
         for chanid in self.config["dev_chan"]:
             try:
                 await self.client.get_channel(chanid).send(
                     embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.icon))
             except:
                 pass
-        self.objects.save_object('errorsDeque', self.errorsDeque)
-        await asyncio.sleep(60)
-        try:
-            channel = self.client.get_channel(message_list[0])
-            delete_message = await channel.fetch_message(message_list[1])
-            await delete_message.delete()
-        except:
-            raise
-        finally:
+        # Send message to current channel if exists
+        if channel is not None:
+            message = await channel.send(embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute",
+                                                      icon_url=self.config["icon"]))
+            msg_id = {"chan_id": message.channel.id, "msg_id": message.id}
+            self.errorsDeque.append(msg_id)
+            # Save message in errorsDeque now to keep them if a reboot happend during next 60 seconds
+            self.objects.save_object('errorsDeque', self.errorsDeque)
+
+            # Wait 60 seconds and delete message
+            await asyncio.sleep(60)
             try:
-                self.errorsDeque.remove(message_list)
-            except ValueError:
-                pass
-        self.objects.save_object('errorsDeque', self.errorsDeque)
+                channel = self.client.get_channel(msg_id["chan_id"])
+                delete_message = await channel.fetch_message(msg_id["msg_id"])
+                await delete_message.delete()
+            except:
+                raise
+            finally:
+                try:
+                    self.errorsDeque.remove(msg_id)
+                except ValueError:
+                    pass
+            # Save now to avoid deleting unkown message
+            self.objects.save_object('errorsDeque', self.errorsDeque)

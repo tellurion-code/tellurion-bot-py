@@ -18,6 +18,7 @@ from packaging.version import Version
 
 from config.FileSystem import FSConfig
 from errors import IncompatibleModule
+from modules.base import base_supported_type
 
 __version__ = "0.1.0"
 
@@ -74,7 +75,6 @@ class Module:
             return False
         with open(os.path.join("modules", self.name, "version.json")) as file:
             versions = json.load(file)
-        print(versions)
         if "version" not in versions.keys():
             return False
         if "dependencies" not in versions.keys():
@@ -82,6 +82,8 @@ class Module:
         if "bot_version" not in versions.keys():
             return False
         if "type" not in versions.keys():
+            return False
+        if versions["type"] not in base_supported_type:
             return False
         return True
 
@@ -226,7 +228,7 @@ class LBI(discord.Client):
     def __init__(self, config=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
         if config is None:
-            config = FSConfig(path="data/config.yml")
+            config = FSConfig(path="data/config.toml")
         self.reloading = False
         self.id = ClientById(self)
         self.ready = False
