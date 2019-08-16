@@ -201,7 +201,14 @@ def event(func):
             return lambda: None
         else:
             return func(self, *args, **kwargs)
+    return wrapper
 
+def async_event(func):
+    async def wrapper(self, *args, **kwargs):
+        if self.reloading:
+            return lambda: None
+        else:
+            return func(self, *args, **kwargs)
     return wrapper
 
 
@@ -337,7 +344,7 @@ class LBI(discord.Client):
         for module in self.modules.values():
             module["initialized_class"].dispatch(event, *args, **kwargs)
 
-    @event
+    @async_event
     async def on_error(self, event_method, *args, **kwargs):
         # This event is special because it is call directly
         for module in self.modules.values():
