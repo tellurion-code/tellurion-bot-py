@@ -72,3 +72,4 @@ data/*
 *.json
 
 Pipfile.lock
+.env
