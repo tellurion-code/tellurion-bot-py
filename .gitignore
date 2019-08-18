@@ -71,3 +71,4 @@ data/*
 *.yml
 *.json
 
+Pipfile.lock
