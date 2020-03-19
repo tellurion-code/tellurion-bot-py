@@ -156,7 +156,7 @@ class BaseClass:
                 i += 1
         return sub_command, args_, kwargs
 
-    async def on_message(self, message):
+    async def on_message(self, message: discord.Message):
         """Override this function to deactivate command_text parsing"""
         await self.parse_command(message)
 

@@ -29,7 +29,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"dev_chan":[], "memes":[""], "icon":""})
+        self.config.init({"dev_chan": [], "memes": [""], "icon": ""})
         self.errorsDeque = None
 
     async def on_ready(self):
@@ -62,13 +62,13 @@ class MainClass(BaseClassPython):
                 channel = arg
                 break
         if channel is None:
-            for _,v in kwargs.items():
+            for _, v in kwargs.items():
                 if type(v) == discord.Message:
                     channel = v.channel
                     break
                 if type(v) == discord.TextChannel:
                     channel = v
-                    break# Create embed
+                    break  # Create embed
         embed = discord.Embed(
             title="[Erreur] Aïe :/",
             description="```python\n{0}```".format(traceback.format_exc()),
@@ -80,14 +80,14 @@ class MainClass(BaseClassPython):
         for chanid in self.config["dev_chan"]:
             try:
                 await self.client.get_channel(chanid).send(
-                    embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.icon))
-            except:
-                pass
+                    embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.config["icon"]))
+            except BaseException as e:
+                raise e
         # Send message to current channel if exists
         if channel is not None:
             message = await channel.send(embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute",
-                                                      icon_url=self.config["icon"]))
-            msg_id = {"chan_id": message.channel.id, "msg_id": message.id}
+                                                                icon_url=self.config["icon"]))
+            msg_id = {"channel_id": message.channel.id, "msg_id": message.id}
             self.errorsDeque.append(msg_id)
             # Save message in errorsDeque now to keep them if a reboot happend during next 60 seconds
             self.objects.save_object('errorsDeque', self.errorsDeque)
@@ -95,7 +95,7 @@ class MainClass(BaseClassPython):
             # Wait 60 seconds and delete message
             await asyncio.sleep(60)
             try:
-                channel = self.client.get_channel(msg_id["chan_id"])
+                channel = self.client.get_channel(msg_id["channel_id"])
                 delete_message = await channel.fetch_message(msg_id["msg_id"])
                 await delete_message.delete()
             except:

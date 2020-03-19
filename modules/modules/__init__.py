@@ -58,11 +58,12 @@ class MainClass(BaseClassPython):
             return
         for arg in args:
             e = self.client.load_module(arg)
+            if e == 1:
+                await message.channel.send(f"Module {arg} not exists.")
             if e == 2:
-                await message.channel.send("Module {module} is incompatible.")
+                await message.channel.send(f"Module {arg} is incompatible.")
             elif e:
-                await message.channel.send("An error occurred during the loading of the module {module}: {error}."
-                                           .format(module=arg, error=e))
+                await message.channel.send(f"An error occurred during the loading of the module {arg}: {e}.")
         await self.com_list(message, args, kwargs)
 
     async def com_reload(self, message, args, kwargs):
@@ -74,15 +75,13 @@ class MainClass(BaseClassPython):
             for module in self.get_all_modules():
                 e = self.client.unload_module(module)
                 if e:
-                    await message.channel.send("An error occurred during the loading of the module {module}."
-                                               .format(module=module))
+                    await message.channel.send(f"An error occurred during the loading of the module {module}.")
             await self.com_list(message, args, kwargs)
             return
         for arg in args:
             e = self.client.unload_module(arg)
             if e:
-                await message.channel.send("An error occurred during the loading of the module {module}."
-                                           .format(module=arg))
+                await message.channel.send(f"An error occurred during the loading of the module {arg}.")
         await self.com_list(message, [], [])
 
     async def com_disable(self, message, args, kwargs):
@@ -94,15 +93,13 @@ class MainClass(BaseClassPython):
             for module in self.get_all_modules():
                 e = self.client.unload_module(module)
                 if e:
-                    await message.channel.send("An error occurred during the loading of the module {module}."
-                                               .format(module=module))
+                    await message.channel.send(f"An error occurred during the loading of the module {module}.")
             await self.com_list(message, args, kwargs)
             return
         for arg in args:
             e = self.client.unload_module(arg)
             if e:
-                await message.channel.send("An error occurred during the loading of the module {module}: {error}."
-                                           .format(module=arg, error=e))
+                await message.channel.send(f"An error occurred during the loading of the module {arg}: {e}.")
         await self.com_list(message, [], [])
 
     async def com_list(self, message, args, kwargs):

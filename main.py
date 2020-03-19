@@ -203,13 +203,13 @@ def event(func):
             return func(self, *args, **kwargs)
     return wrapper
 
-def async_event(func):
+"""def async_event(func):
     async def wrapper(self, *args, **kwargs):
         if self.reloading:
             return lambda: None
         else:
             return func(self, *args, **kwargs)
-    return wrapper
+    return wrapper"""
 
 
 setup_logging()
@@ -298,7 +298,6 @@ class LBI(discord.Client):
                     self.config.save()
             except AttributeError as e:
                 self.error("Module {module} doesn't have MainClass.".format(module=module))
-                raise
                 return e
             return 0
         elif MODULES[module].type == "lua":
@@ -344,7 +343,7 @@ class LBI(discord.Client):
         for module in self.modules.values():
             module["initialized_class"].dispatch(event, *args, **kwargs)
 
-    @async_event
+    #@async_event
     async def on_error(self, event_method, *args, **kwargs):
         # This event is special because it is call directly
         for module in self.modules.values():
@@ -420,7 +419,7 @@ class Communication(asyncio.Protocol):
     critical = log_communication.critical
     name = "Communication"
 
-    def __init__(self, client=client1):
+    def __init__(self, client):
         self.client = client
         self.transport = None
 
@@ -447,8 +446,6 @@ async def start_bot():
 print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock")
 
 loop = asyncio.get_event_loop()
-#loop.add_signal_handler(signal.SIGINT, loop.stop)
-#loop.set_exception_handler(execption_handler)
 t = loop.create_unix_server(Communication,
                             path=os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))
 loop.run_until_complete(t)
