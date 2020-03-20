@@ -1,11 +1,8 @@
 import asyncio
-import time
-
-import datetime
+import collections
 import random
 import traceback
 
-import collections
 import discord
 from discord import Message
 
@@ -32,11 +29,13 @@ class MainClass(BaseClassPython):
         self.config.init({"dev_chan": [], "memes": [""], "icon": ""})
         self.errorsDeque = None
 
-    async def on_ready(self):
+    async def on_load(self):
         if self.objects.save_exists('errorsDeque'):
             self.errorsDeque = self.objects.load_object('errorsDeque')
         else:
             self.errorsDeque = collections.deque()
+
+    async def on_ready(self):
         for i in range(len(self.errorsDeque)):
             try:
                 msg_id = self.errorsDeque.popleft()
@@ -73,20 +72,20 @@ class MainClass(BaseClassPython):
             title="[Erreur] Aïe :/",
             description="```python\n{0}```".format(traceback.format_exc()),
             color=self.color)
-        embed.set_image(url=random.choice(self.config["memes"]))
+        embed.set_image(url=random.choice(self.config.memes))
         message_list = None
 
         # Send message to dev channels
-        for chanid in self.config["dev_chan"]:
+        for chanid in self.config.dev_chan:
             try:
                 await self.client.get_channel(chanid).send(
-                    embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.config["icon"]))
+                    embed=embed.set_footer(text="Ce message ne s'autodétruira pas.", icon_url=self.config.icon))
             except BaseException as e:
                 raise e
         # Send message to current channel if exists
         if channel is not None:
             message = await channel.send(embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute",
-                                                                icon_url=self.config["icon"]))
+                                                                icon_url=self.config.icon))
             msg_id = {"channel_id": message.channel.id, "msg_id": message.id}
             self.errorsDeque.append(msg_id)
             # Save message in errorsDeque now to keep them if a reboot happend during next 60 seconds

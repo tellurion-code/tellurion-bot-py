@@ -1,6 +1,5 @@
 from __future__ import annotations
 
-from enum import Enum
 from typing import Dict, Any, Optional
 
 
@@ -73,6 +72,9 @@ class Config:
 
         Do not override"""
         self._load()
+
+    def __getattr__(self, item):
+        return self.config.get(item)
 
     def __getitem__(self, item):
         return self.config.get(item)

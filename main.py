@@ -1,16 +1,10 @@
 #!/usr/bin/python3
 import asyncio
-import concurrent
 import importlib
 import json
 import logging
 import logging.config
 import os
-import signal
-import socket
-import traceback
-from concurrent.futures.process import ProcessPoolExecutor
-from concurrent.futures.thread import ThreadPoolExecutor
 from typing import Dict
 
 import discord
@@ -310,6 +304,7 @@ class LBI(discord.Client):
             initialized_class.dispatch("load")
             if module not in self.config["modules"]:
                 self.config["modules"].append(module)
+                self.config.save()
             return 0
 
     @modules_edit
