@@ -1,5 +1,5 @@
-import pickle
-
+import json
+import storage.jsonenc
 from storage import path as pth
 
 
@@ -125,19 +125,17 @@ class Objects:
         self.storage = storage
         self.storage.makedirs("objects", exist_ok=True)
 
-    def save_object(self, object_name, object_instance):
-        """Save object into pickle file"""
-        with self.storage.open(pth.join("objects", object_name), "wb") as f:
-            pickler = pickle.Pickler(f)
-            pickler.dump(object_instance)
+    async def save_object(self, object_name, object_instance):
+        """Save object into json file"""
+        with self.storage.open(pth.join("objects", object_name + ".json"), "w") as f:
+            json.dump([object_instance], f, cls=storage.jsonenc.Encoder)
 
-    def load_object(self, object_name):
-        """Load object from pickle file"""
-        if self.save_exists(object_name):
-            with self.storage.open(pth.join("objects", object_name), "rb") as f:
-                unpickler = pickle.Unpickler(f)
-                return unpickler.load()
+    async def load_object(self, object_name):
+        """Load object from json file"""
+        if await self.save_exists(object_name):
+            with self.storage.open(pth.join("objects", object_name + ".json"), "r") as f:
+                return json.load(f, object_hook=storage.jsonenc.hook)[0]
 
-    def save_exists(self, object_name):
-        """Check if pickle file exists"""
-        return self.storage.exists(pth.join("objects", object_name))
+    async def save_exists(self, object_name):
+        """Check if json file exists"""
+        return self.storage.exists(pth.join("objects", object_name + ".json"))

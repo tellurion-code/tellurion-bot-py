@@ -1,5 +1,4 @@
 import asyncio
-import collections
 import random
 import traceback
 
@@ -26,24 +25,24 @@ class MainClass(BaseClassPython):
     def __init__(self, client):
         super().__init__(client)
         self.config.init({"dev_chan": [], "memes": [""], "icon": ""})
-        self.errorsDeque = None
+        self.errorsList = None
 
     async def on_load(self):
-        if await self.objects.save_exists('errorsDeque'):
-            self.errorsDeque = await self.objects.load_object('errorsDeque')
+        if await self.objects.save_exists('errorsList'):
+            self.errorsList = await self.objects.load_object('errorsList')
         else:
-            self.errorsDeque = collections.deque()
+            self.errorsList = []
 
     async def on_ready(self):
-        for i in range(len(self.errorsDeque)):
+        for i in range(len(self.errorsList)):
             try:
-                msg_id = self.errorsDeque.popleft()
+                msg_id = self.errorsList.pop(0)
                 channel = self.client.get_channel(msg_id["channel_id"])
                 to_delete = await channel.fetch_message(msg_id["msg_id"])
                 await to_delete.delete()
             except:
                 raise
-        await self.objects.save_object('errorsDeque', self.errorsDeque)
+        await self.objects.save_object('errorsList', self.errorsList)
 
     async def command(self, message, args, kwargs):
         raise Exception("KERNEL PANIC!!!")
@@ -86,9 +85,9 @@ class MainClass(BaseClassPython):
             message = await channel.send(embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute",
                                                                 icon_url=self.config.icon))
             msg_id = {"channel_id": message.channel.id, "msg_id": message.id}
-            self.errorsDeque.append(msg_id)
-            # Save message in errorsDeque now to keep them if a reboot happend during next 60 seconds
-            self.objects.save_object('errorsDeque', self.errorsDeque)
+            self.errorsList.append(msg_id)
+            # Save message in errorsList now to keep them if a reboot happend during next 60 seconds
+            await self.objects.save_object('errorsList', self.errorsList)
 
             # Wait 60 seconds and delete message
             await asyncio.sleep(60)
@@ -100,8 +99,8 @@ class MainClass(BaseClassPython):
                 raise
             finally:
                 try:
-                    self.errorsDeque.remove(msg_id)
+                    self.errorsList.remove(msg_id)
                 except ValueError:
                     pass
             # Save now to avoid deleting unkown message
-            self.objects.save_object('errorsDeque', self.errorsDeque)
+            await self.objects.save_object('errorsList', self.errorsList)
