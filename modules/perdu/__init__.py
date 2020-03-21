@@ -24,12 +24,7 @@ class MainClass(BaseClassPython):
     def __init__(self, client):
         super().__init__(client)
         self.config.init({"channel": 0, "lost_role": 0, "min_delta": datetime.timedelta(minutes=26).total_seconds()})
-
-    async def on_load(self):
-        if self.objects.save_exists('history'):
-            self.history = self.objects.load_object('history')
-        else:
-            self.history = {}
+        self.history = {}
 
     async def on_message(self, message: discord.Message):
         # Fill history
@@ -46,7 +41,6 @@ class MainClass(BaseClassPython):
                 delta = message.created_at - self.history[message.author.id][-1][0]
                 if delta.total_seconds() >= self.config.min_delta:
                     self.history[message.author.id].append((message.created_at, delta))
-            self.objects.save_object("history", self.history)
         await self.parse_command(message)
 
     async def fill_history(self):
@@ -60,7 +54,6 @@ class MainClass(BaseClassPython):
                 delta = self.history[message.author.id][-1][0] - message.created_at
                 if delta.total_seconds() >= self.config.min_delta:
                     self.history[message.author.id].append((message.created_at, delta))
-        self.objects.save_object("history", self.history)
 
     def get_top(self, top=10, since=datetime.datetime(year=1, month=1, day=1)):
         """Return [(userid, [(date, delta), (date,delta), ...]), ... ]"""
