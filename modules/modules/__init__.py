@@ -28,7 +28,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.storage.mkdir("modules", exist_ok=True)
+        os.makedirs("modules", exist_ok=True)
         self.api = Api()
 
     @staticmethod

@@ -1,16 +1,10 @@
 """Base class for module, never use directly !!!"""
 import asyncio
-import os
-import sys
-import pickle
-import traceback
 
 import discord
 import lupa
 
 from modules.base.Base import BaseClass
-from storage import FSStorage
-import storage.path as path
 
 
 class BaseClassLua(BaseClass):
@@ -27,7 +21,7 @@ class BaseClassLua(BaseClass):
     command_text = None
     authorized_users = []
     authorized_roles = []
-    command_text = "lua"
+    command_text = ""
 
     def __init__(self, client, path):
         """Initialize module class

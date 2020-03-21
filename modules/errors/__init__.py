@@ -28,8 +28,8 @@ class MainClass(BaseClassPython):
         self.errorsList = None
 
     async def on_load(self):
-        if await self.objects.save_exists('errorsList'):
-            self.errorsList = await self.objects.load_object('errorsList')
+        if self.objects.save_exists('errorsList'):
+            self.errorsList = self.objects.load_object('errorsList')
         else:
             self.errorsList = []
 
@@ -87,7 +87,7 @@ class MainClass(BaseClassPython):
             msg_id = {"channel_id": message.channel.id, "msg_id": message.id}
             self.errorsList.append(msg_id)
             # Save message in errorsList now to keep them if a reboot happend during next 60 seconds
-            await self.objects.save_object('errorsList', self.errorsList)
+            self.objects.save_object('errorsList', self.errorsList)
 
             # Wait 60 seconds and delete message
             await asyncio.sleep(60)

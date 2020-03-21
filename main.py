@@ -292,7 +292,7 @@ class LBI(discord.Client):
                     self.config.save()
             except AttributeError as e:
                 self.error("Module {module} doesn't have MainClass.".format(module=module))
-                return e
+                raise e
             return 0
         elif MODULES[module].type == "lua":
             self.info(f"Start loading module {module}...")
@@ -395,11 +395,18 @@ class ClientById:
         channel = self.client.get_channel(id_)
         return channel.send(*args, **kwargs)
 
-    async def get_role(self, id_):
-        for guild in self.client.guilds:
-            role = discord.utils.get(guild.roles, id=id_)
-            if role:
-                return role
+    async def get_role(self, id_=None, name=None):
+        if id_:
+            for guild in self.client.guilds:
+                role = discord.utils.get(guild.roles, id=id_)
+                if role:
+                    return role
+        if name:
+            for guild in self.client.guilds:
+                print(list(r.name for r in guild.roles))
+                role = discord.utils.get(guild.roles, name=name)
+                if role:
+                    return role
         return None
 
 

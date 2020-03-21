@@ -1,12 +1,12 @@
 """Base class for module, never use directly !!!"""
 import asyncio
+import os
 from typing import List
 
 import discord
 
 from config import Config
-from storage import FSStorage, FSObjects
-import storage.path as path
+from storage import Objects
 
 
 class BaseClass:
@@ -32,9 +32,8 @@ class BaseClass:
         :param client: client instance
         :type client: LBI"""
         self.client = client
-        self.storage = FSStorage(path.join(self.client.base_path, self.name))
-        self.objects = FSObjects(self.storage)
-        self.config = Config(parent=self.client.config, name="mod-"+self.name)
+        self.objects = Objects(path=os.path.join("data", self.name))
+        self.config = Config(parent=self.client.config, name="mod-" + self.name)
         self.config.init({"authorized_roles": self.authorized_roles, "authorized_users": self.authorized_users})
 
     async def send_help(self, channel):
