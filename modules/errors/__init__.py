@@ -11,8 +11,7 @@ from modules.base import BaseClassPython
 
 class MainClass(BaseClassPython):
     name = "errors"
-    description = "Error handling"
-    interactive = True
+    help_active = True
     authorized_users = [431043517217898496]
     authorized_roles = []
     color = 0xdb1348
@@ -30,8 +29,8 @@ class MainClass(BaseClassPython):
         self.errorsDeque = None
 
     async def on_load(self):
-        if self.objects.save_exists('errorsDeque'):
-            self.errorsDeque = self.objects.load_object('errorsDeque')
+        if await self.objects.save_exists('errorsDeque'):
+            self.errorsDeque = await self.objects.load_object('errorsDeque')
         else:
             self.errorsDeque = collections.deque()
 
@@ -44,7 +43,7 @@ class MainClass(BaseClassPython):
                 await to_delete.delete()
             except:
                 raise
-        self.objects.save_object('errorsDeque', self.errorsDeque)
+        await self.objects.save_object('errorsDeque', self.errorsDeque)
 
     async def command(self, message, args, kwargs):
         raise Exception("KERNEL PANIC!!!")

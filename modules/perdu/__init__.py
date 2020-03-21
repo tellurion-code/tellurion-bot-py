@@ -26,7 +26,7 @@ class MainClass(BaseClassPython):
         self.config.init({"channel": 0, "lost_role": 0, "min_delta": datetime.timedelta(minutes=30).total_seconds()})
 
     async def on_load(self):
-        if self.objects.save_exists('history'):
+        if await self.objects.save_exists('history'):
             self.history = self.objects.load_object('history')
         else:
             self.history = {}
