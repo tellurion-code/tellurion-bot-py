@@ -69,7 +69,7 @@ temp.zip
 venv/*
 data/*
 *.yml
-*.json
+#*.json
 
 Pipfile.lock
 .env
