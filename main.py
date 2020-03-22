@@ -396,14 +396,13 @@ class ClientById:
         return channel.send(*args, **kwargs)
 
     async def get_role(self, id_=None, name=None):
-        if id_:
+        if id_ is not None:
             for guild in self.client.guilds:
                 role = discord.utils.get(guild.roles, id=id_)
                 if role:
                     return role
-        if name:
+        if name is not None:
             for guild in self.client.guilds:
-                print(list(r.name for r in guild.roles))
                 role = discord.utils.get(guild.roles, name=name)
                 if role:
                     return role

@@ -103,4 +103,4 @@ class MainClass(BaseClassPython):
                 except ValueError:
                     pass
             # Save now to avoid deleting unkown message
-            await self.objects.save_object('errorsList', self.errorsList)
+            self.objects.save_object('errorsList', self.errorsList)

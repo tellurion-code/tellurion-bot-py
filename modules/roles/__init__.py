@@ -31,5 +31,11 @@ class MainClass(BaseClassPython):
         if len(args) <= 1:
             await message.channel.send("Il manque des arguments à la commande")
         for role in args[0:]:
-            role = await self.client.id.get_role(name = role)
-            print(role.name)
+            drole = await self.client.id.get_role(name="Invité")
+            if drole is None or str(drole.id) not in self.config.roles.keys():
+                await message.channel.send(f"Le role {role} n'est pas disponible.")
+            else:
+                try:
+                    await message.author.add_roles(drole)
+                except discord.errors.Forbidden:
+                    await message.channel.send(f"Je n'ai pas la permission d'attribuer le role {role}.")
