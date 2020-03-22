@@ -10,8 +10,8 @@ class Encoder(json.JSONEncoder):
         super().__init__()
         self.custom = {}
 
-    def register(self, type_, encode, decode):
-        self.custom.update({type_: (encode, decode)})
+    def register(self, type_, encode, decode, decode_args={}):
+        self.custom.update({type_: (encode, decode, decode_args)})
 
     def default(self, obj):
         if isinstance(obj, tuple(self.custom.keys())):
@@ -26,7 +26,7 @@ class Encoder(json.JSONEncoder):
         if data_type in dct:
             for ty in self.custom.keys():
                 if str(ty) == dct[data_type]:
-                    return self.custom[ty][1](dct[content])
+                    return self.custom[ty][1](dct[content], **self.custom[ty][2])
             if dct[data_type] == "datetime.datetime":
                 return datetime.datetime.fromisoformat(dct['iso'])
             elif dct[data_type] == "datetime.timedelta":
