@@ -14,12 +14,12 @@ class Encoder(json.JSONEncoder):
         self.custom.update({type_: (encode, decode)})
 
     def default(self, obj):
+        if isinstance(obj, tuple(self.custom.keys())):
+            return {data_type: f'{type(obj)}', content: self.custom[type(obj)][0](obj)}
         if isinstance(obj, (datetime.datetime)):
             return {data_type: 'datetime.datetime', 'iso': obj.isoformat()}
         if isinstance(obj, (datetime.timedelta)):
             return {data_type: 'datetime.timedelta', 'totalseconds': obj.total_seconds()}
-        if isinstance(obj, tuple(self.custom.keys())):
-            return {data_type: f'{type(obj)}', content: self.custom[type(obj)][0](obj)}
         return json.JSONEncoder.default(self, obj)
 
     def hook(self, dct):
