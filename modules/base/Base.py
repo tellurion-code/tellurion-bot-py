@@ -37,6 +37,9 @@ class BaseClass:
         self.config.init({"authorized_roles": self.authorized_roles, "authorized_users": self.authorized_users})
 
     async def send_help(self, channel):
+        if not self.help_active:
+            return
+
         embed = discord.Embed(
             title="[{nom}] - Aide".format(nom=self.name),
             description=self.help["description"].format(prefix=self.client.config['prefix']),
@@ -164,6 +167,9 @@ class BaseClass:
 
         Function which is executed for all command_text doesn't match with a `com_{subcommand}` function"""
         pass
+
+    async def com_help(self, message, args, kwargs):
+        await self.send_help(message.channel)
 
     async def unauthorized(self, message):
         await message.channel.send("Vous n'êtes pas autorisé à effectuer cette commande")
