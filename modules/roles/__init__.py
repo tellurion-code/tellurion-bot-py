@@ -8,10 +8,13 @@ class MainClass(BaseClassPython):
     color = 0xffb593
     help_active = True
     help = {
-        "description": "Modulé gérant l'attribution des roles",
+        "description": "Module gérant l'attribution des roles",
         "commands": {
             "`{prefix}{command} list`": "Liste les roles",
-            "`{prefix}{command}  <role> [role] ...`": "S'attribuer (ou désattribuer) le(s) rôles <role> ([role]...)",
+            "`{prefix}{command} add <role> [role] ...`": "S'attribuer le(s) rôle(s) <role> ([role]...)",
+            "`{prefix}{command} remove <role> [role] ...`": "Se désattribuer  le(s) rôle(s) <role> ([role]...)",
+            "`{prefix}{command} toggle <role> [role] ...`": "S'attribuer (ou désattribuer) le(s) rôle(s) <role> ([role]...)",
+            "`{prefix}{command} <role> [role] ...`": "Alias de `{prefix}{command} toggle`",
         }
     }
     command_text = "roles"
