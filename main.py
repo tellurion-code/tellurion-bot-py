@@ -395,17 +395,33 @@ class ClientById:
         channel = self.client.get_channel(id_)
         return channel.send(*args, **kwargs)
 
-    async def get_role(self, id_=None, name=None):
+    async def get_role(self, id_=None, name=None, guild=None, case_sensitive=True):
+        guilds = self.client.guilds
+        if guild is not None:
+            guilds = [guild]
         if id_ is not None:
-            for guild in self.client.guilds:
+            for guild in guilds:
                 role = discord.utils.get(guild.roles, id=id_)
                 if role:
                     return role
         if name is not None:
-            for guild in self.client.guilds:
-                role = discord.utils.get(guild.roles, name=name)
-                if role:
-                    return role
+            if case_sensitive:
+                for guild in guilds:
+                    role = discord.utils.get(guild.roles, name=name)
+                    if role:
+                        return role
+            else:
+                name = name.lower()
+                role = None
+                
+                for guild in guilds:
+                    for role_ in guild.roles:
+                        if role_.name.lower() == name:
+                            role = role_
+                            break
+                    if role is not None:
+                        break
+                return role
         return None
 
 
