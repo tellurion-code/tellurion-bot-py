@@ -5,6 +5,7 @@ import json
 import logging
 import logging.config
 import os
+import sys
 from typing import Dict
 
 import discord
@@ -413,7 +414,7 @@ class ClientById:
             else:
                 name = name.lower()
                 role = None
-                
+
                 for guild in guilds:
                     for role_ in guild.roles:
                         if role_.name.lower() == name:
@@ -465,7 +466,9 @@ print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock
 loop = asyncio.get_event_loop()
 t = loop.create_unix_server(Communication,
                             path=os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__)) + ".sock"))
-loop.run_until_complete(t)
+if not sys.platform == "win32":
+    loop.run_until_complete(t)
+
 loop.create_task(start_bot())
 loop.run_forever()
 
