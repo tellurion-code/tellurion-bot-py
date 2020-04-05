@@ -1,0 +1,14 @@
+{
+  "version": "0.1.0",
+  "type": "python",
+  "dependencies": {
+    "base": {
+      "min": "0.1.0",
+      "max": "0.1.0"
+    }
+  },
+  "bot_version": {
+    "min": "0.1.0",
+    "max": "0.1.0"
+  }
+}
