@@ -10,6 +10,8 @@ from modules.base import BaseClassPython
 
 class MainClass(BaseClassPython):
     name = "errors"
+    authorized_users = []
+    authorized_roles = []
     help = {
         "description": "Montre toutes les erreurs du bot dans discord.",
         "commands": {
@@ -93,7 +95,7 @@ class MainClass(BaseClassPython):
                 await message.add_reaction("🗑️")
 
                 try:
-                    reaction, user = await self.client.wait_for('reaction_add', timeout=60.0, check=lambda r, u: r.emoji == "🗑️" and not u.bot)
+                    reaction, user = await self.client.wait_for('reaction_add', timeout=60.0, check=lambda r, u: r.emoji == "🗑️" and not u.bot and await self.auth(user))
                 except asyncio.TimeoutError:
                     await message.delete()
                 else:
