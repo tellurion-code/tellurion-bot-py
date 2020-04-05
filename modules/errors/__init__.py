@@ -79,7 +79,7 @@ class MainClass(BaseClassPython):
                 raise e
         # Send message to current channel if exists
         if channel is not None:
-            message = await channel.send(embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute",
+            message = await channel.send(embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute, ou vous pouvez cliquer sur la corbeille",
                                                                 icon_url=self.config.icon))
             msg_id = {"channel_id": message.channel.id, "msg_id": message.id}
             self.errorsList.append(msg_id)
