@@ -1,5 +1,3 @@
-from pprint import pprint
-
 import discord
 
 from modules.base import BaseClassPython
@@ -7,7 +5,6 @@ from modules.base import BaseClassPython
 
 class MainClass(BaseClassPython):
     name = "Aide"
-    help_active = True
     help = {
         "description": "Module d'aide",
         "commands": {
@@ -16,13 +13,11 @@ class MainClass(BaseClassPython):
             # "`{prefix}{command} all`": "Affiche l'aide de tous les modules"
         }
     }
-    color = 0x3c9653
-    command_text = "help"
 
     async def com_list(self, message, args, kwargs):
-        embed = discord.Embed(title="[Aide] - Liste des modules", color=self.color)
+        embed = discord.Embed(title="[Aide] - Liste des modules", color=self.config.color)
         for moduleName in list(self.client.modules.keys()):
-            if self.client.modules[moduleName]["initialized_class"].help_active:
+            if self.client.modules[moduleName]["initialized_class"].config.help_active:
                 embed.add_field(
                     name=moduleName.capitalize(),
                     value=self.client.modules[moduleName]["initialized_class"].help["description"])
@@ -33,7 +28,8 @@ class MainClass(BaseClassPython):
     #         await module["initialized_class"].send_help(message.channel)
 
     async def command(self, message, args, kwargs):
-        if len(args) and args[0] in self.client.modules.keys():
+        if len(args) and args[0] in self.client.modules.keys() and self.client.modules[args[0]][
+            "initialized_class"].config.help_active:
             await self.client.modules[args[0]]["initialized_class"].send_help(message.channel)
         else :
             await self.send_help(message.channel)

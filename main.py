@@ -195,7 +195,9 @@ def event(func):
             return lambda: None
         else:
             return func(self, *args, **kwargs)
+
     return wrapper
+
 
 """def async_event(func):
     async def wrapper(self, *args, **kwargs):
@@ -204,7 +206,6 @@ def event(func):
         else:
             return func(self, *args, **kwargs)
     return wrapper"""
-
 
 setup_logging()
 
@@ -236,7 +237,8 @@ class LBI(discord.Client):
         # Content: {"module_name": {"module": imported module, "class": initialized class}}
         self.modules = {}
         self.config = config
-        self.config.init({"modules": ["modules", "errors"], "prefix": "%", "owners": []})
+        self.config.init(
+            {"modules": ["modules", "errors"], "prefix": "%", "admin_roles": [], "admin_users": [], "main_guild": 0})
         self.load_modules()
 
     @modules_edit
@@ -336,9 +338,12 @@ class LBI(discord.Client):
         super().dispatch(event, *args, **kwargs)
         # Dispatch to modules
         for module in self.modules.values():
-            module["initialized_class"].dispatch(event, *args, **kwargs)
+            if module["initialized_class"].config.configured:
+                module["initialized_class"].dispatch(event, *args, **kwargs)
+            else:
+                self.warning(f"Module {module['initialized_class'].name} is not configured.")
 
-    #@async_event
+    # @async_event
     async def on_error(self, event_method, *args, **kwargs):
         # This event is special because it is call directly
         for module in self.modules.values():
@@ -395,32 +400,29 @@ class ClientById:
         channel = self.client.get_channel(id_)
         return channel.send(*args, **kwargs)
 
-    async def get_role(self, id_=None, name=None, guild=None, case_sensitive=True):
-        guilds = self.client.guilds
-        if guild is not None:
-            guilds = [guild]
+    def get_role(self, id_=None, name=None, check=None, guilds=None):
+        """Get role by id or with custom check"""
+        if guilds is None:
+            guilds = self.client.guilds
         if id_ is not None:
             for guild in guilds:
                 role = discord.utils.get(guild.roles, id=id_)
                 if role:
                     return role
         if name is not None:
-            if case_sensitive:
-                for guild in guilds:
-                    role = discord.utils.get(guild.roles, name=name)
-                    if role:
-                        return role
-            else:
-                name = name.lower()
-                role = None
-                
-                for guild in guilds:
-                    for role_ in guild.roles:
-                        if role_.name.lower() == name:
-                            role = role_
-                            break
-                    if role is not None:
+            for guild in guilds:
+                role = discord.utils.get(guild.roles, name=name)
+                if role:
+                    return role
+        if check is not None:
+            role = None
+            for guild in guilds:
+                for role_ in guild.roles:
+                    if check(role_):
+                        role = role_
                         break
+                if role is not None:
+                    break
                 return role
         return None
 
@@ -460,6 +462,7 @@ communication = Communication(client1)
 async def start_bot():
     await client1.start(os.environ.get("DISCORD_TOKEN"))
 
+
 print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock")
 
 loop = asyncio.get_event_loop()
@@ -468,6 +471,3 @@ t = loop.create_unix_server(Communication,
 loop.run_until_complete(t)
 loop.create_task(start_bot())
 loop.run_forever()
-
-# loop = asyncio.get_event_loop()
-# loop.run_forever()

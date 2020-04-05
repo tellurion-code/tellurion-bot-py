@@ -10,17 +10,14 @@ from modules.base import BaseClassPython
 
 class MainClass(BaseClassPython):
     name = "errors"
-    help_active = True
-    authorized_users = [431043517217898496]
+    authorized_users = []
     authorized_roles = []
-    color = 0xdb1348
     help = {
         "description": "Montre toutes les erreurs du bot dans discord.",
         "commands": {
             "`{prefix}{command}`": "Renvoie une erreur de test.",
         }
     }
-    command_text = "unicorn"
 
     def __init__(self, client):
         super().__init__(client)
@@ -69,7 +66,7 @@ class MainClass(BaseClassPython):
         embed = discord.Embed(
             title="[Erreur] Aïe :/",
             description="```python\n{0}```".format(traceback.format_exc()),
-            color=self.color)
+            color=self.config.color)
         embed.set_image(url=random.choice(self.config.memes))
         message_list = None
 
@@ -90,11 +87,19 @@ class MainClass(BaseClassPython):
             self.objects.save_object('errorsList', self.errorsList)
 
             # Wait 60 seconds and delete message
-            await asyncio.sleep(60)
+            #await asyncio.sleep(60)
             try:
-                channel = self.client.get_channel(msg_id["channel_id"])
-                delete_message = await channel.fetch_message(msg_id["msg_id"])
-                await delete_message.delete()
+                # channel = self.client.get_channel(msg_id["channel_id"])
+                # delete_message = await channel.fetch_message(msg_id["msg_id"])
+                # await delete_message.delete()
+                await message.add_reaction("🗑️")
+
+                try:
+                    reaction, user = await self.client.wait_for('reaction_add', timeout=60.0, check=lambda r, u: r.emoji == "🗑️" and not u.bot and await self.auth(user))
+                except asyncio.TimeoutError:
+                    await message.delete()
+                else:
+                    await reaction.message.delete()
             except:
                 raise
             finally:
