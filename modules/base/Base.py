@@ -33,9 +33,6 @@ class BaseClass:
                           "authorized_users": [], "command_text": self.name.lower()})
 
     async def send_help(self, channel):
-        if not self.config.help_active:
-            return
-
         embed = discord.Embed(
             title="[{nom}] - Aide".format(nom=self.name),
             description="*" + self.help["description"].format(prefix=self.client.config['prefix']) + "*",
