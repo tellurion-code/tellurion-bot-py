@@ -236,7 +236,7 @@ class LBI(discord.Client):
         # Content: {"module_name": {"module": imported module, "class": initialized class}}
         self.modules = {}
         self.config = config
-        self.config.init({"modules": ["modules", "errors"], "prefix": "%", "owners": []})
+        self.config.init({"modules": ["modules", "errors"], "prefix": "%", "admin_roles": [], "admin_users": []})
         self.load_modules()
 
     @modules_edit
