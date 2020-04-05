@@ -72,11 +72,17 @@ class MainClass(BaseClassPython):
             for module in self.get_all_modules():
                 e = self.client.unload_module(module)
                 if e:
+                    await message.channel.send(f"An error occurred during the unloading of the module {module}.")
+                e = self.client.load_module(module)
+                if e:
                     await message.channel.send(f"An error occurred during the loading of the module {module}.")
             await self.com_list(message, args, kwargs)
             return
         for arg in args:
             e = self.client.unload_module(arg)
+            if e:
+                await message.channel.send(f"An error occurred during the unloading of the module {arg}.")
+            e = self.client.load_module(arg)
             if e:
                 await message.channel.send(f"An error occurred during the loading of the module {arg}.")
         await self.com_list(message, [], [])
