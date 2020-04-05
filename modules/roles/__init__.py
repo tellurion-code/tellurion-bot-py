@@ -3,6 +3,22 @@ import discord
 from modules.base import BaseClassPython
 
 
+class RoleAttributionError(Exception):
+    pass
+
+
+class AlreadyHasRoleError(RoleAttributionError):
+    pass
+
+
+class AlreadyRemovedRole(RoleAttributionError):
+    pass
+
+
+class UnavailableRoleError(RoleAttributionError):
+    pass
+
+
 class MainClass(BaseClassPython):
     name = "Roles"
     help = {
@@ -29,81 +45,85 @@ class MainClass(BaseClassPython):
         await message.channel.send(embed=response)
 
     async def com_add(self, message, args, kwargs):
-        guild = self.client.get_guild(self.client.config.main_guild)
-        member = guild.get_member(message.author.id)
         if len(args) <= 1:
             await message.channel.send("Il manque des arguments à la commande")
-        for role_ in args[1:]:
-            role = await self.client.id.get_role(name=role_, guilds=[guild],
-                                                 check=lambda x: x.name.lower() == role_.lower())
-            if role is None or str(role.id) not in self.config.roles.keys():
-                await message.channel.send(f"Le role {role_} n'est pas disponible.")
-            else:
-                await self.tryaddrole(message, member, role)
+        for role in args[1:]:
+            try:
+                await self.try_add_role(message.author, role)
+            except discord.errors.Forbidden:
+                await message.channel.send(f"Je n'ai pas la permission de modifier le role {role}.")
+            except AlreadyHasRoleError:
+                await message.channel.send(f"Vous avez déjà le role {role}.")
+            except UnavailableRoleError:
+                await message.channel.send(f"Le role {role} n'est pas une role disponible à l'autoattribution.")
 
     async def com_remove(self, message, args, kwargs):
-        guild = self.client.get_guild(self.client.config.main_guild)
-        member = guild.get_member(message.author.id)
         if len(args) <= 1:
             await message.channel.send("Il manque des arguments à la commande")
-        for role_ in args[1:]:
-            role = await self.client.id.get_role(name=role_, guilds=[guild],
-                                                 check=lambda x: x.name.lower() == role_.lower())
-            if role is None or str(role.id) not in self.config.roles.keys():
-                await message.channel.send(f"Le role {role_} n'est pas disponible.")
-            else:
-                await self.tryremoverole(message, member, role)
+        for role in args[1:]:
+            try:
+                await self.try_remove_role(message.author, role)
+            except discord.errors.Forbidden:
+                await message.channel.send(f"Je n'ai pas la permission de modifier le role {role}.")
+            except AlreadyRemovedRole:
+                await message.channel.send(f"Vous n'avez pas le role {role}.")
+            except UnavailableRoleError:
+                await message.channel.send(f"Le role {role} n'est pas une role disponible à l'autoattribution.")
 
     async def com_toggle(self, message, args, kwargs):
-        guild = self.client.get_guild(self.client.config.main_guild)
-        member = guild.get_member(message.author.id)
         if len(args) <= 1:
             await message.channel.send("Il manque des arguments à la commande")
-        for role_ in args[1:]:
-            role = await self.client.id.get_role(name=role_, guilds=[guild],
-                                                 check=lambda x: x.name.lower() == role_.lower())
-            if role is None or str(role.id) not in self.config.roles.keys():
-                await message.channel.send(f"Le role {role_} n'est pas disponible.")
-            else:
-                await self.trytogglerole(message, member, role)
+        for role in args[1:]:
+            try:
+                await self.try_toggle_role(message.author, role)
+            except discord.errors.Forbidden:
+                await message.channel.send(f"Je n'ai pas la permission de modifier le role {role}.")
+            except AlreadyHasRoleError:
+                await message.channel.send(f"Vous avez déjà le role {role}.")
+            except AlreadyRemovedRole:
+                await message.channel.send(f"Vous n'avez pas le role {role}.")
+            except UnavailableRoleError:
+                await message.channel.send(f"Le role {role} n'est pas une role disponible à l'autoattribution.")
 
     async def command(self, message, args, kwargs):
-        guild = self.client.get_guild(self.config.guild)
-        member = guild.get_member(message.author.id)
         if len(args) < 1:
             await message.channel.send("Il manque des arguments à la commande")
-        for role_ in args:
-            role = await self.client.id.get_role(name=role_, guilds=[guild],
-                                                 check=lambda x: x.name.lower() == role_.lower())
-            if role is None or str(role.id) not in self.config.roles.keys():
-                await message.channel.send(f"Le role {role_} n'est pas disponible.")
-            else:
-                await self.trytogglerole(message, member, role)
+        for role in args:
+            try:
+                await self.try_toggle_role(message.author, role)
+            except discord.errors.Forbidden:
+                await message.channel.send(f"Je n'ai pas la permission de modifier le role {role}.")
+            except AlreadyHasRoleError:
+                await message.channel.send(f"Vous avez déjà le role {role}.")
+            except AlreadyRemovedRole:
+                await message.channel.send(f"Vous n'avez pas le role {role}.")
+            except UnavailableRoleError:
+                await message.channel.send(f"Le role {role} n'est pas une role disponible à l'autoattribution.")
 
-    async def trytogglerole(self, message, member, role):
-        if role in member.roles:
-            await self.tryremoverole(message, member, role)
-        else:
-            await self.tryaddrole(message, member, role)
+    def get_member(self, user):
+        return self.client.get_guild(self.client.config.main_guild).get_member(user.id)
 
-    async def tryaddrole(self, message, member, role):
-        if role in member.roles:
-            await message.channel.send(f"Vous avez déjà le rôle {role}.")
-            return
-        try:
-            await member.add_roles(role, reason="Auto-attribution")
-        except discord.errors.Forbidden:
-            await message.channel.send(f"Je n'ai pas la permission de vous attribuer le rôle {role}.")
-        else:
-            await message.channel.send(f"Vous avez reçu le rôle {role}.")
+    def get_role(self, role):
+        role = self.client.id.get_role(name=role, guilds=[self.client.get_guild(self.client.config.main_guild)],
+                                       check=lambda x: x.name.lower() == role.lower())
+        if role is None or str(role.id) not in self.config.roles.keys():
+            raise UnavailableRoleError()
+        return role
 
-    async def tryremoverole(self, message, member, role):
-        if not role in member.roles:
-            await message.channel.send(f"Vous n'avez pas le rôle {role}.")
-            return
-        try:
-            await member.remove_roles(role, reason="Auto-désattribution")
-        except discord.errors.Forbidden:
-            await message.channel.send(f"Je n'ai pas la permission de vous retirer le rôle {role}.")
+    async def try_toggle_role(self, user, role):
+        if self.get_role(role) in self.get_member(user).roles:
+            await self.try_remove_role(user, role)
         else:
-            await message.channel.send(f"Vous avez perdu le rôle {role}.")
+            await self.try_add_role(user, role)
+
+    async def try_add_role(self, user, role):
+        role = self.get_role(role)
+        if role in user.roles:
+            raise AlreadyHasRoleError()
+        await self.get_member(user).add_roles(role, reason="Auto-attribution")
+
+    async def try_remove_role(self, user, role):
+        role = self.get_role(role)
+        if role not in user.roles:
+            raise AlreadyRemovedRole()
+        await self.get_member(user).remove_roles(role, reason="Auto-désattribution")

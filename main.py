@@ -400,7 +400,7 @@ class ClientById:
         channel = self.client.get_channel(id_)
         return channel.send(*args, **kwargs)
 
-    async def get_role(self, id_=None, name=None, check=None, guilds=None):
+    def get_role(self, id_=None, name=None, check=None, guilds=None):
         """Get role by id or with custom check"""
         if guilds is None:
             guilds = self.client.guilds
