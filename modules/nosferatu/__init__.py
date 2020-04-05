@@ -13,6 +13,9 @@ class MainClass(BaseClassPython):
         "description": "Module du jeu Nosferatu",
         "commands": {
             "`{prefix}{command}`": "Démarre une partie de Nosferatu",
+            "`{prefix}{command} join`": "Rejoint une partie de Nosferatu",
+            "`{prefix}{command} quit`": "Quitte une partie de Nosferatu",
+            "`{prefix}{command} players`": "Affiche les joueurs d'une partie de Nosferatu",
         }
     }
     color = 0xff0000
@@ -36,14 +39,38 @@ class MainClass(BaseClassPython):
                         "id": message.author.id,
                         "role": ""
                     }
-                ]
+                ],
+                "turn": -1
             }
         else:
             await message.channel.send("Il y a déjà une partie en cours")
     #     self._can_delete.add(message.id)
 
-    async def com_start():
+    async def com_start(self, message, args, kwargs):
         if message.channel.id in self.games:
-            await message.channel.send("test")
+            if self.games[message.channel.id].players.length >= 5:
+                await message.channel.send("Début de partie")
+            else:
+                await message.channel.send("Il faut au minimum 5 joueurs pour commencer la partie")
+        else:
+            await message.channel.send("Il n'y a pas de partie en cours")
+
+    async def com_join(self, message, args, kwargs):
+        if message.channel.id in self.games:
+            if self.games[message.channel.id].players.length < 8:
+                await message.channel.send("<@" + message.author.id + "> rejoint la partie")
+            else:
+                await message.channel.send("Il y a déjà le nombre maximum de joueurs (8)")
+        else:
+            await message.channel.send("Il n'y a pas de partie en cours")
+
+    async def com_players(self, message, args, kwargs):
+        if message.channel.id in self.games:
+            embed = discord.Embed(
+                title = "Liste des joueurs",
+                color = self.color,
+                description = "```" + ' '.join([self.client.get_user(x["id"]).name for x in self.games[message.channel.id].get("players")]) + "```"
+            )
+            await message.channel.send(embed = embed)
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
