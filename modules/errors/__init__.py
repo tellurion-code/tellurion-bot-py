@@ -96,8 +96,7 @@ class MainClass(BaseClassPython):
 
                 try:
                     reaction, user = await self.client.wait_for('reaction_add', timeout=60.0, check=lambda r,
-                                                                                                           u: r.emoji == "🗑️" and not u.bot and self.auth(
-                        user))
+                                                                u: r.emoji == "🗑️" and not u.bot and self.auth(u))
                 except asyncio.TimeoutError:
                     await message.delete()
                 else:
