@@ -82,7 +82,7 @@ class MainClass(BaseClassPython):
                 raise e
         # Send message to current channel if exists
         if channel is not None:
-            message = await channel.send(embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute",
+            message = await channel.send(embed=embed.set_footer(text="Ce message va s'autodétruire dans une minute, ou vous pouvez cliquer sur la corbeille",
                                                                 icon_url=self.config.icon))
             msg_id = {"channel_id": message.channel.id, "msg_id": message.id}
             self.errorsList.append(msg_id)
@@ -90,11 +90,19 @@ class MainClass(BaseClassPython):
             self.objects.save_object('errorsList', self.errorsList)
 
             # Wait 60 seconds and delete message
-            await asyncio.sleep(60)
+            #await asyncio.sleep(60)
             try:
-                channel = self.client.get_channel(msg_id["channel_id"])
-                delete_message = await channel.fetch_message(msg_id["msg_id"])
-                await delete_message.delete()
+                # channel = self.client.get_channel(msg_id["channel_id"])
+                # delete_message = await channel.fetch_message(msg_id["msg_id"])
+                # await delete_message.delete()
+                await message.add_reaction("🗑️")
+
+                try:
+                    reaction, user = await self.client.wait_for('reaction_add', timeout=60.0, check=lambda r, u: r.emoji == "🗑️" and not u.bot)
+                except asyncio.TimeoutError:
+                    await message.delete()
+                else:
+                    await reaction.message.delete()
             except:
                 raise
             finally:
