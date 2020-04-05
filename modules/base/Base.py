@@ -30,7 +30,7 @@ class BaseClass:
         self.objects = Objects(path=os.path.join("data", self.name.lower()))
         self.config = Config(parent=self.client.config, name="mod-" + self.name.lower())
         self.config.init({"help_active": True, "color": 0x000000, "auth_everyone": False, "authorized_roles": [],
-                          "authorized_users": [], "command_text": self.name.lower()})
+                          "authorized_users": [], "command_text": self.name.lower(), "configured": False})
 
     async def send_help(self, channel):
         embed = discord.Embed(
@@ -160,6 +160,8 @@ class BaseClass:
 
     async def on_message(self, message: discord.Message):
         """Override this function to deactivate command_text parsing"""
+        if message.author.bot:
+            return
         await self.parse_command(message)
 
     async def command(self, message, args, kwargs):

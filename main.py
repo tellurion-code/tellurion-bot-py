@@ -195,7 +195,9 @@ def event(func):
             return lambda: None
         else:
             return func(self, *args, **kwargs)
+
     return wrapper
+
 
 """def async_event(func):
     async def wrapper(self, *args, **kwargs):
@@ -204,7 +206,6 @@ def event(func):
         else:
             return func(self, *args, **kwargs)
     return wrapper"""
-
 
 setup_logging()
 
@@ -337,9 +338,12 @@ class LBI(discord.Client):
         super().dispatch(event, *args, **kwargs)
         # Dispatch to modules
         for module in self.modules.values():
-            module["initialized_class"].dispatch(event, *args, **kwargs)
+            if module["initialized_class"].config.configured:
+                module["initialized_class"].dispatch(event, *args, **kwargs)
+            else:
+                self.warning(f"Module {module['initialized_class'].name} is not configured.")
 
-    #@async_event
+    # @async_event
     async def on_error(self, event_method, *args, **kwargs):
         # This event is special because it is call directly
         for module in self.modules.values():
@@ -414,7 +418,7 @@ class ClientById:
             else:
                 name = name.lower()
                 role = None
-                
+
                 for guild in guilds:
                     for role_ in guild.roles:
                         if role_.name.lower() == name:
@@ -460,6 +464,7 @@ communication = Communication(client1)
 
 async def start_bot():
     await client1.start(os.environ.get("DISCORD_TOKEN"))
+
 
 print(os.path.join("/tmp", os.path.dirname(os.path.realpath(__file__))) + ".sock")
 

@@ -22,13 +22,15 @@ class MainClass(BaseClassPython):
                           "succes": "{user} a désormais accepté."})
 
     async def on_message(self, message):
+        if message.author.bot:
+            return
         if message.channel.id == self.config.listen_chan:
             if message.content.lower() in self.config.passwords:
                 new_role = await self.client.id.get_role(id_=self.config.new_role, guild=message.channel.guild)
                 if new_role in message.author.roles:
                     await message.author.remove_roles(new_role)
                     await message.author.add_roles(await self.client.id.get_role(id_=self.config.accepted_role,
-                                                                                guild=message.channel.guild))
+                                                                                 guild=message.channel.guild))
                     await message.author.send(self.config.succes_pm)
                     await message.channel.guild.get_channel(self.config.log_chan).send(
                         self.config.succes.format(user=message.author.mention))
