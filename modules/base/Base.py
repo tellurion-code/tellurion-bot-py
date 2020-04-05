@@ -42,12 +42,12 @@ class BaseClass:
 
         embed = discord.Embed(
             title="[{nom}] - Aide".format(nom=self.name),
-            description=self.help["description"].format(prefix=self.client.config['prefix']),
+            description="*" + self.help["description"].format(prefix=self.client.config['prefix']) + "*",
             color=self.color
         )
         for command, description in self.help["commands"].items():
             embed.add_field(name=command.format(prefix=self.client.config['prefix'], command=self.command_text),
-                            value=description.format(prefix=self.client.config['prefix'], command=self.command_text),
+                            value="-> " + description.format(prefix=self.client.config['prefix'], command=self.command_text),
                             inline=False)
         await channel.send(embed=embed)
 
