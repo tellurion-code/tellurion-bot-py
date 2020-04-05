@@ -1,5 +1,3 @@
-import discord
-import sys
 from modules.base import BaseClassPython
 
 
@@ -15,13 +13,13 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"accepted_role":430846685380345876,
-                          "new_role":430845952388104212,
-                          "listen_chan":430995739636793345,
-                          "log_chan":429977240202248192,
-                          "passwords":["cacahuète","cacahuete","cacahuètes","cacahuetes"],
-                          "succes_pm":"Félicitations, vous êtes désormais un **e-penseur** accompli. Bienvenue sur le serveur E-penser.",
-                          "succes":" est désormais un **e-penseur** accompli."})
+        self.config.init({"accepted_role": 0,
+                          "new_role": 0,
+                          "listen_chan": 0,
+                          "log_chan": 0,
+                          "passwords": [],
+                          "succes_pm": "Félicitations, vous savez lire les règles!",
+                          "succes": "{user} a désormais accepté."})
 
     async def on_message(self, message):
         if message.channel.id == self.config.listen_chan:
@@ -32,6 +30,7 @@ class MainClass(BaseClassPython):
                     await message.author.add_roles(await self.client.id.get_role(id_=self.config.accepted_role,
                                                                                 guild=message.channel.guild))
                     await message.author.send(self.config.succes_pm)
-                    await message.channel.guild.get_channel(self.config.log_chan).send(message.author.mention + self.config.succes)
+                    await message.channel.guild.get_channel(self.config.log_chan).send(
+                        self.config.succes.format(user=message.author.mention))
             else:
                 await message.author.send(f"Le mot de passe que vous avez entré est incorrect : `{message.content}`.\nNous vous prions de lire le règlement afin d'accéder au serveur complet.")

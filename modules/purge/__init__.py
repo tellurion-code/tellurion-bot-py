@@ -1,19 +1,13 @@
-import discord
-import sys
 from modules.base import BaseClassPython
 
 class MainClass(BaseClassPython):
     name = "Purge"
-    color = 0xff0004
-    help_active = True
-    authorized_roles=[522918472548745217]
     help = {
         "description": "Suppression de messages en block.",
         "commands": {
             "`{prefix}{command} <message_id>`": "Supprime tous les messages du salon jusqu'au message spécifié",
         }
     }
-    command_text = "purge"
 
     async def command(self, message, args, kwargs):
         message_id = None

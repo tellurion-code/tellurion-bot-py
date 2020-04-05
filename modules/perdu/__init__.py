@@ -20,9 +20,6 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} stats history": "Affiche un graphique avec le nombre de pertes."
         }
     }
-    help_active = True
-    command_text = "perdu"
-    color = 0xff6ba6
 
     def __init__(self, client):
         super().__init__(client)
@@ -183,4 +180,4 @@ class MainClass(BaseClassPython):
         )[:2000]
         await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
                                                        description=embed_description,
-                                                       color=self.color))
+                                                       color=self.config.color))

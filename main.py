@@ -236,7 +236,8 @@ class LBI(discord.Client):
         # Content: {"module_name": {"module": imported module, "class": initialized class}}
         self.modules = {}
         self.config = config
-        self.config.init({"modules": ["modules", "errors"], "prefix": "%", "admin_roles": [], "admin_users": []})
+        self.config.init(
+            {"modules": ["modules", "errors"], "prefix": "%", "admin_roles": [], "admin_users": [], "main_guild": 0})
         self.load_modules()
 
     @modules_edit
@@ -468,6 +469,3 @@ t = loop.create_unix_server(Communication,
 loop.run_until_complete(t)
 loop.create_task(start_bot())
 loop.run_forever()
-
-# loop = asyncio.get_event_loop()
-# loop.run_forever()

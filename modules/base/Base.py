@@ -18,11 +18,6 @@ class BaseClass:
 
         }
     }
-    help_active = False
-    color = 0x000000
-    command_text = None
-    authorized_users = []
-    authorized_roles = []
 
     def __init__(self, client):
         """Initialize module class
@@ -32,22 +27,24 @@ class BaseClass:
         :param client: client instance
         :type client: LBI"""
         self.client = client
-        self.objects = Objects(path=os.path.join("data", self.name))
-        self.config = Config(parent=self.client.config, name="mod-" + self.name)
-        self.config.init({"authorized_roles": self.authorized_roles, "authorized_users": self.authorized_users})
+        self.objects = Objects(path=os.path.join("data", self.name.lower()))
+        self.config = Config(parent=self.client.config, name="mod-" + self.name.lower())
+        self.config.init({"help_active": True, "color": 0x000000, "auth_everyone": False, "authorized_roles": [],
+                          "authorized_users": [], "command_text": self.name.lower()})
 
     async def send_help(self, channel):
-        if not self.help_active:
+        if not self.config.help_active:
             return
 
         embed = discord.Embed(
             title="[{nom}] - Aide".format(nom=self.name),
             description="*" + self.help["description"].format(prefix=self.client.config['prefix']) + "*",
-            color=self.color
+            color=self.config.color
         )
         for command, description in self.help["commands"].items():
-            embed.add_field(name=command.format(prefix=self.client.config['prefix'], command=self.command_text),
-                            value="-> " + description.format(prefix=self.client.config['prefix'], command=self.command_text),
+            embed.add_field(name=command.format(prefix=self.client.config['prefix'], command=self.config.command_text),
+                            value="-> " + description.format(prefix=self.client.config['prefix'],
+                                                             command=self.config.command_text),
                             inline=False)
         await channel.send(embed=embed)
 
@@ -65,6 +62,8 @@ class BaseClass:
         :type guild: Int
         :type user: discord.User
         """
+        if self.config.auth_everyone:
+            return True
         if user_list is None:
             user_list = self.config.authorized_users + self.client.config.admin_users
         if user.id in user_list:
@@ -90,10 +89,11 @@ class BaseClass:
 
         :param message: message to parse
         :type message: discord.Message"""
-        if message.content.startswith(self.client.config["prefix"] + (self.command_text if self.command_text else "")):
+        if message.content.startswith(
+                self.client.config["prefix"] + (self.config.command_text if self.config.command_text else "")):
 
             content = message.content.lstrip(
-                self.client.config["prefix"] + (self.command_text if self.command_text else ""))
+                self.client.config["prefix"] + (self.config.command_text if self.config.command_text else ""))
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
             if await self.auth(message.author):

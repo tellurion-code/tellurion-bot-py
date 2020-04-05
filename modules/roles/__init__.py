@@ -5,8 +5,6 @@ from modules.base import BaseClassPython
 
 class MainClass(BaseClassPython):
     name = "Roles"
-    color = 0xffb593
-    help_active = True
     help = {
         "description": "Module gérant l'attribution des roles",
         "commands": {
@@ -17,24 +15,21 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} <role> [role] ...`": "Alias de `{prefix}{command} toggle`",
         }
     }
-    command_text = "roles"
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"guild":297780867286433792,
-                          "roles": {"435559220860157952":"Rôle mentionné lors des jeux."}})
+        self.config.init({"roles": {}})
 
     async def com_list(self, message, args, kwargs):
-        response = discord.Embed(title="Roles disponibles", color=self.color)
+        response = discord.Embed(title="Roles disponibles", color=self.config.color)
         for id_ in self.config.roles.keys():
-            print(id_,type(id_))
             role = message.guild.get_role(int(id_))
             if role is not None:
-                response.add_field(name=role.name, value=f" -> `{self.config.roles[id_]}`", inline=True)
+                response.add_field(name=role.name, value=f"-> `{self.config.roles[id_]}`", inline=True)
         await message.channel.send(embed=response)
 
     async def com_add(self, message, args, kwargs):
-        guild = self.client.get_guild(self.config.guild)
+        guild = self.client.get_guild(self.client.config.main_guild)
         member = guild.get_member(message.author.id)
         if len(args) <= 1:
             await message.channel.send("Il manque des arguments à la commande")
@@ -46,7 +41,7 @@ class MainClass(BaseClassPython):
                 await self.tryaddrole(message, member, role)
 
     async def com_remove(self, message, args, kwargs):
-        guild = self.client.get_guild(self.config.guild)
+        guild = self.client.get_guild(self.client.config.main_guild)
         member = guild.get_member(message.author.id)
         if len(args) <= 1:
             await message.channel.send("Il manque des arguments à la commande")
@@ -58,7 +53,7 @@ class MainClass(BaseClassPython):
                 await self.tryremoverole(message, member, role)
 
     async def com_toggle(self, message, args, kwargs):
-        guild = self.client.get_guild(self.config.guild)
+        guild = self.client.get_guild(self.client.config.main_guild)
         member = guild.get_member(message.author.id)
         if len(args) <= 1:
             await message.channel.send("Il manque des arguments à la commande")
@@ -97,7 +92,7 @@ class MainClass(BaseClassPython):
             await message.channel.send(f"Je n'ai pas la permission de vous attribuer le rôle {role}.")
         else:
             await message.channel.send(f"Vous avez reçu le rôle {role}.")
-    
+
     async def tryremoverole(self, message, member, role):
         if not role in member.roles:
             await message.channel.send(f"Vous n'avez pas le rôle {role}.")

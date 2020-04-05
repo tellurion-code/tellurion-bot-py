@@ -9,9 +9,6 @@ from modules.modules.api import Api
 
 class MainClass(BaseClassPython):
     name = "modules"
-    help_active = True
-    command_text = "modules"
-    color = 0x000000
     help = {
         "description": "Manage bot modules.",
         "commands": {

@@ -13,10 +13,6 @@ class MainClass(BaseClassPython):
             "{prefix}{command} <mention>": "Demande gentilment de lire le google doc"
         }
     }
-    help_active = True
-    command_text = "rtfgd"
-
-    color = 0xdb1348
 
     def __init__(self, client):
         super().__init__(client)
@@ -26,4 +22,4 @@ class MainClass(BaseClassPython):
         await message.channel.send(
             " ".join(member.mention for member in message.mentions),
             embed=discord.Embed(title="Read da fu**ing GOOGLE DOCS ! (╯°□°）╯︵ ┻━┻",
-                                color=self.color).set_image(url=random.choice(self.config.memes)))
+                                color=self.config.color).set_image(url=random.choice(self.config.memes)))
