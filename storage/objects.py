@@ -8,12 +8,12 @@ class Objects:
     def __init__(self, path: str):
         self.path = os.path.abspath(path)
         os.makedirs(os.path.join(self.path, "objects"), exist_ok=True)
-        self.encoder = jsonencoder.Encoder
+        self.encoder = jsonencoder.Encoder()
 
     def save_object(self, object_name, object_instance):
         """Save object into json file"""
         with open(os.path.join(self.path, "objects", object_name + ".json"), "w") as file:
-            json.dump(object_instance, file, cls=self.encoder)
+            json.dump(object_instance, file, cls=self.encoder.JSONEncoder)
 
     def load_object(self, object_name):
         """Load object from json file"""

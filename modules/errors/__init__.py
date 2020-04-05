@@ -42,7 +42,7 @@ class MainClass(BaseClassPython):
                 await to_delete.delete()
             except:
                 raise
-        await self.objects.save_object('errorsList', self.errorsList)
+        self.objects.save_object('errorsList', self.errorsList)
 
     async def command(self, message, args, kwargs):
         raise Exception("KERNEL PANIC!!!")
