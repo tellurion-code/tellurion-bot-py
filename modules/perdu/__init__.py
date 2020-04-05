@@ -84,7 +84,7 @@ class MainClass(BaseClassPython):
         return saved_messages
 
     async def com_fill(self, message: discord.Message, args, kwargs):
-        if await self.auth(message.author):
+        if self.auth(message.author):
             async with message.channel.typing():
                 await self.fill_history()
             await message.channel.send("Fait.")

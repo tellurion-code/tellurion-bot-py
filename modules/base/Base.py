@@ -45,8 +45,8 @@ class BaseClass:
                             inline=False)
         await channel.send(embed=embed)
 
-    async def auth(self, user: discord.User, role_list: List[int] = None, user_list: List[int] = None,
-                   guild: int = None):
+    def auth(self, user: discord.User, role_list: List[int] = None, user_list: List[int] = None,
+             guild: int = None):
         """
         Return True if user is an owner of the bot or in authorized_users or he have a role in authorized_roles.
 
@@ -93,7 +93,7 @@ class BaseClass:
                 self.client.config["prefix"] + (self.config.command_text if self.config.command_text else ""))
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
-            if await self.auth(message.author):
+            if self.auth(message.author):
                 if sub_command in dir(self):
                     await self.__getattribute__(sub_command)(message, args, kwargs)
                 else:
