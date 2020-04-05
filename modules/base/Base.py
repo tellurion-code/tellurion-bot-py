@@ -18,11 +18,6 @@ class BaseClass:
 
         }
     }
-    help_active = False
-    color = 0x000000
-    command_text = None
-    authorized_users = []
-    authorized_roles = []
 
     def __init__(self, client):
         """Initialize module class
@@ -32,47 +27,51 @@ class BaseClass:
         :param client: client instance
         :type client: LBI"""
         self.client = client
-        self.objects = Objects(path=os.path.join("data", self.name))
-        self.config = Config(parent=self.client.config, name="mod-" + self.name)
-        self.config.init({"authorized_roles": self.authorized_roles, "authorized_users": self.authorized_users})
+        self.objects = Objects(path=os.path.join("data", self.name.lower()))
+        self.config = Config(parent=self.client.config, name="mod-" + self.name.lower())
+        self.config.init({"help_active": True, "color": 0x000000, "auth_everyone": False, "authorized_roles": [],
+                          "authorized_users": [], "command_text": self.name.lower(), "configured": False})
 
     async def send_help(self, channel):
-        if not self.help_active:
-            return
-
         embed = discord.Embed(
             title="[{nom}] - Aide".format(nom=self.name),
             description="*" + self.help["description"].format(prefix=self.client.config['prefix']) + "*",
-            color=self.color
+            color=self.config.color
         )
         for command, description in self.help["commands"].items():
-            embed.add_field(name=command.format(prefix=self.client.config['prefix'], command=self.command_text),
-                            value="-> " + description.format(prefix=self.client.config['prefix'], command=self.command_text),
+            embed.add_field(name=command.format(prefix=self.client.config['prefix'], command=self.config.command_text),
+                            value="-> " + description.format(prefix=self.client.config['prefix'],
+                                                             command=self.config.command_text),
                             inline=False)
         await channel.send(embed=embed)
 
-    async def auth(self, user: discord.User, role_list: List[int] = None, user_list: List[int] = None):
+    async def auth(self, user: discord.User, role_list: List[int] = None, user_list: List[int] = None,
+                   guild: int = None):
         """
         Return True if user is an owner of the bot or in authorized_users or he have a role in authorized_roles.
 
+        :param user: User to check
         :param user_list: List of authorized users, if not specified use self.authorized_users
         :param role_list: list of authorized roles, if not specified use self.authorized_roles
+        :param guild: Specific guild to search role
         :type user_list: List[Int]
         :type role_list: List[Int]
+        :type guild: Int
         :type user: discord.User
         """
-        if role_list is None:
-            role_list = self.config["authorized_roles"]
+        if self.config.auth_everyone:
+            return True
         if user_list is None:
-            user_list = self.config["authorized_users"]
-        if len(role_list) == 0 and len(user_list) == 0:
-            # Everyone can use this command
-            return True
-        if user.id in self.client.config["owners"]:
-            return True
+            user_list = self.config.authorized_users + self.client.config.admin_users
         if user.id in user_list:
             return True
-        for guild in self.client.guilds:
+        if role_list is None:
+            role_list = self.config.authorized_roles + self.client.config.admin_roles
+        if guild is None:
+            guilds = self.client.guilds
+        else:
+            guilds = [guild]
+        for guild in guilds:
             if guild.get_member(user.id):
                 for role_id in role_list:
                     if role_id in [r.id for r in guild.get_member(user.id).roles]:
@@ -87,10 +86,11 @@ class BaseClass:
 
         :param message: message to parse
         :type message: discord.Message"""
-        if message.content.startswith(self.client.config["prefix"] + (self.command_text if self.command_text else "")):
+        if message.content.startswith(
+                self.client.config["prefix"] + (self.config.command_text if self.config.command_text else "")):
 
             content = message.content.lstrip(
-                self.client.config["prefix"] + (self.command_text if self.command_text else ""))
+                self.client.config["prefix"] + (self.config.command_text if self.config.command_text else ""))
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
             if await self.auth(message.author):
@@ -160,6 +160,8 @@ class BaseClass:
 
     async def on_message(self, message: discord.Message):
         """Override this function to deactivate command_text parsing"""
+        if message.author.bot:
+            return
         await self.parse_command(message)
 
     async def command(self, message, args, kwargs):
