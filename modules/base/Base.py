@@ -80,24 +80,20 @@ class BaseClass:
 
     async def parse_command(self, message):
         """Parse a command_text from received message and execute function
-        %git update
-        com_update(m..)
         Parse message like `{prefix}{command_text} subcommand` and call class method `com_{subcommand}`.
 
         :param message: message to parse
         :type message: discord.Message"""
-        if message.content.startswith(
-                self.client.config["prefix"] + (self.config.command_text if self.config.command_text else "")):
-
-            content = message.content.lstrip(
-                self.client.config["prefix"] + (self.config.command_text if self.config.command_text else ""))
+        command = self.client.config["prefix"] + (self.config.command_text if self.config.command_text else "") + " "
+        if message.content.startswith(command):
+            content = message.content.split(" ", 1)[1]
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
             if self.auth(message.author):
                 if sub_command in dir(self):
                     await self.__getattribute__(sub_command)(message, args, kwargs)
                 else:
-                    await self.command(message, [sub_command[4:]] + args, kwargs)
+                    await self.command(message, args, kwargs)
             else:
                 await self.unauthorized(message)
 
@@ -112,19 +108,21 @@ class BaseClass:
         :type content: str
 
         :return: parsed arguments: [subcommand, [arg1, arg2, ...], [(option1, arg1), (option2, arg2), ...]]
-        :rtype: list[str, list, list]"""
+        :rtype: tuple[str, list, list]"""
         if not len(content.split()):
             return "", [], []
         # Sub_command
         sub_command = content.split()[0]
-        args_ = []
+        args_ = [sub_command]
         kwargs = []
         if len(content.split()) > 1:
+            # Remove subcommand
+            content = content.lstrip(sub_command)
             # Take the other part of command_text
-            content = content.split(" ", 1)[1].replace("\"", "\"\"")
+            content = content.lstrip().replace("\"", "\"\"")
             # Splitting around quotes
             quotes = [element.split("\" ") for element in content.split(" \"")]
-            # Split all sub chains but brute chains and flat the resulting list
+            # Split all sub chains but raw chains and flat the resulting list
             args = [item.split() if item[0] != "\"" else [item, ] for sublist in quotes for item in sublist]
             # Second plating
             args = [item for sublist in args for item in sublist]
