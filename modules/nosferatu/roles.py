@@ -23,7 +23,7 @@ class Player:
         await game["channel"].send(embed = embed)
         for id, player in game["players"].items():
             if id not in exceptions:
-                player.user.send(embed = embed)
+                await player.user.send(embed = embed)
 
     #Broadcast les infos du jeu à tous les joueurs
     async def send_info(self, game):
@@ -61,9 +61,6 @@ class Player:
 
 class Renfield(Player):
     role = "Renfield"
-
-    def __init__(self, _user):
-        super().__init__(_user)
 
     async def game_start(self, game):
         #Détermine au hasard l'ordre et le premier joueur
@@ -508,9 +505,6 @@ class HiddenRole(Player):
     bites = 0
     hand = []
 
-    def __init__(self, _user):
-        super().__init__(_user)
-
     async def send_hand(self, game):
         info_message = await self.user.send(embed = discord.Embed(
             title = "Cartes choisies",
@@ -612,9 +606,6 @@ class HiddenRole(Player):
 class Hunter(HiddenRole):
     role = "Hunter"
 
-    def __init__(self, _user):
-        super().__init__(_user)
-
     async def game_start(self, games, index):
         await self.user.send(embed = discord.Embed(
             title = "Début de partie 🤠",
@@ -629,9 +620,6 @@ class Hunter(HiddenRole):
 
 class Vampire(HiddenRole):
     role = "Vampire"
-
-    def __init__(self, _user):
-        super().__init__(_user)
 
     async def game_start(self, games, index):
         await self.user.send(embed = discord.Embed(

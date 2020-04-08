@@ -10,6 +10,7 @@ import modules.nosferatu.globals as globals
 globals.init()
 
 class MainClass(BaseClassPython):
+    debug = True
     name = "Nosferatu"
     help_active = True
     help = {
@@ -67,26 +68,30 @@ class MainClass(BaseClassPython):
     #Rejoindre la partie
     async def com_join(self, message, args, kwargs):
         if message.channel.id in globals.games:
-            if message.author.id in globals.games[message.channel.id]["players"]:
-                await message.channel.send("Tu es déjà dans la partie")
-            elif len(globals.games[message.channel.id]["players"]) < 8:
-                await message.channel.send("<@" + str(message.author.id) + "> rejoint la partie")
+            game = globals.games[message.channel.id]
+            if game["turn"] == -1:
+                if message.author.id in game["players"]:
+                    await message.channel.send("Tu es déjà dans la partie")
+                elif len(game["players"]) < 8:
+                    await message.channel.send("<@" + str(message.author.id) + "> rejoint la partie")
 
-                globals.games[message.channel.id]["players"][message.author.id] = Hunter(self.client.get_user(message.author.id))
-            else:
-                await message.channel.send("Il y a déjà le nombre maximum de joueurs (8)")
+                    game["players"][message.author.id] = Hunter(self.client.get_user(message.author.id))
+                else:
+                    await message.channel.send("Il y a déjà le nombre maximum de joueurs (8)")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
     #Quitter la partie
     async def com_quit(self, message, args, kwargs):
         if message.channel.id in globals.games:
-            if message.author.id in globals.games[message.channel.id]["players"]:
-                await message.channel.send("<@" + str(message.author.id) + "> rejoint la partie")
+            game = globals.games[message.channel.id]
+            if game["turn"] == -1:
+                if message.author.id in game["players"]:
+                    await message.channel.send("<@" + str(message.author.id) + "> rejoint la partie")
 
-                del globals.games[message.channel.id]["players"][message.author.id]
-            elif len(globals.games[message.channel.id]["players"]) < 8:
-                await message.channel.send("Tu n'es pas dans la partie")
+                    del game["players"][message.author.id]
+                elif len(game["players"]) < 8:
+                    await message.channel.send("Tu n'es pas dans la partie")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -106,38 +111,39 @@ class MainClass(BaseClassPython):
     async def com_nominate(self, message, args, kwargs):
         if message.channel.id in globals.games:
             game = globals.games[message.channel.id]
-            if message.author.id in game["players"]:
-                if globals.games[message.channel.id]["players"][message.author.id].role == "Renfield":
-                    await message.channel.send(self.client.get_user(message.author.id).name + " va nominer un nouveau Renfield")
+            if game["turn"] == -1:
+                if message.author.id in game["players"]:
+                    if globals.games[message.channel.id]["players"][message.author.id].role == "Renfield":
+                        await message.channel.send(self.client.get_user(message.author.id).name + " va nominer un nouveau Renfield")
 
-                    players = [x for x in game["players"]]
+                        players = [x for x in game["players"]]
 
-                    async def set_renfield(reactions):
-                        #Change de Renfield
-                        index = reactions[message.author.id][0]
-                        await message.channel.send(self.client.get_user(players[index]).name + " est maitenant Renfield")
+                        async def set_renfield(reactions):
+                            #Change de Renfield
+                            index = reactions[message.author.id][0]
+                            await message.channel.send(self.client.get_user(players[index]).name + " est maitenant Renfield")
 
-                        game["players"][message.author.id] = Hunter(game["players"][message.author.id].user)
-                        game["players"][players[index]] = Renfield(game["players"][players[index]].user)
+                            game["players"][message.author.id] = Hunter(game["players"][message.author.id].user)
+                            game["players"][players[index]] = Renfield(game["players"][players[index]].user)
 
-                        game["changed_renfield"] = True
+                            game["changed_renfield"] = True
 
-                    async def cond(reactions):
-                        return len(reactions[message.author.id]) == 1
+                        async def cond(reactions):
+                            return len(reactions[message.author.id]) == 1
 
-                    await ReactionMessage(cond,
-                        set_renfield,
-                        check = lambda r, u: u.id == message.author.id
-                    ).send(message.channel,
-                        "Choisis le joueur que tu veux mettre Renfield",
-                        "",
-                        self.color,
-                        [self.client.get_user(x).name for x in game["players"]]
-                    )
+                        await ReactionMessage(cond,
+                            set_renfield,
+                            check = lambda r, u: u.id == message.author.id
+                        ).send(message.channel,
+                            "Choisis le joueur que tu veux mettre Renfield",
+                            "",
+                            self.color,
+                            [self.client.get_user(x).name for x in game["players"]]
+                        )
+                    else:
+                        await message.channel.send("Tu n'es pas Renfield")
                 else:
-                    await message.channel.send("Tu n'es pas Renfield")
-            else:
-                await message.channel.send("Tu n'es pas dans la partie")
+                    await message.channel.send("Tu n'es pas dans la partie")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
