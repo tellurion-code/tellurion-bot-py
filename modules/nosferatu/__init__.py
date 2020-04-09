@@ -116,45 +116,45 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
-    #Changer de Renfield
-    async def com_nominate(self, message, args, kwargs):
-        if message.channel.id in globals.games:
-            game = globals.games[message.channel.id]
-            if game["turn"] == -1:
-                if message.author.id in game["players"]:
-                    if globals.games[message.channel.id]["players"][message.author.id].role == "Renfield":
-                        await message.channel.send(self.client.get_user(message.author.id).name + " va nominer un nouveau Renfield")
-
-                        players = [x for x in game["players"]]
-
-                        async def set_renfield(reactions):
-                            #Change de Renfield
-                            index = reactions[message.author.id][0]
-                            await message.channel.send(self.client.get_user(players[index]).name + " est maitenant Renfield")
-
-                            game["players"][message.author.id] = Hunter(game["players"][message.author.id].user)
-                            game["players"][players[index]] = Renfield(game["players"][players[index]].user)
-
-                            game["changed_renfield"] = True
-
-                        async def cond(reactions):
-                            return len(reactions[message.author.id]) == 1
-
-                        await ReactionMessage(cond,
-                            set_renfield,
-                            check = lambda r, u: u.id == message.author.id
-                        ).send(message.channel,
-                            "Choisis le joueur que tu veux mettre Renfield",
-                            "",
-                            self.color,
-                            [self.client.get_user(x).name for x in game["players"]]
-                        )
-                    else:
-                        await message.channel.send("Vous n'êtes pas Renfield")
-                else:
-                    await message.channel.send("Vous n'êtes pas dans la partie")
-        else:
-            await message.channel.send("Il n'y a pas de partie en cours")
+    # #Changer de Renfield
+    # async def com_nominate(self, message, args, kwargs):
+    #     if message.channel.id in globals.games:
+    #         game = globals.games[message.channel.id]
+    #         if game["turn"] == -1:
+    #             if message.author.id in game["players"]:
+    #                 if globals.games[message.channel.id]["players"][message.author.id].role == "Renfield":
+    #                     await message.channel.send(self.client.get_user(message.author.id).name + " va nominer un nouveau Renfield")
+    #
+    #                     players = [x for x in game["players"]]
+    #
+    #                     async def set_renfield(reactions):
+    #                         #Change de Renfield
+    #                         index = reactions[message.author.id][0]
+    #                         await message.channel.send(self.client.get_user(players[index]).name + " est maitenant Renfield")
+    #
+    #                         game["players"][message.author.id] = Hunter(game["players"][message.author.id].user)
+    #                         game["players"][players[index]] = Renfield(game["players"][players[index]].user)
+    #
+    #                         game["changed_renfield"] = True
+    #
+    #                     async def cond(reactions):
+    #                         return len(reactions[message.author.id]) == 1
+    #
+    #                     await ReactionMessage(cond,
+    #                         set_renfield,
+    #                         check = lambda r, u: u.id == message.author.id
+    #                     ).send(message.channel,
+    #                         "Choisis le joueur que tu veux mettre Renfield",
+    #                         "",
+    #                         self.color,
+    #                         [self.client.get_user(x).name for x in game["players"]]
+    #                     )
+    #                 else:
+    #                     await message.channel.send("Vous n'êtes pas Renfield")
+    #             else:
+    #                 await message.channel.send("Vous n'êtes pas dans la partie")
+    #     else:
+    #         await message.channel.send("Il n'y a pas de partie en cours")
 
     #Début de partie + logique des parties (début des fonctions circulaires)
     async def com_start(self, message, args, kwargs):
