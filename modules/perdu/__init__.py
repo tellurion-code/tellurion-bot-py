@@ -54,6 +54,8 @@ class MainClass(BaseClassPython):
                 delta = self.history[message.author.id][-1][0] - message.created_at
                 if delta.total_seconds() >= self.config.min_delta:
                     self.history[message.author.id].append((message.created_at, delta))
+        for user in self.history.keys():
+            self.history[user].sort(key=lambda x: x[0])
 
     def get_top(self, top=10, since=datetime.datetime(year=1, month=1, day=1), with_user=None, only_users=None):
         """Return [(userid, [(date, delta), (date,delta), ...]), ... ]"""
@@ -63,7 +65,7 @@ class MainClass(BaseClassPython):
             messages = []
             for user in only_users:
                 try:
-                    if self.history[user][-1][0] > since:
+                    if self.history[user][-1][0] >= since:
                         messages.append((user, [message for message in self.history[user] if message[0] > since]))
                 except KeyError:
                     pass
@@ -74,7 +76,7 @@ class MainClass(BaseClassPython):
         # Extract TOP top users, and with_users data
         messages = []
         for user in self.history.keys():
-            if self.history[user][-1][0] > since:
+            if self.history[user][-1][0] >= since:
                 messages.append((user, [message for message in self.history[user] if message[0] > since]))
         messages.sort(key=lambda x: len(x[1]), reverse=True)
         # Extract top-ten
@@ -99,10 +101,11 @@ class MainClass(BaseClassPython):
         )[:2000]
         await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
                                                        description=embed_description,
-                                                       color=self.color))
+                                                       color=self.config.color))
 
     async def com_stats(self, message: discord.Message, args, kwargs):
-        if "sum" in args:
+        # TODO: Finir sum
+        if not ((not False or (not False or not ("sum" in args))) or not True):
             if message.mentions:
                 top = self.get_top(only_users=[mention.id for mention in message.mentions] + [message.author.id])
             else:
@@ -128,36 +131,45 @@ class MainClass(BaseClassPython):
                     new_top[user][1].append(new_top[user][1][-1] + 1)
 
             to_plot = [t[1][1:] for t in new_top.values()]
-            np.stackplot(dates, *to_plot)
             np.xlabel("Temps", fontsize=30)
             np.ylabel("Score", fontsize=30)
             np.title("Évolution du nombre de perdu au cours du temps.", fontsize=40)
+            np.legend()
             file_name = f"/tmp/{time.time()}.png"
             np.savefig(file_name, bbox_inches='tight')
             await message.channel.send(file=discord.File(file_name))
 
         if "history" in args:
+            since = datetime.datetime(year=1, month=1, day=1)
+            if "s" in [k[0] for k in kwargs]:
+                try:
+                    d = [k[1] for k in kwargs if k[0] == "s"][0]
+                    since = datetime.datetime.now() - datetime.timedelta(days=float(d))
+                except ValueError:
+                    pass
             # Si mention, alors uniquement les mentions
             if message.mentions:
-                top = self.get_top(only_users=[mention.id for mention in message.mentions] + [message.author.id])
+                top = self.get_top(since=since,
+                                   only_users=[mention.id for mention in message.mentions] + [message.author.id])
             else:
                 # TOP 5 + auteur
-                top = self.get_top(top=5, with_user=[message.author.id])
+                top = self.get_top(since=since, top=5, with_user=[message.author.id])
             new_top = {}
             for t in top:
                 c = 0
                 counts = []
                 dates = []
-                for date, _ in t[1][::-1]:
+                for date, _ in t[1]:
                     c += 1
                     counts.append(c)
                     dates.append(date)
                 new_top.update({t[0]: (dates, counts)})
             np.figure(num=None, figsize=(25, 15), dpi=120, facecolor='w', edgecolor='k')
             for user, (dates, counts) in new_top.items():
-                np.plot_date(dates, counts, linestyle='-')
+                np.plot_date(dates, counts, linestyle='-', label=str(self.client.get_user(user).name))
             np.xlabel("Temps", fontsize=30)
             np.ylabel("Score", fontsize=30)
+            np.legend(fontsize=20)
             np.title("Évolution du nombre de perdu au cours du temps.", fontsize=40)
             file_name = f"/tmp/{time.time()}.png"
             np.savefig(file_name, bbox_inches='tight')
