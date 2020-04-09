@@ -81,7 +81,7 @@ class Player:
                         for _ in range(player.bites):
                             value += "🧛"
 
-                    if i == 0:
+                    if game["order"][0] == id:
                         value += "\nVous avez le Pieu Ancestral ✝️"
 
                     message.embeds[0].set_field_at(i, name = globals.number_emojis[i] + " `" + str(player.user) + "`",
