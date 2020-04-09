@@ -198,7 +198,7 @@ class MainClass(BaseClassPython):
     async def com_debug(self, message, args, kwargs):
         if message.author.id == 240947137750237185:
             globals.debug = not globals.debug
-            await message.channel.send("Debug:" + str(globals.debug))
+            await message.channel.send("Debug: " + str(globals.debug))
 
 
     async def on_reaction_add(self, reaction, user):

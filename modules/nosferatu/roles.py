@@ -191,7 +191,7 @@ class Renfield(Player):
                 await self.broadcast(game, discord.Embed(
                     title = "Rituel réussi",
                     color = 0x00ff00,
-                    description = "Toutes les cartes passées à Renfield étaient des Incantations. Le Poretur du Pieu Ancestral (`" + player.user.name + "`) va maintenant choisir un Rituel à effectuer"
+                    description = "Toutes les cartes passées à Renfield étaient des Incantations. Le Porteur du Pieu Ancestral (`" + str(player.user) + "`) va maintenant choisir un Rituel à effectuer"
                 ))
 
                 #Envoies le stack à la défausse
@@ -273,7 +273,7 @@ class Renfield(Player):
                         await self.broadcast(game, discord.Embed(
                             title = "Rituel effectué: 🔮 Miroir d'Argent",
                             color = 0x00ff00,
-                            description = "`" + player.user.name + "` regarde dans le Miroir d'Argent pour y voir la véritable identité d'un des Chasseurs...\nRenfield va choisir un joueur dont le rôle sera révélé"
+                            description = "`" + str(player.user) + "` regarde dans le Miroir d'Argent pour y voir la véritable identité d'un des Chasseurs...\nRenfield va choisir un joueur dont le rôle sera révélé"
                         ))
 
                         await ReactionMessage(cond_renfield,
@@ -288,7 +288,7 @@ class Renfield(Player):
                         await self.broadcast(game, discord.Embed(
                             title = "Rituel effectué: 🧴 Eau Bénite",
                             color = 0x00ff00,
-                            description = "`" + player.user.name + "` se saisit de l'Eau Bénite et s'apprête à purifier un membre de l'équipe\nIl va choisir un joueur qui va défausser sa main et piochera autant de la défausse"
+                            description = "`" + str(player.user) + "` se saisit de l'Eau Bénite et s'apprête à purifier un membre de l'équipe\nIl va choisir un joueur qui va défausser sa main et piochera autant de la défausse"
                         ), exceptions = [player.user.id])
 
                         await ReactionMessage(cond,
@@ -303,7 +303,7 @@ class Renfield(Player):
                         await self.broadcast(game, discord.Embed(
                             title = "Rituel effectué: 💉 Transfusion Sanguine",
                             color = 0x00ff00,
-                            description = "`" + player.user.name + "` récupère la poche de sang et s'approche d'un de ses collègues pour le soigner\nIl va choisir un joueur qui va piocher une carte, mais garder les Morsures qui sont devant lui"
+                            description = "`" + str(player.user) + "` récupère la poche de sang et s'approche d'un de ses collègues pour le soigner\nIl va choisir un joueur qui va piocher une carte, mais garder les Morsures qui sont devant lui"
                         ), exceptions = [player.user.id])
 
                         try:
@@ -361,7 +361,7 @@ class Renfield(Player):
             if total_bites == goal:
                 await self.broadcast(game, discord.Embed(
                     title = "**Victoire du Mal**",
-                    description = "`" + player.user.name + "` a été mordu! Le nombre requis de Morsures ont été jouées. Le Vampire, `" + [x for x in game["players"].values() if x.role == "Vampire"][0].user.name + "`, ayant désormais suffisamment d'influence, a neutralisé l'équipe des Chasseurs.\n**Le Mal a gagné!**",
+                    description = "`" + str(player.user) + "` a été mordu! Le nombre requis de Morsures ont été jouées. Le Vampire, `" + str([x for x in game["players"].values() if x.role == "Vampire"][0].user) + "`, ayant désormais suffisamment d'influence, a neutralisé l'équipe des Chasseurs.\n**Le Mal a gagné!**",
                     color = 0xff0000
                 ))
 
@@ -373,7 +373,7 @@ class Renfield(Player):
                     card = player.hand.pop(card_index)
 
                     #Préviens le joueur
-                    await self.user.send("`" + player.user.name + "` a défaussé sa carte " + self.card_names[card])
+                    await self.user.send("`" + str(player.user) + "` a défaussé sa carte " + self.card_names[card])
                     await player.user.send("Tu as été forcé de défausser ta carte " + self.card_names[card])
 
                     #Défausses la carte
@@ -392,9 +392,9 @@ class Renfield(Player):
                     #Préviens tout le monde
                     await self.broadcast(game, discord.Embed(
                         title = "**Morsure!**",
-                        description = "`" + player.user.name + "` a été mordu! Renfield va choisir une carte de sa main pour la défausser",
+                        description = "`" + str(player.user) + "` a été mordu! Renfield va choisir une carte de sa main pour la défausser",
                         color = 0xff0000
-                    ), exceptions = [game["order"][index]])
+                    ))
 
                     #Envoies le choix de la carte à défausser
                     await ReactionMessage(cond,
@@ -520,7 +520,7 @@ class Renfield(Player):
 
                 await self.broadcast(game, discord.Embed(
                     title = "Passation du Pieu Ancestral",
-                    description = "`" + self.user.name + "` a passé le Pieu Ancestral à `" + choice.user.name + "`",
+                    description = "`" + str(self.user) + "` a passé le Pieu Ancestral à `" + str(choice.user) + "`",
                     color = 0x000055
                 ))
 
@@ -623,20 +623,14 @@ class HiddenRole(Player):
                     color = 0x00ff00,
                     description = "Le tour de table a été arrêté par le lever du soleil. Les cartes données à Renfield vont être utilisées"
                 ))
-                try:
-                    await [x for x in game["players"].values() if x.role == "Renfield"][0].study_stack(game)
-                except Exception as e:
-                    print(e)
+                await [x for x in game["players"].values() if x.role == "Renfield"][0].study_stack(game)
             elif game["turn"] == len(game["order"]):
                 await self.broadcast(game, discord.Embed(
                     title = "Tour de table fini (Tour complété 🌃)",
                     color = 0x000055,
                     description = "Le tour de table a été complété sans que le soleil ne se lève. Le Pieu ne pourra pas être utilisé. Les cartes données à Renfield vont être utilisées"
                 ))
-                try:
-                    await [x for x in game["players"].values() if x.role == "Renfield"][0].study_stack(game)
-                except Exception as e:
-                    print(e)
+                await [x for x in game["players"].values() if x.role == "Renfield"][0].study_stack(game)
             else:
                 await game["players"][game["order"][game["turn"]]].turn_start(game)
 
