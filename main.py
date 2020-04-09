@@ -2,6 +2,7 @@
 import asyncio
 import importlib
 import json
+import locale
 import logging
 import logging.config
 import os
@@ -9,6 +10,7 @@ import sys
 from typing import Dict
 
 import discord
+import humanize
 from packaging.version import Version
 
 from config.FileSystem import FSConfig
@@ -239,7 +241,10 @@ class LBI(discord.Client):
         self.modules = {}
         self.config = config
         self.config.init(
-            {"modules": ["modules", "errors"], "prefix": "%", "admin_roles": [], "admin_users": [], "main_guild": 0})
+            {"modules": ["modules", "errors"], "prefix": "%", "admin_roles": [], "admin_users": [], "main_guild": 0,
+             "locale": "fr_FR.utf8"})
+        locale.setlocale(locale.LC_TIME, self.config.locale)
+        humanize.i18n.activate(self.config.locale)
         self.load_modules()
 
     @modules_edit

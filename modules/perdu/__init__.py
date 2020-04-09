@@ -2,6 +2,7 @@ import datetime
 import time
 
 import discord
+import humanize
 import matplotlib.pyplot as np
 
 import utils.emojis
@@ -94,9 +95,14 @@ class MainClass(BaseClassPython):
     async def com_all(self, message: discord.Message, args, kwargs):
         # Get all stats
         top = self.get_top()
+        intervales = [sum(list(zip(*top[i][1]))[1], datetime.timedelta(0)) / len(top[i][1]) for i in range(len(top))]
         embed_description = "\n".join(
             f"{utils.emojis.write_with_number(i)} : <@{top[i][0]}> a **perdu {len(top[i][1])} fois** depuis la"
-            f" création du salon à en moyenne **{sum(list(zip(*top[i][1]))[1], datetime.timedelta(0)) / len(top[i][1])} heures d'intervalle.**"
+            f" création du salon à en moyenne **"
+            f"{(str(intervales[i].days) + ' jours et' if intervales[i].days else '')} "
+            f"{str(int(intervales[i].total_seconds() % (24 * 3600) // 3600)) + ':' if intervales[i].total_seconds() > 3600 else ''}"
+            f"{int((intervales[i].total_seconds() % 3600) // 60)} "
+            f"{'heures' if intervales[i].total_seconds() > 3600 else 'minutes'} d'intervalle.**"
             for i in range(len(top))
         )[:2000]
         await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
@@ -141,19 +147,27 @@ class MainClass(BaseClassPython):
 
         if "history" in args:
             since = datetime.datetime(year=1, month=1, day=1)
+            debut_message = "la création du salon"
+            top = 5
             if "s" in [k[0] for k in kwargs]:
                 try:
                     d = [k[1] for k in kwargs if k[0] == "s"][0]
                     since = datetime.datetime.now() - datetime.timedelta(days=float(d))
+                    debut_message = humanize.naturalday(since.date(), format='le %d %b')
+                except ValueError:
+                    pass
+            if "t" in [k[0] for k in kwargs]:
+                try:
+                    top = int([k[1] for k in kwargs if k[0] == "t"][0])
                 except ValueError:
                     pass
             # Si mention, alors uniquement les mentions
             if message.mentions:
                 top = self.get_top(since=since,
-                                   only_users=[mention.id for mention in message.mentions] + [message.author.id])
+                                   only_users=[mention.id for mention in message.mentions])
             else:
                 # TOP 5 + auteur
-                top = self.get_top(since=since, top=5, with_user=[message.author.id])
+                top = self.get_top(since=since, top=top, with_user=[message.author.id])
             new_top = {}
             for t in top:
                 c = 0
@@ -170,7 +184,7 @@ class MainClass(BaseClassPython):
             np.xlabel("Temps", fontsize=30)
             np.ylabel("Score", fontsize=30)
             np.legend(fontsize=20)
-            np.title("Évolution du nombre de perdu au cours du temps.", fontsize=40)
+            np.title(f"Évolution du nombre de perdu au cours du temps depuis {debut_message}.", fontsize=35)
             file_name = f"/tmp/{time.time()}.png"
             np.savefig(file_name, bbox_inches='tight')
             await message.channel.send(file=discord.File(file_name))
@@ -185,9 +199,14 @@ class MainClass(BaseClassPython):
             except ValueError:
                 pass
         top = self.get_top(10, since)
+        intervales = [sum(list(zip(*top[i][1]))[1], datetime.timedelta(0)) / len(top[i][1]) for i in range(len(top))]
         embed_description = "\n".join(
-            f"{utils.emojis.write_with_number(i)} : <@{top[i][0]}> a **perdu {len(top[i][1])} fois** depuis la"
-            f" création du salon à en moyenne **{sum(list(zip(*top[i][1]))[1], datetime.timedelta(0)) / len(top[i][1])} heures d'intervalle.**"
+            f"{utils.emojis.write_with_number(i)} : <@{top[i][0]}> a **perdu {len(top[i][1])} fois** depuis "
+            f"{humanize.naturalday(since.date(), format='le %d %b')} à en moyenne **"
+            f"{(str(intervales[i].days) + ' jours et' if intervales[i].days else '')} "
+            f"{str(int(intervales[i].total_seconds() % (24 * 3600) // 3600)) + ':' if intervales[i].total_seconds() > 3600 else ''}"
+            f"{int((intervales[i].total_seconds() % 3600) // 60)} "
+            f"{'heures' if intervales[i].total_seconds() > 3600 else 'minutes'} d'intervalle.**"
             for i in range(len(top))
         )[:2000]
         await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",

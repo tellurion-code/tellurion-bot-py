@@ -12,6 +12,7 @@ aiofile = "*"
 toml = "*"
 "discord.py" = {version = "*",extras = ["voice",]}
 matplotlib = "*"
+humanize = "*"
 
 [dev-packages]
 
