@@ -460,7 +460,7 @@ class Renfield(Player):
 
                 async def stab_player(reactions):
                     index = reactions[player.user.id][0]
-                    choice = (game["players"][game["order"][index]] if index < len(game("order")) else None) if player.role == "Hunter" else None
+                    choice = (game["players"][game["order"][index]] if index < len(game["order"]) else None) if player.role == "Hunter" else None
 
                     if choice:
                         await self.broadcast(game, discord.Embed(
