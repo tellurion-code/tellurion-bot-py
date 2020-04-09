@@ -306,17 +306,14 @@ class Renfield(Player):
                             description = "`" + str(player.user) + "` récupère la poche de sang et s'approche d'un de ses collègues pour le soigner\nIl va choisir un joueur qui va piocher une carte, mais garder les Morsures qui sont devant lui"
                         ), exceptions = [player.user.id])
 
-                        try:
-                            await ReactionMessage(cond,
-                                transfuse
-                            ).send(player.user,
-                                "Choisis le joueur qui va piocher une carte",
-                                "",
-                                0x00ff00,
-                                [game["players"][x].user.name for x in game["order"]]
-                            )
-                        except Exception as e:
-                            print(e)
+                        await ReactionMessage(cond,
+                            transfuse
+                        ).send(player.user,
+                            "Choisis le joueur qui va piocher une carte",
+                            "",
+                            0x00ff00,
+                            [game["players"][x].user.name for x in game["order"]]
+                        )
 
                 await ReactionMessage(cond,
                     run_ritual
@@ -436,7 +433,7 @@ class Renfield(Player):
 
                 await self.broadcast(game, discord.Embed(
                     title = "Vote du Pieu Ancestral",
-                    description = "Le tour de table s'est fini sur une Aurore. Le Porteur du Pieu Ancestral (`" + player.user.name + "`) a donc la possibilité de l'utiliser sur un de ses collègues",
+                    description = "Le tour de table s'est fini sur une Aurore. Le Porteur du Pieu Ancestral (`" + str(player.user) + "`) a donc la possibilité de l'utiliser sur un de ses collègues",
                     color = 0x00ff00
                 ))
 
@@ -449,7 +446,7 @@ class Renfield(Player):
 
                     await self.broadcast(game, discord.Embed(
                         title = "Passation du Pieu Ancestral",
-                        description = "`" + player.user.name + "` a passé le Pieu Ancestral à `" + choice.user.name + "`",
+                        description = "`" + str(player.user) + "` a passé le Pieu Ancestral à `" + choice.user.name + "`",
                         color = 0xffff00
                     ))
 
@@ -465,7 +462,7 @@ class Renfield(Player):
                     if choice:
                         await self.broadcast(game, discord.Embed(
                             title = "Le Pieu Ancestral a été planté!",
-                            description = "`" + player.user.name + "` a décidé de planter le Pieu dans le coeur de `" + choice.user.name + "`!\n" + ("Le Pieu s'enflamme et tue le Vampire sur-le-champ, ne laissant qu'un tas de cendre. **Les Chasseurs ont gagnés!**" if choice.role == "Vampire" else "Le Pieu reste silencieux alors que le Chasseur s'effondre sur le sol. Le Vampire, `" + [x for x in game["players"].values() if x.role == "Vampire"][0].user.name + "`, maintenant que les autres Chasseurs sont sans défense, se révèle et termine le travail. **Le Mal a gagné!**"),
+                            description = "`" + str(player.user) + "` a décidé de planter le Pieu dans le coeur de `" + choice.user.name + "`!\n" + ("Le Pieu s'enflamme et tue le Vampire sur-le-champ, ne laissant qu'un tas de cendre. **Les Chasseurs ont gagnés!**" if choice.role == "Vampire" else "Le Pieu reste silencieux alors que le Chasseur s'effondre sur le sol. Le Vampire, `" + [x for x in game["players"].values() if x.role == "Vampire"][0].user.name + "`, maintenant que les autres Chasseurs sont sans défense, se révèle et termine le travail. **Le Mal a gagné!**"),
                             color = 0x00ff00 if choice.role == "Vampire" else 0xff0000
                         ))
 
@@ -473,7 +470,7 @@ class Renfield(Player):
                     else:
                         await self.broadcast(game, discord.Embed(
                             title = "Le Pieu Ancestral n'a pas été utilisé",
-                            description = "`" + player.user.name + "` a décidé de garder le Pieu pour plus tard. Il va cependant décider du joueur qui va recevoir le Pieu pour le prochain Tour",
+                            description = "`" + str(player.user) + "` a décidé de garder le Pieu pour plus tard. Il va cependant décider du joueur qui va recevoir le Pieu pour le prochain Tour",
                             color = 0xffff00
                         ))
 
@@ -509,7 +506,7 @@ class Renfield(Player):
 
         await self.broadcast(game, discord.Embed(
             title = "Début d'un nouveau tour de table",
-            description = "Toutes les cartes passées à Renfield ont soit été défaussées, soit jouées.\n" + ("**" + str(self.nights) + (" cartes Nuit ont été ajoutées" if self.nights > 1 else " carte Nuit a été ajoutée") + " à l'Horloge.**\n" if self.nights else "") + "L'Horloge a été mélangée" + (".\nRenfield va décider du nouveau Porteur du Pieu Ancestral" if not stick_was_passed else ""),
+            description = "Toutes les cartes passées à Renfield ont soit été défaussées, soit été jouées.\n" + ("**" + str(self.nights) + (" cartes Nuit ont été ajoutées" if self.nights > 1 else " carte Nuit a été ajoutée") + " à l'Horloge.**\n" if self.nights else "") + "L'Horloge a été mélangée" + (".\nRenfield va décider du nouveau Porteur du Pieu Ancestral" if not stick_was_passed else ""),
             color = 0x000055
         ))
 
@@ -553,15 +550,14 @@ class Renfield(Player):
         i = 0
         for id in game["order"]:
             value = "Main: "
-            for _ in range(len(game["players"][id].hand)):
-                value += "🔳"
+            value += '\n  '.join([self.card_names[x] for x in game["players"][id].hand])
 
             if game["players"][id].bites:
                 value += "\nMorsures:"
                 for _ in range(game["players"][id].bites):
                     value += "🧛"
 
-            embed.add_field(name = "`" + game["players"][id].user.name + "`",
+            embed.add_field(name = "`" + str(game["players"][id].user) + "`",
                 value = value,
                 inline = False
             )
