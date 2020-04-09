@@ -29,7 +29,7 @@ class Player:
     #Broadcast les infos du jeu à tous les joueurs
     async def send_info(self, game):
         embed = discord.Embed(
-            title = "Tour de `" + game["players"][game["order"][game["turn"]]].user.name + "` (Tour " + str(game["turn"] + 1) + "/" + str(len(game["order"])) +")",
+            title = "Tour de `" + str(game["players"][game["order"][game["turn"]]].user) + "` (Tour " + str(game["turn"] + 1) + "/" + str(len(game["order"])) +")",
             color = 0x000055,
             description = "Il reste " + str(len(game["rituals"])) + " Rituels."
         )
@@ -48,7 +48,7 @@ class Player:
             if i == 0:
                 value += "\nCe joueur a le Pieu Ancestral ✝️"
 
-            embed.add_field(name = globals.number_emojis[i] + " `" + game["players"][id].user.name + "`",
+            embed.add_field(name = globals.number_emojis[i] + " `" + str(game["players"][id].user) + "`",
                 value = value,
                 inline = False
             )
@@ -61,12 +61,35 @@ class Player:
         )
 
         if game["turn"] > 0:
-            embed.add_field(name = "Carte défaussée par `" + game["players"][game["order"][game["turn"] - 1]].user.name + "`:",
+            last_player = game["players"][game["order"][game["turn"] - 1]]
+            embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
                 value = self.card_names[game["discard"][-1]],
                 inline = False
             )
 
-        await self.broadcast(game, embed)
+        await game["channel"].send(embed = embed)
+
+        i = 0
+        for id, player in game["players"].items():
+            if id not in exceptions:
+                if player.role != "Renfield":
+                    message = await player.user.send(embed = embed)
+                    value = '\n'.[self.card_names[x] for x in player.hand]
+
+                    if player.bites:
+                        value += "\nMorsures:"
+                        for _ in range(player.bites):
+                            value += "🧛"
+
+                    if i == 0:
+                        value += "\nVous avez le Pieu Ancestral ✝️"
+
+                    message.embeds[0].set_field_at(i, name = globals.number_emojis[i] + " `" + str(player.user) + "`",
+                        value = value,
+                        inline = False
+                    )
+
+            i += 1
 
 
 class Renfield(Player):
@@ -583,7 +606,7 @@ class HiddenRole(Player):
                 except Exception as e:
                     print(e)
             else:
-                game["players"][game["order"][game["turn"]]].turn_start(game)
+                await game["players"][game["order"][game["turn"]]].turn_start(game)
 
         async def cond(reactions):
             return len(reactions[self.user.id]) == 2
