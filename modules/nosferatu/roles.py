@@ -74,7 +74,7 @@ class Player:
             if id not in exceptions:
                 if player.role != "Renfield":
                     message = await player.user.send(embed = embed)
-                    value = '\n'.[self.card_names[x] for x in player.hand]
+                    value = '\n'.join([self.card_names[x] for x in player.hand])
 
                     if player.bites:
                         value += "\nMorsures:"
