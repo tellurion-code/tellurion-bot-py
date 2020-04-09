@@ -19,7 +19,6 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} join`": "Rejoint la partie de Nosferatu",
             "`{prefix}{command} quit`": "Quitte la partie de Nosferatu",
             "`{prefix}{command} start`": "Démarre la partie de Nosferatu",
-            "`{prefix}{command} nominate`": "Nomine un nouveau Renfield pour la partie de Nosferatu (réservé à Renfield). Cette fonction sera faite automatiquement en début de partie",
             "`{prefix}{command} players`": "Affiche les joueurs de la partie de Nosferatu",
             "`{prefix}{command} reset`": "Reset la partie de Nosferatu"
         }
@@ -161,9 +160,10 @@ class MainClass(BaseClassPython):
         if message.channel.id in globals.games:
             game = globals.games[message.channel.id]
             if game["turn"] == -1:
-                game["turn"] = 0
                 if message.author.id in game["players"]:
                     if len(game["players"]) >= 5 or globals.debug:
+                        game["turn"] = 0
+                        
                         await message.channel.send("Début de partie")
                         players = [x for x in game["players"]]
 
