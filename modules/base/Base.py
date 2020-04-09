@@ -85,9 +85,9 @@ class BaseClass:
 
         :param message: message to parse
         :type message: discord.Message"""
-        command = self.client.config["prefix"] + (self.config.command_text if self.config.command_text else "") + " "
+        command = self.client.config["prefix"] + (self.config.command_text if self.config.command_text else "")
         if message.content.startswith(command):
-            content = message.content.split(" ", 1)[1]
+            content = message.content.split(" ", 1)[1 if " " in message.content else 0]
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
             if self.auth(message.author):
