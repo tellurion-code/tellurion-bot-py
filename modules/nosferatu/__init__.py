@@ -99,7 +99,7 @@ class MainClass(BaseClassPython):
     async def com_players(self, message, args, kwargs):
         if message.channel.id in globals.games:
             embed = discord.Embed(
-                title = "Liste des joueurs (" + str(len(global.games[message.channel.id]["players"])) + ")",
+                title = "Liste des joueurs (" + str(len(globals.games[message.channel.id]["players"])) + ")",
                 color = self.color,
                 description = "```" + ', '.join([str(self.client.get_user(x)) + (" (Renfield)" if (y.role == "Renfield") else "") for x, y in globals.games[message.channel.id]["players"].items()]) + "```"
             )
