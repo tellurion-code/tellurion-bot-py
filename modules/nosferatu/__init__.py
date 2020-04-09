@@ -10,7 +10,6 @@ import modules.nosferatu.globals as globals
 globals.init()
 
 class MainClass(BaseClassPython):
-    debug = True
     name = "Nosferatu"
     help_active = True
     help = {
@@ -42,7 +41,7 @@ class MainClass(BaseClassPython):
             globals.games[message.channel.id] = {
                 "channel": message.channel,
                 "players": {
-                    message.author.id: Renfield(self.client.get_user(message.author.id))
+                    message.author.id: Renfield(message.author)
                 }, #Dict pour rapidement accéder aux infos
                 "order": [], #L'ordre de jeu (liste des id des joueurs, n'inclut pas Renfield)
                 "turn": -1, #Le tour en cours (incrémente modulo le nombre de joueurs - Renfield). -1 = pas commencé
@@ -75,7 +74,7 @@ class MainClass(BaseClassPython):
                 elif len(game["players"]) < 8:
                     await message.channel.send("<@" + str(message.author.id) + "> rejoint la partie")
 
-                    game["players"][message.author.id] = Hunter(self.client.get_user(message.author.id))
+                    game["players"][message.author.id] = Hunter(message.author)
                 else:
                     await message.channel.send("Il y a déjà le nombre maximum de joueurs (8)")
         else:
@@ -87,9 +86,12 @@ class MainClass(BaseClassPython):
             game = globals.games[message.channel.id]
             if game["turn"] == -1:
                 if message.author.id in game["players"]:
-                    await message.channel.send("<@" + str(message.author.id) + "> rejoint la partie")
+                    if game["players"][message.author.id].role == "Renfield":
+                        await message.channel.send("Tu ne peux pas quitter la partie si tu es Renfield. Utilise %nosferatu nominate pour changer le Renfield")
+                    else:
+                        await message.channel.send("<@" + str(message.author.id) + "> quitte la partie")
 
-                    del game["players"][message.author.id]
+                        del game["players"][message.author.id]
                 elif len(game["players"]) < 8:
                     await message.channel.send("Tu n'es pas dans la partie")
         else:
@@ -153,7 +155,7 @@ class MainClass(BaseClassPython):
             game = globals.games[message.channel.id]
             if game["turn"] == -1:
                 if game["players"][message.author.id].role == "Renfield":
-                    if len(game["players"]) >= 5:
+                    if len(game["players"]) >= 5 or globals.debug:
                         await message.channel.send("Début de partie")
 
                         if game["changed_renfield"]:
@@ -164,12 +166,15 @@ class MainClass(BaseClassPython):
                             async def set_renfield(reactions):
                                 #Change Renfield
                                 index = reactions[message.author.id][0]
-                                await message.channel.send(game["players"][players[index]].name + " est maitenant Renfield")
+                                print(index)
+                                print(players[index])
+                                print(game["players"][players[index]])
+                                await message.channel.send(game["players"][players[index]].user.name + " est maitenant Renfield")
 
                                 game["players"][message.author.id] = Hunter(game["players"][message.author.id].user)
                                 game["players"][players[index]] = Renfield(game["players"][players[index]].user)
 
-                                game["players"][players[index]].game_start(game)
+                                await game["players"][players[index]].game_start(game)
 
                             async def cond(reactions):
                                 return len(reactions[message.author.id]) == 1
@@ -181,7 +186,7 @@ class MainClass(BaseClassPython):
                                 "Choisis le joueur que tu veux mettre Renfield",
                                 "",
                                 self.color,
-                                [self.client.get_user(x).name for x in globals.games[message.channel.id]["players"]]
+                                [self.client.get_user(x).name for x in game["players"]]
                             )
                     else:
                         await message.channel.send("Il faut au minimum 5 joueurs pour commencer la partie")
@@ -190,10 +195,14 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
+    async def com_end(self, message, args, kwargs):
+        if message.channel.id in globals.games:
+            game = globals.games[message.channel.id]
+            if globals.debug:
+                await game["players"][message.author.id].end_game(game)
+
 
     async def on_reaction_add(self, reaction, user):
-        print("Add reaction")
-        print(globals.reaction_messages)
         if not user.bot:
             for message in globals.reaction_messages:
                 if message.check(reaction, user) and reaction.emoji in message.number_emojis and message.message.id == reaction.message.id:

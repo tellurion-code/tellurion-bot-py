@@ -4,6 +4,7 @@ def init():
     global number_emojis
     global ritual_names
     global clock_faces
+    global debug
 
     games = {}
     reaction_messages = []
@@ -15,3 +16,4 @@ def init():
         "water": "🧴 Eau Bénite"
     }
     clock_faces = ["🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚", "🕛", "🕜", "🕝", "🕞", "🕟", "🕠", "🕡", "🕢", "🕣", "🕤", "🕥", "🕦", "🕧"]
+    debug = False
