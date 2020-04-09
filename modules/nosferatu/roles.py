@@ -416,7 +416,7 @@ class Renfield(Player):
                     "Choisis qui sera mordu",
                     "Une Morsure a été jouée\n\n",
                     0xff0000,
-                    [game["players"][x].user.name + " (🧛)" if game["players"][x].role == "Vampire" else "" for x in game["order"]]
+                    [game["players"][x].user.name + (" (🧛)" if game["players"][x].role == "Vampire" else "") for x in game["order"]]
                 )
         else:
             #Rajoute la Nuit à l'Horloge et ajoute un au nombre qui ont été ajoutées

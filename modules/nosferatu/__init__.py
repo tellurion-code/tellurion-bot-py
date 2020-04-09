@@ -195,6 +195,10 @@ class MainClass(BaseClassPython):
             if globals.debug:
                 await game["players"][message.author.id].end_game(game)
 
+    async def com_debug(self, message, args, kwargs):
+        if message.author.id == 240947137750237185:
+            globals.debug = not globals.debug
+
 
     async def on_reaction_add(self, reaction, user):
         if not user.bot:
