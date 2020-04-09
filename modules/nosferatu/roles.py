@@ -100,7 +100,6 @@ class Renfield(Player):
         game["order"] = [x for x in game["players"]]
         game["order"].remove(self.user.id)
         random.shuffle(game["order"])
-        game["turn"] = 0
 
         #Ajouter les nuits à l'horloge et à la librairie et les mélange
         for i in range(10):
