@@ -282,7 +282,7 @@ class Renfield(Player):
                             "Choisis le joueur dont le rôle sera révélé",
                             "",
                             0x00ff00,
-                            [game["players"][x].user.name + " (🧛)" if game["players"][x].role == "Vampire" else "" for x in game["order"]]
+                            [game["players"][x].user.name + (" (🧛)" if game["players"][x].role == "Vampire" else "") for x in game["order"]]
                         )
                     elif ritual == "water":
                         await self.broadcast(game, discord.Embed(
@@ -419,7 +419,11 @@ class Renfield(Player):
             #Rajoute la Nuit à l'Horloge et ajoute un au nombre qui ont été ajoutées
             if card == "night":
                 game["clock"].append(card)
-                self.nights += 1
+                await self.broadcast(game, discord.Embed(
+                    titre = "La Nuit s'allonge",
+                    description = "Une carte Nuit a été jouée et ajoutée à l'Horloge",
+                    color = 0xff0000
+                ))
 
             #Regarde la prochaine carte
             await self.check_if_stack_done(game)
@@ -462,7 +466,7 @@ class Renfield(Player):
                     if choice:
                         await self.broadcast(game, discord.Embed(
                             title = "Le Pieu Ancestral a été planté!",
-                            description = "`" + str(player.user) + "` a décidé de planter le Pieu dans le coeur de `" + choice.user.name + "`!\n" + ("Le Pieu s'enflamme et tue le Vampire sur-le-champ, ne laissant qu'un tas de cendre. **Les Chasseurs ont gagnés!**" if choice.role == "Vampire" else "Le Pieu reste silencieux alors que le Chasseur s'effondre sur le sol. Le Vampire, `" + [x for x in game["players"].values() if x.role == "Vampire"][0].user.name + "`, maintenant que les autres Chasseurs sont sans défense, se révèle et termine le travail. **Le Mal a gagné!**"),
+                            description = "`" + str(player.user) + "` a décidé de planter le Pieu dans le coeur de `" + str(choice.user) + "`!\n" + ("Le Pieu s'enflamme et tue le Vampire sur-le-champ, ne laissant qu'un tas de cendre. **Les Chasseurs ont gagnés!**" if choice.role == "Vampire" else "Le Pieu reste silencieux alors que le Chasseur s'effondre sur le sol. Le Vampire, `" + str([x for x in game["players"].values() if x.role == "Vampire"][0].user) + "`, maintenant que les autres Chasseurs sont sans défense, se révèle et termine le travail. **Le Mal a gagné!**"),
                             color = 0x00ff00 if choice.role == "Vampire" else 0xff0000
                         ))
 
@@ -506,7 +510,7 @@ class Renfield(Player):
 
         await self.broadcast(game, discord.Embed(
             title = "Début d'un nouveau tour de table",
-            description = "Toutes les cartes passées à Renfield ont soit été défaussées, soit été jouées.\n" + ("**" + str(self.nights) + (" cartes Nuit ont été ajoutées" if self.nights > 1 else " carte Nuit a été ajoutée") + " à l'Horloge.**\n" if self.nights else "") + "L'Horloge a été mélangée" + (".\nRenfield va décider du nouveau Porteur du Pieu Ancestral" if not stick_was_passed else ""),
+            description = "Toutes les cartes passées à Renfield ont soit été défaussées, soit été jouées.\nL'Horloge a été mélangée" + (".\nRenfield va décider du nouveau Porteur du Pieu Ancestral" if not stick_was_passed else ""),
             color = 0x000055
         ))
 
