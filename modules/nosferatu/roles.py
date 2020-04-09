@@ -71,9 +71,9 @@ class Player:
 
         for id, player in game["players"].items():
             if player.role != "Renfield":
-                self.send_personnal_info(game, player)
+                await self.send_personnal_info(game, player)
             else:
-                message = await player.user.send(embed = embed)
+                await player.user.send(embed = embed)
 
     async def send_personnal_info(self, game, player):
         embed = discord.Embed(
@@ -84,10 +84,11 @@ class Player:
 
         i = 0
         for id in game["order"]:
-            value = "Main: "
             if id == player.user.id:
-                value += '\n'.join([self.card_names[x] for x in player.hand])
+                value = "Votre main:\n  "
+                value += '\n  '.join([self.card_names[x] for x in player.hand])
             else:
+                value = "Main: "
                 for i in range(len(game["players"][id].hand)):
                     value += "🔳"
 
@@ -121,7 +122,7 @@ class Player:
                 inline = False
             )
 
-        player.user.send(embed = embed)
+        await player.user.send(embed = embed)
 
 
 class Renfield(Player):
