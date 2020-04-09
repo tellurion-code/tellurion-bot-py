@@ -71,23 +71,22 @@ class Player:
 
         i = 0
         for id, player in game["players"].items():
-            if id not in exceptions:
-                if player.role != "Renfield":
-                    message = await player.user.send(embed = embed)
-                    value = '\n'.join([self.card_names[x] for x in player.hand])
+            if player.role != "Renfield":
+                message = await player.user.send(embed = embed)
+                value = '\n'.join([self.card_names[x] for x in player.hand])
 
-                    if player.bites:
-                        value += "\nMorsures:"
-                        for _ in range(player.bites):
-                            value += "🧛"
+                if player.bites:
+                    value += "\nMorsures:"
+                    for _ in range(player.bites):
+                        value += "🧛"
 
-                    if game["order"][0] == id:
-                        value += "\nVous avez le Pieu Ancestral ✝️"
+                if game["order"][0] == id:
+                    value += "\nVous avez le Pieu Ancestral ✝️"
 
-                    message.embeds[0].set_field_at(i, name = globals.number_emojis[i] + " `" + str(player.user) + "`",
-                        value = value,
-                        inline = False
-                    )
+                message.embeds[0].set_field_at(i, name = globals.number_emojis[i] + " `" + str(player.user) + "`",
+                    value = value,
+                    inline = False
+                )
 
             i += 1
 
