@@ -70,7 +70,7 @@ class MainClass(BaseClassPython):
             game = globals.games[message.channel.id]
             if game["turn"] == -1:
                 if message.author.id in game["players"]:
-                    await message.channel.send("Tu es déjà dans la partie")
+                    await message.channel.send("Vous êtes déjà dans la partie")
                 elif len(game["players"]) < 8:
                     await message.channel.send("<@" + str(message.author.id) + "> rejoint la partie")
 
@@ -93,7 +93,7 @@ class MainClass(BaseClassPython):
 
                         del game["players"][message.author.id]
                 elif len(game["players"]) < 8:
-                    await message.channel.send("Tu n'es pas dans la partie")
+                    await message.channel.send("Vous n'êtes pas dans la partie")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -143,9 +143,9 @@ class MainClass(BaseClassPython):
                             [self.client.get_user(x).name for x in game["players"]]
                         )
                     else:
-                        await message.channel.send("Tu n'es pas Renfield")
+                        await message.channel.send("Vous n'êtes pas Renfield")
                 else:
-                    await message.channel.send("Tu n'es pas dans la partie")
+                    await message.channel.send("Vous n'êtes pas dans la partie")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -154,44 +154,47 @@ class MainClass(BaseClassPython):
         if message.channel.id in globals.games:
             game = globals.games[message.channel.id]
             if game["turn"] == -1:
-                if game["players"][message.author.id].role == "Renfield":
-                    if len(game["players"]) >= 5 or globals.debug:
-                        await message.channel.send("Début de partie")
+                if message.author.id in game["players"]:
+                    if game["players"][message.author.id].role == "Renfield":
+                        if len(game["players"]) >= 5 or globals.debug:
+                            await message.channel.send("Début de partie")
 
-                        if game["changed_renfield"]:
-                            await game["players"][message.author.id].game_start(game)
+                            if game["changed_renfield"]:
+                                await game["players"][message.author.id].game_start(game)
+                            else:
+                                players = [x for x in game["players"]]
+
+                                async def set_renfield(reactions):
+                                    #Change Renfield
+                                    index = reactions[message.author.id][0]
+                                    print(index)
+                                    print(players[index])
+                                    print(game["players"][players[index]])
+                                    await message.channel.send(game["players"][players[index]].user.name + " est maitenant Renfield")
+
+                                    game["players"][message.author.id] = Hunter(game["players"][message.author.id].user)
+                                    game["players"][players[index]] = Renfield(game["players"][players[index]].user)
+
+                                    await game["players"][players[index]].game_start(game)
+
+                                async def cond(reactions):
+                                    return len(reactions[message.author.id]) == 1
+
+                                await ReactionMessage(cond,
+                                    set_renfield,
+                                    check = lambda r, u: u.id == message.author.id
+                                ).send(message.channel,
+                                    "Choisis le joueur que tu veux mettre Renfield",
+                                    "",
+                                    self.color,
+                                    [self.client.get_user(x).name for x in game["players"]]
+                                )
                         else:
-                            players = [x for x in game["players"]]
-
-                            async def set_renfield(reactions):
-                                #Change Renfield
-                                index = reactions[message.author.id][0]
-                                print(index)
-                                print(players[index])
-                                print(game["players"][players[index]])
-                                await message.channel.send(game["players"][players[index]].user.name + " est maitenant Renfield")
-
-                                game["players"][message.author.id] = Hunter(game["players"][message.author.id].user)
-                                game["players"][players[index]] = Renfield(game["players"][players[index]].user)
-
-                                await game["players"][players[index]].game_start(game)
-
-                            async def cond(reactions):
-                                return len(reactions[message.author.id]) == 1
-
-                            await ReactionMessage(cond,
-                                set_renfield,
-                                check = lambda r, u: u.id == message.author.id
-                            ).send(message.channel,
-                                "Choisis le joueur que tu veux mettre Renfield",
-                                "",
-                                self.color,
-                                [self.client.get_user(x).name for x in game["players"]]
-                            )
+                            await message.channel.send("Il faut au minimum 5 joueurs pour commencer la partie")
                     else:
-                        await message.channel.send("Il faut au minimum 5 joueurs pour commencer la partie")
+                        await message.channel.send("Vous n'êtes pas Renfield")
                 else:
-                    await message.channel.send("Tu n'es pas Renfield")
+                    await message.channel.send("Vous n'êtes pas dans la partie")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
