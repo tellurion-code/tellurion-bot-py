@@ -43,7 +43,7 @@ class MainClass(BaseClassPython):
                     await message.channel.send("Il y a déjà le nombre maximum de joueurs (8)")
         else:
             embed = discord.Embed(title = "Démarrage de la partie de Nosferatu",
-                                description = "Tapez !nosferatu join pour rejoindre la partie",
+                                description = "Tapez %nosferatu join pour rejoindre la partie",
                                 color = self.color)
 
             await message.channel.send(embed = embed)
