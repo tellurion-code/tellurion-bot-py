@@ -256,16 +256,14 @@ class Renfield(Player):
                         await self.broadcast(game, discord.Embed(
                             title = "Rituel effectué: 🕰️ Distortion temporelle",
                             color = 0x00ff00,
-                            description = random.choice(globals.clock_faces) + "Une distortion temporelle s'empare du manoir!" + random.choice(globals.clock_faces) + "\nUne carte Nuit a été retirée de l'Horloge"
+                            description = random.choice(globals.clock_faces) + " Une distortion temporelle s'empare du manoir! " + random.choice(globals.clock_faces) + "\nUne carte Nuit a été retirée de l'Horloge"
                         ))
 
-                        while True:
-                            night_card = game["clock"].pop(0)
-                            print(night_card)
-                            if night_card == "night":
-                                break
-                            else:
-                                game["clock"].append(night_card)
+                        index_to_remove = -1
+                        while game["clock"][index_to_remove] == "dawn":
+                            index_to_remove -= 1
+
+                        game["clock"][index_to_remove].pop(index_to_remove)
 
                         print("moving on")
                         await self.check_if_stack_done(game)
