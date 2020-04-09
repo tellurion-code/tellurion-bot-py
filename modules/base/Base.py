@@ -1,12 +1,13 @@
 """Base class for module, never use directly !!!"""
 import asyncio
 import os
-from typing import List
+from typing import List, Union, Optional
 
 import discord
 
 from config import Config
 from storage import Objects
+from utils import emojis
 
 
 class BaseClass:
@@ -84,9 +85,9 @@ class BaseClass:
 
         :param message: message to parse
         :type message: discord.Message"""
-        command = self.client.config["prefix"] + (self.config.command_text if self.config.command_text else "") + " "
+        command = self.client.config["prefix"] + (self.config.command_text if self.config.command_text else "")
         if message.content.startswith(command):
-            content = message.content.split(" ", 1)[1]
+            content = message.content.split(" ", 1)[1 if " " in message.content else 0]
             sub_command, args, kwargs = self._parse_command_content(content)
             sub_command = "com_" + sub_command
             if self.auth(message.author):
@@ -188,3 +189,72 @@ class BaseClass:
 
     async def on_error(self, event_method, *args, **kwargs):
         pass
+
+    async def choice(self, message: discord.Message, choices: List[Union[discord.Emoji, discord.PartialEmoji, str]],
+                     validation: bool = False,
+                     validation_emote: Union[discord.Emoji, discord.PartialEmoji, str] = emojis.WHITE_CHECK_MARK,
+                     minimal_choices: int = 1,
+                     maximal_choices: Optional[int] = None,
+                     timeout: Optional[float] = None,
+                     user: Optional[discord.User] = None,
+                     unique: bool = False):
+        final_choices: List[Union[discord.Emoji, discord.PartialEmoji, str]] = []
+        validation_step = False
+        for emoji in choices:
+            await message.add_reaction(emoji)
+
+        def check_add(reaction, u):
+            nonlocal validation_step, final_choices
+            if (not user.bot) and (user is None or u.id == user.id):
+                if validation_step and reaction.emoji == validation_emote:
+                    return True
+                if reaction in choices:
+                    if not unique or reaction.emoji not in final_choices:
+                        final_choices.append(reaction.emoji)
+                if maximal_choices is not None and len(final_choices) > maximal_choices:
+                    validation_step = False
+                    asyncio.ensure_future(message.remove_reaction(validation_emote, self.client.user))
+                    try:
+                        asyncio.get_running_loop().run_until_complete(message.clear_reaction(validation_emote))
+                    except discord.errors.Forbidden:
+                        pass
+                    return False
+                if len(final_choices) >= minimal_choices:
+                    if validation:
+                        asyncio.get_running_loop().run_until_complete(message.add_reaction(validation_emote))
+                        validation_step = True
+                        return False
+                    else:
+                        return True
+            return False
+
+        def check_remove(reaction: discord.Reaction, u):
+            nonlocal validation_step, final_choices
+            if (not user.bot) and (user is None or u.id == user.id):
+                if reaction.emoji in choices:
+                    if not unique or reaction.count != 0:
+                        final_choices.remove(reaction.emoji)
+                    if len(final_choices) < minimal_choices:
+                        if validation_step:
+                            asyncio.ensure_future(message.remove_reaction(validation_emote, self.client.user))
+                            try:
+                                asyncio.get_running_loop().run_until_complete(message.clear_reaction(validation_emote))
+                            except discord.errors.Forbidden:
+                                pass
+                            validation_step = False
+                        return False
+                    if (maximal_choices is None or len(final_choices) <= maximal_choices) and len(
+                            final_choices) >= minimal_choices:
+                        if validation:
+                            asyncio.get_running_loop().run_until_complete(message.add_reaction(validation_emote))
+                            validation_step = True
+                            return False
+                        else:
+                            return True
+            return False
+
+        done, pending = await asyncio.wait([
+            self.client.wait_for('reaction_add', timeout=timeout, check=check_add),
+            self.client.wait_for('reaction_remove', timeout=timeout, check=check_remove)],
+            return_when=asyncio.FIRST_COMPLETED)
+        return final_choices
