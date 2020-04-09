@@ -528,9 +528,13 @@ class Renfield(Player):
 
         globals.games.pop(game["channel"].id)
 
+
 class HiddenRole(Player):
-    bites = 0
-    hand = []
+
+    def __init__(self, user):
+        super().__init__(user)
+        self.bites = 0
+        self.hand = []
 
     async def send_hand(self, game):
         info_message = await self.user.send(embed = discord.Embed(

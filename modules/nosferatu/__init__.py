@@ -159,7 +159,7 @@ class MainClass(BaseClassPython):
                         await message.channel.send("Début de partie")
 
                         if game["changed_renfield"]:
-                            game["players"][message.author.id].game_start(game)
+                            await game["players"][message.author.id].game_start(game)
                         else:
                             players = [x for x in game["players"]]
 
