@@ -1,7 +1,7 @@
 import discord
 import random
 
-from modules.nosferatu.roles import Hunter, Vampire
+from modules.nosferatu.roles import Renfield, Hunter, Vampire
 from modules.nosferatu.reaction_message import ReactionMessage
 
 import modules.nosferatu.globals as globals
