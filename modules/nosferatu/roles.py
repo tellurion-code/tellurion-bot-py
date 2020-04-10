@@ -17,186 +17,31 @@ class Player:
     def __init__(self, _user):
         self.user = _user
 
-    #Envoies l'embed dans le channel et à tous les joueurs
-    async def broadcast(self, game, embed, **kwargs):
-        exceptions = kwargs["exceptions"] if "exceptions" in kwargs else []
-
-        await game["channel"].send(embed = embed)
-        for id, player in game["players"].items():
-            if id not in exceptions:
-                await player.user.send(embed = embed)
-
-    #Broadcast les infos du jeu à tous les joueurs
-    async def send_info(self, game):
-        embed = discord.Embed(
-            title = "Tour de `" + str(game["players"][game["order"][game["turn"]]].user) + "` (Tour " + str(game["turn"] + 1) + "/" + str(len(game["order"])) +")",
-            color = 0x000055,
-            description = "Il reste " + str(len(game["rituals"])) + " Rituels."
-        )
-
-        i = 0
-        for id in game["order"]:
-            value = "Main: "
-            for _ in range(len(game["players"][id].hand)):
-                value += "🔳"
-
-            if game["players"][id].bites:
-                value += "\nMorsures:"
-                for _ in range(game["players"][id].bites):
-                    value += "🧛"
-
-            if i == 0:
-                value += "\nCe joueur a le Pieu Ancestral ✝️"
-
-            embed.add_field(name = globals.number_emojis[i] + " `" + str(game["players"][id].user) + "`",
-                value = value,
-                inline = False
-            )
-            i += 1
-
-        value = "\n".join(globals.ritual_names[x] for x in game["rituals"])
-        embed.add_field(name = "Rituels restants:",
-            value = value,
-            inline = False
-        )
-
-        if game["turn"] > 0:
-            last_player = game["players"][game["order"][game["turn"] - 1]]
-            embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
-                value = self.card_names[game["discard"][-1]],
-                inline = False
-            )
-
-        await game["channel"].send(embed = embed)
-
-        for id, player in game["players"].items():
-            if player.role != "Renfield":
-                await self.send_personnal_info(game, player)
-            else:
-                await player.user.send(embed = embed)
-
-    async def send_personnal_info(self, game, player):
-        embed = discord.Embed(
-            title = "Tour de `" + str(game["players"][game["order"][game["turn"]]].user) + "` (Tour " + str(game["turn"] + 1) + "/" + str(len(game["order"])) +")",
-            color = 0x000055,
-            description = "Il reste " + str(len(game["rituals"])) + " Rituels."
-        )
-
-        i = 0
-        for id in game["order"]:
-            if id == player.user.id:
-                value = "Votre main:\n  "
-                value += '\n  '.join([self.card_names[x] for x in player.hand])
-            else:
-                value = "Main: "
-                for i in range(len(game["players"][id].hand)):
-                    value += "🔳"
-
-            if game["players"][id].bites:
-                value += "\nMorsures:"
-                for _ in range(game["players"][id].bites):
-                    value += "🧛"
-
-            if i == 0:
-                if player.user.id == id:
-                    value += "\nVous avez le Pieu Ancestral ✝️"
-                else:
-                    value += "\nCe joueur a le Pieu Ancestral ✝️"
-
-            embed.add_field(name = globals.number_emojis[i] + " `" + str(game["players"][id].user) + "`",
-                value = value,
-                inline = False
-            )
-            i += 1
-
-        value = "\n".join(globals.ritual_names[x] for x in game["rituals"])
-        embed.add_field(name = "Rituels restants:",
-            value = value,
-            inline = False
-        )
-
-        if game["turn"] > 0:
-            last_player = game["players"][game["order"][game["turn"] - 1]]
-            embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
-                value = self.card_names[game["discard"][-1]],
-                inline = False
-            )
-
-        await player.user.send(embed = embed)
-
 
 class Renfield(Player):
     role = "Renfield"
 
-    async def game_start(self, game):
-        #Détermine au hasard l'ordre et le premier joueur
-        game["order"] = [x for x in game["players"]]
-        game["order"].remove(self.user.id)
-        random.shuffle(game["order"])
-
-        #Ajouter les nuits à l'horloge et à la librairie et les mélange
-        for i in range(10):
-            if i < len(game["players"]):
-                game["clock"].append("night")
-            else:
-                game["library"].append("night")
-
-        random.shuffle(game["library"])
-        random.shuffle(game["clock"])
-
-        async def set_player(reactions):
-            #Met à jour les rôles et les envoies
-            index = reactions[self.user.id][0]
-            user = game["players"][game["order"][index]].user
-            game["players"][game["order"][index]] = Vampire(user)
-
-            await self.user.send(user.name + " est maitenant le Vampire")
-
-            for id in game["order"]:
-                player = game["players"][id]
-                await player.game_start(game)
-
-            #Tour du premier joueur
-            await game["players"][game["order"][0]].turn_start(game)
-
-
-        async def cond(reactions):
-            return len(reactions[self.user.id]) == 1
-
-        #Envoies le message de choix du vampire à Renfield
-        await ReactionMessage(cond,
-            set_player
-        ).send(self.user,
-            "Choix du Vampire",
-            "",
-            0xff0000,
-            [game["players"][x].user.name for x in game["order"]]
-        )
-
-    async def turn_start(self, game):
-        await game["players"][game["order"][0]].turn_start(game)
-
     #Le tour de table est terminé, les cartes sont étudiées en secret
     async def study_stack(self, game):
         can_make_ritual = True
-        for card in game["stack"]:
+        for card in game.stack:
             if card != "spell":
                 can_make_ritual = False
                 break
 
         if can_make_ritual:
-            if len(game["rituals"]) > 1:
-                player = game["players"][game["order"][0]]
+            if len(game.rituals) > 1:
+                player = game.players[game.order[0]]
 
-                await self.broadcast(game, discord.Embed(
+                await game.broadcast(discord.Embed(
                     title = "Rituel réussi",
                     color = 0x00ff00,
                     description = "Toutes les cartes passées à Renfield étaient des Incantations. Le Porteur du Pieu Ancestral (`" + str(player.user) + "`) va maintenant choisir un Rituel à effectuer"
                 ))
 
                 #Envoies le stack à la défausse
-                game["discard"].extend(game["stack"])
-                game["stack"].clear()
+                game.discard.extend(game.stack)
+                game.stack.clear()
 
                 async def cond(reactions):
                     return len(reactions[player.user.id]) == 1
@@ -207,9 +52,9 @@ class Renfield(Player):
                 #Envoies le choix du Rituel au joueur avec le Pieu (premier joueur de l'ordre de jeu)
                 async def silver_mirror(reactions):
                     index = reactions[self.user.id][0] #Le choix revient à Renfield de révéler le rôle
-                    choice = game["players"][game["order"][index]]
+                    choice = game.players[game.order[index]]
 
-                    await self.broadcast(game, discord.Embed(
+                    await game.broadcast(discord.Embed(
                         title = "Résultat du Miroir d'Argent",
                         color = 0x00ff00,
                         description = "Le Miroir révèle que `" + choice.user.name + "` est " + ("le Vampire!" if choice.role == "Vampire" else "un Chasseur")
@@ -219,16 +64,16 @@ class Renfield(Player):
 
                 async def holy_water(reactions):
                     index = reactions[player.user.id][0] #Le choix revient au joueur avec le Pieu
-                    choice = game["players"][game["order"][index]]
+                    choice = game.players[game.order[index]]
 
-                    await self.broadcast(game, discord.Embed(
+                    await game.broadcast(discord.Embed(
                         title = "Résultat de l'Eau Bénite",
                         color = 0x00ff00,
                         description = "`" + choice.user.name + "` a été aspergé d'Eau Bénite, et a donc défaussé sa main. Il a pioché autant de cartes de la défausse"
                     ))
 
                     hand_size = len(choice.hand)
-                    game["discard"].extend(choice.hand)
+                    game.discard.extend(choice.hand)
                     choice.hand.clear()
                     await choice.draw(game, hand_size, origin = "discard")
 
@@ -236,9 +81,9 @@ class Renfield(Player):
 
                 async def transfuse(reactions):
                     index = reactions[player.user.id][0] #Le choix revient au joueur avec le Pieu
-                    choice = game["players"][game["order"][index]]
+                    choice = game.players[game.order[index]]
 
-                    await self.broadcast(game, discord.Embed(
+                    await game.broadcast(discord.Embed(
                         title = "Résultat de la Tranfusion Sanguine",
                         color = 0x00ff00,
                         description = "`" + choice.user.name + "` a été transfusé et a donc pioché une carte" + (". Il a toujours " + str(player.bites) + " Morsures" if player.bites else "")
@@ -250,25 +95,25 @@ class Renfield(Player):
 
                 async def run_ritual(reactions):
                     index = reactions[player.user.id][0]
-                    ritual = game["rituals"].pop(index)
+                    ritual = game.rituals.pop(index)
 
                     if ritual == "distortion":
-                        await self.broadcast(game, discord.Embed(
+                        await game.broadcast(discord.Embed(
                             title = "Rituel effectué: 🕰️ Distortion temporelle",
                             color = 0x00ff00,
                             description = random.choice(globals.clock_faces) + " Une distortion temporelle s'empare du manoir! " + random.choice(globals.clock_faces) + "\nUne carte Nuit a été retirée de l'Horloge"
                         ))
 
                         index_to_remove = -1
-                        while game["clock"][index_to_remove] == "dawn":
+                        while game.clock[index_to_remove] == "dawn":
                             index_to_remove -= 1
 
-                        game["clock"][index_to_remove].pop(index_to_remove)
+                        game.clock[index_to_remove].pop(index_to_remove)
 
                         print("moving on")
                         await self.check_if_stack_done(game)
                     elif ritual == "mirror":
-                        await self.broadcast(game, discord.Embed(
+                        await game.broadcast(discord.Embed(
                             title = "Rituel effectué: 🔮 Miroir d'Argent",
                             color = 0x00ff00,
                             description = "`" + str(player.user) + "` regarde dans le Miroir d'Argent pour y voir la véritable identité d'un des Chasseurs...\nRenfield va choisir un joueur dont le rôle sera révélé"
@@ -280,10 +125,10 @@ class Renfield(Player):
                             "Choisis le joueur dont le rôle sera révélé",
                             "",
                             0x00ff00,
-                            [game["players"][x].user.name + (" (🧛)" if game["players"][x].role == "Vampire" else "") for x in game["order"]]
+                            [game.players[x].user.name + (" (🧛)" if game.players[x].role == "Vampire" else "") for x in game.order]
                         )
                     elif ritual == "water":
-                        await self.broadcast(game, discord.Embed(
+                        await game.broadcast(discord.Embed(
                             title = "Rituel effectué: 🧴 Eau Bénite",
                             color = 0x00ff00,
                             description = "`" + str(player.user) + "` se saisit de l'Eau Bénite et s'apprête à purifier un membre de l'équipe\nIl va choisir un joueur qui va défausser sa main et piochera autant de la défausse"
@@ -295,10 +140,10 @@ class Renfield(Player):
                             "Choisis le joueur qui va défausser sa main et piochera autant de la défausse",
                             "",
                             0x00ff00,
-                            [game["players"][x].user.name for x in game["order"]]
+                            [game.players[x].user.name for x in game.order]
                         )
                     elif ritual == "transfusion":
-                        await self.broadcast(game, discord.Embed(
+                        await game.broadcast(discord.Embed(
                             title = "Rituel effectué: 💉 Transfusion Sanguine",
                             color = 0x00ff00,
                             description = "`" + str(player.user) + "` récupère la poche de sang et s'approche d'un de ses collègues pour le soigner\nIl va choisir un joueur qui va piocher une carte, mais garder les Morsures qui sont devant lui"
@@ -310,7 +155,7 @@ class Renfield(Player):
                             "Choisis le joueur qui va piocher une carte",
                             "",
                             0x00ff00,
-                            [game["players"][x].user.name for x in game["order"]]
+                            [game.players[x].user.name for x in game.order]
                         )
 
                 await ReactionMessage(cond,
@@ -319,44 +164,44 @@ class Renfield(Player):
                     "Choisis le Rituel à effectuer",
                     "",
                     0x00ff00,
-                    [globals.ritual_names[x] for x in game["rituals"]]
+                    [globals.ritual_names[x] for x in game.rituals]
                 )
             else:
-                await self.broadcast(game, discord.Embed(
+                await game.broadcast(discord.Embed(
                     title = "**Victoire des Chasseurs**",
                     color = 0x00ff00,
                     description = "Toutes les cartes passées à Renfield étaient des Incantations. Tous les Rituels ont été effectués, le Vampire est anéanti par le groupe.\n**Les Chasseurs ont gagné!**"
                 ))
 
-                await self.end_game(game)
+                await game.end_game()
         else:
             #Prépare le compteur de nuit qui ont été ajoutées
             self.nights = 0
 
             #Mélange le stack pour brouiller les origines
-            random.shuffle(game["stack"])
+            random.shuffle(game.stack)
 
             #Commence la boucle récursive d'étude des cartes
             await self.loop_through_stack(game)
 
     async def loop_through_stack(self, game):
-        card = game["stack"].pop()
+        card = game.stack.pop()
 
         #Défausses la carte
-        game["discard"].append(card)
+        game.discard.append(card)
 
         #Si la carte est une MORSURE, envoies le choix du joueur puis le choix de la carte
         if card == "bite":
-            goal = 4 if len(game["players"]) == 5 else 5
+            goal = 4 if len(game.players) == 5 else 5
             total_bites = 1
-            for player in game["players"].values():
+            for player in game.players.values():
                 if player.role != "Renfield":
                     total_bites += player.bites
 
             if total_bites == goal:
-                await self.broadcast(game, discord.Embed(
+                await game.broadcast(discord.Embed(
                     title = "**Victoire du Mal**",
-                    description = "`" + str(player.user) + "` a été mordu! Le nombre requis de Morsures ont été jouées. Le Vampire, `" + str([x for x in game["players"].values() if x.role == "Vampire"][0].user) + "`, ayant désormais suffisamment d'influence, a neutralisé l'équipe des Chasseurs.\n**Le Mal a gagné!**",
+                    description = "`" + str(player.user) + "` a été mordu! Le nombre requis de Morsures ont été jouées. Le Vampire, `" + str([x for x in game.players.values() if x.role == "Vampire"][0].user) + "`, ayant désormais suffisamment d'influence, a neutralisé l'équipe des Chasseurs.\n**Le Mal a gagné!**",
                     color = 0xff0000
                 ))
 
@@ -372,20 +217,20 @@ class Renfield(Player):
                     await player.user.send("Tu as été forcé de défausser ta carte " + self.card_names[card])
 
                     #Défausses la carte
-                    game["discard"].append(card)
+                    game.discard.append(card)
 
                     await self.check_if_stack_done(game)
 
                 #Fonction de morsure pour le premier choix
                 async def bite_player(reactions):
                     index = reactions[self.user.id][0]
-                    player = game["players"][game["order"][index]]
+                    player = game.players[game.order[index]]
 
                     #Ajoute une Morsure au mordu
                     player.bites += 1
 
                     #Préviens tout le monde
-                    await self.broadcast(game, discord.Embed(
+                    await game.broadcast(discord.Embed(
                         title = "**Morsure!**",
                         description = "`" + str(player.user) + "` a été mordu! Renfield va choisir une carte de sa main pour la défausser",
                         color = 0xff0000
@@ -411,13 +256,13 @@ class Renfield(Player):
                     "Choisis qui sera mordu",
                     "Une Morsure a été jouée\n\n",
                     0xff0000,
-                    [game["players"][x].user.name + (" (🧛)" if game["players"][x].role == "Vampire" else "") for x in game["order"]]
+                    [game.players[x].user.name + (" (🧛)" if game.players[x].role == "Vampire" else "") for x in game.order]
                 )
         else:
             #Rajoute la Nuit à l'Horloge et ajoute un au nombre qui ont été ajoutées
             if card == "night":
-                game["clock"].append(card)
-                await self.broadcast(game, discord.Embed(
+                game.clock.append(card)
+                await game.broadcast(discord.Embed(
                     titre = "La Nuit s'allonge",
                     description = "Une carte Nuit a été jouée et ajoutée à l'Horloge",
                     color = 0xff0000
@@ -427,13 +272,13 @@ class Renfield(Player):
             await self.check_if_stack_done(game)
 
     async def check_if_stack_done(self, game):
-        if len(game["stack"]):
+        if len(game.stack):
             await self.loop_through_stack(self, game)
         else:
-            if game["clock"][game["turn"] - 1] == "dawn":
-                player = game["players"][game["order"][0]]
+            if game.clock[game.turn - 1] == "dawn":
+                player = game.players[game.order[0]]
 
-                await self.broadcast(game, discord.Embed(
+                await game.broadcast(discord.Embed(
                     title = "Vote du Pieu Ancestral",
                     description = "Le tour de table s'est fini sur une Aurore. Le Porteur du Pieu Ancestral (`" + str(player.user) + "`) a donc la possibilité de l'utiliser sur un de ses collègues",
                     color = 0x00ff00
@@ -444,33 +289,33 @@ class Renfield(Player):
 
                 async def pass_stick(reactions):
                     index = reactions[player.user.id][0] + (1 if not globals.debug else 0)
-                    choice = game["players"][game["order"][index]]
+                    choice = game.players[game.order[index]]
 
-                    await self.broadcast(game, discord.Embed(
+                    await game.broadcast(discord.Embed(
                         title = "Passation du Pieu Ancestral",
                         description = "`" + str(player.user) + "` a passé le Pieu Ancestral à `" + choice.user.name + "`",
                         color = 0xffff00
                     ))
 
                     for i in range(index):
-                        game["order"].append(game["order"].pop(0))
+                        game.order.append(game.order.pop(0))
 
-                    await self.next_table_turn(game, True)
+                    await game.next_table_turn(True)
 
                 async def stab_player(reactions):
                     index = reactions[player.user.id][0]
-                    choice = (game["players"][game["order"][index]] if index < len(game["order"]) else None) if player.role == "Hunter" else None
+                    choice = (game.players[game.order[index]] if index < len(game.order) else None) if player.role == "Hunter" else None
 
                     if choice:
-                        await self.broadcast(game, discord.Embed(
+                        await game.broadcast(discord.Embed(
                             title = "Le Pieu Ancestral a été planté!",
-                            description = "`" + str(player.user) + "` a décidé de planter le Pieu dans le coeur de `" + str(choice.user) + "`!\n" + ("Le Pieu s'enflamme et tue le Vampire sur-le-champ, ne laissant qu'un tas de cendre. **Les Chasseurs ont gagnés!**" if choice.role == "Vampire" else "Le Pieu reste silencieux alors que le Chasseur s'effondre sur le sol. Le Vampire, `" + str([x for x in game["players"].values() if x.role == "Vampire"][0].user) + "`, maintenant que les autres Chasseurs sont sans défense, se révèle et termine le travail. **Le Mal a gagné!**"),
+                            description = "`" + str(player.user) + "` a décidé de planter le Pieu dans le coeur de `" + str(choice.user) + "`!\n" + ("Le Pieu s'enflamme et tue le Vampire sur-le-champ, ne laissant qu'un tas de cendre. **Les Chasseurs ont gagnés!**" if choice.role == "Vampire" else "Le Pieu reste silencieux alors que le Chasseur s'effondre sur le sol. Le Vampire, `" + str([x for x in game.players.values() if x.role == "Vampire"][0].user) + "`, maintenant que les autres Chasseurs sont sans défense, se révèle et termine le travail. **Le Mal a gagné!**"),
                             color = 0x00ff00 if choice.role == "Vampire" else 0xff0000
                         ))
 
                         await self.end_game(game)
                     else:
-                        await self.broadcast(game, discord.Embed(
+                        await game.broadcast(discord.Embed(
                             title = "Le Pieu Ancestral n'a pas été utilisé",
                             description = "`" + str(player.user) + "` a décidé de garder le Pieu pour plus tard. Il va cependant décider du joueur qui va recevoir le Pieu pour le prochain Tour",
                             color = 0xffff00
@@ -482,10 +327,10 @@ class Renfield(Player):
                             "Choisis à qui tu veux passer le Pieu",
                             "",
                             0xffff00,
-                            [game["players"][x].user.name for x in game["order"] if x != player.user.id or globals.debug]
+                            [game.players[x].user.name for x in game.order if x != player.user.id or globals.debug]
                         )
 
-                choices = [game["players"][x].user.name for x in game["order"]] if player.role == "Hunter" else []
+                choices = [game.players[x].user.name for x in game.order] if player.role == "Hunter" else []
                 choices.append("Personne")
 
                 await ReactionMessage(cond,
@@ -497,89 +342,7 @@ class Renfield(Player):
                     choices
                 )
             else:
-                await self.next_table_turn(game, False)
-
-    async def next_table_turn(self, game, stick_was_passed):
-        #Mélange l'Horologe
-        random.shuffle(game["clock"])
-
-        #Remet à 0 les tours
-        game["turn"] = 0
-
-        await self.broadcast(game, discord.Embed(
-            title = "Début d'un nouveau tour de table",
-            description = "Toutes les cartes passées à Renfield ont soit été défaussées, soit été jouées.\nL'Horloge a été mélangée" + (".\nRenfield va décider du nouveau Porteur du Pieu Ancestral" if not stick_was_passed else ""),
-            color = 0x000055
-        ))
-
-        if not stick_was_passed:
-            async def pass_stick(reactions):
-                index = reactions[self.user.id][0] + (1 if not globals.debug else 0)
-                choice = game["players"][game["order"][index]]
-
-                await self.broadcast(game, discord.Embed(
-                    title = "Passation du Pieu Ancestral",
-                    description = "`" + str(self.user) + "` a passé le Pieu Ancestral à `" + str(choice.user) + "`",
-                    color = 0x000055
-                ))
-
-                for i in range(index):
-                    game["order"].append(game["order"].pop(0))
-
-                await self.turn_start(game)
-
-            async def cond(reactions):
-                return len(reactions[self.user.id]) == 1
-
-            await ReactionMessage(cond,
-                pass_stick
-            ).send(self.user,
-                "Choisis à qui tu veux passer le Pieu",
-                "",
-                0xffff00,
-                [game["players"][x].user.name for x in game["order"] if x != game["order"][0] or globals.debug]
-            )
-        else:
-            await self.turn_start(game)
-
-    async def end_game(self, game):
-        embed = discord.Embed(
-            title = "Fin de partie",
-            description = "",
-            color = 0xfffffe
-        )
-
-        i = 0
-        for id in game["order"]:
-            value = "Main: "
-            value += '\n  '.join([self.card_names[x] for x in game["players"][id].hand])
-
-            if game["players"][id].bites:
-                value += "\nMorsures:"
-                for _ in range(game["players"][id].bites):
-                    value += "🧛"
-
-            embed.add_field(name = "`" + str(game["players"][id].user) + "`",
-                value = value,
-                inline = False
-            )
-            i += 1
-
-        if len(game["rituals"]):
-            value = "\n".join(globals.ritual_names[x] for x in game["rituals"])
-            embed.add_field(name = "Rituels restants:",
-                value = value,
-                inline = False
-            )
-        else:
-            embed.add_field(name = "Rituels restants:",
-                value = "Aucun!",
-                inline = False
-            )
-
-        await self.broadcast(game, embed)
-
-        globals.games.pop(game["channel"].id)
+                await game.next_table_turn(False)
 
 
 class HiddenRole(Player):
@@ -606,31 +369,31 @@ class HiddenRole(Player):
                 description = "Carte envoyée:\n" + self.card_names[play] + "\nCarte défaussée:\n" + self.card_names[discard]
             ))
 
-            game["stack"].append(play)
-            game["discard"].append(discard)
+            game.stack.append(play)
+            game.discard.append(discard)
             self.hand.remove(play)
             self.hand.remove(discard)
 
-            clock_card = game["clock"][game["turn"]]
+            clock_card = game.clock[game.turn]
 
-            game["turn"] += 1
+            game.turn += 1
 
             if clock_card == "dawn":
-                await self.broadcast(game, discord.Embed(
+                await game.broadcast(discord.Embed(
                     title = "Tour de table fini (Aurore 🌅)",
                     color = 0x00ff00,
                     description = "Le tour de table a été arrêté par le lever du soleil. Les cartes données à Renfield vont être utilisées"
                 ))
-                await [x for x in game["players"].values() if x.role == "Renfield"][0].study_stack(game)
-            elif game["turn"] == len(game["order"]):
-                await self.broadcast(game, discord.Embed(
+                await [x for x in game.players.values() if x.role == "Renfield"][0].study_stack(game)
+            elif game.turn == len(game.order):
+                await game.broadcast(discord.Embed(
                     title = "Tour de table fini (Tour complété 🌃)",
                     color = 0x000055,
                     description = "Le tour de table a été complété sans que le soleil ne se lève. Le Pieu ne pourra pas être utilisé. Les cartes données à Renfield vont être utilisées"
                 ))
-                await [x for x in game["players"].values() if x.role == "Renfield"][0].study_stack(game)
+                await [x for x in game.players.values() if x.role == "Renfield"][0].study_stack(game)
             else:
-                await game["players"][game["order"][game["turn"]]].turn_start(game)
+                await game.players[game.order[game.turn]].turn_start(game)
 
         async def cond(reactions):
             return len(reactions[self.user.id]) == 2
@@ -664,7 +427,7 @@ class HiddenRole(Player):
         await self.draw(game, 2)
 
         #Envoies les infos de début de partie
-        await self.send_info(game)
+        await game.send_info()
 
         #Envoies la main et le choix des cartes au joueur
         await self.send_hand(game)
@@ -677,12 +440,12 @@ class HiddenRole(Player):
 
         if amount:
             #Si le deck n'a pas assez de cartes, mélange la défausse et l'ajoute au deck
-            if len(game["library"]) < amount:
-                random.shuffle(game["discard"])
-                game["library"].extend(game["discard"])
-                game["discard"].clear()
+            if len(game.library) < amount:
+                random.shuffle(game.discard)
+                game.library.extend(game.discard)
+                game.discard.clear()
 
-                await self.broadcast(game, discord.Embed(
+                await game.broadcast(discord.Embed(
                     title = "Pioche rafraichîe",
                     description = "La défausse a été mélangée et remise dans la pioche",
                     color = 0xffffff
@@ -690,7 +453,7 @@ class HiddenRole(Player):
 
             #Pioche x cartes
             for i in range(amount):
-                self.hand.append(game["library"].pop(0))
+                self.hand.append(game.library.pop(0))
 
 
 class Hunter(HiddenRole):
@@ -707,7 +470,6 @@ class Hunter(HiddenRole):
 
     async def turn_start(self, game):
         await super().turn_start(game)
-        await self.user.send("Il reste " + str(len(game["rituals"])) + " Rituels à réaliser.")
 
 
 class Vampire(HiddenRole):
@@ -718,16 +480,16 @@ class Vampire(HiddenRole):
 
         await self.user.send(embed = discord.Embed(
             title = "Début de partie 🧛",
-            description = "Tu es le Vampire. Tu es allié avec Renfield.\nTon but est de faire tuer un Chasseur par le Pieu Ancestral, ou bien de réussir à placer " + ("4" if len(game["players"]) == 5 else "5") + " Morsures.\n**Tu ne peux pas utiliser le Pieu Ancestral si tu l'as.**",
+            description = "Tu es le Vampire. Tu es allié avec Renfield.\nTon but est de faire tuer un Chasseur par le Pieu Ancestral, ou bien de réussir à placer " + ("4" if len(game.players) == 5 else "5") + " Morsures.\n**Tu ne peux pas utiliser le Pieu Ancestral si tu l'as.**",
             color = 0xff0000
         ))
 
     async def turn_start(self, game):
         await super().turn_start(game)
 
-        goal = 4 if len(game["players"]) == 5 else 5
+        goal = 4 if len(game.players) == 5 else 5
         total_bites = 0
-        for player in game["players"].values():
+        for player in game.players.values():
             if player.role != "Renfield":
                 total_bites += player.bites
 
