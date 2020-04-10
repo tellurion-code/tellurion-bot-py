@@ -468,7 +468,7 @@ class Game:
 
     async def check_if_stack_done(self):
         if len(self.stack):
-            await self.loop_through_stack(self, self)
+            await self.loop_through_stack()
         else:
             if self.clock[self.turn - 1] == "dawn":
                 player = self.players[self.order[0]]
