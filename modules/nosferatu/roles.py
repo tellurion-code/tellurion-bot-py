@@ -100,7 +100,8 @@ class HiddenRole(Player):
             send_card,
             update = modify_info
         )
-        self.choice_message.send(self.user,
+
+        await self.choice_message.send(self.user,
             "Début de tour",
             "Choisis la carte que tu veux envoyez à Renfield, puis la carte que tu veux défausser:\n\n",
             0xffff00,
