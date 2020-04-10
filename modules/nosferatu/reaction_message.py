@@ -27,7 +27,7 @@ class ReactionMessage:
 
         i = 0
         for choice in _choices:
-            embed.description += self.number_emojis[i] + " `" + choice + "`\n"
+            embed.description += self.number_emojis[i] + choice + "\n"
             i += 1
 
         self.message = await _channel.send(embed = embed)
