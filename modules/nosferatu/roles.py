@@ -20,6 +20,8 @@ class HiddenRole(Player):
         super().__init__(user)
         self.bites = 0
         self.hand = []
+        self.info_message = None
+        self.choice_message = None
 
     async def send_hand(self, game):
         info_message = await self.user.send(embed = discord.Embed(
