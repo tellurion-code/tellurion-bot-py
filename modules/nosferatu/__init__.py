@@ -124,7 +124,7 @@ class MainClass(BaseClassPython):
                     if len(game.players) >= 5 or globals.debug:
                         if message.author.id == 118399702667493380:
                             game.start_game()
-                        else
+                        else:
                             await message.channel.send("Vous n'êtes pas Alix")
                     else:
                         await message.channel.send("Il faut au minimum 5 joueurs pour commencer la partie")
