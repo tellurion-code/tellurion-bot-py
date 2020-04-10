@@ -167,7 +167,7 @@ class Game:
             "Choisis le Renfield",
             "",
             0xffff00,
-            ["`" + str(self.client.get_user(x)) + "`" for x in game.players]
+            ["`" + str(x.user) + "`" for x in self.players.values()]
         )
 
     async def game_start(self):
