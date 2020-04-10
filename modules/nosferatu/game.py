@@ -80,6 +80,8 @@ class Game:
         await self.channel.send(embed = embed)
 
         for id, player in self.players.items():
+            i = 0
+            
             if player.role != "Renfield":
                 await self.send_personnal_info(player)
             else:
@@ -97,7 +99,6 @@ class Game:
             description = "Il reste " + str(len(self.rituals)) + " Rituels" + (". Il vous reste " + str(goal - total_bites) + " Morsures à placer" if player.role == "Vampire" else "")
         )
 
-        i = 0
         for id in self.order:
             if id == player.user.id:
                 value = "Votre main:\n  "
@@ -416,7 +417,7 @@ class Game:
 
                     #Préviens tout le monde
                     await self.broadcast(discord.Embed(
-                        title = "**Morsure!**",
+                        title = "**Morsure !**",
                         description = "`" + str(player.user) + "` a été mordu! Renfield va choisir une carte de sa main pour la défausser",
                         color = 0xff0000
                     ))
