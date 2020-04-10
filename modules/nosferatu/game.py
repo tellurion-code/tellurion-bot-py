@@ -137,7 +137,10 @@ class Game:
                 inline = False
             )
 
-        await player.user.send(embed = embed)
+        if not player.info_message:
+            player.info_message = await player.user.send(embed = embed)
+        else:
+            await player.info_message.edit(embed = embed)
 
     async def start_game(self, message):
         self.turn = 0
@@ -217,6 +220,11 @@ class Game:
 
     #Le tour de table est terminé, les cartes sont étudiées en secret
     async def study_stack(self):
+        #Reset les messages d'info
+        for id in self.order:
+            player = self.players[id]
+            player.info_message = None
+
         can_make_ritual = True
         for card in self.stack:
             if card != "spell":
@@ -398,20 +406,6 @@ class Game:
 
                 await self.end_game()
             else:
-                #Fonction de défausse pour le second choix
-                async def discard(reactions):
-                    card_index = reactions[self.renfield.user.id][0]
-                    card = player.hand.pop(card_index)
-
-                    #Préviens le joueur
-                    await self.renfield.user.send("`" + str(player.user) + "` a défaussé sa carte " + globals.card_names[card])
-                    await player.user.send("Tu as été forcé de défausser ta carte " + globals.card_names[card])
-
-                    #Défausses la carte
-                    self.discard.append(card)
-
-                    await self.check_if_stack_done()
-
                 #Fonction de morsure pour le premier choix
                 async def bite_player(reactions):
                     index = reactions[self.renfield.user.id][0]
@@ -426,6 +420,20 @@ class Game:
                         description = "`" + str(player.user) + "` a été mordu! Renfield va choisir une carte de sa main pour la défausser",
                         color = 0xff0000
                     ))
+
+                    #Fonction de défausse pour le second choix
+                    async def discard(reactions2):
+                        card_index = reactions2[self.renfield.user.id][0]
+                        card = player.hand.pop(card_index)
+
+                        #Préviens le joueur
+                        await self.renfield.user.send("`" + str(player.user) + "` a défaussé sa carte " + globals.card_names[card])
+                        await player.user.send("Tu as été forcé de défausser ta carte " + globals.card_names[card])
+
+                        #Défausses la carte
+                        self.discard.append(card)
+
+                        await self.check_if_stack_done()
 
                     #Envoies le choix de la carte à défausser uniquement s'il y a une carte à défausser
                     if len(player.hand):
@@ -588,7 +596,7 @@ class Game:
 
         i = 0
         for id in self.order:
-            value = "Main: "
+            value = "Main:\n"
             value += '\n  '.join([globals.card_names[x] for x in self.players[id].hand])
 
             if self.players[id].bites:

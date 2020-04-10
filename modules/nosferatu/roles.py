@@ -32,6 +32,7 @@ class HiddenRole(Player):
             play = self.hand[reactions[self.user.id][0]]
             discard = self.hand[reactions[self.user.id][1]]
 
+            self.choice_message.delete()
             await info_message.edit(embed = discord.Embed(
                 title = "Cartes jouées ✅",
                 color = 0x00ff00,
@@ -93,10 +94,11 @@ class HiddenRole(Player):
                 description = "Carte à envoyer:\n" + globals.card_names[play] + "\nCarte à défausser:\n" + globals.card_names[discard]
             ))
 
-        await ReactionMessage(cond,
+        self.choice_message = ReactionMessage(cond,
             send_card,
             update = modify_info
-        ).send(self.user,
+        )
+        self.choice_message.send(self.user,
             "Début de tour",
             "Choisis la carte que tu veux envoyez à Renfield, puis la carte que tu veux défausser:\n\n",
             0xffff00,
