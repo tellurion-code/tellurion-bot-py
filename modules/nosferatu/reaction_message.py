@@ -8,7 +8,6 @@ class ReactionMessage:
         self.update_function = kwargs["update"] if "update" in kwargs else None
         self.cond = _cond
         self.effect = _effect
-        self.block = True
 
         self.reactions = {}
 
@@ -37,7 +36,6 @@ class ReactionMessage:
             await self.message.add_reaction(self.number_emojis[i])
 
         globals.reaction_messages.append(self)
-        self.block = False
 
     #Trigger quand une réaction est ajoutée
     async def add_reaction(self, reaction, user):
