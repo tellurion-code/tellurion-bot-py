@@ -46,12 +46,12 @@ class Game:
 
         i = 0
         for id in self.order:
-            value = "Main: "
+            value = "__Main:__ "
             for _ in range(len(self.players[id].hand)):
                 value += "🔳"
 
             if self.players[id].bites:
-                value += "\nMorsures:"
+                value += "\n__Morsures:__"
                 for _ in range(self.players[id].bites):
                     value += "🧛"
 
@@ -65,14 +65,14 @@ class Game:
             i += 1
 
         value = "\n".join(globals.ritual_names[x] for x in self.rituals)
-        embed.add_field(name = "Rituels restants:",
+        embed.add_field(name = "Rituels restants :",
             value = value,
             inline = False
         )
 
         if self.turn > 0:
             last_player = self.players[self.order[self.turn - 1]]
-            embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
+            embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "` :",
                 value = globals.card_names[self.discard[-1]],
                 inline = False
             )
@@ -100,15 +100,15 @@ class Game:
         i = 0
         for id in self.order:
             if id == player.user.id:
-                value = "Votre main:\n  "
+                value = "__Votre main:__\n  "
                 value += '\n  '.join([globals.card_names[x] for x in player.hand])
             else:
-                value = "Main: "
+                value = "__Main:__"
                 for _ in range(len(self.players[id].hand)):
                     value += "🔳"
 
             if self.players[id].bites:
-                value += "\nMorsures:"
+                value += "\n__Morsures:__"
                 for _ in range(self.players[id].bites):
                     value += "🧛"
 
@@ -125,14 +125,14 @@ class Game:
             i += 1
 
         value = "\n".join(globals.ritual_names[x] for x in self.rituals)
-        embed.add_field(name = "Rituels restants:",
+        embed.add_field(name = "Rituels restants :",
             value = value,
             inline = False
         )
 
         if self.turn > 0:
             last_player = self.players[self.order[self.turn - 1]]
-            embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
+            embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "` :",
                 value = globals.card_names[self.discard[-1]],
                 inline = False
             )
@@ -600,7 +600,7 @@ class Game:
             value += '\n  '.join([globals.card_names[x] for x in self.players[id].hand])
 
             if self.players[id].bites:
-                value += "\nMorsures:"
+                value += "\nMorsures :"
                 for _ in range(self.players[id].bites):
                     value += "🧛"
 
@@ -612,12 +612,12 @@ class Game:
 
         if len(self.rituals):
             value = "\n".join(globals.ritual_names[x] for x in self.rituals)
-            embed.add_field(name = "Rituels restants:",
+            embed.add_field(name = "Rituels restants :",
                 value = value,
                 inline = False
             )
         else:
-            embed.add_field(name = "Rituels restants:",
+            embed.add_field(name = "Rituels restants :",
                 value = "Aucun!",
                 inline = False
             )

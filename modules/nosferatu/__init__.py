@@ -161,7 +161,7 @@ class MainClass(BaseClassPython):
         if not user.bot:
             for message in globals.reaction_messages:
                 if message.message.id == reaction.message.id:
-                    if message.check(reaction, user) and reaction.emoji in message.number_emojis:
+                    if message.check(reaction, user) and reaction.emoji in message.number_emojis and not message.block:
                         await message.add_reaction(reaction, user)
                     else:
                         await message.message.clear_reaction(reaction)
@@ -169,5 +169,5 @@ class MainClass(BaseClassPython):
     async def on_reaction_remove(self, reaction, user):
         if not user.bot:
             for message in globals.reaction_messages:
-                if message.check(reaction, user) and reaction.emoji in message.number_emojis and message.message.id == reaction.message.id:
+                if message.check(reaction, user) and reaction.emoji in message.number_emojis and message.message.id == reaction.message.id and not message.block:
                     await message.remove_reaction(reaction, user)

@@ -27,7 +27,7 @@ class HiddenRole(Player):
         info_message = await self.user.send(embed = discord.Embed(
             title = "Cartes choisies",
             color = 0xffff00,
-            description = "Carte à envoyer:\n❌ Manquante\nCarte à défausser:\n❌ Manquante"
+            description = "Carte à envoyer :\n❌ Manquante\nCarte à défausser :\n❌ Manquante"
         ))
 
         async def send_card(reactions):
@@ -38,7 +38,7 @@ class HiddenRole(Player):
             await info_message.edit(embed = discord.Embed(
                 title = "Cartes jouées ✅",
                 color = 0x00ff00,
-                description = "Carte envoyée:\n" + globals.card_names[play] + "\nCarte défaussée:\n" + globals.card_names[discard]
+                description = "Carte envoyée :\n" + globals.card_names[play] + "\nCarte défaussée :\n" + globals.card_names[discard]
             ))
 
             game.stack.append(play)
@@ -58,7 +58,7 @@ class HiddenRole(Player):
                 )
 
                 last_player = game.players[game.order[game.turn - 1]]
-                embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
+                embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "` :",
                     value = globals.card_names[game.discard[-1]],
                     inline = False
                 )
@@ -69,11 +69,11 @@ class HiddenRole(Player):
                 embed = discord.Embed(
                     title = "Tour de table fini (Tour complété 🌃)",
                     color = 0x000055,
-                    description = "Le tour de table a été complété sans que le soleil ne se lève. Le Pieu ne pourra pas être utilisé. Les cartes données à Renfield vont être utilisées"
+                    description = "Le tour de table a été complété sans que le soleil ne se lève. **Le Pieu ne pourra pas être utilisé.** Les cartes données à Renfield vont être utilisées"
                 )
 
                 last_player = game.players[game.order[game.turn - 1]]
-                embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
+                embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "` :",
                     value = globals.card_names[game.discard[-1]],
                     inline = False
                 )
@@ -93,7 +93,7 @@ class HiddenRole(Player):
             await info_message.edit(embed = discord.Embed(
                 title = "Carte choisies",
                 color = 0xffff00,
-                description = "Carte à envoyer:\n" + globals.card_names[play] + "\nCarte à défausser:\n" + globals.card_names[discard]
+                description = "Carte à envoyer :\n" + globals.card_names[play] + "\nCarte à défausser :\n" + globals.card_names[discard]
             ))
 
         self.choice_message = ReactionMessage(cond,
@@ -103,7 +103,7 @@ class HiddenRole(Player):
 
         await self.choice_message.send(self.user,
             "Début de tour",
-            "Choisis la carte que tu veux envoyez à Renfield, puis la carte que tu veux défausser:\n\n",
+            "Choisis la carte que tu veux envoyez à Renfield, puis la carte que tu veux défausser :\n\n",
             0xffff00,
             [globals.card_names[x] for x in self.hand]
         )
