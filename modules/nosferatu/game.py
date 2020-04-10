@@ -139,6 +139,37 @@ class Game:
 
         await player.user.send(embed = embed)
 
+    async def start_game(self, message):
+        self.turn = 0
+
+        await message.channel.send("Début de partie, " + message.author.mention + " va décider du Renfield")
+        players = [x for x in self.players]
+
+        async def set_renfield(reactions):
+            #Change Renfield
+            index = reactions[message.author.id][0]
+            print(index)
+            print(players[index])
+            print(self.players[players[index]])
+            await message.channel.send(str(self.players[players[index]].user) + " est maitenant Renfield")
+
+            self.players[players[index]] = Renfield(self.players[players[index]].user)
+            self.renfield = self.players[players[index]]
+
+            await self.game_start()
+
+        async def cond(reactions):
+            return len(reactions[message.author.id]) == 1
+
+        await ReactionMessage(cond,
+            set_renfield
+        ).send(message.author,
+            "Choisis le Renfield",
+            "",
+            self.color,
+            ["`" + str(self.client.get_user(x)) + "`" for x in game.players]
+        )
+
     async def game_start(self):
         #Détermine au hasard l'ordre et le premier joueur
         self.order = [x for x in self.players]
