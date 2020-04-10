@@ -34,7 +34,7 @@ class HiddenRole(Player):
             play = self.hand[reactions[self.user.id][0]]
             discard = self.hand[reactions[self.user.id][1]]
 
-            self.choice_message.delete()
+            self.choice_message.message.delete()
             await info_message.edit(embed = discord.Embed(
                 title = "Cartes jouées ✅",
                 color = 0x00ff00,
