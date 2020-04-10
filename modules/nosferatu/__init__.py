@@ -48,6 +48,8 @@ class MainClass(BaseClassPython):
                     game.players[message.author.id] = Hunter(message.author)
                 else:
                     await message.channel.send("Il y a déjà le nombre maximum de joueurs (8)")
+            else:
+                await message.author.send("La partie a déjà commencé")
         else:
             embed = discord.Embed(title = "Démarrage de la partie de Nosferatu",
                                 description = "Tapez %nosferatu join pour rejoindre la partie",
@@ -74,6 +76,8 @@ class MainClass(BaseClassPython):
                             globals.games.pop(message.channel.id)
                 elif len(game.players) < 8:
                     await message.channel.send("Vous n'êtes pas dans la partie")
+            else:
+                await message.author.send("La partie a déjà commencé")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -88,6 +92,8 @@ class MainClass(BaseClassPython):
                     description = "```" + ', '.join([str(self.client.get_user(x)) for x, y in globals.games[message.channel.id].players.items()]) + "```"
                 )
                 await message.channel.send(embed = embed)
+            else:
+                await message.author.send("La partie a déjà commencé")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -97,6 +103,8 @@ class MainClass(BaseClassPython):
             if game.turn == -1:
                 await message.channel.send("La partie a été reset")
                 globals.games.pop(message.channel.id)
+            else:
+                await message.author.send("La partie a déjà commencé")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -107,11 +115,13 @@ class MainClass(BaseClassPython):
             if game.turn == -1:
                 if message.author.id in game.players:
                     if len(game.players) >= 5 or globals.debug:
-                        game.start_game(message)
+                        await game.start_game(message)
                     else:
                         await message.channel.send("Il faut au minimum 5 joueurs pour commencer la partie")
                 else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
+            else:
+                await message.author.send("La partie a déjà commencé")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -123,13 +133,15 @@ class MainClass(BaseClassPython):
                 if message.author.id in game.players:
                     if len(game.players) >= 5 or globals.debug:
                         if message.author.id == 118399702667493380:
-                            game.start_game()
+                            await game.start_game(message)
                         else:
                             await message.channel.send("Vous n'êtes pas Alix")
                     else:
                         await message.channel.send("Il faut au minimum 5 joueurs pour commencer la partie")
                 else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
+            else:
+                await message.author.send("La partie a déjà commencé")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
