@@ -4,6 +4,7 @@ def init():
     global number_emojis
     global ritual_names
     global clock_faces
+    global card_names
     global debug
 
     games = {}
@@ -16,4 +17,11 @@ def init():
         "water": "🧴 Eau Bénite"
     }
     clock_faces = ["🕐", "🕑", "🕒", "🕓", "🕔", "🕕", "🕖", "🕗", "🕘", "🕙", "🕚", "🕛", "🕜", "🕝", "🕞", "🕟", "🕠", "🕡", "🕢", "🕣", "🕤", "🕥", "🕦", "🕧"]
+    card_names = {
+        "bite": "🧛 Morsure",
+        "spell": "📖 Incantation",
+        "journal": "🧾 Journal",
+        "night": "🌃 Nuit",
+        "none": "❌ Manquante"
+    }
     debug = False

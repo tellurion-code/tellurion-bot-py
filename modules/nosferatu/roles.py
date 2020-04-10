@@ -6,14 +6,6 @@ from modules.nosferatu.reaction_message import ReactionMessage
 import modules.nosferatu.globals as globals
 
 class Player:
-    card_names = {
-        "bite": "🧛 Morsure",
-        "spell": "📖 Incantation",
-        "journal": "🧾 Journal",
-        "night": "🌃 Nuit",
-        "none": "❌ Manquante"
-    }
-
     def __init__(self, _user):
         self.user = _user
 
@@ -43,7 +35,7 @@ class HiddenRole(Player):
             await info_message.edit(embed = discord.Embed(
                 title = "Cartes jouées ✅",
                 color = 0x00ff00,
-                description = "Carte envoyée:\n" + self.card_names[play] + "\nCarte défaussée:\n" + self.card_names[discard]
+                description = "Carte envoyée:\n" + globals.card_names[play] + "\nCarte défaussée:\n" + globals.card_names[discard]
             ))
 
             game.stack.append(play)
@@ -62,9 +54,9 @@ class HiddenRole(Player):
                     description = "Le tour de table a été arrêté par le lever du soleil. Les cartes données à Renfield vont être utilisées"
                 )
 
-                last_player = self.players[self.order[self.turn - 1]]
+                last_player = game.players[game.order[game.turn - 1]]
                 embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
-                    value = self.card_names[self.discard[-1]],
+                    value = globals.card_names[game.discard[-1]],
                     inline = False
                 )
 
@@ -77,9 +69,9 @@ class HiddenRole(Player):
                     description = "Le tour de table a été complété sans que le soleil ne se lève. Le Pieu ne pourra pas être utilisé. Les cartes données à Renfield vont être utilisées"
                 )
 
-                last_player = self.players[self.order[self.turn - 1]]
+                last_player = game.players[game.order[game.turn - 1]]
                 embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
-                    value = self.card_names[self.discard[-1]],
+                    value = globals.card_names[game.discard[-1]],
                     inline = False
                 )
 
@@ -98,7 +90,7 @@ class HiddenRole(Player):
             await info_message.edit(embed = discord.Embed(
                 title = "Carte choisies",
                 color = 0xffff00,
-                description = "Carte à envoyer:\n" + self.card_names[play] + "\nCarte à défausser:\n" + self.card_names[discard]
+                description = "Carte à envoyer:\n" + globals.card_names[play] + "\nCarte à défausser:\n" + globals.card_names[discard]
             ))
 
         await ReactionMessage(cond,
@@ -108,7 +100,7 @@ class HiddenRole(Player):
             "Début de tour",
             "Choisis la carte que tu veux envoyez à Renfield, puis la carte que tu veux défausser:\n\n",
             0xffff00,
-            [self.card_names[x] for x in self.hand]
+            [globals.card_names[x] for x in self.hand]
         )
 
     async def game_start(self, game):
@@ -127,8 +119,8 @@ class HiddenRole(Player):
 
     async def draw(self, game, amount, **kwargs):
         if "origin" in kwargs:
-            while len(game[kwargs["origin"]]) and amount > 0:
-                self.hand.append(game[kwargs["origin"]].pop(0))
+            while len(kwargs["origin"]) and amount > 0:
+                self.hand.append(kwargs["origin"].pop(0))
                 amount -= 1
 
         if amount:
@@ -179,11 +171,3 @@ class Vampire(HiddenRole):
 
     async def turn_start(self, game):
         await super().turn_start(game)
-
-        goal = 4 if len(game.players) == 5 else 5
-        total_bites = 0
-        for player in game.players.values():
-            if player.role != "Renfield":
-                total_bites += player.bites
-
-        await self.user.send("Il reste " + str(goal - total_bites) + " Morsures à placer.")

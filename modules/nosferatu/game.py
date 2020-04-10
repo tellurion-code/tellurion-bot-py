@@ -1,20 +1,22 @@
 import discord
+import random
 
-from modules.nosferatu.roles import Hunter
+from modules.nosferatu.roles import Hunter, Vampire
+from modules.nosferatu.reaction_message import ReactionMessage
 
 import modules.nosferatu.globals as globals
 
 class Game:
     def __init__(self, _message):
         self.channel = _message.channel
-        self.players = { _message.author.id: Hunter(message.author) } #Dict pour rapidement accéder aux infos
-        self.order = [], #L'ordre de jeu (liste des id des joueurs, n'inclut pas Renfield)
-        self.turn = -1, #Le tour en cours (incrémente modulo le nombre de joueurs - Renfield). -1 = pas commencé
-        self.clock = [ "dawn" ], #Nuits et Aurore
-        self.library = [], #Morsures, Incantations, Nuits et Journaux
-        self.stack = [], #Ce qui est passé à Renfield
-        self.discard = [], #Ce qui est défaussé
-        self.rituals = [ "mirror", "transfusion", "transfusion", "distortion", "water" ],
+        self.players = { _message.author.id: Hunter(_message.author) } #Dict pour rapidement accéder aux infos
+        self.order = [] #L'ordre de jeu (liste des id des joueurs, n'inclut pas Renfield)
+        self.turn = -1 #Le tour en cours (incrémente modulo le nombre de joueurs - Renfield). -1 = pas commencé
+        self.clock = [ "dawn" ] #Nuits et Aurore
+        self.library = [] #Morsures, Incantations, Nuits et Journaux
+        self.stack = [] #Ce qui est passé à Renfield
+        self.discard = [] #Ce qui est défaussé
+        self.rituals = [ "mirror", "transfusion", "transfusion", "distortion", "water" ]
 
         for i in range(16):
             self.library.append("bite")
@@ -35,7 +37,7 @@ class Game:
                 await player.user.send(embed = embed)
 
     #Broadcast les infos du jeu à tous les joueurs
-    async def send_info():
+    async def send_info(self):
         embed = discord.Embed(
             title = "Tour de `" + str(self.players[self.order[self.turn]].user) + "` (Tour " + str(self.turn + 1) + "/" + str(len(self.order)) +")",
             color = 0x000055,
@@ -71,7 +73,7 @@ class Game:
         if self.turn > 0:
             last_player = self.players[self.order[self.turn - 1]]
             embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
-                value = self.card_names[self.discard[-1]],
+                value = globals.card_names[self.discard[-1]],
                 inline = False
             )
 
@@ -99,7 +101,7 @@ class Game:
         for id in self.order:
             if id == player.user.id:
                 value = "Votre main:\n  "
-                value += '\n  '.join([self.card_names[x] for x in player.hand])
+                value += '\n  '.join([globals.card_names[x] for x in player.hand])
             else:
                 value = "Main: "
                 for i in range(len(self.players[id].hand)):
@@ -131,16 +133,16 @@ class Game:
         if self.turn > 0:
             last_player = self.players[self.order[self.turn - 1]]
             embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "`:",
-                value = self.card_names[self.discard[-1]],
+                value = globals.card_names[self.discard[-1]],
                 inline = False
             )
 
         await player.user.send(embed = embed)
 
-    async def game_start():
+    async def game_start(self):
         #Détermine au hasard l'ordre et le premier joueur
         self.order = [x for x in self.players]
-        self.order.remove(self.user.id)
+        self.order.remove(self.renfield.user.id)
         random.shuffle(self.order)
 
         #Ajouter les nuits à l'horloge et à la librairie et les mélange
@@ -163,10 +165,10 @@ class Game:
 
             for id in self.order:
                 player = self.players[id]
-                await player.self_start()
+                await player.game_start(self)
 
             #Tour du premier joueur
-            await self.players[self.order[0]].turn_start()
+            await self.players[self.order[0]].turn_start(self)
 
 
         async def cond(reactions):
@@ -183,7 +185,7 @@ class Game:
         )
 
     #Le tour de table est terminé, les cartes sont étudiées en secret
-    async def study_stack():
+    async def study_stack(self):
         can_make_ritual = True
         for card in self.stack:
             if card != "spell":
@@ -216,7 +218,6 @@ class Game:
                     choice = self.players[self.order[index]]
 
                     await self.broadcast(discord.Embed(
-                        title = "Résultat du Miroir d'Argent",
                         color = 0x00ff00,
                         description = "Le Miroir révèle que `" + str(choice.user) + "` est " + ("le Vampire!" if choice.role == "Vampire" else "un Chasseur")
                     ))
@@ -228,7 +229,6 @@ class Game:
                     choice = self.players[self.order[index]]
 
                     await self.broadcast(discord.Embed(
-                        title = "Résultat de l'Eau Bénite",
                         color = 0x00ff00,
                         description = "`" + str(choice.user) + "` a été aspergé d'Eau Bénite, et a donc défaussé sa main. Il a pioché autant de cartes de la défausse"
                     ))
@@ -236,7 +236,7 @@ class Game:
                     hand_size = len(choice.hand)
                     self.discard.extend(choice.hand)
                     choice.hand.clear()
-                    await choice.draw(self, hand_size, origin = "discard")
+                    await choice.draw(self, hand_size, origin = self.discard)
 
                     await self.check_if_stack_done()
 
@@ -245,7 +245,6 @@ class Game:
                     choice = self.players[self.order[index]]
 
                     await self.broadcast(discord.Embed(
-                        title = "Résultat de la Tranfusion Sanguine",
                         color = 0x00ff00,
                         description = "`" + str(choice.user) + "` a été transfusé et a donc pioché une carte" + (". Il a toujours " + str(player.bites) + " Morsures" if player.bites else "")
                     ))
@@ -269,7 +268,7 @@ class Game:
                         while self.clock[index_to_remove] == "dawn":
                             index_to_remove -= 1
 
-                        self.clock[index_to_remove].pop(index_to_remove)
+                        self.clock.pop(index_to_remove)
 
                         print("moving on")
                         await self.check_if_stack_done()
@@ -331,7 +330,7 @@ class Game:
                 await self.broadcast(discord.Embed(
                     title = "**Victoire des Chasseurs**",
                     color = 0x00ff00,
-                    description = "Toutes les cartes passées à Renfield étaient des Incantations. Tous les Rituels ont été effectués, le Vampire est anéanti par le groupe.\n**Les Chasseurs ont gagné!**"
+                    description = "Toutes les cartes passées à Renfield étaient des Incantations. Tous les Rituels ont été effectués, le Vampire, `" + str([x for x in self.players.values() if x.role == "Vampire"][0].user) + "`, a été anéanti par le groupe.\n**Les Chasseurs ont gagné!**"
                 ))
 
                 await self.end_game()
@@ -345,7 +344,7 @@ class Game:
             #Commence la boucle récursive d'étude des cartes
             await self.loop_through_stack()
 
-    async def loop_through_stack():
+    async def loop_through_stack(self):
         card = self.stack.pop()
 
         #Défausses la carte
@@ -362,7 +361,7 @@ class Game:
             if total_bites == goal:
                 await self.broadcast(discord.Embed(
                     title = "**Victoire du Mal**",
-                    description = "`" + str(player.user) + "` a été mordu! Le nombre requis de Morsures ont été jouées. Le Vampire, `" + str([x for x in self.players.values() if x.role == "Vampire"][0].user) + "`, ayant désormais suffisamment d'influence, a neutralisé l'équipe des Chasseurs.\n**Le Mal a gagné!**",
+                    description = "Le nombre requis de Morsures ont été jouées. Le Vampire, `" + str([x for x in self.players.values() if x.role == "Vampire"][0].user) + "`, ayant désormais suffisamment d'influence, a neutralisé l'équipe des Chasseurs.\n**Le Mal a gagné!**",
                     color = 0xff0000
                 ))
 
@@ -374,8 +373,8 @@ class Game:
                     card = player.hand.pop(card_index)
 
                     #Préviens le joueur
-                    await self.user.send("`" + str(player.user) + "` a défaussé sa carte " + self.card_names[card])
-                    await player.user.send("Tu as été forcé de défausser ta carte " + self.card_names[card])
+                    await self.renfield.user.send("`" + str(player.user) + "` a défaussé sa carte " + globals.card_names[card])
+                    await player.user.send("Tu as été forcé de défausser ta carte " + globals.card_names[card])
 
                     #Défausses la carte
                     self.discard.append(card)
@@ -397,18 +396,23 @@ class Game:
                         color = 0xff0000
                     ))
 
-                    #Envoies le choix de la carte à défausser
-                    await ReactionMessage(cond,
-                        discard
-                    ).send(self.user,
-                        "Choisis la carte à défausser",
-                        "",
-                        0xff0000,
-                        [self.card_names[x] for x in player.hand]
-                    )
+                    #Envoies le choix de la carte à défausser uniquement s'il y a une carte à défausser
+                    if len(player.hand):
+                        await ReactionMessage(cond,
+                            discard
+                        ).send(self.renfield.user,
+                            "Choisis la carte à défausser",
+                            "",
+                            0xff0000,
+                            [globals.card_names[x] for x in player.hand]
+                        )
+                    else:
+                        #Sinon juste avance le tour
+                        await self.renfield.user.send("`" + str(player.user) + "` n'avait aucune carte à défausser")
+                        await self.check_if_stack_done()
 
                 async def cond(reactions):
-                    return len(reactions[self.user.id]) == 1
+                    return len(reactions[self.renfield.user.id]) == 1
 
                 #Envoies le message de choix du mordu à Renfield
                 await ReactionMessage(cond,
@@ -424,15 +428,14 @@ class Game:
             if card == "night":
                 self.clock.append(card)
                 await self.broadcast(discord.Embed(
-                    titre = "La Nuit s'allonge",
-                    description = "Une carte Nuit a été jouée et ajoutée à l'Horloge",
-                    color = 0xff0000
+                    description = "**Une carte Nuit a été jouée et ajoutée à l'Horloge**",
+                    color = 0x000055
                 ))
 
             #Regarde la prochaine carte
             await self.check_if_stack_done()
 
-    async def check_if_stack_done():
+    async def check_if_stack_done(self):
         if len(self.stack):
             await self.loop_through_stack(self, self)
         else:
@@ -453,9 +456,8 @@ class Game:
                     choice = self.players[self.order[index]]
 
                     await self.broadcast(discord.Embed(
-                        title = "Passation du Pieu Ancestral",
                         description = "`" + str(player.user) + "` a passé le Pieu Ancestral à `" + str(choice.user) + "`",
-                        color = 0xffff00
+                        color = 0x00ff00
                     ))
 
                     for i in range(index):
@@ -477,9 +479,8 @@ class Game:
                         await self.end_game()
                     else:
                         await self.broadcast(discord.Embed(
-                            title = "Le Pieu Ancestral n'a pas été utilisé",
                             description = "`" + str(player.user) + "` a décidé de garder le Pieu pour plus tard. Il va cependant décider du joueur qui va recevoir le Pieu pour le prochain Tour",
-                            color = 0xffff00
+                            color = 0x00ff00
                         ))
 
                         await ReactionMessage(cond,
@@ -487,7 +488,7 @@ class Game:
                         ).send(player.user,
                             "Choisis à qui tu veux passer le Pieu",
                             "",
-                            0xffff00,
+                            0x00ff00,
                             ["`" + str(self.players[x].user) + "`" for x in self.order if x != player.user.id or globals.debug]
                         )
 
@@ -499,7 +500,7 @@ class Game:
                 ).send(player.user,
                     "Choisis qui tu veux planter avec le Pieu Ancestral",
                     "",
-                    0xffff00,
+                    0x00ff00,
                     choices
                 )
             else:
@@ -524,7 +525,6 @@ class Game:
                 choice = self.players[self.order[index]]
 
                 await self.broadcast(discord.Embed(
-                    title = "Passation du Pieu Ancestral",
                     description = "`" + str(self.renfield.user) + "` a passé le Pieu Ancestral à `" + str(choice.user) + "`",
                     color = 0x000055
                 ))
@@ -532,7 +532,7 @@ class Game:
                 for i in range(index):
                     self.order.append(self.order.pop(0))
 
-                await self.players[self.order[0]].turn_start()
+                await self.players[self.order[0]].turn_start(self)
 
             async def cond(reactions):
                 return len(reactions[self.renfield.user.id]) == 1
@@ -542,13 +542,13 @@ class Game:
             ).send(self.renfield.user,
                 "Choisis à qui tu veux passer le Pieu",
                 "",
-                0xffff00,
+                0x000055,
                 ["`" + str(self.players[x].user)  + "`" for x in self.order if x != self.order[0] or globals.debug]
             )
         else:
-            await self.players[self.order[0]].turn_start()
+            await self.players[self.order[0]].turn_start(self)
 
-    async def end_game():
+    async def end_game(self):
         embed = discord.Embed(
             title = "Fin de partie",
             description = "",
@@ -558,7 +558,7 @@ class Game:
         i = 0
         for id in self.order:
             value = "Main: "
-            value += '\n  '.join([self.card_names[x] for x in self.players[id].hand])
+            value += '\n  '.join([globals.card_names[x] for x in self.players[id].hand])
 
             if self.players[id].bites:
                 value += "\nMorsures:"

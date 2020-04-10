@@ -75,7 +75,10 @@ class MainClass(BaseClassPython):
                         await message.channel.send("<@" + str(message.author.id) + "> a quitté la partie")
 
                         del game.players[message.author.id]
-                elif len(game[.players) < 8:
+
+                        if len(game.players) == 0:
+                            globals.games.pop(message.channel.id)
+                elif len(game.players) < 8:
                     await message.channel.send("Vous n'êtes pas dans la partie")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
@@ -83,6 +86,7 @@ class MainClass(BaseClassPython):
     #Liste des joueurs
     async def com_players(self, message, args, kwargs):
         if message.channel.id in globals.games:
+            game = globals.games[message.channel.id]
             if game.turn == -1:
                 embed = discord.Embed(
                     title = "Liste des joueurs (" + str(len(globals.games[message.channel.id].players)) + ")",
@@ -95,6 +99,7 @@ class MainClass(BaseClassPython):
 
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in globals.games:
+            game = globals.games[message.channel.id]
             if game.turn == -1:
                 await message.channel.send("La partie a été reset")
                 globals.games.pop(message.channel.id)
@@ -135,7 +140,7 @@ class MainClass(BaseClassPython):
                             "Choisis le Renfield",
                             "",
                             self.color,
-                            [self.client.get_user(x).name for x in game.players]
+                            ["`" + str(self.client.get_user(x)) + "`" for x in game.players]
                         )
                     else:
                         await message.channel.send("Il faut au minimum 5 joueurs pour commencer la partie")
