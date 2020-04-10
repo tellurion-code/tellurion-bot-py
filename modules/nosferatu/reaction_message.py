@@ -37,7 +37,7 @@ class ReactionMessage:
             await self.message.add_reaction(self.number_emojis[i])
 
         globals.reaction_messages.append(self)
-        self.block = false
+        self.block = False
 
     #Trigger quand une réaction est ajoutée
     async def add_reaction(self, reaction, user):
