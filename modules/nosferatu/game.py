@@ -166,7 +166,7 @@ class Game:
         ).send(message.author,
             "Choisis le Renfield",
             "",
-            self.color,
+            0xffff00,
             ["`" + str(self.client.get_user(x)) + "`" for x in game.players]
         )
 
