@@ -80,8 +80,6 @@ class Game:
         await self.channel.send(embed = embed)
 
         for id, player in self.players.items():
-            i = 0
-            
             if player.role != "Renfield":
                 await self.send_personnal_info(player)
             else:
@@ -99,13 +97,14 @@ class Game:
             description = "Il reste " + str(len(self.rituals)) + " Rituels" + (". Il vous reste " + str(goal - total_bites) + " Morsures à placer" if player.role == "Vampire" else "")
         )
 
+        i = 0
         for id in self.order:
             if id == player.user.id:
                 value = "Votre main:\n  "
                 value += '\n  '.join([globals.card_names[x] for x in player.hand])
             else:
                 value = "Main: "
-                for i in range(len(self.players[id].hand)):
+                for _ in range(len(self.players[id].hand)):
                     value += "🔳"
 
             if self.players[id].bites:
