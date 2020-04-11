@@ -147,7 +147,7 @@ class Game:
 
     async def send_personnal_info(self, player, title):
         #Infos pour les joueurs
-        goal = 4 if len(self.players) == 5 else 5
+        goal = 4 if len(self.players) <= 5 else 5
         total_bites = 0
         for id in self.order:
             total_bites += self.players[id].bites
@@ -208,7 +208,7 @@ class Game:
         self.order = [x for x in self.players]
 
         if len(self.players) == 4 :
-            await message.channel.send("Il s'agit d'une partie à 4 joueurs, le bot est donc automatiquement Renfield.\n**Le Miroir d'Argent ne pourra pas être joué et ne servira que dedernier Rituel à effectuer.**")
+            await message.channel.send("Il s'agit d'une partie à 4 joueurs, le bot est donc automatiquement Renfield.\n**Le Miroir d'Argent ne pourra pas être joué et ne servira que de dernier Rituel à effectuer.**")
             await self.game_start()
         else:
             await message.channel.send("Début de partie, " + message.author.mention + " va décider du Renfield")
@@ -476,7 +476,7 @@ class Game:
 
         #Si la carte est une MORSURE, envoies le choix du joueur puis le choix de la carte
         if card == "bite":
-            goal = 4 if len(self.players) == 5 else 5
+            goal = 4 if len(self.players) <= 5 else 5
             total_bites = 1
             for player in self.players.values():
                 if player.role != "Renfield":
@@ -586,7 +586,7 @@ class Game:
                 player = self.players[self.order[0]]
 
                 await self.broadcast(discord.Embed(
-                    title = "Vote du Pieu Ancestral",
+                    title = "Choix du Pieu Ancestral",
                     description = "Le tour de table s'est fini sur une Aurore. Le Porteur du Pieu Ancestral (`" + str(player.user) + "`) a donc la possibilité de l'utiliser sur un de ses collègues",
                     color = 0x00ff00
                 ), mode = "set")
@@ -644,7 +644,7 @@ class Game:
                 ).send(player.user,
                     "Choisis qui tu veux planter avec le Pieu Ancestral",
                     "",
-                    0x00ff00,
+                    0xff0000,
                     choices
                 )
             else:

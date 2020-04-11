@@ -24,4 +24,4 @@ def init():
         "night": "🌃 Nuit",
         "none": "❌ Manquante"
     }
-    debug = True
+    debug = False
