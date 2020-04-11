@@ -6,6 +6,7 @@ class ReactionMessage:
     def __init__(self, _cond, _effect, **kwargs):
         self.check = kwargs["check"] if "check" in kwargs else lambda r, u: True
         self.update_function = kwargs["update"] if "update" in kwargs else None
+        self.temporary = kwargs["temporary"] if "temporary" in kwargs else True
         self.cond = _cond
         self.effect = _effect
 
@@ -48,6 +49,8 @@ class ReactionMessage:
 
         if reaction.emoji == "✅" and await self.cond(self.reactions):
             await self.effect(self.reactions)
+            if self.temporary:
+                await self.message.delete()
             globals.reaction_messages.remove(self)
         else:
             await self.update(reaction)

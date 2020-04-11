@@ -114,7 +114,7 @@ class MainClass(BaseClassPython):
             game = globals.games[message.channel.id]
             if game.turn == -1:
                 if message.author.id in game.players:
-                    if len(game.players) >= 5 or globals.debug:
+                    if len(game.players) >= 4 or globals.debug:
                         await game.start_game(message)
                     else:
                         await message.channel.send("Il faut au minimum 5 joueurs pour commencer la partie")

@@ -8,6 +8,7 @@ import modules.nosferatu.globals as globals
 class Player:
     def __init__(self, _user):
         self.user = _user
+        self.info_message = None
 
 
 class Renfield(Player):
@@ -20,8 +21,6 @@ class HiddenRole(Player):
         super().__init__(user)
         self.bites = 0
         self.hand = []
-        self.info_message = None
-        self.choice_message = None
 
     async def send_hand(self, game):
         info_message = await self.user.send(embed = discord.Embed(
@@ -34,7 +33,6 @@ class HiddenRole(Player):
             play = self.hand[reactions[self.user.id][0]]
             discard = self.hand[reactions[self.user.id][1]]
 
-            await self.choice_message.message.delete()
             await info_message.edit(embed = discord.Embed(
                 title = "Cartes jouées ✅",
                 color = 0x00ff00,
@@ -43,6 +41,8 @@ class HiddenRole(Player):
 
             game.stack.append(play)
             game.discard.append(discard)
+            game.discard_stack.append(discard)
+
             self.hand.remove(play)
             self.hand.remove(discard)
 
@@ -51,34 +51,38 @@ class HiddenRole(Player):
             game.turn += 1
 
             if clock_card == "dawn":
+                await game.send_info("Tour de table terminé")
+
                 embed = discord.Embed(
-                    title = "Tour de table fini (Aurore 🌅)",
+                    title = "Tour de table fini : Aurore 🌅",
                     color = 0x00ff00,
                     description = "Le tour de table a été arrêté par le lever du soleil. Les cartes données à Renfield vont être utilisées"
                 )
 
-                last_player = game.players[game.order[game.turn - 1]]
-                embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "` :",
-                    value = globals.card_names[game.discard[-1]],
-                    inline = False
-                )
+                # last_player = game.players[game.order[game.turn - 1]]
+                # embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "` :",
+                #     value = globals.card_names[game.discard[-1]],
+                #     inline = False
+                # )
 
-                await game.broadcast(embed)
+                await game.broadcast(embed, mode = "set")
                 await game.study_stack()
             elif game.turn == len(game.order):
+                await game.send_info("Tour de table terminé")
+
                 embed = discord.Embed(
-                    title = "Tour de table fini (Tour complété 🌃)",
+                    title = "Tour de table fini : Tour complété 🌃",
                     color = 0x000055,
                     description = "Le tour de table a été complété sans que le soleil ne se lève. **Le Pieu ne pourra pas être utilisé.** Les cartes données à Renfield vont être utilisées"
                 )
 
-                last_player = game.players[game.order[game.turn - 1]]
-                embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "` :",
-                    value = globals.card_names[game.discard[-1]],
-                    inline = False
-                )
+                # last_player = game.players[game.order[game.turn - 1]]
+                # embed.add_field(name = "Carte défaussée par `" + str(last_player.user) + "` :",
+                #     value = globals.card_names[game.discard[-1]],
+                #     inline = False
+                # )
 
-                await game.broadcast(embed)
+                await game.broadcast(embed, mode = "set")
                 await game.study_stack()
             else:
                 await game.players[game.order[game.turn]].turn_start(game)
@@ -96,12 +100,10 @@ class HiddenRole(Player):
                 description = "Carte à envoyer :\n" + globals.card_names[play] + "\nCarte à défausser :\n" + globals.card_names[discard]
             ))
 
-        self.choice_message = ReactionMessage(cond,
+        await ReactionMessage(cond,
             send_card,
             update = modify_info
-        )
-
-        await self.choice_message.send(self.user,
+        ).send(self.user,
             "Début de tour",
             "Choisis la carte que tu veux envoyez à Renfield, puis la carte que tu veux défausser :\n\n",
             0xffff00,
@@ -117,7 +119,7 @@ class HiddenRole(Player):
         await self.draw(game, 2)
 
         #Envoies les infos de début de partie
-        await game.send_info()
+        await game.send_info("Tour de `" + str(self.user) + "` (Tour " + str(game.turn + 1) + "/" + str(len(game.order)) +")")
 
         #Envoies la main et le choix des cartes au joueur
         await self.send_hand(game)
@@ -138,7 +140,7 @@ class HiddenRole(Player):
                 await game.broadcast(discord.Embed(
                     title = "Pioche rafraichîe",
                     description = "La défausse a été mélangée et remise dans la pioche",
-                    color = 0xffffff
+                    color = 0xfffffe
                 ))
 
             #Pioche x cartes
