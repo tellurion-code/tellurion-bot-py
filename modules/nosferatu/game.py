@@ -204,14 +204,14 @@ class Game:
         for player in self.players.values():
             await player.user.send("||\n\n\n\n\n\n\n\n\n\n||")
 
+        self.turn = 0
+        self.order = [x for x in self.players]
+
         if len(self.players) == 4 :
             await message.channel.send("Il s'agit d'une partie à 4 joueurs, le bot est donc automatiquement Renfield.\n**Le Miroir d'Argent ne pourra pas être joué et ne servira que dedernier Rituel à effectuer.**")
             await self.game_start()
         else:
-            self.turn = 0
-
             await message.channel.send("Début de partie, " + message.author.mention + " va décider du Renfield")
-            self.order = [x for x in self.players]
 
             async def set_renfield(reactions):
                 #Change Renfield
