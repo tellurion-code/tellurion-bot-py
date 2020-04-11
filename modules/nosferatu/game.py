@@ -354,7 +354,21 @@ class Game:
                     hand_size = len(choice.hand)
                     self.discard.extend(choice.hand)
                     choice.hand.clear()
-                    await choice.draw(self, hand_size, origin = self.discard)
+
+                    card_index = 0
+                    while card_index < len(self.discard) and hand_size > 0:
+                        if self.discard[card_index] == "journal":
+                            choice.hand.append(self.discard.pop(card_index))
+                            hand_size -= 1
+                        card_index += 1
+
+                    card_index = 0
+                    while card_index < len(self.library) and hand_size > 0:
+                        if self.library[card_index] == "journal":
+                            choice.hand.append(self.library.pop(card_index))
+                            hand_size -= 1
+                        card_index += 1
+
 
                     await self.check_if_stack_done()
 
@@ -411,13 +425,13 @@ class Game:
                         await self.broadcast(discord.Embed(
                             title = "Rituel effectué : 🧴 Eau Bénite",
                             color = 0x00ff00,
-                            description = "`" + str(player.user) + "` se saisit de l'Eau Bénite et s'apprête à purifier un membre de l'équipe\nIl va choisir un joueur qui va défausser sa main et piochera autant de la défausse"
+                            description = "`" + str(player.user) + "` se saisit de l'Eau Bénite et s'apprête à purifier un membre de l'équipe\nIl va choisir un joueur qui va défausser sa main et piochera autant de Journaux de la défausse"
                         ), mode = "replace")
 
                         await ReactionMessage(cond,
                             holy_water
                         ).send(player.user,
-                            "Choisis le joueur qui va défausser sa main et piochera autant de la défausse",
+                            "Choisis le joueur qui va défausser sa main et piochera autant de Journaux de la défausse",
                             "",
                             0x00ff00,
                             ["`" + str(self.players[x].user) + "`" for x in self.order]
@@ -594,35 +608,64 @@ class Game:
                 async def cond(reactions):
                     return len(reactions[player.user.id]) == 1
 
-                async def pass_stick(reactions):
-                    index = reactions[player.user.id][0] + (1 if not globals.debug else 0)
-                    choice = self.players[self.order[index]]
+                async def send_murder_choice(reactions):
+                    if reactions[player.user.id][0] == 0:
+                        async def pass_stick(reactions):
+                            index = reactions[player.user.id][0] + (1 if not globals.debug else 0)
+                            choice = self.players[self.order[index]]
 
-                    await self.broadcast(discord.Embed(
-                        description = "\n\n`" + str(player.user) + "` a passé le Pieu Ancestral à `" + str(choice.user) + "`",
-                        color = 0x00ff00
-                    ), mode = "append")
+                            await self.broadcast(discord.Embed(
+                                description = "\n\n`" + str(player.user) + "` a passé le Pieu Ancestral à `" + str(choice.user) + "`",
+                                color = 0x00ff00
+                            ), mode = "append")
 
-                    for i in range(index):
-                        self.order.append(self.order.pop(0))
+                            for i in range(index):
+                                self.order.append(self.order.pop(0))
 
-                    await self.next_table_turn(True)
+                            await self.next_table_turn(True)
 
-                async def stab_player(reactions):
-                    index = reactions[player.user.id][0]
-                    choice = (self.players[self.order[index]] if index < len(self.order) else None) if player.role == "Hunter" else None
+                        async def stab_player(reactions):
+                            index = reactions[player.user.id][0]
+                            choice = (self.players[self.order[index]] if index < len(self.order) else None) if player.role == "Hunter" else None
 
-                    if choice:
-                        await self.broadcast(discord.Embed(
-                            title = "Le Pieu Ancestral a été planté !",
-                            description = "`" + str(player.user) + "` a décidé de planter le Pieu dans le coeur de `" + str(choice.user) + "`!\n" + ("Le Pieu s'enflamme et tue le Vampire sur-le-champ, ne laissant qu'un tas de cendre. **Les Chasseurs ont gagnés!**" if choice.role == "Vampire" else "Le Pieu reste silencieux alors que le Chasseur s'effondre sur le sol. Le Vampire, `" + str([x for x in self.players.values() if x.role == "Vampire"][0].user) + "`, maintenant que les autres Chasseurs sont sans défense, se révèle et termine le travail. **Le Mal a gagné!**"),
-                            color = 0x00ff00 if choice.role == "Vampire" else 0xff0000
-                        ), mode = "replace")
+                            if choice:
+                                await self.broadcast(discord.Embed(
+                                    title = "Le Pieu Ancestral a été planté !",
+                                    description = "`" + str(player.user) + "` a décidé de planter le Pieu dans le coeur de `" + str(choice.user) + "`!\n" + ("Le Pieu s'enflamme et tue le Vampire sur-le-champ, ne laissant qu'un tas de cendre. **Les Chasseurs ont gagnés!**" if choice.role == "Vampire" else "Le Pieu reste silencieux alors que le Chasseur s'effondre sur le sol. Le Vampire, `" + str([x for x in self.players.values() if x.role == "Vampire"][0].user) + "`, maintenant que les autres Chasseurs sont sans défense, se révèle et termine le travail\n**Le Mal a gagné!**"),
+                                    color = 0x00ff00 if choice.role == "Vampire" else 0xff0000
+                                ), mode = "replace")
 
-                        await self.end_game()
+                                await self.end_game()
+                            else:
+                                await self.broadcast(discord.Embed(
+                                    title = "Choix du Pieu Ancestral",
+                                    description = "`" + str(player.user) + "` a décidé de garder le Pieu pour plus tard. Il va cependant décider du joueur qui va recevoir le Pieu pour le prochain Tour",
+                                    color = 0x00ff00
+                                ), mode = "replace")
+
+                                await ReactionMessage(cond,
+                                    pass_stick
+                                ).send(player.user,
+                                    "Choisis à qui tu veux passer le Pieu",
+                                    "",
+                                    0x00ff00,
+                                    ["`" + str(self.players[x].user) + "`" for x in self.order if x != player.user.id or globals.debug]
+                                )
+
+                        choices = ["`" + str(self.players[x].user) + "`" for x in self.order] if player.role == "Hunter" else []
+                        choices.append("Personne")
+
+                        await ReactionMessage(cond,
+                            stab_player
+                        ).send(player.user,
+                            "Choisis qui tu veux planter avec le Pieu Ancestral",
+                            "",
+                            0xff0000,
+                            choices
+                        )
                     else:
                         await self.broadcast(discord.Embed(
-                            title = "Vote du Pieu Ancestral",
+                            title = "Choix du Pieu Ancestral",
                             description = "`" + str(player.user) + "` a décidé de garder le Pieu pour plus tard. Il va cependant décider du joueur qui va recevoir le Pieu pour le prochain Tour",
                             color = 0x00ff00
                         ), mode = "replace")
@@ -636,16 +679,13 @@ class Game:
                             ["`" + str(self.players[x].user) + "`" for x in self.order if x != player.user.id or globals.debug]
                         )
 
-                choices = ["`" + str(self.players[x].user) + "`" for x in self.order] if player.role == "Hunter" else []
-                choices.append("Personne")
-
                 await ReactionMessage(cond,
-                    stab_player
+                    send_murder_choice
                 ).send(player.user,
-                    "Choisis qui tu veux planter avec le Pieu Ancestral",
+                    "Voulez vous tuer quelqu'un avec le Pieu Ancestral?",
                     "",
-                    0xff0000,
-                    choices
+                    0x00ff00,
+                    ["Oui", "Non"]
                 )
             else:
                 await self.next_table_turn(False)
@@ -740,8 +780,7 @@ class Game:
                     value += "🧛"
 
             embed.add_field(name = "`" + str(self.players[id].user) + "`" + (" (🧛)" if self.players[id].role == "Vampire" else ""),
-                value = value,
-                inline = False
+                value = value
             )
             i += 1
 
