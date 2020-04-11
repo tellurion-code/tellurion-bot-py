@@ -167,7 +167,7 @@ class BaseClass:
         """Override this function to handle all messages starting with `{prefix}{command_text}`
 
         Function which is executed for all command_text doesn't match with a `com_{subcommand}` function"""
-        pass
+        await self.send_help(message.channel)
 
     async def com_help(self, message, args, kwargs):
         await self.send_help(message.channel)
