@@ -163,17 +163,13 @@ class Game:
                     }
                 ]
             )
+
         async def cond_teams(reactions):
-            ok = False
-
-            old_team = -1
+            teams = [0, 0]
             for id, indexes in reactions.items():
-                if old_team == -1:
-                    old_team = indexes[0]
-                elif old_team != indexes[0]:
-                    ok = True
-                    break
+                teams[indexes[0]] += 1
 
+            ok = teams[0] > 1 and teams[1] > 1
             if not ok:
                 return False
 

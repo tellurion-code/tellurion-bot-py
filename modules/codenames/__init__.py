@@ -59,7 +59,7 @@ class MainClass(BaseClassPython):
 
                     if len(game.players) == 0:
                         globals.games.pop(message.channel.id)
-                elif len(game.players) < 8:
+                else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
             else:
                 await message.author.send("La partie a déjà commencé")
@@ -86,7 +86,7 @@ class MainClass(BaseClassPython):
         if message.channel.id in globals.games:
             game = globals.games[message.channel.id]
             if game.turn == "none":
-                await message.channel.send("La partie a été reset")
+                await message.channel.send("La partie a été réinitialisée")
                 globals.games.pop(message.channel.id)
             else:
                 await message.author.send("La partie a déjà commencé")
@@ -163,6 +163,7 @@ class MainClass(BaseClassPython):
     async def on_reaction_remove(self, reaction, user):
         if not user.bot:
             for message in globals.reaction_messages:
-                if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
-                    if message.check(reaction, user) and message.message.id == reaction.message.id:
-                        await message.remove_reaction(reaction, user)
+                if user.id in message.reactions:    
+                    if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
+                        if message.check(reaction, user) and message.message.id == reaction.message.id:
+                            await message.remove_reaction(reaction, user)
