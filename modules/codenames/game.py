@@ -236,7 +236,7 @@ class Game:
             board += " " * math.floor((word_length - len(card))/2) + card + " " * math.ceil((word_length - len(card))/2) + ("|\n" if (i + 1) % 5 == 0 else "|")
         board += "```"
 
-        colors = ""
+        colors = "" #⬛🇦🇧🇨🇩🇪
         card_count = 0
         for card in self.colors:
             if card == self.turn:
@@ -247,7 +247,7 @@ class Game:
             if card == self.turn:
                 card_count -= 1
 
-        embed = discord.Embed(title = "Tour de l'équipe " + ("bleue" if self.turn == "blue" else "rouge") + " (" + str(card_count) + " cartes restantes)",
+        embed = discord.Embed(title = "Tour de l'équipe " + ("bleue" if self.turn == "blue" else "rouge") + " (" + str(card_count) + (" carte restante)" if card_count == 1 else " cartes restantes)"),
             description = ("Indice : " + self.hint + " (" + str(self.affected) + ")") if self.hint != "" else "",
             color = 0x0000ff if self.turn == "blue" else 0xff0000)
 
@@ -282,7 +282,7 @@ class Game:
             if card == self.turn:
                 card_count -= 1
 
-        embed = discord.Embed(title = "Tour de l'équipe " + ("bleue" if self.turn == "blue" else "rouge") + " (" + str(card_count) + " cartes restantes)",
+        embed = discord.Embed(title = "Tour de l'équipe " + ("bleue" if self.turn == "blue" else "rouge") + " (" + str(card_count) + (" carte restante)" if card_count == 1 else " cartes restantes)"),
             description = ("Indice : " + self.hint + " (" + str(self.affected) + ")") if self.hint != "" else "",
             color = 0x0000ff if self.turn == "blue" else 0xff0000)
 
@@ -296,6 +296,21 @@ class Game:
             await target.message.edit(content = board, embed =  embed)
         else:
             target.message = await target.user.send(board, embed =  embed)
+
+    async def check_if_win(self):
+        card_count = 0
+        for card in self.colors:
+            if card == self.turn:
+                card_count += 1
+
+        for card in self.revealed:
+            if card == self.turn:
+                card_count -= 1
+
+        if card_count == 0:
+            await self.end_game(True)
+        else:
+            await self.send_info()
 
     async def end_game(self, current_win):
         if not current_win:

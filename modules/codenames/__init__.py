@@ -127,9 +127,10 @@ class MainClass(BaseClassPython):
                                         game.hint = args[1]
                                         game.affected = affected
                                         await game.send_info()
-                                        await game.players[message.author.id].send_tile_choice(game)
+                                        await message.author.send("Vous pouvez utiliser %codenames reveal pour révéler les mots, et %codenames pass pour passer votre tour")
+                                        #await game.players[message.author.id].send_tile_choice(game)
                                 else:
-                                    await message.author.send("Tu dois spécifier un indice et le nombre de mots concernés")
+                                    await message.author.send("Vous devez spécifier juste un indice et le nombre de mots concernés")
                             else:
                                 await message.author.send("Tu as déjà envoyé un indice")
                         else:
@@ -142,6 +143,67 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Cette commande est à envoyer en DM")
 
+    async def com_reveal(self, message, args, kwargs):
+        if not message.guild:
+            done = False
+            for game in globals.games.values():
+                if message.author.id in game.players:
+                    if message.author.id in game.spy_masters:
+                        done = True
+                        if game.players[message.author.id].team == game.turn:
+                            if game.hint != "":
+                                if len(args) == 2:
+                                    try:
+                                        card = game.board.index(card)
+                                    except:
+                                        await message.author.send("Il n'y a pas de cartes avec ce nom. Vérifiez que le mot est en minuscules et sans accents")
+                                    else:
+                                        game.revealed[card] = game.colors[card]
+                                        if game.colors[card] == game.turn:
+                                            await game.check_if_win()
+                                        elif game.colors[card] == "black":
+                                            await game.end_game(False)
+                                        else:
+                                            game.turn = "blue" if game.turn == "red" else "red"
+                                            game.hint = ""
+                                            await game.send_info()
+                                else:
+                                    await message.author.send("Vous devez spécifier juste un mot")
+                            else:
+                                await message.author.send("Tu n'as pas envoyé un indice")
+                        else:
+                            await message.author.send("Ce n'est pas ton tour")
+                    else:
+                        await message.author.send("Tu n'es pas un Spy Master")
+
+            if not done:
+                await message.author.send("Il n'y a pas de partie en cours")
+        else:
+            await message.channel.send("Cette commande est à envoyer en DM")
+
+    async def com_pass(self, message, args, kwargs):
+        if not message.guild:
+            done = False
+            for game in globals.games.values():
+                if message.author.id in game.players:
+                    if message.author.id in game.spy_masters:
+                        done = True
+                        if game.players[message.author.id].team == game.turn:
+                            if game.hint != "":
+                                game.turn = "blue" if game.turn == "red" else "red"
+                                game.hint = ""
+                                await game.send_info()
+                            else:
+                                await message.author.send("Tu n'as pas envoyé un indice")
+                        else:
+                            await message.author.send("Ce n'est pas ton tour")
+                    else:
+                        await message.author.send("Tu n'es pas un Spy Master")
+
+            if not done:
+                await message.author.send("Il n'y a pas de partie en cours")
+        else:
+            await message.channel.send("Cette commande est à envoyer en DM")
 
     async def com_debug(self, message, args, kwargs):
         if message.author.id == 240947137750237185:
@@ -163,7 +225,7 @@ class MainClass(BaseClassPython):
     async def on_reaction_remove(self, reaction, user):
         if not user.bot:
             for message in globals.reaction_messages:
-                if user.id in message.reactions:    
+                if user.id in message.reactions:
                     if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
                         if message.check(reaction, user) and message.message.id == reaction.message.id:
                             await message.remove_reaction(reaction, user)

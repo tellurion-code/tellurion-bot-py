@@ -86,19 +86,3 @@ class Player():
             emojis = ["🇦", "🇧", "🇨", "🇩", "🇪", "1️⃣", "2️⃣", "3️⃣", "4️⃣", "5️⃣", "🚫"],
             silent = True
         )
-
-    async def check_if_win(self, game):
-        card_count = 0
-        for card in game.colors:
-            if card == game.turn:
-                card_count += 1
-
-        for card in game.revealed:
-            if card == game.turn:
-                card_count -= 1
-
-        if card_count == 0:
-            await game.end_game(True)
-        else:
-            await game.send_info()
-            await self.send_tile_choice(game)
