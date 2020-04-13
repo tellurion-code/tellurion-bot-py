@@ -9,6 +9,7 @@ class ReactionMessage:
         self.temporary = kwargs["temporary"] if "temporary" in kwargs else True
         self.cond = _cond
         self.effect = _effect
+        self.block = False
 
         self.reactions = {}
 
@@ -57,7 +58,8 @@ class ReactionMessage:
         else:
             self.reactions[user.id] = [self.number_emojis.index(reaction.emoji)]
 
-        if reaction.emoji == "✅" and await self.cond(self.reactions):
+        if reaction.emoji == "✅" and await self.cond(self.reactions) and not self.block:
+            self.block = True
             await self.effect(self.reactions)
             if self.temporary:
                 await self.message.delete()

@@ -95,7 +95,7 @@ class Game:
                             votes[-1][1] += 1
 
                 random.shuffle(votes)
-                votes.sort(key = lambda e: e[1])
+                votes.sort(key = lambda e: e[1], reverse = True)
 
                 self.spy_masters = [0, 0]
                 for vote in votes:
@@ -169,7 +169,7 @@ class Game:
             for id, indexes in reactions.items():
                 teams[indexes[0]] += 1
 
-            ok = teams[0] > 1 and teams[1] > 1
+            ok = teams[0] > 1 and teams[1] > 1 or globals.debug
             if not ok:
                 return False
 
