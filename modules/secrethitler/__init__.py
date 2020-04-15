@@ -36,9 +36,12 @@ class MainClass(BaseClassPython):
                 if message.author.id in game.players:
                     await message.channel.send("Vous êtes déjà dans la partie")
                 else:
-                    await message.channel.send("<@" + str(message.author.id) + "> a rejoint la partie")
+                    if len(game.players) < 10:
+                        await message.channel.send("<@" + str(message.author.id) + "> a rejoint la partie")
 
-                    game.players[message.author.id] = Liberal(message.author)
+                        game.players[message.author.id] = Liberal(message.author)
+                    else:
+                        await message.channel.send("Il y a déjà le nombre maximum de joueurs (10)")
         else:
             embed = discord.Embed(title = "Démarrage de la partie de Secret Hitler",
                 description = "Tapez %secrethitler join pour rejoindre la partie",
