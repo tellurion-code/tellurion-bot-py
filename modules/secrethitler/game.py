@@ -312,7 +312,10 @@ class Game:
     async def apply_law(self, law):
         self.refused = 0
         self.term_limited.clear()
-        self.term_limited.append(self.order[self.turn])
+
+        if len(self.players) > 5:
+            self.term_limited.append(self.order[self.turn])
+            
         self.term_limited.append(self.chancellor)
 
         async def cond_president(reactions):

@@ -15,7 +15,7 @@ class Player:
         self.user = user
 
     async def send_vote(self, game):
-        emojis = ["🇯", "🇳"]
+        emojis = ["⬜", "⬛"]
         choices = ["Ja", "Nein"]
 
         async def cast_vote(reactions):
