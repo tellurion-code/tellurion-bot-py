@@ -605,25 +605,25 @@ class Game:
                     color = 0x00ff00
                 ), mode = "set")
 
+                async def pass_stick(reactions):
+                    index = reactions[player.user.id][0] + (1 if not globals.debug else 0)
+                    choice = self.players[self.order[index]]
+
+                    await self.broadcast(discord.Embed(
+                        description = "\n\n`" + str(player.user) + "` a passé le Pieu Ancestral à `" + str(choice.user) + "`",
+                        color = 0x00ff00
+                    ), mode = "append")
+
+                    for i in range(index):
+                        self.order.append(self.order.pop(0))
+
+                    await self.next_table_turn(True)
+
                 async def cond(reactions):
                     return len(reactions[player.user.id]) == 1
 
                 async def send_murder_choice(reactions):
                     if reactions[player.user.id][0] == 0:
-                        async def pass_stick(reactions):
-                            index = reactions[player.user.id][0] + (1 if not globals.debug else 0)
-                            choice = self.players[self.order[index]]
-
-                            await self.broadcast(discord.Embed(
-                                description = "\n\n`" + str(player.user) + "` a passé le Pieu Ancestral à `" + str(choice.user) + "`",
-                                color = 0x00ff00
-                            ), mode = "append")
-
-                            for i in range(index):
-                                self.order.append(self.order.pop(0))
-
-                            await self.next_table_turn(True)
-
                         async def stab_player(reactions):
                             index = reactions[player.user.id][0]
                             choice = (self.players[self.order[index]] if index < len(self.order) else None) if player.role == "Hunter" else None
