@@ -11,7 +11,7 @@ import modules.secrethitler.globals as globals
 globals.init()
 
 class MainClass(BaseClassPython):
-    name = "Secret Hitler"
+    name = "SecretHitler"
     help_active = True
     help = {
         "description": "Module du jeu Secret Hitler",
