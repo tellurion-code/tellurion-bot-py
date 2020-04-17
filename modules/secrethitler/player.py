@@ -90,9 +90,11 @@ class Fascist(Player):
             color = 0xef223f
         )
 
-        embed.add_field(name = "Vos coéquipiers:",
-            value = '\n'.join([globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "fascist"])
-        )
+        fascists = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "fascist"]
+        if len(fascists):
+            embed.add_field(name = "Vos coéquipiers:",
+                value = '\n'.join(fascists)
+            )
 
         embed.add_field(name = "Votre leader:",
             value = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "hitler"][0]
