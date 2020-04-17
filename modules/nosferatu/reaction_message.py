@@ -58,7 +58,9 @@ class ReactionMessage:
     #Trigger quand une réaction est retirée
     async def remove_reaction(self, reaction, user):
         print("remove " + str(user.id))
-        self.reactions[user.id].remove(self.number_emojis.index(reaction.emoji))
+        if user.id in self.reactions:
+            if self.number_emojis.index(reaction.emoji) in self.reactions[user.id]:
+                self.reactions[user.id].remove(self.number_emojis.index(reaction.emoji))
 
         await self.update(reaction)
 
