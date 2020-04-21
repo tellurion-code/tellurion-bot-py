@@ -30,10 +30,8 @@ class MainClass(BaseClassPython):
         super().__init__(client)
 
     async def command(self, message, args, kwargs):
-        if message.channel.id in globals.games:
-            game = globals.games[message.channel.id]
-            if args[0] == "join't" and game.turn == -1:
-                await message.channel.send(message.author.mention + " n'a pas rejoint la partie")
+        if args[0] == "join't"
+            await message.channel.send(message.author.mention + " n'a pas rejoint la partie")
 
     async def com_join(self, message, args, kwargs):
         if message.channel.id in globals.games:
