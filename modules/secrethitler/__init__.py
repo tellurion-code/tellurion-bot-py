@@ -30,7 +30,7 @@ class MainClass(BaseClassPython):
         super().__init__(client)
 
     async def command(self, message, args, kwargs):
-        if args[0] == "join't"
+        if args[0] == "join't":
             await message.channel.send(message.author.mention + " n'a pas rejoint la partie")
 
     async def com_join(self, message, args, kwargs):
