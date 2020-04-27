@@ -15,7 +15,7 @@ class Player:
         self.user = user
 
     async def send_vote(self, game):
-        emojis = ["⬜", "⬛"]
+        emojis = ["✅", "❎"]
         choices = ["Ja", "Nein"]
 
         async def cast_vote(reactions):
@@ -39,7 +39,7 @@ class Player:
             fields = [
                 {
                     "name": "Votes:",
-                    "value": ' '.join(["✉️" if x.last_vote == "" else "📩" for x in game.players.values()])
+                    "value": ' '.join(["✉️" for x in game.order])
                 }
             ]
         )
