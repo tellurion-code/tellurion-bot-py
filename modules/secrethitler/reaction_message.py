@@ -34,7 +34,11 @@ class ReactionMessage:
             self.number_emojis = kwargs["emojis"][:len(_choices)]
         else:
             self.number_emojis = globals.number_emojis[:len(_choices)]
-        self.number_emojis.append("✅")
+
+        if "validation_emoji" in kwargs:
+            self.number_emojis.append(kwargs["validation_emoji"])
+        else:
+            self.number_emojis.append("✅")
 
         if "silent" not in kwargs:
             i = 0

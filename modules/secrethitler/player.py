@@ -27,7 +27,8 @@ class Player:
 
         self.vote_message = ReactionMessage(cond_player,
             cast_vote,
-            temporary = False
+            temporary = False,
+            validation_emoji = "⭕"
         )
 
         await self.vote_message.send(self.user,
@@ -45,7 +46,7 @@ class Player:
         )
 
     async def send_veto_vote(self, game):
-        emojis = ["🇯", "🇳"]
+        emojis = ["✅", "❎"]
         choices = ["Ja", "Nein"]
         self.last_vote = ""
 
@@ -57,7 +58,8 @@ class Player:
             return len(reactions[self.user.id]) == 1
 
         await ReactionMessage(cond_player,
-            cast_veto_vote
+            cast_veto_vote,
+            validation_emoji = "⭕"
         ).send(self.user,
             "Droit de véto : Voulez-vous annuler cette loi?",
             "",
