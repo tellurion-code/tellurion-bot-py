@@ -216,7 +216,7 @@ class Game:
 
             for_votes = len([self.players[x] for x in self.order if self.players[x].last_vote[1:] == "Ja"])
 
-            if for_votes > len(self.players)/2:
+            if for_votes > len(self.order)/2:
                 if self.players[self.chancellor].role == "hitler" and self.fascist_laws >= 3:
                     await self.end_game(False, "nomination d'Hitler en tant que Chancelier")
                 else:
@@ -438,7 +438,7 @@ class Game:
     async def next_turn(self, message = "", nomination = None):
         if nomination is not None:
             print("Nominated")
-            self.after_special_election = (self.turn + 1) % len(self.players)
+            self.after_special_election = (self.turn + 1) % len(self.order)
             self.turn = nomination
         elif self.after_special_election != -1:
             print("Restored")
@@ -446,7 +446,7 @@ class Game:
             self.after_special_election = -1
         else:
             print("Normal")
-            self.turn = (self.turn + 1) % len(self.players)
+            self.turn = (self.turn + 1) % len(self.order)
 
         self.chancellor = 0
 
