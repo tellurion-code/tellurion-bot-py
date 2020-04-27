@@ -214,7 +214,7 @@ class Game:
         if not missing:
             await self.send_info()
 
-            for_votes = len([self.players[x] for x in self.order if self.players[x].last_vote == "🇯Ja"])
+            for_votes = len([self.players[x] for x in self.order if self.players[x].last_vote[1:] == "Ja"])
 
             if for_votes > len(self.players)/2:
                 if self.players[self.chancellor].role == "hitler" and self.fascist_laws >= 3:
@@ -315,7 +315,7 @@ class Game:
 
         if len(self.players) > 5:
             self.term_limited.append(self.order[self.turn])
-            
+
         self.term_limited.append(self.chancellor)
 
         async def cond_president(reactions):
@@ -447,6 +447,8 @@ class Game:
         else:
             print("Normal")
             self.turn = (self.turn + 1) % len(self.players)
+
+        self.chancellor = 0
 
         await self.send_chancellor_choice(message)
 
