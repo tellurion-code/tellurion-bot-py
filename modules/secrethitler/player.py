@@ -27,8 +27,7 @@ class Player:
 
         self.vote_message = ReactionMessage(cond_player,
             cast_vote,
-            temporary = False,
-            validation_emoji = "⭕"
+            temporary = False
         )
 
         await self.vote_message.send(self.user,
@@ -36,6 +35,7 @@ class Player:
             "Le Président `" + str(game.players[game.order[game.turn]].user) + "` a proposé comme Chancelier `" + str(game.players[game.chancellor].user) + "`. Êtes-vous d'accord avec ce Gouvernement?\n\n",
             globals.color,
             choices,
+            validation_emoji = "⭕",
             emojis = emojis,
             fields = [
                 {
@@ -58,14 +58,14 @@ class Player:
             return len(reactions[self.user.id]) == 1
 
         await ReactionMessage(cond_player,
-            cast_veto_vote,
-            validation_emoji = "⭕"
+            cast_veto_vote
         ).send(self.user,
             "Droit de véto : Voulez-vous annuler cette loi?",
             "",
             globals.color,
             choices,
             emojis = emojis,
+            validation_emoji = "⭕"
         )
 
 class Liberal(Player):
