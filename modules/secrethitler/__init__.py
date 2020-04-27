@@ -24,7 +24,7 @@ class MainClass(BaseClassPython):
         }
     }
     color = globals.color
-    command_text = "secrethitler"
+    command_text = "sh"
 
     def __init__(self, client):
         super().__init__(client)
