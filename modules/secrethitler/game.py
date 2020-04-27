@@ -161,6 +161,8 @@ class Game:
         for player in self.players.values():
             player.last_vote = ""
 
+        self.chancellor = -1
+
         await self.send_info(mode = "set", info = info)
 
         president = self.players[self.order[self.turn]]
@@ -285,7 +287,7 @@ class Game:
                         self.refused = 0
 
                         await self.next_turn("**Une loi " + ("libérale" if cards[0] == "liberal" else "fasciste") + " a été adoptée suite à l'inaction du Gouvernement**\n")
-                else:
+                elif self.refused >= 1:
                     await self.next_turn("**Le Gouvernement proposé a été refusé**\n")
 
     async def check_veto_vote(self):
@@ -305,8 +307,8 @@ class Game:
                         self.discard.extend(cards)
                         self.refused = 0
 
-                        await self.next_turn("**Le Gouvernement a utilisé son droit de véto\nUne loi " + ("libérale" if cards[0] == "liberal" else "fasciste") + " a été adoptée suite à l'inaction du Gouvernement**\n")
-                else:
+                        await self.next_turn("**Le Gouvernement a utilisé son droit de véto\0**nUne loi " + ("libérale" if cards[0] == "liberal" else "fasciste") + " a été adoptée suite à l'inaction du Gouvernement**\n")
+                elif self.refused >= 1:
                     await self.next_turn("**Le Gouvernement a utilisé son droit de véto**\n")
 
     async def apply_law(self, law):
@@ -447,8 +449,6 @@ class Game:
         else:
             print("Normal")
             self.turn = (self.turn + 1) % len(self.order)
-
-        self.chancellor = 0
 
         await self.send_chancellor_choice(message)
 
