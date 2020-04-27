@@ -57,12 +57,12 @@ class ReactionMessage:
     async def add_reaction(self, reaction, user):
         print("add " + str(user.id))
         if user.id in self.reactions:
-            if reaction.emoji != "✅":
+            if reaction.emoji != number_emojis[-1]:
                 self.reactions[user.id].append(self.number_emojis.index(reaction.emoji))
         else:
             self.reactions[user.id] = [self.number_emojis.index(reaction.emoji)]
 
-        if reaction.emoji == "✅" and await self.cond(self.reactions) and not self.block:
+        if reaction.emoji == number_emojis[-1] and await self.cond(self.reactions) and not self.block:
             self.block = True
             await self.effect(self.reactions)
 
@@ -93,9 +93,9 @@ class ReactionMessage:
 
         if await self.cond(self.reactions):
             print("Try and add")
-            await self.message.add_reaction("✅")
+            await self.message.add_reaction(number_emojis[-1])
         else:
             if reaction.message.guild:
-                await self.message.remove_reaction("✅", reaction.message.guild.me)
+                await self.message.remove_reaction(number_emojis[-1], reaction.message.guild.me)
             else:
-                await self.message.remove_reaction("✅", reaction.message.channel.me)
+                await self.message.remove_reaction(number_emojis[-1], reaction.message.channel.me)
