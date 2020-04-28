@@ -133,14 +133,13 @@ class MainClass(BaseClassPython):
                             powers = powers[:5]
                             done = True
                             valid_powers = ["none", "kill", "elect", "inspect", "peek"]
-
                             for power in powers:
                                 if power not in valid_powers:
                                     done = False
                                     break
 
                             if done:
-                                await message.channel.send('Pouvoirs changés pour : ' + ', '.join(powers))
+                                await message.channel.send("Pouvoirs changés pour : " + ', '.join(powers))
                                 powers.append("none")
                                 game.policies = powers
                             else:

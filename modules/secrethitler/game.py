@@ -142,7 +142,7 @@ class Game:
             "peek": "👁️",
             "inspect" : "🔍",
             "elect":"🎖️",
-            "kill": "🔪"
+            "kill": "🗡️"
         }
 
         embed.add_field(name = "Lois fascistes :",
@@ -341,7 +341,7 @@ class Game:
                 "none": "\n**Aucune action spéciale ne prend place**",
                 "peek": "\n👁️ **Le Président va regarder les 3 prochaines lois**",
                 "inspect": "\n🔍 **Le Président va inspecter l'allégeance d'un des parlementaires**",
-                "kill": "\n🔪 **Le Président va choisir un parlementaire à exécuter**",
+                "kill": "\n🗡️ **Le Président va choisir un parlementaire à exécuter**",
                 "elect": "\n🎖️ **Le Président va nominer un parlementaire comme prochain Président de manière exceptionnelle**"
             }
 
