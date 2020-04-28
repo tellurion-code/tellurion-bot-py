@@ -122,6 +122,40 @@ class MainClass(BaseClassPython):
             globals.debug = not globals.debug
             await message.channel.send("Debug: " + str(globals.debug))
 
+    async def com_powers(self, message, args, kwargs):
+        if message.channel.id in globals.games:
+            game = globals.games[message.channel.id]
+            if game.turn == -1:
+                if message.author.id in game.players:
+                    if len(args):
+                        powers = args.split(", ")
+                        if len(powers) >= 5:
+                            powers = powers[:5]
+                            done = True
+                            valid_powers = ["none", "kill", "elect", "inspect", "peek"]
+
+                            for power in powers:
+                                if power not in valid_powers:
+                                    done = False
+                                    break
+
+                            if done:
+                                await message.channel.send('Pouvoirs changés pour : ' + ', '.join(powers))
+                                powers.append("none")
+                                game.policies = powers
+                            else:
+                                await message.channel.send('Il faut préciser 5 pouvoirs séparés par ", " parmi none, peek, inspect, kill ou elect (Un des pouvoirs était invalide)')
+                        else:
+                            await message.channel.send('Il faut préciser 5 pouvoirs séparés par ", " parmi none, peek, inspect, kill ou elect (5 pouvoirs requis)')
+                    else:
+                        await message.channel.send('Il faut préciser 5 pouvoirs séparés par ", " parmi none, peek, kill ou elect (5 pouvoirs requis)')
+                else:
+                    await message.channel.send("Vous n'êtes pas dans la partie")
+            else:
+                await message.author.send("La partie a déjà commencé")
+        else:
+            await message.channel.send("Il n'y a pas de partie en cours")
+
     async def on_reaction_add(self, reaction, user):
         if not user.bot:
             for message in globals.reaction_messages:

@@ -40,20 +40,21 @@ class Game:
         fascist_amount = max(0, math.floor((len(self.players) - 3)/2))
 
         policies = [
-            ["", "", "", "", "", ""], #0
-            ["", "", "", "", "", ""], #1
-            ["kill", "elect", "peek", "", "", ""], #2, Debug
-            ["", "", "peek", "kill", "kill", ""], #3
-            ["", "", "peek", "kill", "kill", ""], #4
-            ["", "", "peek", "kill", "kill", ""], #5
-            ["", "", "peek", "kill", "kill", ""], #6
-            ["", "inspect", "elect", "kill", "kill", ""], #7
-            ["", "inspect", "elect", "kill", "kill", ""], #8
-            ["inspect", "inspect", "elect", "kill", "kill", ""], #9
-            ["inspect", "inspect", "elect", "kill", "kill", ""], #10
+            ["none", "none", "none", "none", "none", "none"], #0
+            ["none", "none", "none", "none", "none", "none"], #1
+            ["kill", "elect", "peek", "none", "none", "none"], #2, Debug
+            ["none", "none", "peek", "kill", "kill", "none"], #3
+            ["none", "none", "peek", "kill", "kill", "none"], #4
+            ["none", "none", "peek", "kill", "kill", "none"], #5
+            ["none", "none", "peek", "kill", "kill", "none"], #6
+            ["none", "inspect", "elect", "kill", "kill", "none"], #7
+            ["none", "inspect", "elect", "kill", "kill", "none"], #8
+            ["inspect", "inspect", "elect", "kill", "kill", "none"], #9
+            ["inspect", "inspect", "elect", "kill", "kill", "none"], #10
         ]
 
-        self.policies = policies[len(self.players)]
+        if len(self.policies) == 0:
+            self.policies = policies[len(self.players)]
 
         for id in self.players:
             self.order.append(id)
@@ -120,7 +121,7 @@ class Game:
         mode = kwargs["mode"] if "mode" in kwargs else "replace"
         info = kwargs["info"] if "info" in kwargs else ""
 
-        embed = discord.Embed(title = "Tour de `" + str(self.players[self.order[self.turn]].user) + "` 🎖️",
+        embed = discord.Embed(title = "[SECRET HITLER] Tour de `" + str(self.players[self.order[self.turn]].user) + "` 🎖️",
             description = info,
             color = globals.color
         )
@@ -137,7 +138,7 @@ class Game:
             value = "🟦" * self.liberal_laws + "🔹" * ( 5 - self.liberal_laws ))
 
         policies_icons = {
-            "": "⬛",
+            "none": "⬛",
             "peek": "👁️",
             "inspect" : "🔍",
             "elect":"🎖️",
@@ -337,7 +338,7 @@ class Game:
             policy = self.policies[self.fascist_laws]
 
             policies_announcements = {
-                "": "\n**Aucune action spéciale ne prend place**",
+                "none": "\n**Aucune action spéciale ne prend place**",
                 "peek": "\n👁️ **Le Président va regarder les 3 prochaines lois**",
                 "inspect": "\n🔍 **Le Président va inspecter l'allégeance d'un des parlementaires**",
                 "kill": "\n🔪 **Le Président va choisir un parlementaire à exécuter**",
@@ -401,6 +402,9 @@ class Game:
                             await self.end_game(True, "exécution d'Hitler")
                         else:
                             self.order.remove(id)
+
+                            if len(self.order) == 1:
+                                await self.end_game(self.players[self.order[0]].role == "liberal", "soltiude")
 
                             await self.next_turn()
 

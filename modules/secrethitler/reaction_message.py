@@ -62,7 +62,8 @@ class ReactionMessage:
         else:
             self.reactions[user.id] = [self.number_emojis.index(reaction.emoji)]
 
-        if reaction.emoji == self.number_emojis[-1] and await self.cond(self.reactions) and not self.block:
+        condition_on = await self.cond(self.reactions)
+        if reaction.emoji == self.number_emojis[-1] and condition_on and not self.block:
             self.block = True
             await self.effect(self.reactions)
 
