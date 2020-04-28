@@ -120,7 +120,7 @@ class Game:
         mode = kwargs["mode"] if "mode" in kwargs else "replace"
         info = kwargs["info"] if "info" in kwargs else ""
 
-        embed = discord.Embed(title = "Tour de `" + str(self.players[self.order[self.turn]].user) + "` 🎩",
+        embed = discord.Embed(title = "Tour de `" + str(self.players[self.order[self.turn]].user) + "` 🎖️",
             description = info,
             color = globals.color
         )
@@ -131,7 +131,7 @@ class Game:
         if self.fascist_laws >= 5:
             embed.description += "🚫 Droit de véto débloqué 🚫\n"
 
-        embed.description += "__Parlementaires:__\n" + '\n'.join([self.players[x].last_vote[:1] + globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("🎩" if self.turn == i else ("💼" if self.chancellor == x else ("❌" if x in self.term_limited else "")))  for i, x in enumerate(self.order)])
+        embed.description += "__Parlementaires:__\n" + '\n'.join([self.players[x].last_vote[:1] + globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("🎖️" if self.turn == i else ("💼" if self.chancellor == x else ("❌" if x in self.term_limited else "")))  for i, x in enumerate(self.order)])
 
         embed.add_field(name = "Lois libérales :",
             value = "🟦" * self.liberal_laws + "🔹" * ( 5 - self.liberal_laws ))
@@ -140,7 +140,7 @@ class Game:
             "": "⬛",
             "peek": "👁️",
             "inspect" : "🔍",
-            "elect":"🎩",
+            "elect":"🎖️",
             "kill": "🔪"
         }
 
@@ -177,7 +177,7 @@ class Game:
         async def propose_chancellor(reactions):
             self.chancellor = valid_candidates[reactions[president.user.id][0]]
 
-            await self.send_info(info = globals.number_emojis[self.order.index(self.chancellor)] + "`" + str(self.players[self.chancellor].user) + "` a été choisi comme Chancelier\n")
+            await self.send_info(info = globals.number_emojis[self.order.index(self.chancellor)] + " `" + str(self.players[self.chancellor].user) + "` a été choisi comme Chancelier\n")
 
             for id in self.order:
                 await self.players[id].send_vote(self)
@@ -341,7 +341,7 @@ class Game:
                 "peek": "\n👁️ **Le Président va regarder les 3 prochaines lois**",
                 "inspect": "\n🔍 **Le Président va inspecter l'allégeance d'un des parlementaires**",
                 "kill": "\n🔪 **Le Président va choisir un parlementaire à exécuter**",
-                "elect": "\n🎩 **Le Président va nominer un parlementaire comme prochain Président de manière exceptionnelle**"
+                "elect": "\n🎖️ **Le Président va nominer un parlementaire comme prochain Président de manière exceptionnelle**"
             }
 
             await self.broadcast(discord.Embed(title = "Gouvernement accepté : Loi fasciste adoptée 🐍",
