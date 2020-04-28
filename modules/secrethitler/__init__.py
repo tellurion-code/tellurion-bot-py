@@ -148,7 +148,7 @@ class MainClass(BaseClassPython):
                         else:
                             await message.channel.send('Il faut préciser 5 pouvoirs séparés par ", " parmi none, peek, inspect, kill ou elect (5 pouvoirs requis)')
                     else:
-                        await message.channel.send('Il faut préciser 5 pouvoirs séparés par ", " parmi none, peek, kill ou elect (5 pouvoirs requis)')
+                        await message.channel.send('Il faut préciser 5 pouvoirs séparés par ", " parmi none, peek, inspect, kill ou elect (5 pouvoirs requis)')
                 else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
             else:
