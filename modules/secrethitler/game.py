@@ -60,11 +60,11 @@ class Game:
             self.order.append(id)
 
         random.shuffle(self.order)
+        self.players[self.order[fascist_amount]] = Hitler(self.players[self.order[i]].user)
+        
         for i in range(len(self.order)):
             if i < fascist_amount:
                 self.players[self.order[i]] = Fascist(self.players[self.order[i]].user)
-            elif i == fascist_amount:
-                self.players[self.order[i]] = Hitler(self.players[self.order[i]].user)
 
             await self.players[self.order[i]].game_start(self)
 
