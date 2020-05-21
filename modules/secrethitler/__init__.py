@@ -47,7 +47,7 @@ class MainClass(BaseClassPython):
                     else:
                         await message.channel.send("Il y a déjà le nombre maximum de joueurs (10)")
         else:
-            embed = discord.Embed(title = "Démarrage de la partie de Secret Hitler",
+            embed = discord.Embed(title = "Création de la partie de Secret Hitler",
                 description = "Tapez %sh join pour rejoindre la partie",
                 color = self.color)
 

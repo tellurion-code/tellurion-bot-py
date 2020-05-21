@@ -16,7 +16,7 @@ class Game:
         self.order = [] #Ordre des id des joueurs
         self.turn = -1 #Le tour (index du président) en cours, -1 = pas commencé
         self.chancellor = 0 #Id du chancelier
-        self.after_special_election = -1 #Index du prochain président en cas d'Election Spéciale, -1 = pas de président nominé
+        self.after_special_election = -1 #Id du prochain président en cas d'Election Spéciale, -1 = pas de président nominé
         self.deck = [] #Liste des lois
         self.discard = [] #Pile de défausse
         self.policies = [] #Pouvoirs des lois fascistes
@@ -171,9 +171,11 @@ class Game:
 
         if not globals.debug:
             for limited in self.term_limited:
-                valid_candidates.remove(limited)
+                if limited in valid_candidates:
+                    valid_candidates.remove(limited)
 
         choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
+        emojis = [globals.number_emojis[self.order.index(x)] for x in valid_candidates]
 
         async def propose_chancellor(reactions):
             self.chancellor = valid_candidates[reactions[president.user.id][0]]
@@ -192,7 +194,8 @@ class Game:
             "Choisissez votre Chancelier",
             "",
             globals.color,
-            choices
+            choices,
+            emojis = emojis
         )
 
     async def check_vote_end(self):
@@ -401,6 +404,9 @@ class Game:
                         if player.role == "hitler":
                             await self.end_game(True, "exécution d'Hitler")
                         else:
+                            if self.after_special_election == id:
+                                self.after_special_election = self.order[self.order.index(id) + 1]
+
                             self.order.remove(id)
 
                             if len(self.order) == 1:
@@ -444,11 +450,11 @@ class Game:
     async def next_turn(self, message = "", nomination = None):
         if nomination is not None:
             print("Nominated")
-            self.after_special_election = (self.turn + 1) % len(self.order)
+            self.after_special_election = self.order[self.turn + 1]
             self.turn = nomination
         elif self.after_special_election != -1:
             print("Restored")
-            self.turn = self.after_special_election
+            self.turn = self.order.index(self.after_special_election)
             self.after_special_election = -1
         else:
             print("Normal")
