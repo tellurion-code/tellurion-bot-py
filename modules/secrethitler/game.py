@@ -167,15 +167,11 @@ class Game:
         await self.send_info(mode = "set", info = info)
 
         president = self.players[self.order[self.turn]]
-        valid_candidates = [x for i, x in enumerate(self.order) if i != self.turn]
-
-        if not globals.debug:
-            for limited in self.term_limited:
-                if limited in valid_candidates:
-                    valid_candidates.remove(limited)
+        valid_candidates = [x for i, x in enumerate(self.order) if i != self.turn and (x not in self.term_limited or globals.debug)]
+        emojis = [globals.number_emojis[self.order.index(x)] for x in valid_candidates]
 
         choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
-        emojis = [globals.number_emojis[self.order.index(x)] for x in valid_candidates]
+
 
         async def propose_chancellor(reactions):
             self.chancellor = valid_candidates[reactions[president.user.id][0]]
