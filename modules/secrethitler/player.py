@@ -20,7 +20,7 @@ class Player:
 
         async def cast_vote(reactions):
             self.last_vote = emojis[reactions[self.user.id][0]] + choices[reactions[self.user.id][0]]
-            await game.check_vote_end()
+            await game.check_vote_end() #TODO: Trouvez pourquoi c'est appelé deux fois d'affilée parfois
 
         async def cond_player(reactions):
             return len(reactions[self.user.id]) == 1
