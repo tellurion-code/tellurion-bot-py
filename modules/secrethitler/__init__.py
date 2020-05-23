@@ -175,7 +175,7 @@ class MainClass(BaseClassPython):
         if not user.bot:
             for message in globals.reaction_messages:
                 if message.message.id == reaction.message.id:
-                    if  reaction.emoji in message.number_emojis:
+                    if reaction.emoji in message.number_emojis:
                         if message.check(reaction, user):
                             await message.add_reaction(reaction, user)
                         else:
@@ -187,6 +187,7 @@ class MainClass(BaseClassPython):
         if not user.bot:
             for message in globals.reaction_messages:
                 if user.id in message.reactions:
-                    if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
-                        if message.check(reaction, user) and message.message.id == reaction.message.id:
-                            await message.remove_reaction(reaction, user)
+                    if reaction.emoji in message.number_emojis:
+                        if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
+                            if message.check(reaction, user) and message.message.id == reaction.message.id:
+                                await message.remove_reaction(reaction, user)
