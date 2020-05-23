@@ -118,20 +118,7 @@ class MainClass(BaseClassPython):
             await message.channel.send("Il n'y a pas de partie en cours")
 
     async def com_SUTARUTO(self, message, args, kwargs):
-        if message.channel.id in globals.games:
-            game = globals.games[message.channel.id]
-            if game.turn == -1:
-                if message.author.id in game.players:
-                    if len(game.players) >= 5 and message.author.id == 118399702667493380:
-                        await game.start_game()
-                    else:
-                        await message.channel.send("Il faut au minimum 5 joueurs")
-                else:
-                    await message.channel.send("Vous n'êtes pas dans la partie")
-            else:
-                await message.author.send("La partie a déjà commencé")
-        else:
-            await message.channel.send("Il n'y a pas de partie en cours")
+        await com_start(self, message, args, kwargs)
 
     async def com_debug(self, message, args, kwargs):
         if message.author.id == 240947137750237185:
