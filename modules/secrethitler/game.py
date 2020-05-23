@@ -72,11 +72,12 @@ class Game:
 
         await self.send_chancellor_choice("Début de partie\n")
 
+    #Envoies un message à tous les joueurs + le channel
     async def broadcast(self, _embed, **kwargs):
         exceptions = kwargs["exceptions"] if "exceptions" in kwargs else []
         mode = kwargs["mode"] if "mode" in kwargs else "normal"
 
-        if mode == "append":
+        if mode == "append": #append = ajoute à la description
             if self.info_message:
                 embed = self.info_message.embeds[0]
                 embed.description += _embed.description
@@ -94,7 +95,7 @@ class Game:
                         await player.info_message.edit(embed = embed)
                     else:
                         player.info_message = await player.user.send(embed = _embed)
-        elif mode == "replace":
+        elif mode == "replace": #replace = modifie le dernier message
             if self.info_message:
                 await self.info_message.edit(embed = _embed)
             else:
@@ -106,24 +107,26 @@ class Game:
                         await player.info_message.edit(embed = _embed)
                     else:
                         player.info_message = await player.user.send(embed = _embed)
-        elif mode == "set":
+        elif mode == "set": #set = nouveau message
             self.info_message = await self.channel.send(embed = _embed)
             for id, player in self.players.items():
                 if id not in exceptions:
                     player.info_message = await player.user.send(embed = _embed)
-        else:
+        else: #normal = nouveau message sans mémoire
             await self.channel.send(embed = _embed)
             for id, player in self.players.items():
                 if id not in exceptions:
                     await player.user.send(embed = _embed)
 
+    #Envoies le résumé de la partie aux joueurs + le channel
     async def send_info(self, **kwargs):
         mode = kwargs["mode"] if "mode" in kwargs else "replace"
         info = kwargs["info"] if "info" in kwargs else ""
+        color = kwarfs["color"] if "color" in kwargs else globals.color
 
         embed = discord.Embed(title = "[SECRET HITLER] Tour de `" + str(self.players[self.order[self.turn]].user) + "` 🎖️",
             description = info,
-            color = globals.color
+            color = color
         )
 
         if self.fascist_laws >= 3:
@@ -152,13 +155,15 @@ class Game:
             value = "🟧" * self.refused + "🔸" * ( 2 - self.refused ),
             inline = False)
 
+        # --[ANCIEN BROADCAST]--
         # await self.channel.send(embed = embed)
         # for player in self.players.values():
         #     await player.user.send(embed = embed)
 
         await self.broadcast(embed, mode = mode)
 
-    async def send_chancellor_choice(self, info): #Est aussi un début de tour
+    #Est aussi un début de tour, envoies le choix de chancelier
+    async def send_chancellor_choice(self, info):
         for player in self.players.values():
             player.last_vote = ""
 
@@ -166,12 +171,12 @@ class Game:
 
         await self.send_info(mode = "set", info = info)
 
-        president = self.players[self.order[self.turn]]
+        president = self.players[self.order[self.turn]] #Tour actuel
+
         valid_candidates = [x for i, x in enumerate(self.order) if i != self.turn and (x not in self.term_limited or globals.debug)]
         emojis = [globals.number_emojis[self.order.index(x)] for x in valid_candidates]
 
         choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
-
 
         async def propose_chancellor(reactions):
             self.chancellor = valid_candidates[reactions[president.user.id][0]]
@@ -194,6 +199,8 @@ class Game:
             emojis = emojis
         )
 
+    #Appelé à chaque fois qu'un joueur vote. Vérifie les votes manquants puis la majorité
+    #TODO: Trouvez pourquoi il est call 2 fois d'affilée parfois
     async def check_vote_end(self):
         missing = False
 
@@ -214,9 +221,9 @@ class Game:
             await player.vote_message.message.edit(embed = embed)
 
         if not missing:
-            await self.send_info()
-
             for_votes = len([self.players[x] for x in self.order if self.players[x].last_vote[1:] == "Ja"])
+
+            await self.send_info(color = 0x00ff00 if for_votes > len(self.order)/2 else 0xff0000) #Change la couleur du message en fonction
 
             if for_votes > len(self.order)/2:
                 if self.players[self.chancellor].role == "hitler" and self.fascist_laws >= 3:
@@ -290,6 +297,7 @@ class Game:
                 elif self.refused >= 1:
                     await self.next_turn("**Le Gouvernement proposé a été refusé**\n")
 
+    #Vérfies la fin du vote de veto, similaire à check_vote_end
     async def check_veto_vote(self):
         if self.players[self.order[self.turn]].last_vote != "" and self.players[self.chancellor].last_vote != "":
             if self.players[self.order[self.turn]] == "Nein" or self.players[self.chancellor].last_vote == "Nein":
@@ -311,6 +319,7 @@ class Game:
                 elif self.refused >= 1:
                     await self.next_turn("**Le Gouvernement a utilisé son droit de véto**\n")
 
+    #Fin de tour, s'occupe des effets des pouvoirs fascistes
     async def apply_law(self, law):
         self.refused = 0
         self.term_limited.clear()
@@ -443,6 +452,23 @@ class Game:
                 else:
                     await self.next_turn()
 
+    #Applique la loi choisie ou piochée et vérifie la fin de la partie
+    async def pass_law(self, law):
+        if law == "liberal":
+            self.liberal_laws += 1
+        else:
+            self.fascist_laws += 1
+
+        if self.liberal_laws == 5:
+            await self.end_game(True, "5 lois libérales votées")
+            return True
+        elif self.fascist_laws == 6:
+            await self.end_game(False, "6 lois fascistes votées")
+            return True
+        else:
+            return False
+
+    #Passe au prochain tour, s'occupe ausis de l'élection spéciale
     async def next_turn(self, message = "", nomination = None):
         if nomination is not None:
             print("Nominated")
@@ -458,6 +484,7 @@ class Game:
 
         await self.send_chancellor_choice(message)
 
+    #Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, liberal_wins, cause):
         if liberal_wins:
             embed = discord.Embed(title = "Victoire des Libéraux 🕊️ par " + cause  + " !",
@@ -477,6 +504,7 @@ class Game:
         await self.broadcast(embed)
         globals.games.pop(self.channel.id)
 
+    #Pioche x cartes (remélange le paquet si besoin)
     async def draw(self, amount):
         cards = []
         if len(self.deck) < amount:
@@ -493,18 +521,3 @@ class Game:
             cards.append(self.deck.pop(0))
 
         return cards
-
-    async def pass_law(self, law):
-        if law == "liberal":
-            self.liberal_laws += 1
-        else:
-            self.fascist_laws += 1
-
-        if self.liberal_laws == 5:
-            await self.end_game(True, "5 lois libérales votées")
-            return True
-        elif self.fascist_laws == 6:
-            await self.end_game(False, "6 lois fascistes votées")
-            return True
-        else:
-            return False
