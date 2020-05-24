@@ -118,8 +118,8 @@ class MainClass(BaseClassPython):
             await message.channel.send("Il n'y a pas de partie en cours")
 
     async def com_SUTARUTO(self, message, args, kwargs):
-        if if message.author.id == 118399702667493380:
-            await self.com_start(self, message, args, kwargs)
+        if message.author.id == 118399702667493380:
+            await self.com_start(message, args, kwargs)
 
     async def com_debug(self, message, args, kwargs):
         if message.author.id == 240947137750237185:
