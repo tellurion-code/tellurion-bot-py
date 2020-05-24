@@ -21,6 +21,7 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} start`": "Démarre la partie de Secret Hitler",
             "`{prefix}{command} players`": "Affiche les joueurs de la partie de Secret Hitler",
             "`{prefix}{command} reset`": "Reinitialise la partie de Secret Hitler"
+            "`{prefix}{command} powers`": "Change les pouvoirs présidentiels"
         }
     }
     color = globals.color
@@ -90,17 +91,16 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
+    #Réitinitialise et supprime la partie
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in globals.games:
             game = globals.games[message.channel.id]
-            if game.turn == -1:
-                await message.channel.send("La partie a été reset")
-                globals.games.pop(message.channel.id)
-            else:
-                await message.author.send("La partie a déjà commencé")
+            await message.channel.send("La partie a été reset")
+            globals.games.pop(message.channel.id)
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
+    #Lance la partie
     async def com_start(self, message, args, kwargs):
         if message.channel.id in globals.games:
             game = globals.games[message.channel.id]
@@ -117,15 +117,18 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
+    #Idem
     async def com_SUTARUTO(self, message, args, kwargs):
         if message.author.id == 118399702667493380:
             await self.com_start(message, args, kwargs)
 
+    #Active le debug: enlève la limitation de terme, et le nombre minimal de joueurs
     async def com_debug(self, message, args, kwargs):
         if message.author.id == 240947137750237185:
             globals.debug = not globals.debug
             await message.channel.send("Debug: " + str(globals.debug))
 
+    #Change les pouvoirs présidentiels
     async def com_powers(self, message, args, kwargs):
         if message.channel.id in globals.games:
             game = globals.games[message.channel.id]
@@ -137,6 +140,7 @@ class MainClass(BaseClassPython):
                             powers = powers[:5]
                             done = True
                             valid_powers = ["none", "kill", "elect", "inspect", "peek"]
+                            
                             for power in powers:
                                 if power not in valid_powers:
                                     done = False
