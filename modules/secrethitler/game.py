@@ -135,7 +135,7 @@ class Game:
         if self.fascist_laws >= 5:
             embed.description += "🚫 Droit de véto débloqué 🚫\n"
 
-        embed.description += "__Parlementaires:__\n" + '\n'.join([self.players[x].last_vote[:1] + globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("🎖️" if self.turn == i else ("💼" if self.chancellor == x else ("❌" if x in self.term_limited else "")))  for i, x in enumerate(self.order)])
+        embed.description += "__Parlementaires:__\n" + '\n'.join([self.players[x].last_vote[:1] + globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("🎖️" if self.turn == i else ("💼" if self.chancellor == x else ("❌" if x in self.term_limited else ""))) for i, x in enumerate(self.order)])
 
         embed.add_field(name = "Lois libérales :",
             value = "🟦" * self.liberal_laws + "🔹" * ( 5 - self.liberal_laws ))
@@ -243,7 +243,7 @@ class Game:
                         discarded = cards.pop(reactions[self.order[self.turn]][0])
 
                         await law_message.message.edit(embed = discord.Embed(title = "Loi défaussée",
-                            description = "Lois restantes :\n" + '\n'.join(["🟦 Libérale" if x == "liberal" else "🟥 Fasciste" for x in cards]),
+                            description = "Lois restantes :\n" + '\n'.join(["🟦 Libérale" if x == "liberal" else "🟥 Fasciste" for x in cards]) + "\n\nLoi défaussée :\n" + ("🟦 Libérale" if discarded == "liberal" else "🟥 Fasciste"),
                             color = 0x00ff00
                         ))
 
