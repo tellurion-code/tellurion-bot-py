@@ -122,7 +122,7 @@ class Game:
     async def send_info(self, **kwargs):
         mode = kwargs["mode"] if "mode" in kwargs else "replace"
         info = kwargs["info"] if "info" in kwargs else ""
-        color = kwarfs["color"] if "color" in kwargs else globals.color
+        color = kwargs["color"] if "color" in kwargs else globals.color
 
         embed = discord.Embed(title = "[SECRET HITLER] Tour de `" + str(self.players[self.order[self.turn]].user) + "` 🎖️",
             description = info,
@@ -213,7 +213,7 @@ class Game:
             )
 
             if player.last_vote != "":
-                embed.description = "Le Président `" + str(self.players[self.order[self.turn]].user) + "` a proposé comme Chancelier `" + str(self.players[self.chancellor].user) + "`.\nVous avez voté " + player.last_vote[1:]
+                embed.description = "Le Président `" + str(self.players[self.order[self.turn]].user) + "` a proposé comme Chancelier `" + str(self.players[self.chancellor].user) + "`.\nVous avez voté " + player.last_vote
                 embed.color = 0x00ff00
             else:
                 missing = True
@@ -508,14 +508,11 @@ class Game:
     async def draw(self, amount):
         cards = []
         if len(self.deck) < amount:
-            self.discard.extend(self.deck)
-            self.deck.clear()
-            random.shuffle(self.discard)
             self.deck.extend(self.discard)
             self.discard.clear()
+            random.shuffle(self.deck)
 
-            await self.broadcast(discord.Embed(description = "La pioche a été reformée à partir des cartes restantes et de la défausse",
-                color = 0xfffffe))
+            await self.broadcast(discord.Embed(description = "La pioche a été reformée à partir des cartes restantes et de la défausse", color = 0xfffffe))
 
         for _ in range(amount):
             cards.append(self.deck.pop(0))

@@ -26,19 +26,10 @@ class ReactionMessage:
 
         if "fields" in kwargs:
             for field in kwargs["fields"]:
-                embed.add_field(name = field["name"],
-                    value = field["value"],
-                    inline = field["inline"] if "inline" in field else False)
+                embed.add_field(name = field["name"], value = field["value"], inline = field["inline"] if "inline" in field else False)
 
-        if "emojis" in kwargs:
-            self.number_emojis = kwargs["emojis"][:len(_choices)]
-        else:
-            self.number_emojis = globals.number_emojis[:len(_choices)]
-
-        if "validation_emoji" in kwargs:
-            self.number_emojis.append(kwargs["validation_emoji"])
-        else:
-            self.number_emojis.append("✅")
+        self.number_emojis = (kwargs["emojis"] if "emojis" in kwargs else globals.number_emojis)[:len(_choices)]
+        self.number_emojis.append(kwargs["validation_emoji"] if "validation_emoji" in kwargs else "✅")
 
         if "silent" not in kwargs:
             i = 0
@@ -48,7 +39,7 @@ class ReactionMessage:
 
         self.message = await _channel.send(embed = embed)
 
-        for i in range(len(_choices)):
+        for i,_ in enumerate(_choices):
             await self.message.add_reaction(self.number_emojis[i])
 
         globals.reaction_messages.append(self)

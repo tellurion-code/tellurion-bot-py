@@ -71,9 +71,6 @@ class Player:
 class Liberal(Player):
     role = "liberal"
 
-    def __init__(self, user):
-        super().__init__(user)
-
     async def game_start(self, game):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie 🕊️",
             description = "Vous êtes un Libéral. Vous devez faire élire 5 lois libérales, ou bien trouver Hitler dans vos rangs et l'assassiner",
@@ -82,9 +79,6 @@ class Liberal(Player):
 
 class Fascist(Player):
     role = "fascist"
-
-    def __init__(self, user):
-        super().__init__(user)
 
     async def game_start(self, game):
         embed = discord.Embed(title = "Début de partie 🐍",
@@ -106,9 +100,6 @@ class Fascist(Player):
 
 class Hitler(Fascist):
     role = "hitler"
-
-    def __init__(self, user):
-        super().__init__(user)
 
     async def game_start(self, game):
         embed = discord.Embed(title = "Début de partie ☠️",
