@@ -73,7 +73,7 @@ class Liberal(Player):
 
     async def game_start(self, game):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie 🕊️",
-            description = "Vous êtes un Libéral. Vous devez faire élire 5 lois libérales, ou bien trouver Hitler dans vos rangs et l'assassiner",
+            description = "Vous êtes un Libéral. Vous devez faire élire 5 lois libérales, ou bien trouver Hitler dans vos rangs et l'assassiner.",
             color = 0x2e64fe
         ))
 
@@ -82,7 +82,7 @@ class Fascist(Player):
 
     async def game_start(self, game):
         embed = discord.Embed(title = "Début de partie 🐍",
-            description = "Vous êtes un Fasciste. Vous devez faire élire 6 lois fascistes, ou bien réussir à faire élire Hitler en tant que Chancelier une fois 3 lois fascistes votées.\n" + ("**Hitler vous connaît**" if len(game.players) <= 6 else "**Hitler ne vous connaît pas**"),
+            description = "Vous êtes un Fasciste. Vous devez faire élire 6 lois fascistes, ou bien réussir à faire élire Hitler en tant que Chancelier une fois 3 lois fascistes votées.\n" + ("**Hitler vous connaît.**" if len(game.players) <= 6 else "**Hitler ne vous connaît pas.**"),
             color = 0xef223f
         )
 
@@ -103,7 +103,7 @@ class Hitler(Fascist):
 
     async def game_start(self, game):
         embed = discord.Embed(title = "Début de partie ☠️",
-            description = "Vous êtes Hitler. Vous devez faire élire 6 lois fascistes, ou bien réussir à vous faire élire en tant que Chancelier une fois 3 lois fascistes votées.\n" + ("**Vous connaissez vos partisans**" if len(game.players) <= 6 else "**Vous ne connaissez pas vos partisans**"),
+            description = "Vous êtes Hitler. Vous devez faire élire 6 lois fascistes, ou bien réussir à vous faire élire en tant que Chancelier une fois 3 lois fascistes votées.\n" + ("**Vous connaissez vos partisans.**" if len(game.players) <= 6 else "**Vous ne connaissez pas vos partisans.**"),
             color = 0xff0000
         )
 

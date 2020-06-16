@@ -415,9 +415,9 @@ class Game:
                             self.order.remove(id)
 
                             if len(self.order) == 1:
-                                await self.end_game(self.players[self.order[0]].role == "liberal", "soltiude")
-
-                            await self.next_turn()
+                                await self.end_game(self.players[self.order[0]].role == "liberal", "solitude")
+                            else:
+                                await self.next_turn()
 
                     await ReactionMessage(cond_president,
                         kill
