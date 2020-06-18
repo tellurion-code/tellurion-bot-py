@@ -94,7 +94,6 @@ class MainClass(BaseClassPython):
     #Réitinitialise et supprime la partie
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in globals.games:
-            game = globals.games[message.channel.id]
             await message.channel.send("La partie a été reset")
             globals.games.pop(message.channel.id)
         else:
