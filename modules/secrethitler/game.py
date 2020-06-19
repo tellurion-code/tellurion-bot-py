@@ -66,6 +66,7 @@ class Game:
             if i < fascist_amount:
                 self.players[self.order[i]] = Fascist(self.players[self.order[i]].user)
 
+        for i in range(len(self.order)):
             await self.players[self.order[i]].game_start(self)
 
         random.shuffle(self.order)
