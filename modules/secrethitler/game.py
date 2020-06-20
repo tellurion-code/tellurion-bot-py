@@ -314,7 +314,7 @@ class Game:
                 self.refused += 1
 
                 if self.refused == 3:
-                    cards = await self.dr   aw(1)
+                    cards = await self.draw(1)
                     done = await self.apply_law(cards[0], "🟦 Libérale : " + get_law_name("{type} de {noun_liberal} {adjective}") if cards[0] == "liberal" else "🟥 Fasciste : " + get_law_name("{type} de {noun_fascist} {adjective}"), "*Gouvernement inactif*:", "Les parlementaires n'ont pas réussi à se mettre d'accord sur un Gouvernement.", False)
 
                     if not done:
