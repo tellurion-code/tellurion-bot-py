@@ -484,7 +484,7 @@ class Game:
     async def next_turn(self, message = "", nomination = None):
         if nomination is not None:
             print("Nominated")
-            self.after_special_election = self.order[self.turn + 1]
+            self.after_special_election = self.order[(self.turn + 1) % len(self.order)]
             self.turn = nomination
         elif self.after_special_election != -1:
             print("Restored")
