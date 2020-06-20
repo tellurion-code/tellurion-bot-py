@@ -4,6 +4,7 @@ import math
 
 from modules.secrethitler.player import Liberal, Fascist, Hitler
 from modules.secrethitler.reaction_message import ReactionMessage
+from modules.secrethitler.law_names import get_law_name
 
 import modules.secrethitler.globals as globals
 
@@ -236,15 +237,17 @@ class Game:
                     ), mode = "set")
 
                     cards = await self.draw(3)
+                    show_cards = ["🟦 Libérale: " + get_law_name("{type} de {noun_liberal} {adjective}") if x == "liberal" else "🟥 Fasciste: " + get_law_name("{type} de {noun_fascist} {adjective}") for x in cards]
 
                     async def cond_president(reactions):
                         return len(reactions[self.order[self.turn]]) == 1
 
                     async def discard_first(reactions):
                         discarded = cards.pop(reactions[self.order[self.turn]][0])
+                        show_discarded = show_cards.pop(reactions[self.order[self.turn]][0])
 
                         await law_message.message.edit(embed = discord.Embed(title = "Loi défaussée",
-                            description = "Lois restantes :\n" + '\n'.join(["🟦 Libérale" if x == "liberal" else "🟥 Fasciste" for x in cards]) + "\n\nLoi défaussée :\n" + ("🟦 Libérale" if discarded == "liberal" else "🟥 Fasciste"),
+                            description = "Lois restantes :\n" + '\n'.join(show_cards) + "\n\nLoi défaussée :\n" + show_discarded,
                             color = 0x00ff00
                         ))
 
@@ -269,7 +272,7 @@ class Game:
                             "Choisissez la carte à **jouer**",
                             "",
                             globals.color,
-                            ["🟦 Libérale" if x == "liberal" else "🟥 Fasciste" for x in cards]
+                            show_cards
                         )
 
                     law_message = ReactionMessage(cond_president,
@@ -281,14 +284,14 @@ class Game:
                         "Choisissez la carte à **défausser**",
                         "Les deux autres seront passées à votre Chancelier\n\n",
                         globals.color,
-                        ["🟦 Libérale" if x == "liberal" else "🟥 Fasciste" for x in cards]
+                        show_cards
                     )
             else:
                 self.refused += 1
 
                 if self.refused == 3:
                     cards = await self.draw(1)
-                    done = await self.apply_law(cards[0], "*Gouvernement inactif :*")
+                    done = await self.apply_law(cards[0], "*Gouvernement inactif*:", "Les parlementaires n'ont pas réussi à se mettre d'accord sur un Gouvernement.", False)
 
                     if not done:
                         self.discard.extend(cards)
@@ -310,7 +313,7 @@ class Game:
 
                 if self.refused == 3:
                     cards = await self.draw(1)
-                    done = await self.apply_law(cards[0], "*Gouvernement inactif :*")
+                    done = await self.apply_law(cards[0], "*Gouvernement inactif*:", "Les parlementaires n'ont pas réussi à se mettre d'accord sur un Gouvernement.", False)
 
                     if not done:
                         self.discard.extend(cards)
@@ -321,7 +324,7 @@ class Game:
                     await self.next_turn("**Le Gouvernement a utilisé son droit de véto**\n")
 
     #Fin de tour, s'occupe des effets des pouvoirs fascistes
-    async def apply_law(self, law, message = "Gouvernement accepté :"):
+    async def apply_law(self, law, message = "Gouvernement accepté :", description = "Le Gouvernement proposé a été accepté.", normal = True):
         self.refused = 0
         self.term_limited.clear()
 
@@ -335,7 +338,7 @@ class Game:
 
         if law == "liberal":
             await self.broadcast(discord.Embed(title = message + " Loi libérale adoptée 🕊️",
-                description = "Le Gouvernement proposé a été accepté. Le Président et le Chancelier ont adopté une loi libérale",
+                description = description + " Le Président et le Chancelier ont adopté une loi libérale",
                 color = 0x2e64fe
             ), mode = "replace")
 
@@ -355,13 +358,16 @@ class Game:
             }
 
             await self.broadcast(discord.Embed(title = message + " Loi fasciste adoptée 🐍",
-                description = "Le Gouvernement proposé a été accepté. Le Président et le Chancelier ont adopté une loi fasciste." + policies_announcements[policy],
+                description = description + " Le Président et le Chancelier ont adopté une loi fasciste." + (policies_announcements[policy] if normal else ""),
                 color = 0xef223f
             ), mode = "replace")
 
             done = await self.pass_law("fascist")
 
-            if not done:
+            if not normal:
+                await self.next_turn()
+
+            if not done and normal:
                 if policy == "peek":
                     await self.players[self.order[self.turn]].user.send(embed = discord.Embed(title = "👁️ Prévision",
                         description = "Voici les 3 prochaines lois :\n" + '\n'.join(["🟦 Libérale" if self.deck[x] == "liberal" else "🟥 Fasciste" for x in range(3)]),
