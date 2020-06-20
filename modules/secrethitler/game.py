@@ -140,12 +140,12 @@ class Game:
         embed.description += "__Parlementaires:__\n" + '\n'.join([self.players[x].last_vote[:1] + globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("🎖️" if self.turn == i else ("💼" if self.chancellor == x else ("❌" if x in self.term_limited else ""))) for i, x in enumerate(self.order)])
 
         embed.add_field(name = "Lois libérales :",
-            value = "🟦" * self.liberal_laws + "🔹" * ( 5 - self.liberal_laws ))
+            value = "🟦" * self.liberal_laws + "🔹" * ( 5 - self.liberal_laws )  + "\n" + "⬛" * 5)
 
         policies_icons = {
             "none": "⬛",
             "peek": "👁️",
-            "inspect" : "🔍",
+            "inspect": "🔍",
             "elect":"🎖️",
             "kill": "🗡️"
         }
@@ -216,7 +216,7 @@ class Game:
 
             if player.last_vote != "":
                 embed.description = "Le Président `" + str(self.players[self.order[self.turn]].user) + "` a proposé comme Chancelier `" + str(self.players[self.chancellor].user) + "`.\nVous avez voté " + player.last_vote
-                embed.color = 0x00ff00
+                embed.color = 0x00ff00 if player.last_vote[1:] == "Ja" else 0xff0000
             else:
                 missing = True
 
@@ -237,7 +237,7 @@ class Game:
                     ), mode = "set")
 
                     cards = await self.draw(3)
-                    show_cards = ["🟦 Libérale: " + get_law_name("{type} de {noun_liberal} {adjective}") if x == "liberal" else "🟥 Fasciste: " + get_law_name("{type} de {noun_fascist} {adjective}") for x in cards]
+                    show_cards = ["🟦 Libérale : " + get_law_name("{type} de {noun_liberal} {adjective}") if x == "liberal" else "🟥 Fasciste : " + get_law_name("{type} de {noun_fascist} {adjective}") for x in cards]
 
                     async def cond_president(reactions):
                         return len(reactions[self.order[self.turn]]) == 1
@@ -258,16 +258,18 @@ class Game:
 
                         async def play_law(reactions):
                             self.played = cards.pop(reactions[self.chancellor][0])
+                            show_played = show_cards.pop(reactions[self.chancellor][0])
                             self.discard.extend(cards)
 
                             if self.fascist_laws >= 5:
                                 await self.players[self.order[self.turn]].send_veto_vote(self)
                                 await self.players[self.chancellor].send_veto_vote(self)
                             else:
-                                await self.apply_law(self.played)
+                                await self.apply_law(self.played, show_played)
 
                         await ReactionMessage(cond_chancellor,
-                            play_law
+                            play_law,
+                            temporary = False
                         ).send(self.players[self.chancellor].user,
                             "Choisissez la carte à **jouer**",
                             "",
@@ -291,7 +293,7 @@ class Game:
 
                 if self.refused == 3:
                     cards = await self.draw(1)
-                    done = await self.apply_law(cards[0], "*Gouvernement inactif*:", "Les parlementaires n'ont pas réussi à se mettre d'accord sur un Gouvernement.", False)
+                    done = await self.apply_law(cards[0], "🟦 Libérale : " + get_law_name("{type} de {noun_liberal} {adjective}") if cards[0] == "liberal" else "🟥 Fasciste : " + get_law_name("{type} de {noun_fascist} {adjective}"), "*Gouvernement inactif*:", "Les parlementaires n'ont pas réussi à se mettre d'accord sur un Gouvernement.", False)
 
                     if not done:
                         self.discard.extend(cards)
@@ -324,21 +326,22 @@ class Game:
                     await self.next_turn("**Le Gouvernement a utilisé son droit de véto**\n")
 
     #Fin de tour, s'occupe des effets des pouvoirs fascistes
-    async def apply_law(self, law, message = "Gouvernement accepté :", description = "Le Gouvernement proposé a été accepté.", normal = True):
+    async def apply_law(self, law, name, message = "Gouvernement accepté :", description = "Le Gouvernement proposé a été accepté.", normal = True):
         self.refused = 0
         self.term_limited.clear()
 
-        if len(self.players) > 5:
-            self.term_limited.append(self.order[self.turn])
+        if normal:
+            if len(self.players) > 5:
+                self.term_limited.append(self.order[self.turn])
 
-        self.term_limited.append(self.chancellor)
+            self.term_limited.append(self.chancellor)
 
         async def cond_president(reactions):
             return len(reactions[self.order[self.turn]]) == 1
 
         if law == "liberal":
             await self.broadcast(discord.Embed(title = message + " Loi libérale adoptée 🕊️",
-                description = description + " Le Président et le Chancelier ont adopté une loi libérale",
+                description = description + " Le Président et le Chancelier ont adopté une loi " + name,
                 color = 0x2e64fe
             ), mode = "replace")
 
@@ -358,7 +361,7 @@ class Game:
             }
 
             await self.broadcast(discord.Embed(title = message + " Loi fasciste adoptée 🐍",
-                description = description + " Le Président et le Chancelier ont adopté une loi fasciste." + (policies_announcements[policy] if normal else ""),
+                description = description + " Le Président et le Chancelier ont adopté une loi " + name + "." + (policies_announcements[policy] if normal else ""),
                 color = 0xef223f
             ), mode = "replace")
 
@@ -447,7 +450,7 @@ class Game:
                         player = self.players[id]
 
                         await self.broadcast(discord.Embed(
-                            description = ".\n\n`" + str(player.user) + "` a été nominé comme le Président pour cette Election Spéciale"
+                            description = ".\n\n`" + str(player.user) + "` a été nommé Président pour cette Election Spéciale"
                         ), mode = "append")
 
                         await self.next_turn("**Une Election Spéciale a été convoquée**\n", index)
