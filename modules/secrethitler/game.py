@@ -67,10 +67,10 @@ class Game:
             if i < fascist_amount:
                 self.players[self.order[i]] = Fascist(self.players[self.order[i]].user)
 
+        random.shuffle(self.order)
+
         for i in range(len(self.order)):
             await self.players[self.order[i]].game_start(self)
-
-        random.shuffle(self.order)
 
         await self.send_chancellor_choice("Début de partie\n")
 
@@ -377,6 +377,7 @@ class Game:
                     await self.next_turn()
                 elif policy == "inspect":
                     inspectable = [x for i, x in enumerate(self.order) if i != self.turn and not self.players[x].inspected]
+                    emojis = [globals.number_emojis[self.order.index(x)] for x in inspectable]
 
                     async def inspect(reactions):
                         player = self.players[inspectable[reactions[self.order[self.turn]][0]]]
@@ -400,10 +401,12 @@ class Game:
                         "Choisissez le joueur à inspecter",
                         "",
                         globals.color,
-                        ["`" + str(self.players[x].user) + "`" for x in inspectable]
+                        ["`" + str(self.players[x].user) + "`" for x in inspectable],
+                        emojis = emojis
                     )
                 elif policy == "kill":
                     killable = [x for i, x in enumerate(self.order) if i != self.turn]
+                    emojis = [globals.number_emojis[self.order.index(x)] for x in killable]
 
                     async def kill(reactions):
                         id = killable[reactions[self.order[self.turn]][0]]
@@ -413,18 +416,17 @@ class Game:
                             description = ".\n\n`" + str(player.user) + "` a été exécuté et retiré du jeu"
                         ), mode = "append")
 
+                        if self.after_special_election == id:
+                            self.after_special_election = self.order[self.order.index(id) + 1]
+
+                        self.order.remove(id)
+
                         if player.role == "hitler":
                             await self.end_game(True, "exécution d'Hitler")
+                        elif len(self.order) == 1:
+                            await self.end_game(self.players[self.order[0]].role == "liberal", "solitude")
                         else:
-                            if self.after_special_election == id:
-                                self.after_special_election = self.order[self.order.index(id) + 1]
-
-                            self.order.remove(id)
-
-                            if len(self.order) == 1:
-                                await self.end_game(self.players[self.order[0]].role == "liberal", "solitude")
-                            else:
-                                await self.next_turn()
+                            await self.next_turn()
 
                     await ReactionMessage(cond_president,
                         kill
@@ -432,10 +434,12 @@ class Game:
                         "Choisissez le joueur à exécuter",
                         "",
                         globals.color,
-                        ["`" + str(self.players[x].user) + "`" for x in killable]
+                        ["`" + str(self.players[x].user) + "`" for x in killable],
+                        emojis = emojis
                     )
                 elif policy == "elect":
                     electable = [x for i, x in enumerate(self.order) if i != self.turn]
+                    emojis = [globals.number_emojis[self.order.index(x)] for x in electable]
 
                     async def elect(reactions):
                         id = electable[reactions[self.order[self.turn]][0]]
@@ -454,7 +458,8 @@ class Game:
                         "Choisissez le joueur à nominer pour l'Election Spéciale",
                         "",
                         globals.color,
-                        ["`" + str(self.players[x].user) + "`" for x in electable]
+                        ["`" + str(self.players[x].user) + "`" for x in electable],
+                        emojis = emojis
                     )
                 else:
                     await self.next_turn()
@@ -494,11 +499,9 @@ class Game:
     #Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, liberal_wins, cause):
         if liberal_wins:
-            embed = discord.Embed(title = "Victoire des Libéraux 🕊️ par " + cause  + " !",
-                color = 0x2e64fe)
+            embed = discord.Embed(title = "Victoire des Libéraux 🕊️ par " + cause  + " !", color = 0x2e64fe)
         else:
-            embed = discord.Embed(title = "Victoire des Fascistes 🐍 par " + cause  + " !",
-                color = 0xef223f)
+            embed = discord.Embed(title = "Victoire des Fascistes 🐍 par " + cause  + " !", color = 0xef223f)
 
         roles = {
             "liberal": "🟦 Libéral",
@@ -506,7 +509,7 @@ class Game:
             "hitler": "☠️ Hitler"
         }
 
-        embed.description = "__Joueurs :__\n" + '\n'.join([(globals.number_emojis[self.order.index(id)] if id in self.order else "💀") + "`" + str(x.user) + "` : " + roles[x.role] for id, x in self.players.items()])
+        embed.description = "__Joueurs :__\n" + '\n'.join([globals.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + roles[self.players[x].role] for i,x in enumerate(self.order)]) + '\n' + '\n'.join(["💀 `" + str(x.user) + "` : " + roles[x.role] for i,x in self.players.items() if i not in self.order])
 
         await self.broadcast(embed)
         globals.games.pop(self.channel.id)
