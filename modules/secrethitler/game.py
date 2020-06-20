@@ -372,6 +372,13 @@ class Game:
 
             if not done and normal:
                 if policy == "peek":
+                    if len(self.deck) < 3:
+                        self.deck.extend(self.discard)
+                        self.discard.clear()
+                        random.shuffle(self.deck)
+
+                        await self.broadcast(discord.Embed(description = "La pioche a été reformée à partir des cartes restantes et de la défausse", color = 0xfffffe))
+
                     await self.players[self.order[self.turn]].user.send(embed = discord.Embed(title = "👁️ Prévision",
                         description = "Voici les 3 prochaines lois :\n" + '\n'.join(["🟦 Libérale" if self.deck[x] == "liberal" else "🟥 Fasciste" for x in range(3)]),
                         color = globals.color
