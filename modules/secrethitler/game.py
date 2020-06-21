@@ -43,7 +43,7 @@ class Game:
         policies = [
             ["none", "none", "none", "none", "none", "none"], #0
             ["none", "none", "none", "none", "none", "none"], #1
-            ["kill", "elect", "peek", "none", "none", "none"], #2, Debug
+            ["none", "none", "none", "peek", "elect", "inspect"], #2, Debug
             ["none", "none", "peek", "kill", "kill", "none"], #3
             ["none", "none", "peek", "kill", "kill", "none"], #4
             ["none", "none", "peek", "kill", "kill", "none"], #5
@@ -347,7 +347,7 @@ class Game:
 
             done = await self.pass_law("liberal")
 
-            if not done:
+            if not done and normal:
                 await self.next_turn()
         else:
             policy = self.policies[self.fascist_laws]
@@ -366,9 +366,6 @@ class Game:
             ), mode = "replace")
 
             done = await self.pass_law("fascist")
-
-            if not normal:
-                await self.next_turn()
 
             if not done and normal:
                 if policy == "peek":
