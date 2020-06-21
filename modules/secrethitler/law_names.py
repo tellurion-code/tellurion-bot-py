@@ -1,8 +1,8 @@
 import random
 
-type = ("Mention", "Loi", "Projet", "Déclaration", "Réforme", "Campagne")
-nouns_fascist = ("Censure", "Collectivisation", "Militarisation", "Protection", "Relance", "Taxe", "Purge", "Discrédit", "Privatisation", "Confiscation", "Recensement", "Revue")
-nouns_liberal = ("Libéralisation", "Congolexicomatisation", "Négociation", "Paix", "Médecine", "Démilitarisation", "Diplomatie", "Prudence", "Diagnostic", "Sollicitude", "Souvenir")
+type = ("Mention", "Loi", "Projet", "Déclaration", "Réforme", "Campagne", "Diplomatie")
+nouns_fascist = ("Censure", "Collectivisation", "Militarisation", "Relance", "Taxe", "Purge", "Privatisation", "Confiscation", "Revue", "Délibération")
+nouns_liberal = ("Libéralisation", "Congolexicomatisation", "Négociation", "Paix", "Médecine", "Démilitarisation", "Prudence", "Sollicitude", "Projection", "Protection")
 adjectives = ("agressive", "générale", "rapide", "locale", "douce", "intrinsèque", "crédible", "correcte", "exceptionnelle", "banale", "forte", "festive", "admirable", "absolue", "nationale", "équitable", "orthogonale", "approximative", "médiocre", "relative")
 
 def get_law_name(pattern):
