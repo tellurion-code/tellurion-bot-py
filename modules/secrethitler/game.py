@@ -9,32 +9,45 @@ from modules.secrethitler.law_names import get_law_name
 import modules.secrethitler.globals as globals
 
 class Game:
-    def __init__(self, message):
-        self.channel = message.channel
-        self.players = {
-            message.author.id: Liberal(message.author)
-        } #Dict pour rapidement accéder aux infos
-        self.order = [] #Ordre des id des joueurs
-        self.turn = -1 #Le tour (index du président) en cours, -1 = pas commencé
-        self.chancellor = 0 #Id du chancelier
-        self.after_special_election = -1 #Id du prochain président en cas d'Election Spéciale, -1 = pas de président nominé
-        self.deck = [] #Liste des lois
-        self.discard = [] #Pile de défausse
-        self.policies = [] #Pouvoirs des lois fascistes
-        self.liberal_laws = 0 #Nombre de lois libérales votées
-        self.fascist_laws = 0 #Nombre de lois fascistes votées
-        self.term_limited = [] #Listes des id des anciens chanceliers et présidents
-        self.refused = 0 #Nombre de gouvernements refusés
-        self.info_message = None
-        self.played = "" #Dernière carte jouée
+    def __init__(self, **kwargs):
+        reload = kwargs["reload"] if "reload" in kwargs else False
+        message = kwargs["message"] if "message" in kwargs else None
+        object = kwargs["object"] if "object" in kwargs else None
+        client = kwargs["client"] if "client" in kwargs else None
 
-        for _ in range(6):
-            self.deck.append("liberal")
+        if reload:
+            self.deserialize(object, client)
 
-        for _ in range(11):
-            self.deck.append("fascist")
+            if object["state"]["type"] == "next_turn":
+                self.next_turn(object["state"]["message"], object["state"]["nomination"])
+            elif object["state"]["type"] == "send_laws":
+                self.send_laws()
+        else:
+            self.channel = message.channel
+            self.players = {
+                message.author.id: Liberal(message.author)
+            } #Dict pour rapidement accéder aux infos
+            self.order = [] #Ordre des id des joueurs
+            self.turn = -1 #Le tour (index du président) en cours, -1 = pas commencé
+            self.chancellor = 0 #Id du chancelier
+            self.after_special_election = -1 #Id du prochain président en cas d'Election Spéciale, -1 = pas de président nominé
+            self.deck = [] #Liste des lois
+            self.discard = [] #Pile de défausse
+            self.policies = [] #Pouvoirs des lois fascistes
+            self.liberal_laws = 0 #Nombre de lois libérales votées
+            self.fascist_laws = 0 #Nombre de lois fascistes votées
+            self.term_limited = [] #Listes des id des anciens chanceliers et présidents
+            self.refused = 0 #Nombre de gouvernements refusés
+            self.info_message = None
+            self.played = "" #Dernière carte jouée
 
-        random.shuffle(self.deck)
+            for _ in range(6):
+                self.deck.append("liberal")
+
+            for _ in range(11):
+                self.deck.append("fascist")
+
+            random.shuffle(self.deck)
 
     async def start_game(self):
         self.turn = 0
@@ -231,63 +244,7 @@ class Game:
                 if self.players[self.chancellor].role == "hitler" and self.fascist_laws >= 3:
                     await self.end_game(False, "nomination d'Hitler en tant que Chancelier")
                 else:
-                    await self.broadcast(discord.Embed(title = "Gouvernement accepté",
-                        description = "Le Gouvernement proposé a été accepté. Le Président et le Chancelier vont maintenant choisir la loi à faire passer parmi les 3 piochées",
-                        color = 0x00ff00
-                    ), mode = "set")
-
-                    cards = await self.draw(3)
-                    show_cards = ["🟦 Libérale : " + get_law_name("{type} de {noun_liberal} {adjective}") if x == "liberal" else "🟥 Fasciste : " + get_law_name("{type} de {noun_fascist} {adjective}") for x in cards]
-
-                    async def cond_president(reactions):
-                        return len(reactions[self.order[self.turn]]) == 1
-
-                    async def discard_first(reactions):
-                        discarded = cards.pop(reactions[self.order[self.turn]][0])
-                        show_discarded = show_cards.pop(reactions[self.order[self.turn]][0])
-
-                        await law_message.message.edit(embed = discord.Embed(title = "Loi défaussée",
-                            description = "Lois restantes :\n" + '\n'.join(show_cards) + "\n\nLoi défaussée :\n" + show_discarded,
-                            color = 0x00ff00
-                        ))
-
-                        self.discard.append(discarded)
-
-                        async def cond_chancellor(reactions):
-                            return len(reactions[self.chancellor]) == 1
-
-                        async def play_law(reactions):
-                            self.played = cards.pop(reactions[self.chancellor][0])
-                            show_played = show_cards.pop(reactions[self.chancellor][0])
-                            self.discard.extend(cards)
-
-                            if self.fascist_laws >= 5:
-                                await self.players[self.order[self.turn]].send_veto_vote(self)
-                                await self.players[self.chancellor].send_veto_vote(self)
-                            else:
-                                await self.apply_law(self.played, show_played)
-
-                        await ReactionMessage(cond_chancellor,
-                            play_law,
-                            temporary = False
-                        ).send(self.players[self.chancellor].user,
-                            "Choisissez la carte à **jouer**",
-                            "",
-                            globals.color,
-                            show_cards
-                        )
-
-                    law_message = ReactionMessage(cond_president,
-                        discard_first,
-                        temporary = False
-                    )
-
-                    await law_message.send(self.players[self.order[self.turn]].user,
-                        "Choisissez la carte à **défausser**",
-                        "Les deux autres seront passées à votre Chancelier\n\n",
-                        globals.color,
-                        show_cards
-                    )
+                    await self.send_laws()
             else:
                 self.refused += 1
 
@@ -302,6 +259,68 @@ class Game:
                         await self.next_turn()
                 elif self.refused >= 1:
                     await self.next_turn("**Le Gouvernement proposé a été refusé**\n")
+
+    async def send_laws(self):
+        object = self.serialize({"type": "send_laws"})
+        #TODO: Save
+
+        await self.broadcast(discord.Embed(title = "Gouvernement accepté",
+            description = "Le Gouvernement proposé a été accepté. Le Président et le Chancelier vont maintenant choisir la loi à faire passer parmi les 3 piochées",
+            color = 0x00ff00
+        ), mode = "set")
+
+        cards = await self.draw(3)
+        show_cards = ["🟦 Libérale : " + get_law_name("{type} de {noun_liberal} {adjective}") if x == "liberal" else "🟥 Fasciste : " + get_law_name("{type} de {noun_fascist} {adjective}") for x in cards]
+
+        async def cond_president(reactions):
+            return len(reactions[self.order[self.turn]]) == 1
+
+        async def discard_first(reactions):
+            discarded = cards.pop(reactions[self.order[self.turn]][0])
+            show_discarded = show_cards.pop(reactions[self.order[self.turn]][0])
+
+            await law_message.message.edit(embed = discord.Embed(title = "Loi défaussée",
+                description = "Lois restantes :\n" + '\n'.join(show_cards) + "\n\nLoi défaussée :\n" + show_discarded,
+                color = 0x00ff00
+            ))
+
+            self.discard.append(discarded)
+
+            async def cond_chancellor(reactions):
+                return len(reactions[self.chancellor]) == 1
+
+            async def play_law(reactions):
+                self.played = cards.pop(reactions[self.chancellor][0])
+                show_played = show_cards.pop(reactions[self.chancellor][0])
+                self.discard.extend(cards)
+
+                if self.fascist_laws >= 5:
+                    await self.players[self.order[self.turn]].send_veto_vote(self)
+                    await self.players[self.chancellor].send_veto_vote(self)
+                else:
+                    await self.apply_law(self.played, show_played)
+
+            await ReactionMessage(cond_chancellor,
+                play_law,
+                temporary = False
+            ).send(self.players[self.chancellor].user,
+                "Choisissez la carte à **jouer**",
+                "",
+                globals.color,
+                show_cards
+            )
+
+        law_message = ReactionMessage(cond_president,
+            discard_first,
+            temporary = False
+        )
+
+        await law_message.send(self.players[self.order[self.turn]].user,
+            "Choisissez la carte à **défausser**",
+            "Les deux autres seront passées à votre Chancelier\n\n",
+            globals.color,
+            show_cards
+        )
 
     #Vérfies la fin du vote de veto, similaire à check_vote_end
     async def check_veto_vote(self):
@@ -487,8 +506,11 @@ class Game:
         else:
             return False
 
-    #Passe au prochain tour, s'occupe ausis de l'élection spéciale
+    #Passe au prochain tour, s'occupe aussi de l'élection spéciale
     async def next_turn(self, message = "", nomination = None):
+        object = self.serialize({"type": "next_turn", "message": message, "nomination": nomination})
+        #TODO: Save
+
         if nomination is not None:
             print("Nominated")
             self.after_special_election = self.order[(self.turn + 1) % len(self.order)]
@@ -520,6 +542,7 @@ class Game:
 
         await self.broadcast(embed)
         globals.games.pop(self.channel.id)
+        #TODO: Remove save
 
     #Pioche x cartes (remélange le paquet si besoin)
     async def draw(self, amount):
@@ -535,3 +558,59 @@ class Game:
             cards.append(self.deck.pop(0))
 
         return cards
+
+    async def serialize(self, state):
+        object = {
+            "channel": self.channel.id,
+            "order": self.order,
+            "turn": self.turn,
+            "chancellor": self.chancellor,
+            "after_special_election": self.after_special_election,
+            "deck": self.deck,
+            "discard": self.discard,
+            "policies": self.policies,
+            "liberal_laws": self.liberal_laws,
+            "fascist_laws": self.fascist_laws,
+            "term_limited": self.term_limited,
+            "refused": self.refused,
+            "info_message": self.info_message.id,
+            "played": self.played,
+            "players": {},
+            "state": state
+        }
+
+        for id, player in self.players.items():
+            object["players"][id] = {
+                "role": player.role,
+                "last_vote": player.last_vote,
+                "inspected": player.inspected,
+                "vote_message": player.vote_message.id,
+                "info_message": player.info_message.id,
+                "user": player.user.id
+            }
+
+        return object
+
+    async def deserialize(self, object, client):
+        self.channel = client.get_channel(object["channel"]),
+        self.order = object["order"],
+        self.turn = object["turn"],
+        self.chancellor = object["chancellor"],
+        self.after_special_election = object["after_special_election"],
+        self.deck = object["deck"],
+        self.discard = object["discard"],
+        self.policies = object["policies"],
+        self.liberal_laws = object["liberal_laws"],
+        self.fascist_laws = object["fascist_laws"],
+        self.term_limited = object["term_limited"],
+        self.refused = object["refused"],
+        self.info_message = await self.channel.fetch_message(object["info_message"]),
+        self.played = object["played"]
+        self.players = {}
+
+        for id, info in game["players"].items():
+            player = self.players[id] = Liberal(client.get_user(info.user)) if info.role == "liberal" else (Fascist(client.get_user(info.user)) if info.role == "fascist" else Hitler(client.get_user(info.user)))
+            player.last_vote = info.last_vote
+            player.inspected = info.inspected
+            player.vote_message = await player.user.dm_channel.fecth_message(info.vote_message)
+            player.info_message = await player.user.dm_channel.fecth_message(info.info_message)
