@@ -603,7 +603,7 @@ class Game:
         self.fascist_laws = object["fascist_laws"],
         self.term_limited = object["term_limited"],
         self.refused = object["refused"],
-        self.info_message = await self.channel.fetch_message(object["info_message"]),
+        self.info_message = self.channel.fetch_message(object["info_message"]),
         self.played = object["played"]
         self.players = {}
 
@@ -611,8 +611,8 @@ class Game:
             player = self.players[id] = Liberal(client.get_user(info.user)) if info.role == "liberal" else (Fascist(client.get_user(info.user)) if info.role == "fascist" else Hitler(client.get_user(info.user)))
             player.last_vote = info.last_vote
             player.inspected = info.inspected
-            player.vote_message = await player.user.dm_channel.fecth_message(info.vote_message)
-            player.info_message = await player.user.dm_channel.fecth_message(info.info_message)
+            player.vote_message = player.user.dm_channel.fetch_message(info.vote_message)
+            player.info_message = player.user.dm_channel.fetch_message(info.info_message)
 
     def save(self, state):
         if self.mainclass.objects.save_exists("games"):
