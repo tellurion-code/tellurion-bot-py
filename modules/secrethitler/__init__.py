@@ -30,10 +30,12 @@ class MainClass(BaseClassPython):
     def __init__(self, client):
         super().__init__(client)
 
+    async def on_ready(self):
         if self.objects.save_exists("games"):
             games = self.objects.load_object("games")
             for game in games.values():
-                globals.games[game["channel"]] = Game(self, object = game, reload = True, client = client)
+                globals.games[game["channel"]] = Game(self, message=-1)
+                await globals.games[game["channel"]].reload(game, self.client)
 
     async def command(self, message, args, kwargs):
         if args[0] == "join't":

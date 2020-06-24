@@ -10,45 +10,42 @@ import modules.secrethitler.globals as globals
 
 class Game:
     def __init__(self, mainclass, **kwargs):
-        reload = kwargs["reload"] if "reload" in kwargs else False
         message = kwargs["message"] if "message" in kwargs else None
-        object = kwargs["object"] if "object" in kwargs else None
-        client = kwargs["client"] if "client" in kwargs else None
         self.mainclass = mainclass
 
-        if reload:
-            await self.deserialize(object, client)
+        self.channel = message.channel
+        self.players = {
+            message.author.id: Liberal(message.author)
+        } #Dict pour rapidement accéder aux infos
+        self.order = [] #Ordre des id des joueurs
+        self.turn = -1 #Le tour (index du président) en cours, -1 = pas commencé
+        self.chancellor = 0 #Id du chancelier
+        self.after_special_election = -1 #Id du prochain président en cas d'Election Spéciale, -1 = pas de président nominé
+        self.deck = [] #Liste des lois
+        self.discard = [] #Pile de défausse
+        self.policies = [] #Pouvoirs des lois fascistes
+        self.liberal_laws = 0 #Nombre de lois libérales votées
+        self.fascist_laws = 0 #Nombre de lois fascistes votées
+        self.term_limited = [] #Listes des id des anciens chanceliers et présidents
+        self.refused = 0 #Nombre de gouvernements refusés
+        self.info_message = None
+        self.played = "" #Dernière carte jouée
 
-            if object["state"]["type"] == "send_chancellor_choice":
-                await self.send_chancellor_choice(object["state"]["message"])
-            elif object["state"]["type"] == "send_laws":
-                await self.send_laws()
-        else:
-            self.channel = message.channel
-            self.players = {
-                message.author.id: Liberal(message.author)
-            } #Dict pour rapidement accéder aux infos
-            self.order = [] #Ordre des id des joueurs
-            self.turn = -1 #Le tour (index du président) en cours, -1 = pas commencé
-            self.chancellor = 0 #Id du chancelier
-            self.after_special_election = -1 #Id du prochain président en cas d'Election Spéciale, -1 = pas de président nominé
-            self.deck = [] #Liste des lois
-            self.discard = [] #Pile de défausse
-            self.policies = [] #Pouvoirs des lois fascistes
-            self.liberal_laws = 0 #Nombre de lois libérales votées
-            self.fascist_laws = 0 #Nombre de lois fascistes votées
-            self.term_limited = [] #Listes des id des anciens chanceliers et présidents
-            self.refused = 0 #Nombre de gouvernements refusés
-            self.info_message = None
-            self.played = "" #Dernière carte jouée
+        for _ in range(6):
+            self.deck.append("liberal")
 
-            for _ in range(6):
-                self.deck.append("liberal")
+        for _ in range(11):
+            self.deck.append("fascist")
 
-            for _ in range(11):
-                self.deck.append("fascist")
+        random.shuffle(self.deck)
 
-            random.shuffle(self.deck)
+    async def reload(self, object, client)
+        await self.deserialize(object, client)
+
+        if object["state"]["type"] == "send_chancellor_choice":
+            await self.send_chancellor_choice(object["state"]["message"])
+        elif object["state"]["type"] == "send_laws":
+            await self.send_laws()
 
     async def start_game(self):
         self.turn = 0
