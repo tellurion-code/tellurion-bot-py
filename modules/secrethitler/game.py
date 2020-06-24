@@ -572,7 +572,7 @@ class Game:
             "fascist_laws": self.fascist_laws,
             "term_limited": self.term_limited,
             "refused": self.refused,
-            "info_message": self.info_message.id,
+            "info_message": self.info_message.id if self.info_message else None,
             "played": self.played,
             "players": {},
             "state": state
@@ -583,8 +583,8 @@ class Game:
                 "role": player.role,
                 "last_vote": player.last_vote,
                 "inspected": player.inspected,
-                "vote_message": player.vote_message.id,
-                "info_message": player.info_message.id,
+                "vote_message": player.vote_message.id if self.vote_message else None,
+                "info_message": player.info_message.id if self.info_message else None,
                 "user": player.user.id
             }
 
@@ -603,7 +603,7 @@ class Game:
         self.fascist_laws = object["fascist_laws"],
         self.term_limited = object["term_limited"],
         self.refused = object["refused"],
-        self.info_message = self.channel.fetch_message(object["info_message"]),
+        self.info_message = self.channel.fetch_message(object["info_message"]) if object["info_message"] else None,
         self.played = object["played"]
         self.players = {}
 
@@ -611,8 +611,8 @@ class Game:
             player = self.players[id] = Liberal(client.get_user(info.user)) if info.role == "liberal" else (Fascist(client.get_user(info.user)) if info.role == "fascist" else Hitler(client.get_user(info.user)))
             player.last_vote = info.last_vote
             player.inspected = info.inspected
-            player.vote_message = player.user.dm_channel.fetch_message(info.vote_message)
-            player.info_message = player.user.dm_channel.fetch_message(info.info_message)
+            player.vote_message = player.user.dm_channel.fetch_message(info.vote_message) if info["vote_message"] else None
+            player.info_message = player.user.dm_channel.fetch_message(info.info_message) if info["info_message"] else None
 
     def save(self, state):
         if self.mainclass.objects.save_exists("games"):
