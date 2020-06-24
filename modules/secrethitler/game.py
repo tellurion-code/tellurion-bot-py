@@ -583,8 +583,8 @@ class Game:
                 "role": player.role,
                 "last_vote": player.last_vote,
                 "inspected": player.inspected,
-                "vote_message": player.vote_message.id if self.vote_message else None,
-                "info_message": player.info_message.id if self.info_message else None,
+                "vote_message": player.vote_message.id if player.vote_message else None,
+                "info_message": player.info_message.id if player.info_message else None,
                 "user": player.user.id
             }
 
