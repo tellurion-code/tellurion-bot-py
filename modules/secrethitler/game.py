@@ -17,7 +17,7 @@ class Game:
         self.mainclass = mainclass
 
         if reload:
-            self.deserialize(object, client)
+            await self.deserialize(object, client)
 
             if object["state"]["type"] == "send_chancellor_choice":
                 await self.send_chancellor_choice(object["state"]["message"])
@@ -590,7 +590,7 @@ class Game:
 
         return object
 
-    def deserialize(self, object, client):
+    async def deserialize(self, object, client):
         self.channel = client.get_channel(object["channel"]),
         self.order = object["order"],
         self.turn = object["turn"],
@@ -603,7 +603,7 @@ class Game:
         self.fascist_laws = object["fascist_laws"],
         self.term_limited = object["term_limited"],
         self.refused = object["refused"],
-        self.info_message = self.channel.fetch_message(object["info_message"]) if object["info_message"] else None,
+        self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None,
         self.played = object["played"]
         self.players = {}
 
@@ -611,8 +611,8 @@ class Game:
             player = self.players[id] = Liberal(client.get_user(info["user"])) if info["role"] == "liberal" else (Fascist(client.get_user(info["user"])) if info["role"] == "fascist" else Hitler(client.get_user(info["user"])))
             player.last_vote = info["last_vote"]
             player.inspected = info["inspected"]
-            player.vote_message = player.user.dm_channel.fetch_message(info["vote_message"]) if info["vote_message"] else None
-            player.info_message = player.user.dm_channel.fetch_message(info["info_message"]) if info["info_message"] else None
+            player.vote_message = await player.user.dm_channel.fetch_message(info["vote_message"]) if info["vote_message"] else None
+            player.info_message = await player.user.dm_channel.fetch_message(info["info_message"]) if info["info_message"] else None
 
     def save(self, state):
         if self.mainclass.objects.save_exists("games"):
