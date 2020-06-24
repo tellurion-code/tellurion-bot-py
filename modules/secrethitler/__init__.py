@@ -34,7 +34,7 @@ class MainClass(BaseClassPython):
         if self.objects.save_exists("games"):
             games = self.objects.load_object("games")
             for game in games.values():
-                globals.games[game["channel"]] = Game(self, message=-1)
+                globals.games[game["channel"]] = Game(self)
                 await globals.games[game["channel"]].reload(game, self.client)
 
     async def command(self, message, args, kwargs):

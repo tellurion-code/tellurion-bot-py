@@ -13,7 +13,7 @@ class Game:
         message = kwargs["message"] if "message" in kwargs else None
         self.mainclass = mainclass
 
-        self.channel = message.channel
+        self.channel = message.channel if message else None
         self.players = {
             message.author.id: Liberal(message.author)
         } #Dict pour rapidement accéder aux infos
