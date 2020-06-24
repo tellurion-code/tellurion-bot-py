@@ -607,7 +607,7 @@ class Game:
         self.played = object["played"]
         self.players = {}
 
-        for id, info in game["players"].items():
+        for id, info in object["players"].items():
             player = self.players[id] = Liberal(client.get_user(info.user)) if info.role == "liberal" else (Fascist(client.get_user(info.user)) if info.role == "fascist" else Hitler(client.get_user(info.user)))
             player.last_vote = info.last_vote
             player.inspected = info.inspected
@@ -620,13 +620,13 @@ class Game:
         else:
             object = {}
 
-        object[game.channel.id] = self.serialize(state)
+        object[self.channel.id] = self.serialize(state)
         self.mainclass.objects.save_object("games", object)
 
     def delete_save(self):
         if self.mainclass.objects.save_exists("games"):
             object = self.mainclass.objects.save_object("games")
-            if game.channel.id in object:
-                object.pop(game.channel.id)
+            if self.channel.id in object:
+                object.pop(self.channel.id)
 
             self.mainclass.objects.save_object("games", object)
