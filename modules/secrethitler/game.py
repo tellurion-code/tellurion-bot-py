@@ -19,8 +19,8 @@ class Game:
         if reload:
             self.deserialize(object, client)
 
-            if object["state"]["type"] == "next_turn":
-                self.next_turn(object["state"]["message"], object["state"]["nomination"])
+            if object["state"]["type"] == "send_chancellor_choice":
+                self.send_chancellor_choice(object["state"]["message"])
             elif object["state"]["type"] == "send_laws":
                 self.send_laws()
         else:
@@ -180,6 +180,8 @@ class Game:
 
     #Est aussi un début de tour, envoies le choix de chancelier
     async def send_chancellor_choice(self, info):
+        self.save({"type": "send_chancellor_choice", "message": info})
+
         for player in self.players.values():
             player.last_vote = ""
 
@@ -508,8 +510,6 @@ class Game:
 
     #Passe au prochain tour, s'occupe aussi de l'élection spéciale
     async def next_turn(self, message = "", nomination = None):
-        self.save({"type": "next_turn", "message": message, "nomination": nomination})
-
         if nomination is not None:
             print("Nominated")
             self.after_special_election = self.order[(self.turn + 1) % len(self.order)]
