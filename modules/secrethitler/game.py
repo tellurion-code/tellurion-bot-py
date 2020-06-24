@@ -508,8 +508,7 @@ class Game:
 
     #Passe au prochain tour, s'occupe aussi de l'élection spéciale
     async def next_turn(self, message = "", nomination = None):
-        object = self.serialize({"type": "next_turn", "message": message, "nomination": nomination})
-        #TODO: Save
+        self.save({"type": "next_turn", "message": message, "nomination": nomination})
 
         if nomination is not None:
             print("Nominated")
@@ -541,8 +540,8 @@ class Game:
         embed.description = "__Joueurs :__\n" + '\n'.join([globals.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + roles[self.players[x].role] for i,x in enumerate(self.order)]) + '\n' + '\n'.join(["💀 `" + str(x.user) + "` : " + roles[x.role] for i,x in self.players.items() if i not in self.order])
 
         await self.broadcast(embed)
+        self.delete_save()
         globals.games.pop(self.channel.id)
-        #TODO: Remove save
 
     #Pioche x cartes (remélange le paquet si besoin)
     async def draw(self, amount):
