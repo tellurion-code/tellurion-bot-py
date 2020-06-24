@@ -39,7 +39,7 @@ class Game:
 
         random.shuffle(self.deck)
 
-    async def reload(self, object, client)
+    async def reload(self, object, client):
         await self.deserialize(object, client)
 
         if object["state"]["type"] == "send_chancellor_choice":
