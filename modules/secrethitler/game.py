@@ -608,11 +608,11 @@ class Game:
         self.players = {}
 
         for id, info in object["players"].items():
-            player = self.players[id] = Liberal(client.get_user(info.user)) if info.role == "liberal" else (Fascist(client.get_user(info.user)) if info.role == "fascist" else Hitler(client.get_user(info.user)))
-            player.last_vote = info.last_vote
-            player.inspected = info.inspected
-            player.vote_message = player.user.dm_channel.fetch_message(info.vote_message) if info["vote_message"] else None
-            player.info_message = player.user.dm_channel.fetch_message(info.info_message) if info["info_message"] else None
+            player = self.players[id] = Liberal(client.get_user(info["user"])) if info["role"] == "liberal" else (Fascist(client.get_user(info["user"])) if info["role"] == "fascist" else Hitler(client.get_user(info["user"])))
+            player.last_vote = info["last_vote"]
+            player.inspected = info["inspected"]
+            player.vote_message = player.user.dm_channel.fetch_message(info["vote_message"]) if info["vote_message"] else None
+            player.info_message = player.user.dm_channel.fetch_message(info["info_message"]) if info["info_message"] else None
 
     def save(self, state):
         if self.mainclass.objects.save_exists("games"):
