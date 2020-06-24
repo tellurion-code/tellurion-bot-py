@@ -20,9 +20,9 @@ class Game:
             self.deserialize(object, client)
 
             if object["state"]["type"] == "send_chancellor_choice":
-                self.send_chancellor_choice(object["state"]["message"])
+                await self.send_chancellor_choice(object["state"]["message"])
             elif object["state"]["type"] == "send_laws":
-                self.send_laws()
+                await self.send_laws()
         else:
             self.channel = message.channel
             self.players = {
