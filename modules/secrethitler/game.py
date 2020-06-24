@@ -9,11 +9,12 @@ from modules.secrethitler.law_names import get_law_name
 import modules.secrethitler.globals as globals
 
 class Game:
-    def __init__(self, **kwargs):
+    def __init__(self, mainclass, **kwargs):
         reload = kwargs["reload"] if "reload" in kwargs else False
         message = kwargs["message"] if "message" in kwargs else None
         object = kwargs["object"] if "object" in kwargs else None
         client = kwargs["client"] if "client" in kwargs else None
+        self.mainclass = mainclass
 
         if reload:
             self.deserialize(object, client)
@@ -261,8 +262,7 @@ class Game:
                     await self.next_turn("**Le Gouvernement proposé a été refusé**\n")
 
     async def send_laws(self):
-        object = self.serialize({"type": "send_laws"})
-        #TODO: Save
+        self.save({"type": "send_laws"})
 
         await self.broadcast(discord.Embed(title = "Gouvernement accepté",
             description = "Le Gouvernement proposé a été accepté. Le Président et le Chancelier vont maintenant choisir la loi à faire passer parmi les 3 piochées",
@@ -559,7 +559,7 @@ class Game:
 
         return cards
 
-    async def serialize(self, state):
+    def serialize(self, state):
         object = {
             "channel": self.channel.id,
             "order": self.order,
@@ -591,7 +591,7 @@ class Game:
 
         return object
 
-    async def deserialize(self, object, client):
+    def deserialize(self, object, client):
         self.channel = client.get_channel(object["channel"]),
         self.order = object["order"],
         self.turn = object["turn"],
@@ -614,3 +614,20 @@ class Game:
             player.inspected = info.inspected
             player.vote_message = await player.user.dm_channel.fecth_message(info.vote_message)
             player.info_message = await player.user.dm_channel.fecth_message(info.info_message)
+
+    def save(self, state):
+        if self.mainclass.objects.save_exists("games"):
+            object = self.mainclass.objects.save_object("games")
+        else:
+            object = {}
+
+        object[game.channel.id] = self.serialize(state)
+        self.mainclass.objects.save_object("games", object)
+
+    def delete_save(self):
+        if self.mainclass.objects.save_exists("games"):
+            object = self.mainclass.objects.save_object("games")
+            if game.channel.id in object:
+                object.pop(game.channel.id)
+
+            self.mainclass.objects.save_object("games", object)

@@ -30,8 +30,9 @@ class MainClass(BaseClassPython):
     def __init__(self, client):
         super().__init__(client)
 
-        if False:
-            globals.games[object["channel"]] = Game(object = object, reload = True, client = client)
+        object = self.objects.load_object("games")
+        for game in games.values():
+            globals.games[game["channel"]] = Game(self, object = game, reload = True, client = client)
 
     async def command(self, message, args, kwargs):
         if args[0] == "join't":
@@ -57,7 +58,7 @@ class MainClass(BaseClassPython):
 
             await message.channel.send(embed = embed)
 
-            globals.games[message.channel.id] = Game(message = message)
+            globals.games[message.channel.id] = Game(self, message = message)
 
     #Quitter la partie
     async def com_quit(self, message, args, kwargs):
