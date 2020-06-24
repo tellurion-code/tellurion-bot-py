@@ -593,19 +593,19 @@ class Game:
         return object
 
     async def deserialize(self, object, client):
-        self.channel = client.get_channel(object["channel"]),
-        self.order = object["order"],
-        self.turn = object["turn"],
-        self.chancellor = object["chancellor"],
-        self.after_special_election = object["after_special_election"],
-        self.deck = object["deck"],
-        self.discard = object["discard"],
-        self.policies = object["policies"],
-        self.liberal_laws = object["liberal_laws"],
-        self.fascist_laws = object["fascist_laws"],
-        self.term_limited = object["term_limited"],
-        self.refused = object["refused"],
-        self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None,
+        self.channel = client.get_channel(object["channel"])
+        self.order = object["order"]
+        self.turn = object["turn"]
+        self.chancellor = object["chancellor"]
+        self.after_special_election = object["after_special_election"]
+        self.deck = object["deck"]
+        self.discard = object["discard"]
+        self.policies = object["policies"]
+        self.liberal_laws = object["liberal_laws"]
+        self.fascist_laws = object["fascist_laws"]
+        self.term_limited = object["term_limited"]
+        self.refused = object["refused"]
+        self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None
         self.played = object["played"]
         self.players = {}
 
