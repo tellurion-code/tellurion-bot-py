@@ -13,10 +13,15 @@ class Game:
         message = kwargs["message"] if "message" in kwargs else None
         self.mainclass = mainclass
 
-        self.channel = message.channel if message else None
-        self.players = {
-            message.author.id: Liberal(message.author)
-        } #Dict pour rapidement accéder aux infos
+        if message:
+            self.channel = message.channel if message else None
+            self.players = {
+                message.author.id: Liberal(message.author)
+            } #Dict pour rapidement accéder aux infos
+        else:
+            self.channel = none
+            self.players = {}
+            
         self.order = [] #Ordre des id des joueurs
         self.turn = -1 #Le tour (index du président) en cours, -1 = pas commencé
         self.chancellor = 0 #Id du chancelier
