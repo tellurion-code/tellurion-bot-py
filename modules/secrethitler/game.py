@@ -14,14 +14,14 @@ class Game:
         self.mainclass = mainclass
 
         if message:
-            self.channel = message.channel if message else None
+            self.channel = message.channel
             self.players = {
                 message.author.id: Liberal(message.author)
             } #Dict pour rapidement accéder aux infos
         else:
-            self.channel = none
+            self.channel = None
             self.players = {}
-            
+
         self.order = [] #Ordre des id des joueurs
         self.turn = -1 #Le tour (index du président) en cours, -1 = pas commencé
         self.chancellor = 0 #Id du chancelier
