@@ -618,7 +618,7 @@ class Game:
 
     def save(self, state):
         if self.mainclass.objects.save_exists("games"):
-            object = self.mainclass.objects.save_object("games")
+            object = self.mainclass.objects.load_object("games")
         else:
             object = {}
 
@@ -627,7 +627,7 @@ class Game:
 
     def delete_save(self):
         if self.mainclass.objects.save_exists("games"):
-            object = self.mainclass.objects.save_object("games")
+            object = self.mainclass.objects.load_object("games")
             if self.channel.id in object:
                 object.pop(self.channel.id)
 
