@@ -48,7 +48,7 @@ class Game:
         await self.deserialize(object, client)
 
         if object["state"]["type"] == "send_chancellor_choice":
-            await self.send_chancellor_choice(object["state"]["message"])
+            await self.send_chancellor_choice()
         elif object["state"]["type"] == "send_laws":
             await self.send_laws()
 
@@ -88,7 +88,8 @@ class Game:
         for i in range(len(self.order)):
             await self.players[self.order[i]].game_start(self)
 
-        await self.send_chancellor_choice("Début de partie\n")
+        await self.send_info(mode = "set", info = "Début de partie\n")
+        await self.send_chancellor_choice()
 
     #Envoies un message à tous les joueurs + le channel
     async def broadcast(self, _embed, **kwargs):
@@ -181,20 +182,17 @@ class Game:
         await self.broadcast(embed, mode = mode)
 
     #Est aussi un début de tour, envoies le choix de chancelier
-    async def send_chancellor_choice(self, info):
-        self.save({"type": "send_chancellor_choice", "message": info})
-
-        for player in self.players.values():
-            player.last_vote = ""
+    async def send_chancellor_choice(self):
+        self.save({"type": "send_chancellor_choice"})
 
         self.chancellor = -1
-
-        await self.send_info(mode = "set", info = info)
 
         president = self.players[self.order[self.turn]] #Tour actuel
 
         valid_candidates = [x for i, x in enumerate(self.order) if i != self.turn and (x not in self.term_limited or globals.debug)]
         emojis = [globals.number_emojis[self.order.index(x)] for x in valid_candidates]
+
+        print(valid_candidates)
 
         choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
 
@@ -524,7 +522,11 @@ class Game:
             print("Normal")
             self.turn = (self.turn + 1) % len(self.order)
 
-        await self.send_chancellor_choice(message)
+        for player in self.players.values():
+            player.last_vote = ""
+
+        await self.send_info(mode = "set", info = message)
+        await self.send_chancellor_choice()
 
     #Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, liberal_wins, cause):
@@ -585,7 +587,6 @@ class Game:
                 "role": player.role,
                 "last_vote": player.last_vote,
                 "inspected": player.inspected,
-                "vote_message": player.vote_message.id if player.vote_message else None,
                 "info_message": player.info_message.id if player.info_message else None,
                 "user": player.user.id
             }
@@ -610,11 +611,10 @@ class Game:
         self.players = {}
 
         for id, info in object["players"].items():
-            player = self.players[id] = Liberal(client.get_user(info["user"])) if info["role"] == "liberal" else (Fascist(client.get_user(info["user"])) if info["role"] == "fascist" else Hitler(client.get_user(info["user"])))
+            player = self.players[int(id)] = Liberal(client.get_user(info["user"])) if info["role"] == "liberal" else (Fascist(client.get_user(info["user"])) if info["role"] == "fascist" else Hitler(client.get_user(info["user"])))
             player.last_vote = info["last_vote"]
             player.inspected = info["inspected"]
-            player.vote_message = await player.user.dm_channel.fetch_message(info["vote_message"]) if info["vote_message"] else None
-            player.info_message = await player.user.dm_channel.fetch_message(info["info_message"]) if info["info_message"] else None
+            player.info_message = await player.user.fetch_message(info["info_message"]) if info["info_message"] else None
 
     def save(self, state):
         if self.mainclass.objects.save_exists("games"):
@@ -628,7 +628,9 @@ class Game:
     def delete_save(self):
         if self.mainclass.objects.save_exists("games"):
             object = self.mainclass.objects.load_object("games")
-            if self.channel.id in object:
-                object.pop(self.channel.id)
+            if str(self.channel.id) in object:
+                object.pop(str(self.channel.id))
 
             self.mainclass.objects.save_object("games", object)
+        else:
+            print("no save")

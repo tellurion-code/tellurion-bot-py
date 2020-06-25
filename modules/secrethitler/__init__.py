@@ -32,6 +32,9 @@ class MainClass(BaseClassPython):
 
     async def on_ready(self):
         if self.objects.save_exists("games"):
+            object = self.objects.load_object("globals")
+            globals.debug = object["debug"]
+
             games = self.objects.load_object("games")
             for game in games.values():
                 globals.games[game["channel"]] = Game(self)
@@ -102,6 +105,7 @@ class MainClass(BaseClassPython):
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in globals.games:
             await message.channel.send("La partie a été reset")
+            globals.games[message.channel.id].delete_save()
             globals.games.pop(message.channel.id)
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
@@ -133,6 +137,11 @@ class MainClass(BaseClassPython):
         if message.author.id == 240947137750237185:
             globals.debug = not globals.debug
             await message.channel.send("Debug: " + str(globals.debug))
+
+            if self.objects.save_exists("games"):
+                object = self.objects.load_object("globals")
+                object["debug"] = globals.debug
+                self.objects.save_object("globals", object)
 
     #Change les pouvoirs présidentiels
     async def com_powers(self, message, args, kwargs):
