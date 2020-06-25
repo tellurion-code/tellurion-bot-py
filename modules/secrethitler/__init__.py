@@ -31,10 +31,11 @@ class MainClass(BaseClassPython):
         super().__init__(client)
 
     async def on_ready(self):
-        if self.objects.save_exists("games"):
+        if self.objects.save_exists("globals"):
             object = self.objects.load_object("globals")
             globals.debug = object["debug"]
 
+        if self.objects.save_exists("games"):
             games = self.objects.load_object("games")
             for game in games.values():
                 globals.games[game["channel"]] = Game(self)
