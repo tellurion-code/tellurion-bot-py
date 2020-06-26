@@ -3,7 +3,7 @@ import asyncio
 import random
 
 from modules.secrethitler.game import Game
-from modules.secrethitler.player import Liberal, Fascist, Hitler
+from modules.secrethitler.player import Player
 from modules.secrethitler.reaction_message import ReactionMessage
 from modules.base import BaseClassPython
 
@@ -55,7 +55,7 @@ class MainClass(BaseClassPython):
                     if len(game.players) < 10:
                         await message.channel.send("<@" + str(message.author.id) + "> a rejoint la partie")
 
-                        game.players[message.author.id] = Liberal(message.author)
+                        game.players[message.author.id] = Player(message.author)
                     else:
                         await message.channel.send("Il y a déjà le nombre maximum de joueurs (10)")
         else:
@@ -118,7 +118,10 @@ class MainClass(BaseClassPython):
             if game.turn == -1:
                 if message.author.id in game.players:
                     if len(game.players) >= 5 or globals.debug:
-                        await game.start_game()
+                        if len(game.roles) in [0, len(game.players)]:
+                            await game.start_game()
+                        else:
+                            await message.channel.send("Le nombre de rôles ne correspond pasau nombre de joueurs")
                     else:
                         await message.channel.send("Il faut au minimum 5 joueurs")
                 else:
@@ -177,6 +180,44 @@ class MainClass(BaseClassPython):
                             await message.channel.send('Pouvoirs actuels: ```' + ', '.join([x for x in game.policies]) + '```')
                         else:
                             await message.channel.send('Pouvoirs actuels: ```Dépendant du nombre de joueurs```')
+                else:
+                    await message.channel.send("Vous n'êtes pas dans la partie")
+            else:
+                await message.author.send("La partie a déjà commencé")
+        else:
+            await message.channel.send("Il n'y a pas de partie en cours")
+
+    async def com_roles(self, message, args, kwargs):
+        if message.channel.id in globals.games:
+            game = globals.games[message.channel.id]
+            if game.turn == -1:
+                if message.author.id in game.players:
+                    if len(args) > 1:
+                        roles = args
+                        roles.pop(0)
+                        print(len(roles))
+                        if len(roles) >= 5:
+                            roles = roles[:len(self.players)]
+                            done = True
+                            valid_roles = ["liberal", "fasciste", "hitler", "goebbels", "merliner"]
+
+                            for role in roles:
+                                if role not in valid_roles:
+                                    done = False
+                                    break
+
+                            if done:
+                                await message.channel.send("Rôles changés pour : " + ', '.join(roles))
+                                game.roles = roles
+                            else:
+                                await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments parmi liberal, fascist, hitler, goebbels ou merliner (Un des roles était invalide)')
+                        else:
+                            await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments parmi liberal, fascist, hitler, goebbels ou merliner (Pas assez de roles)')
+                    else:
+                        if len(game.policies):
+                            await message.channel.send('Roles actuels: ```' + ', '.join([x for x in game.roles]) + '```')
+                        else:
+                            await message.channel.send('Roles actuels: ```Dépendant du nombre de joueurs```')
                 else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
             else:

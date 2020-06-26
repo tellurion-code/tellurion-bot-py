@@ -2,7 +2,7 @@ import discord
 import random
 import math
 
-from modules.secrethitler.player import Liberal, Fascist, Hitler
+from modules.secrethitler.player import Player, Liberal, Fascist, Hitler, Goebbels, Merliner
 from modules.secrethitler.reaction_message import ReactionMessage
 from modules.secrethitler.law_names import get_law_name
 
@@ -16,7 +16,7 @@ class Game:
         if message:
             self.channel = message.channel
             self.players = {
-                message.author.id: Liberal(message.author)
+                message.author.id: Player(message.author)
             } #Dict pour rapidement accéder aux infos
         else:
             self.channel = None
@@ -35,6 +35,7 @@ class Game:
         self.refused = 0 #Nombre de gouvernements refusés
         self.info_message = None
         self.played = "" #Dernière carte jouée
+        self.roles = [] #Rôles
 
         for _ in range(6):
             self.deck.append("liberal")
@@ -54,7 +55,6 @@ class Game:
 
     async def start_game(self):
         self.turn = 0
-        fascist_amount = max(0, math.floor((len(self.players) - 3)/2))
 
         policies = [
             ["none", "none", "none", "none", "none", "none"], #0
@@ -73,17 +73,39 @@ class Game:
         if len(self.policies) == 0:
             self.policies = policies[len(self.players)]
 
+        roles = [
+            [], #0?
+            ["liberal"], #1
+            ["hitler", "liberal"], #2, Debug
+            ["hitler", "liberal", "liberal"], #3
+            ["hitler", "liberal", "liberal", "liberal"], #4
+            ["hitler", "liberal", "liberal", "liberal", "fascist"], #5
+            ["hitler", "liberal", "liberal", "liberal", "liberal", "fascist"], #6
+            ["hitler", "liberal", "liberal", "liberal", "liberal", "fascist", "fascist"], #7
+            ["hitler", "liberal", "liberal", "liberal", "liberal", "liberal", "fascist", "fascist"], #8
+            ["hitler", "liberal", "liberal", "liberal", "liberal", "liberal", "fascist", "fascist", "fascist"], #9
+            ["hitler", "liberal", "liberal", "liberal", "liberal", "liberal", "liberal", "fascist", "fascist", "fascist"], #10
+        ]
+
+        classes = {
+            "liberal": Liberal,
+            "fascist": Fascist,
+            "hitler": Hitler,
+            "goebbels": Goebbels,
+            "merliner": Merliner
+        }
+
+        if len(self.roles) == 0:
+            self.roles = roles[len(self.players)]
+
         for id in self.players:
             self.order.append(id)
 
         random.shuffle(self.order)
-        self.players[self.order[fascist_amount]] = Hitler(self.players[self.order[fascist_amount]].user)
+        random.shuffle(self.roles)
 
         for i in range(len(self.order)):
-            if i < fascist_amount:
-                self.players[self.order[i]] = Fascist(self.players[self.order[i]].user)
-
-        random.shuffle(self.order)
+            self.players[self.order[i]] = classes[self.roles.pop(0)](client.get_user(info["user"]))
 
         for i in range(len(self.order)):
             await self.players[self.order[i]].game_start(self)
@@ -185,8 +207,6 @@ class Game:
     async def send_chancellor_choice(self):
         self.save({"type": "send_chancellor_choice"})
 
-        self.chancellor = -1
-
         president = self.players[self.order[self.turn]] #Tour actuel
 
         valid_candidates = [x for i, x in enumerate(self.order) if i != self.turn and (x not in self.term_limited or globals.debug)]
@@ -202,7 +222,10 @@ class Game:
             await self.send_info(info = globals.number_emojis[self.order.index(self.chancellor)] + " `" + str(self.players[self.chancellor].user) + "` a été choisi comme Chancelier\n")
 
             for id in self.order:
-                await self.players[id].send_vote(self)
+                if self.players[id].role == "goebbels" and self.played == "fascist":
+                    await self.players[id].send_exchange(self)
+                else:
+                    await self.players[id].send_vote(self)
 
         async def cond(reactions):
             return len(reactions[self.order[self.turn]]) == 1
@@ -239,6 +262,9 @@ class Game:
             await player.vote_message.message.edit(embed = embed)
 
         if not missing:
+            for goebbels in [self.players[x] for x in self.order if self.players[x].role == "goebbels"]
+                self.players[self.order[goebbels.exchanged[0]]].last_vote, self.players[self.order[goebbels.exchanged[1]]].last_vote = self.players[self.order[goebbels.exchanged[1]]].last_vote, self.players[self.order[goebbels.exchanged[0]]].last_vote
+
             for_votes = len([self.players[x] for x in self.order if self.players[x].last_vote[1:] == "Ja"])
 
             await self.send_info(color = 0x00ff00 if for_votes > len(self.order)/2 else 0xff0000) #Change la couleur du message en fonction
@@ -417,7 +443,7 @@ class Game:
                         ), mode = "append")
 
                         await self.players[self.order[self.turn]].user.send(embed = discord.Embed(title = "🔍 Inspection",
-                            description = "L'allégeance de `" + str(player.user) + "` est " + ("🟦 Libérale" if player.role == "liberal" else "🟥 Fasciste"),
+                            description = "L'allégeance de `" + str(player.user) + "` est " + ("🟦 Libérale" if player.allegeance == "liberal" else "🟥 Fasciste"),
                             color = globals.color
                         ))
 
@@ -451,8 +477,10 @@ class Game:
 
                         if player.role == "hitler":
                             await self.end_game(True, "exécution d'Hitler")
+                        elif player.role == "merliner":
+                            await self.end_game(False, "exécution de la Merliner")
                         elif len(self.order) == 1:
-                            await self.end_game(self.players[self.order[0]].role == "liberal", "solitude")
+                            await self.end_game(self.players[self.order[0]].allegeance == "liberal", "solitude")
                         else:
                             await self.next_turn()
 
@@ -525,6 +553,8 @@ class Game:
         for player in self.players.values():
             player.last_vote = ""
 
+        self.chancellor = -1
+
         await self.send_info(mode = "set", info = message)
         await self.send_chancellor_choice()
 
@@ -538,7 +568,9 @@ class Game:
         roles = {
             "liberal": "🟦 Libéral",
             "fascist": "🟥 Fasciste",
-            "hitler": "☠️ Hitler"
+            "merliner": "🧙‍♀️ Merliner",
+            "hitler": "☠️ Hitler",
+            "goebbels": "👨‍⚖️ Goebbels"
         }
 
         embed.description = "__Joueurs :__\n" + '\n'.join([globals.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + roles[self.players[x].role] for i,x in enumerate(self.order)]) + '\n' + '\n'.join(["💀 `" + str(x.user) + "` : " + roles[x.role] for i,x in self.players.items() if i not in self.order])
