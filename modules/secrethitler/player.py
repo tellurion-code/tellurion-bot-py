@@ -123,7 +123,7 @@ class Goebbels(Fascist):
 
     async def game_start(self, game):
         embed = discord.Embed(title = "Début de partie 👨‍⚖️",
-            description = "Vous êtes Goebbels. Vous devez faire élire 6 lois fascistes, ou bien réussir à faire élire Hitler en tant que Chancelier une fois 3 lois fascistes votées.\n" + ("**Hitler vous connaît.**" if len(game.players) <= 6 else "**Hitler ne vous connaît pas.**") + "\n**Si une loi fasciste a été élie au dernier tour, vous pouvez échanger deux votes pour la validation du Gouvernement.**",
+            description = "Vous êtes Goebbels. Vous devez faire élire 6 lois fascistes, ou bien réussir à faire élire Hitler en tant que Chancelier une fois 3 lois fascistes votées.\n" + ("**Hitler vous connaît.**" if len(game.players) <= 6 else "**Hitler ne vous connaît pas.**") + "\n**Si une loi fasciste a été votée au dernier tour, vous pouvez échanger deux votes pour la validation du Gouvernement.**",
             color = 0xef223f
         )
 
