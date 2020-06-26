@@ -118,7 +118,7 @@ class Fascist(Player):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = embed)
 
 class Goebbels(Fascist):
-    role = "hitler"
+    role = "goebbels"
     exchanged = []
 
     async def game_start(self, game):
