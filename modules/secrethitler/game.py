@@ -263,7 +263,10 @@ class Game:
 
         if not missing:
             for goebbels in [self.players[x] for x in self.order if self.players[x].role == "goebbels"]
-                self.players[self.order[goebbels.exchanged[0]]].last_vote, self.players[self.order[goebbels.exchanged[1]]].last_vote = self.players[self.order[goebbels.exchanged[1]]].last_vote, self.players[self.order[goebbels.exchanged[0]]].last_vote
+                if len(goebbels.exchanged):
+                    self.players[self.order[goebbels.exchanged[0]]].last_vote, self.players[self.order[goebbels.exchanged[1]]].last_vote = self.players[self.order[goebbels.exchanged[1]]].last_vote, self.players[self.order[goebbels.exchanged[0]]].last_vote
+
+                goebbels.exchanged = []
 
             for_votes = len([self.players[x] for x in self.order if self.players[x].last_vote[1:] == "Ja"])
 
