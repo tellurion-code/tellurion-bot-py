@@ -85,7 +85,7 @@ class Merliner(Liberal):
         embed = discord.Embed(title = "Début de partie 🧙‍♀️",
             description = "Vous êtes la Merliner. Vous devez faire élire 5 lois libérales, ou bien trouver Hitler dans vos rangs et l'assassiner.\n**Vous connaissez les fascistes. Si vous vous faites éliminer, les libéraux perdent instantannément.**",
             color = 0x2e64fe
-        ))
+        )
 
         fascists = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegeance == "fascist"]
         if len(fascists):
