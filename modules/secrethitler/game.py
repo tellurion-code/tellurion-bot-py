@@ -262,7 +262,7 @@ class Game:
             await player.vote_message.message.edit(embed = embed)
 
         if not missing:
-            for goebbels in [self.players[x] for x in self.order if self.players[x].role == "goebbels"]
+            for goebbels in [self.players[x] for x in self.order if self.players[x].role == "goebbels"]:
                 if len(goebbels.exchanged):
                     self.players[self.order[goebbels.exchanged[0]]].last_vote, self.players[self.order[goebbels.exchanged[1]]].last_vote = self.players[self.order[goebbels.exchanged[1]]].last_vote, self.players[self.order[goebbels.exchanged[0]]].last_vote
 
