@@ -143,10 +143,13 @@ class MainClass(BaseClassPython):
             globals.debug = not globals.debug
             await message.channel.send("Debug: " + str(globals.debug))
 
-            if self.objects.save_exists("games"):
+            if self.objects.save_exists("globals"):
                 object = self.objects.load_object("globals")
-                object["debug"] = globals.debug
-                self.objects.save_object("globals", object)
+            else:
+                object = {}
+
+            object["debug"] = globals.debug
+            self.objects.save_object("globals", object)
 
     #Change les pouvoirs présidentiels
     async def com_powers(self, message, args, kwargs):
