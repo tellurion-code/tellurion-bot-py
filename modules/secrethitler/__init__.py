@@ -60,8 +60,8 @@ class MainClass(BaseClassPython):
                     else:
                         await message.channel.send("Il y a déjà le nombre maximum de joueurs (10)")
         else:
-            embed = discord.Embed(title = "Création de la partie de Secret Hitler",
-                description = "Tapez %sh join pour rejoindre la partie",
+            embed = discord.Embed(title = "Création de la partie de Avalon",
+                description = "Tapez %avalon join pour rejoindre la partie",
                 color = self.color)
 
             await message.channel.send(embed = embed)
@@ -203,7 +203,7 @@ class MainClass(BaseClassPython):
                         if len(roles) >= len(game.players):
                             roles = roles[:len(game.players)]
                             done = True
-                            valid_roles = ["liberal", "fasciste", "hitler", "goebbels", "merliner"]
+                            valid_roles = ["liberal", "fascist", "hitler", "goebbels", "merliner"]
 
                             for role in roles:
                                 if role not in valid_roles:
@@ -214,9 +214,9 @@ class MainClass(BaseClassPython):
                                 await message.channel.send("Rôles changés pour : " + ', '.join(roles))
                                 game.roles = roles
                             else:
-                                await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments parmi liberal, fasciste, hitler, goebbels ou merliner (Un des roles était invalide)')
+                                await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments parmi liberal, fascist, hitler, goebbels ou merliner (Un des roles était invalide)')
                         else:
-                            await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments parmi liberal, fasciste, hitler, goebbels ou merliner (Pas assez de roles)')
+                            await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments parmi liberal, fascist, hitler, goebbels ou merliner (Pas assez de roles)')
                     else:
                         if len(game.roles):
                             await message.channel.send('Roles actuels: ```' + ', '.join([x for x in game.roles]) + '```')
