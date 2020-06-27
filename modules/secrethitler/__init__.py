@@ -21,7 +21,8 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} start`": "Démarre la partie de Secret Hitler",
             "`{prefix}{command} players`": "Affiche les joueurs de la partie de Secret Hitler",
             "`{prefix}{command} reset`": "Reinitialise la partie de Secret Hitler",
-            "`{prefix}{command} powers`": "Change les pouvoirs présidentiels"
+            "`{prefix}{command} powers`": "Change les pouvoirs présidentiels, ou affiche-les si aucun argument n'est précisé",
+            "`{prefix}{command} roles`": "Change les rôles, ou affiche-les si aucun argument n'est précisé"
         }
     }
     color = globals.color
