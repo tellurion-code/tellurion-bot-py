@@ -80,7 +80,7 @@ class MainClass(BaseClassPython):
 
                     if len(game.players) == 0:
                         globals.games.pop(message.channel.id)
-                elif len(game.players) < 8:
+                else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
             else:
                 await message.author.send("La partie a déjà commencé")
