@@ -196,8 +196,8 @@ class MainClass(BaseClassPython):
                         roles = args
                         roles.pop(0)
                         print(len(roles))
-                        if len(roles) >= 5:
-                            roles = roles[:len(self.players)]
+                        if len(roles) >= len(game.players):
+                            roles = roles[:len(game.players)]
                             done = True
                             valid_roles = ["liberal", "fasciste", "hitler", "goebbels", "merliner"]
 
@@ -210,11 +210,11 @@ class MainClass(BaseClassPython):
                                 await message.channel.send("Rôles changés pour : " + ', '.join(roles))
                                 game.roles = roles
                             else:
-                                await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments parmi liberal, fascist, hitler, goebbels ou merliner (Un des roles était invalide)')
+                                await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments parmi liberal, fasciste, hitler, goebbels ou merliner (Un des roles était invalide)')
                         else:
-                            await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments parmi liberal, fascist, hitler, goebbels ou merliner (Pas assez de roles)')
+                            await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments parmi liberal, fasciste, hitler, goebbels ou merliner (Pas assez de roles)')
                     else:
-                        if len(game.policies):
+                        if len(game.roles):
                             await message.channel.send('Roles actuels: ```' + ', '.join([x for x in game.roles]) + '```')
                         else:
                             await message.channel.send('Roles actuels: ```Dépendant du nombre de joueurs```')

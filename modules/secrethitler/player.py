@@ -83,7 +83,7 @@ class Merliner(Liberal):
 
     async def game_start(self, game):
         embed = discord.Embed(title = "Début de partie 🧙‍♀️",
-            description = "Vous êtes la Merliner. Vous devez faire élire 5 lois libérales, ou bien trouver Hitler dans vos rangs et l'assassiner.\n**Vous connaissez les fascistes. Si vous vous faites éliminer, les libéraux perdent instantannément.**",
+            description = "Vous êtes Merliner. Vous devez faire élire 5 lois libérales, ou bien trouver Hitler dans vos rangs et l'assassiner.\n**Vous connaissez les fascistes. Si vous vous faites éliminer, les libéraux perdent instantannément.**",
             color = 0x2e64fe
         )
 
@@ -105,15 +105,17 @@ class Fascist(Player):
             color = 0xef223f
         )
 
-        fascists = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "fascist"]
+        fascists = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegeance == "fascist"]
         if len(fascists):
             embed.add_field(name = "Vos coéquipiers:",
                 value = '\n'.join(fascists)
             )
 
-        embed.add_field(name = "Votre leader:",
-            value = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "hitler"][0]
-        )
+        hitlers = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "hitler"]
+        if len(hitlers):
+            embed.add_field(name = "Votre leader:",
+                value = '\n'.join(hitlers)
+            )
 
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = embed)
 
@@ -127,20 +129,22 @@ class Goebbels(Fascist):
             color = 0xef223f
         )
 
-        fascists = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "fascist"]
+        fascists = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegeance == "fascist"]
         if len(fascists):
             embed.add_field(name = "Vos coéquipiers:",
                 value = '\n'.join(fascists)
             )
 
-        embed.add_field(name = "Votre leader:",
-            value = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "hitler"][0]
-        )
+        hitlers = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "hitler"]
+        if len(hitlers):
+            embed.add_field(name = "Votre leader:",
+                value = '\n'.join(hitlers)
+            )
 
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = embed)
 
     async def send_exchange(self, game):
-        choices = ["`" + str(self.players[x].user) + "`" for x in self.order]
+        choices = ["`" + str(game.players[x].user) + "`" for x in game.order]
 
         async def exchange(reactions):
             self.exchanged = reactions[self.user.id]
@@ -150,10 +154,11 @@ class Goebbels(Fascist):
             return len(reactions[self.user.id]) == 2
 
         await ReactionMessage(cond_player,
-            exchange
+            exchange,
+            temporary = False
         ).send(self.user,
-            "__👨‍⚖️ Pouvoir de Goebbels:__ Une loi fasciste a été votée au dernier tour. Choisissez les deux joueurs dont vous voulez échanger les votes.\n**Votre vote vous sera envoyé après.**",
-            "",
+            "👨‍⚖️ __Pouvoir de Goebbels__",
+            "Une loi fasciste a été votée au dernier tour. Choisissez les deux joueurs dont vous voulez échanger les votes.\n**Votre vote vous sera envoyé après.**\n",
             globals.color,
             choices
         )
@@ -169,7 +174,7 @@ class Hitler(Fascist):
 
         if len(game.players) <= 6:
             embed.add_field(name = "Vos partisans:",
-                value = '\n'.join([globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "fascist" or game.players[x].role == "hitler" and globals.debug])
+                value = '\n'.join([globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegeance == "fascist"])
             )
 
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = embed)

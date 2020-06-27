@@ -59,7 +59,7 @@ class Game:
         policies = [
             ["none", "none", "none", "none", "none", "none"], #0
             ["none", "none", "none", "none", "none", "none"], #1
-            ["none", "none", "none", "peek", "elect", "inspect"], #2, Debug
+            ["none", "peek", "inspect", "elect", "kill", "none"], #2, Debug
             ["none", "none", "peek", "kill", "kill", "none"], #3
             ["none", "none", "peek", "kill", "kill", "none"], #4
             ["none", "none", "peek", "kill", "kill", "none"], #5
@@ -105,7 +105,7 @@ class Game:
         random.shuffle(self.roles)
 
         for i in range(len(self.order)):
-            self.players[self.order[i]] = classes[self.roles.pop(0)](client.get_user(info["user"]))
+            self.players[self.order[i]] = classes[self.roles.pop(0)](self.players[self.order[i]].user)
 
         for i in range(len(self.order)):
             await self.players[self.order[i]].game_start(self)
@@ -219,7 +219,7 @@ class Game:
         async def propose_chancellor(reactions):
             self.chancellor = valid_candidates[reactions[president.user.id][0]]
 
-            await self.send_info(info = globals.number_emojis[self.order.index(self.chancellor)] + " `" + str(self.players[self.chancellor].user) + "` a été choisi comme Chancelier\n")
+            await self.send_info(info = globals.number_emojis[self.order.index(self.chancellor)] + " `" + str(self.players[self.chancellor].user) + "` a été proposé comme Chancelier\n")
 
             for id in self.order:
                 if self.players[id].role == "goebbels" and self.played == "fascist":
@@ -248,18 +248,19 @@ class Game:
         for id in self.order:
             player = self.players[id]
 
-            embed = player.vote_message.message.embeds[0]
-            embed.set_field_at(0, name = "Votes:",
-                value = ' '.join(["✉️" if self.players[x].last_vote == "" else "📩" for x in self.order])
-            )
+            if player.vote_message:
+                embed = player.vote_message.message.embeds[0]
+                embed.set_field_at(0, name = "Votes:",
+                    value = ' '.join(["✉️" if self.players[x].last_vote == "" else "📩" for x in self.order])
+                )
 
-            if player.last_vote != "":
-                embed.description = "Le Président `" + str(self.players[self.order[self.turn]].user) + "` a proposé comme Chancelier `" + str(self.players[self.chancellor].user) + "`.\nVous avez voté " + player.last_vote
-                embed.color = 0x00ff00 if player.last_vote[1:] == "Ja" else 0xff0000
-            else:
-                missing = True
+                if player.last_vote != "":
+                    embed.description = "Le Président `" + str(self.players[self.order[self.turn]].user) + "` a proposé comme Chancelier `" + str(self.players[self.chancellor].user) + "`.\nVous avez voté " + player.last_vote
+                    embed.color = 0x00ff00 if player.last_vote[1:] == "Ja" else 0xff0000
+                else:
+                    missing = True
 
-            await player.vote_message.message.edit(embed = embed)
+                await player.vote_message.message.edit(embed = embed)
 
         if not missing:
             for goebbels in [self.players[x] for x in self.order if self.players[x].role == "goebbels"]:
@@ -308,10 +309,10 @@ class Game:
 
         async def discard_first(reactions):
             discarded = cards.pop(reactions[self.order[self.turn]][0])
-            show_discarded = show_cards.pop(reactions[self.order[self.turn]][0])
+            show_cards.pop(reactions[self.order[self.turn]][0])
 
             await law_message.message.edit(embed = discord.Embed(title = "Loi défaussée",
-                description = "Lois restantes :\n" + '\n'.join(show_cards) + "\n\nLoi défaussée :\n" + show_discarded,
+                description = "Lois restantes :\n" + '\n'.join(["🟦 Libérale" if x == "liberal" else "🟥 Fasciste" for x in cards]) + "\n\nLoi défaussée :\n" + ("🟦 Libérale" if discarded == "liberal" else "🟥 Fasciste"),
                 color = 0x00ff00
             ))
 
@@ -481,7 +482,7 @@ class Game:
                         if player.role == "hitler":
                             await self.end_game(True, "exécution d'Hitler")
                         elif player.role == "merliner":
-                            await self.end_game(False, "exécution de la Merliner")
+                            await self.end_game(False, "exécution de Merliner")
                         elif len(self.order) == 1:
                             await self.end_game(self.players[self.order[0]].allegeance == "liberal", "solitude")
                         else:
@@ -645,8 +646,16 @@ class Game:
         self.played = object["played"]
         self.players = {}
 
+        classes = {
+            "liberal": Liberal,
+            "fascist": Fascist,
+            "hitler": Hitler,
+            "goebbels": Goebbels,
+            "merliner": Merliner
+        }
+
         for id, info in object["players"].items():
-            player = self.players[int(id)] = Liberal(client.get_user(info["user"])) if info["role"] == "liberal" else (Fascist(client.get_user(info["user"])) if info["role"] == "fascist" else Hitler(client.get_user(info["user"])))
+            player = self.players[int(id)] = classes[info["role"]](client.get_user(info["user"]))
             player.last_vote = info["last_vote"]
             player.inspected = info["inspected"]
             player.info_message = await player.user.fetch_message(info["info_message"]) if info["info_message"] else None
