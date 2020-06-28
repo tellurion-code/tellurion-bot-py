@@ -222,7 +222,7 @@ class Game:
             await self.send_info(info = globals.number_emojis[self.order.index(self.chancellor)] + " `" + str(self.players[self.chancellor].user) + "` a été proposé comme Chancelier\n")
 
             for id in self.order:
-                if self.players[id].role == "goebbels" and self.played == "fascist":
+                if self.players[id].role == "goebbels":
                     await self.players[id].send_exchange(self)
                 else:
                     await self.players[id].send_vote(self)

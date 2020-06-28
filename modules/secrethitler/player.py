@@ -107,7 +107,7 @@ class Fascist(Player):
 
         fascists = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegeance == "fascist"]
         if len(fascists):
-            embed.add_field(name = "Vos coéquipiers:",
+            embed.add_field(name = "Vos co-équipiers:",
                 value = '\n'.join(fascists)
             )
 
@@ -125,13 +125,13 @@ class Goebbels(Fascist):
 
     async def game_start(self, game):
         embed = discord.Embed(title = "Début de partie 👨‍⚖️",
-            description = "Vous êtes Goebbels. Vous devez faire élire 6 lois fascistes, ou bien réussir à faire élire Hitler en tant que Chancelier une fois 3 lois fascistes votées.\n" + ("**Hitler vous connaît.**" if len(game.players) <= 6 else "**Hitler ne vous connaît pas.**") + "\n**Si une loi fasciste a été votée au dernier tour, vous pouvez échanger deux votes pour la validation du Gouvernement.**",
+            description = "Vous êtes Goebbels. Vous devez faire élire 6 lois fascistes, ou bien réussir à faire élire Hitler en tant que Chancelier une fois 3 lois fascistes votées.\n" + ("**Hitler vous connaît.**" if len(game.players) <= 6 else "**Hitler ne vous connaît pas.**") + "\n**Vous échangez deux votes pour la validation du Gouvernement.**",
             color = 0xef223f
         )
 
         fascists = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegeance == "fascist"]
         if len(fascists):
-            embed.add_field(name = "Vos coéquipiers:",
+            embed.add_field(name = "Vos co-équipiers:",
                 value = '\n'.join(fascists)
             )
 
