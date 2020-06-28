@@ -245,13 +245,15 @@ class Agrav2(Evil):
     quest_choices = ["Réussite", "Echec", "Inversion"]
 
     async def game_start(self, game):
-        await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie ⚔️️",
+        embed = discord.Embed(title = "Début de partie ⚔️️",
             description = "Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent.",
             color = 0xef223f
-        ))
-
-    evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
-    if len(evils):
-        embed.add_field(name = "Un de vos co-équipiers:",
-            value = random.choice(evils)
         )
+
+        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
+        if len(evils):
+            embed.add_field(name = "Un de vos co-équipiers:",
+                value = random.choice(evils)
+            )
+
+        await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = embed)
