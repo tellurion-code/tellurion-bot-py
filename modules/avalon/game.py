@@ -68,7 +68,7 @@ class Game:
             ["merlin", "percival", "good", "good", "morgane", "assassin"], #6
             ["merlin", "percival", "good", "good", "evil", "morgane", "assassin"], #7
             ["merlin", "percival", "good", "good", "good", "evil", "morgane", "assassin"], #8
-            ["merlin", "percival", "good", "good", "good", "evil", "evil", "morgane", "assassin"], #9
+            ["merlin", "percival", "good", "good", "good", "good", "evil", "morgane", "assassin"], #9
             ["merlin", "percival", "good", "good", "good", "good", "evil", "evil", "morgane", "assassin"], #10
         ]
 
@@ -77,10 +77,13 @@ class Game:
             "evil": Evil,
             "merlin": Merlin,
             "percival": Percival,
+            "lancelot": Lancelot,
             "assassin": Assassin,
             "morgane": Morgane,
             "mordred": Mordred,
-            "oberon": Oberon
+            "oberon": Oberon,
+            "agrav1": Agrav1,
+            "agrav2": Agrav2
         }
 
         if len(self.roles) == 0:
@@ -342,10 +345,13 @@ class Game:
             "evil": "🟥 Fasciste",
             "merlin": "🧙‍♂️ Merlin",
             "percival": "🤴 Perceval",
+            "lancelot": "🛡️ Lancelot",
             "assassin": "🗡️ Assassin",
             "morgane": "🧙‍♀️ Morgane",
             "mordred": "😈 Mordred",
-            "oberon": "😶 Oberon"
+            "oberon": "😶 Oberon",
+            "agrav1": "⚔️ Agravain",
+            "agrav2": "⚔️ Agravain"
         }
 
         embed.description = "__Joueurs :__\n" + '\n'.join([globals.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + roles[self.players[x].role] for i,x in enumerate(self.order)])

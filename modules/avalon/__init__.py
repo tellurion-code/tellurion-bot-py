@@ -172,7 +172,7 @@ class MainClass(BaseClassPython):
                         roles.pop(0)
                         if len(roles) >= len(game.players):
                             done = True
-                            valid_roles = {"gentil": "good", "méchant": "evil", "merlin": "merlin", "perceval": "percival", "assassin": "assassin", "morgane": "morgane", "mordred": "mordred", "oberon": "oberon"}
+                            valid_roles = {"gentil": "good", "méchant": "evil", "merlin": "merlin", "perceval": "percival", "lancelot": "lancelot", "assassin": "assassin", "morgane": "morgane", "mordred": "mordred", "oberon": "oberon", "agrav1": "agrav1", "agrav2": "agrav2"}
 
                             for role in roles:
                                 if role not in valid_roles:
