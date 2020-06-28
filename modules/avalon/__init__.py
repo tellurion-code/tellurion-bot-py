@@ -27,34 +27,14 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        # self.config.init({"spectate_channel": 0,
-        #                   "illustrations":{"merlin":"",
-        #                                    "perceval":"",
-        #                                    "gentil":"",
-        #                                    "assassin":"",
-        #                                    "mordred":"",
-        #                                    "morgane":"",
-        #                                    "oberon":"",
-        #                                    "mechant":""},
-        #                   "couleurs":{"merlin":"",
-        #                               "perceval":0,
-        #                               "gentil":0,
-        #                               "assassin":0,
-        #                               "mordred":0,
-        #                               "morgane":0,
-        #                               "oberon":0,
-        #                               "mechant":0,
-        #                               "test":15},
-        #                   "test":{"merlin":"",
-        #                                    "perceval":0,
-        #                                    "gentil":0,
-        #                                    "assassin":0,
-        #                                    "mordred":0,
-        #                                    "morgane":0,
-        #                                    "oberon":0,
-        #                                    "mechant":0,
-        #                                    "test":15}
-        #                   })
+        self.config.init({"help_active": True,
+            "color": globals.color,
+            "auth_everyone": True,
+            "authorized_roles": [],
+            "authorized_users": [],
+            "command_text": "avalon",
+            "configured": True
+        })
 
     async def command(self, message, args, kwargs):
         if args[0] == "join't":
