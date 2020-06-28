@@ -1,11 +1,12 @@
 import datetime
 import discord
 
-from modules.avalon.game import Game
-from modules.base import BaseClassPython
-
 import modules.avalon.globals as globals
 globals.init()
+
+from modules.avalon.player import Player
+from modules.avalon.game import Game
+from modules.base import BaseClassPython
 
 class MainClass(BaseClassPython):
     name = "Avalon"
@@ -73,8 +74,8 @@ class MainClass(BaseClassPython):
                     else:
                         await message.channel.send("Il y a déjà le nombre maximum de joueurs (10)")
         else:
-            embed = discord.Embed(title = "Création de la partie de Secret Hitler",
-                description = "Tapez %sh join pour rejoindre la partie",
+            embed = discord.Embed(title = "Création de la partie d'Avalon",
+                description = "Tapez %avalon join pour rejoindre la partie",
                 color = self.color)
 
             await message.channel.send(embed = embed)
@@ -93,7 +94,7 @@ class MainClass(BaseClassPython):
 
                     if len(game.players) == 0:
                         globals.games.pop(message.channel.id)
-                else
+                else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
             else:
                 await message.author.send("La partie a déjà commencé")
@@ -163,3 +164,39 @@ class MainClass(BaseClassPython):
 
             object["debug"] = globals.debug
             self.objects.save_object("globals", object)
+
+    async def com_roles(self, message, args, kwargs):
+        if message.channel.id in globals.games:
+            game = globals.games[message.channel.id]
+            if game.turn == -1:
+                if message.author.id in game.players:
+                    if len(args) > 1:
+                        roles = args
+                        roles.pop(0)
+                        if len(roles) >= len(game.players):
+                            done = True
+                            valid_roles = {"gentil": "good", "méchant": "evil", "merlin": "merlin", "perceval": "percival", "assassin": "assassin", "morgane": "morgane", "mordred": "mordred", "oberon": "oberon"}
+
+                            for role in roles:
+                                if role not in valid_roles:
+                                    done = False
+                                    break
+
+                            if done:
+                                await message.channel.send("Rôles changés pour : " + ', '.join(roles))
+                                game.roles = [valid_roles[x] for x in roles]
+                            else:
+                                await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments (Un des roles était invalide)')
+                        else:
+                            await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments (Pas assez de roles)')
+                    else:
+                        if len(game.roles):
+                            await message.channel.send('Roles actuels: ```' + ', '.join([x for x in game.roles]) + '```')
+                        else:
+                            await message.channel.send('Roles actuels: ```Dépendant du nombre de joueurs```')
+                else:
+                    await message.channel.send("Vous n'êtes pas dans la partie")
+            else:
+                await message.author.send("La partie a déjà commencé")
+        else:
+            await message.channel.send("Il n'y a pas de partie en cours")
