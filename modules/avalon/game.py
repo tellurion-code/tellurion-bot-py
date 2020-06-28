@@ -93,7 +93,7 @@ class Game:
         random.shuffle(self.roles)
 
         for i in range(len(self.order)):
-            self.players[self.order[i]] = classes[self.roles.pop(0)](self.players[self.order[i]].user)
+            self.players[self.order[i]] = classes[self.roles[i]](self.players[self.order[i]].user)
 
         for i in range(len(self.order)):
             await self.players[self.order[i]].game_start(self)
