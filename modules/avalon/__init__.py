@@ -105,15 +105,12 @@ class MainClass(BaseClassPython):
     async def com_players(self, message, args, kwargs):
         if message.channel.id in globals.games:
             game = globals.games[message.channel.id]
-            if game.turn == -1:
-                embed = discord.Embed(
-                    title = "Liste des joueurs (" + str(len(globals.games[message.channel.id].players)) + ")",
-                    color = self.color,
-                    description = "```" + ', '.join([str(self.client.get_user(x)) for x, y in globals.games[message.channel.id].players.items()]) + "```"
-                )
-                await message.channel.send(embed = embed)
-            else:
-                await message.author.send("La partie a déjà commencé")
+            embed = discord.Embed(
+                title = "Liste des joueurs (" + str(len(globals.games[message.channel.id].players)) + ")",
+                color = self.color,
+                description = "```" + ', '.join([str(self.client.get_user(x)) for x, y in globals.games[message.channel.id].players.items()]) + "```"
+            )
+            await message.channel.send(embed = embed)
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -168,9 +165,9 @@ class MainClass(BaseClassPython):
     async def com_roles(self, message, args, kwargs):
         if message.channel.id in globals.games:
             game = globals.games[message.channel.id]
-            if game.turn == -1:
-                if message.author.id in game.players:
-                    if len(args) > 1:
+            if len(args) > 1:
+                if game.turn == -1:
+                    if message.author.id in game.players:
                         roles = args
                         roles.pop(0)
                         if len(roles) >= len(game.players):
@@ -186,17 +183,17 @@ class MainClass(BaseClassPython):
                                 await message.channel.send("Rôles changés pour : " + ', '.join(roles))
                                 game.roles = [valid_roles[x] for x in roles]
                             else:
-                                await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments (Un des roles était invalide)')
+                                await message.channel.send('Il faut préciser autant de roles que de joueurs en arguments (Un des roles était invalide)')
                         else:
-                            await message.channel.send('Il faut préciser autant de roles que de joueurs séparés en arguments (Pas assez de roles)')
+                            await message.channel.send('Il faut préciser autant de roles que de joueurs en arguments (Pas assez de rôles)')
                     else:
-                        if len(game.roles):
-                            await message.channel.send('Roles actuels: ```' + ', '.join([x for x in game.roles]) + '```')
-                        else:
-                            await message.channel.send('Roles actuels: ```Dépendant du nombre de joueurs```')
+                        await message.channel.send("Vous n'êtes pas dans la partie")
                 else:
-                    await message.channel.send("Vous n'êtes pas dans la partie")
+                    await message.author.send("La partie a déjà commencé")
             else:
-                await message.author.send("La partie a déjà commencé")
+                if len(game.roles):
+                    await message.channel.send('Rôles actuels: ```' + ', '.join([x for x in game.roles]) + '```')
+                else:
+                    await message.channel.send('Rôles actuels: ```Dépendant du nombre de joueurs```')
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
