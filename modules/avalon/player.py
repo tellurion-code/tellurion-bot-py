@@ -44,8 +44,7 @@ class Player:
             return len(reactions[self.user.id]) == 1
 
         self.vote_message = ReactionMessage(cond_player,
-            cast_vote,
-            temporary = False
+            cast_vote
         )
 
         await self.vote_message.send(self.user,
@@ -72,16 +71,16 @@ class Player:
             return len(reactions[self.user.id]) == 1
 
         self.vote_message = ReactionMessage(cond_player,
-            cast_choice,
-            temporary = False
+            cast_choice
         )
 
         await self.vote_message.send(self.user,
-            "Equipe acceptée",
-            "Êtes-vous pour la réussite la quête?\n\n",
+            "Quête",
+            "Êtes-vous pour la réussite la quête?",
             globals.color,
             self.quest_choices,
             validation_emoji = "⭕",
+            silent = True,
             emojis = self.quest_emojis
         )
 
@@ -100,7 +99,7 @@ class Good(Player):
 
     async def _game_start(self, game):
         self.embed = discord.Embed(title = "Début de partie 🟦",
-            description = "Vous êtes un Fidèle Vassal d'Arthur. Vous devez faire réussir 3 Quêtes.",
+            description = "Vous êtes un Fidèle Vassal d'Arthur (Gentil). Vous devez faire réussir 3 Quêtes.",
             color = self.color
         )
 
@@ -227,7 +226,7 @@ class Evil(Player):
 
     async def _game_start(self, game):
         self.embed = discord.Embed(title = "Début de partie 🟥",
-            description = "Vous êtes un Serviteur de Mordred. Vous devez faire échouer 3 Quêtes.",
+            description = "Vous êtes un Serviteur de Mordred (Méchant). Vous devez faire échouer 3 Quêtes.",
             color = self.color
         )
 
