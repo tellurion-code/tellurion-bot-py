@@ -44,7 +44,8 @@ class Player:
             return len(reactions[self.user.id]) == 1
 
         self.vote_message = ReactionMessage(cond_player,
-            cast_vote
+            cast_vote,
+            temporary = False
         )
 
         await self.vote_message.send(self.user,
@@ -71,7 +72,8 @@ class Player:
             return len(reactions[self.user.id]) == 1
 
         self.vote_message = ReactionMessage(cond_player,
-            cast_choice
+            cast_choice,
+            temporary = False
         )
 
         await self.vote_message.send(self.user,

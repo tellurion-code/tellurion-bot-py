@@ -172,7 +172,9 @@ class Game:
             value = "🟧" * self.refused + "🔸" * ( 4 - self.refused ))
 
         embed.add_field(name = "__Chevaliers:__",
-            value = '\n'.join([self.players[x].last_vote[:1] + globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]))
+            value = '\n'.join([self.players[x].last_vote[:1] + globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]),
+            inline = False
+        )
 
         if len(self.team):
             embed.add_field(name = "Participants à la Quête :",
@@ -267,6 +269,11 @@ class Game:
 
             for_votes = len([self.players[x] for x in self.order if self.players[x].last_vote[:1] == "✅"])
 
+            for id in self.order:
+                player = self.players[id]
+                if player.vote_message:
+                    await player.vote_message.message.delete()
+
             await self.send_info(color = 0x00ff00 if for_votes > len(self.order)/2 else 0xff0000) #Change la couleur du message en fonction
 
             if for_votes > len(self.order)/2:
@@ -310,6 +317,11 @@ class Game:
 
         if not missing and self.phase == "vote_for_team":
             self.phase = "quest"
+
+            for id in self.team.values():
+                player = self.players[id]
+                if player.vote_message:
+                    await player.vote_message.message.delete()
 
             self.played = [self.players[x].last_vote[:1] for x in self.team.values()]
             random.shuffle(self.played)
