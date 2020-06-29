@@ -326,7 +326,7 @@ class Game:
                 if player.vote_message:
                     await player.vote_message.message.delete()
 
-            self.played = [self.players[x].last_choice[:1] for x in self.team.values()]
+            self.played = [self.players[x].last_choice.split(" ")[0] for x in self.team.values()]
             random.shuffle(self.played)
 
             fails = len([x for x in self.played if x == str(globals.quest_emojis["failure"])])
