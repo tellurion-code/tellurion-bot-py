@@ -199,6 +199,22 @@ class Game:
         emojis = [globals.number_emojis[self.order.index(x)] for x in valid_candidates]
         choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
 
+        embed = discord.Embed(
+            title = "Equipe Choisie",
+            color = globals.color
+        )
+
+        embed.add_field(name = "Equipe",
+            value = "❌ Pas de participants choisis")
+
+        team_message = await leader.user.send(embed = embed)
+
+        async def update(reactions):
+            embed = team_message.embeds[0]
+            embed.set_field_at(0, name = "Equipe",
+                value = '\n'.join([(globals.number_emojis[self.order.index(valid_candidates[i])] + ' `' + str(self.players[valid_candidates[i]].user) + '`') for i in reactions[leader.user.id]]) if len(reactions[leader.user.id]) else "❌ Pas de participants choisis")
+            await team_message.edit(embed = embed)
+
         async def propose_team(reactions):
             for i in reactions[leader.user.id]:
                 self.team[i] = valid_candidates[i]
@@ -212,7 +228,8 @@ class Game:
             return len(reactions[self.order[self.turn]]) == self.quests[self.round]
 
         await ReactionMessage(cond,
-            propose_team
+            propose_team,
+            update = update
         ).send(leader.user,
             "Choisissez votre Equipe (" + str(self.quests[self.round]) + (" participants)" if self.quests[self.round] > 1 else " participant)"),
             "",
