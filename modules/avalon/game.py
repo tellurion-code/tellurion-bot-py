@@ -329,8 +329,8 @@ class Game:
             self.played = [self.players[x].last_choice[:1] for x in self.team.values()]
             random.shuffle(self.played)
 
-            fails = len([x for x in self.played if x == str(globals.quest_emojis["failure"]]))
-            reverses = len([x for x in self.played if x == str(globals.quest_emojis["reverse"]]))
+            fails = len([x for x in self.played if x == str(globals.quest_emojis["failure"])])
+            reverses = len([x for x in self.played if x == str(globals.quest_emojis["reverse"])])
 
             success = fails < (2 if self.round == 3 and len(self.players) >= 7 else 1)
             if reverses == 1:
