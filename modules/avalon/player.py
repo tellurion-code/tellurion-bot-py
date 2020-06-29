@@ -8,6 +8,7 @@ import modules.avalon.globals as globals
 class Player:
     role = ""
     last_vote = ""
+    last_choice = ""
     inspected = False
     vote_message = None
     info_message = None
@@ -65,7 +66,7 @@ class Player:
 
     async def send_choice(self, game):
         async def cast_choice(reactions):
-            self.last_vote = self.quest_emojis[reactions[self.user.id][0]] + " " + self.quest_choices[reactions[self.user.id][0]]
+            self.last_choice = self.quest_emojis[reactions[self.user.id][0]] + " " + self.quest_choices[reactions[self.user.id][0]]
             await game.check_quest_end()
 
         async def cond_player(reactions):
@@ -247,10 +248,12 @@ class Assassin(Evil):
         choices = ["`" + str(game.players[x].user) + "`" for x in valid_candidates]
 
         async def kill(reactions):
-            if game.players[valid_candidates[reactions[self.user.id][0]]].role == "merlin":
-                await game.end_game(False, "assassinat de Merlin")
+            killed = game.players[valid_candidates[reactions[self.user.id][0]]]
+
+            if killed.role == "merlin":
+                await game.end_game(False, "assassinat de Merlin (`" + str(killed.user) + "`)")
             else:
-                await game.end_game(True, "3 Quêtes réussies")
+                await game.end_game(True, "3 Quêtes réussies (Assassinat de `" + str(killed.user) + "` qui était " + globals.visual_roles[killed.role] + ")")
 
         async def cond(reactions):
             return len(reactions[self.user.id]) == 1
