@@ -17,6 +17,15 @@ class Player:
     def __init__(self, user):
         self.user = user
 
+    def game_start(self, game):
+        await self.team_game_start(game)
+
+        # blaise = [x for x in game.players if x.role == "blaise"]
+        # if len(blaise):
+        #     await self.user.send(embed = discord.Embed(description = blaise[0] + " est le Père Blaise ✍️. Il ne peut pas être dans une quête mais connaitra le choix d'un personne participant à chacune.",
+        #         color = 0x2e64fe
+        #     ))
+
     async def send_vote(self, game):
         emojis = ["✅", "❎"]
         choices = ["Pour", "Contre"]
@@ -74,23 +83,27 @@ class Player:
 class Good(Player):
     allegiance = "good"
     role = "good"
+    color =  0x2e64fe
 
-    async def game_start(self, game):
+    async def team_game_start(self, game):
+        await self._game_start(game)
+
+    async def _game_start(self, game):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie 🟦",
-            description = "Vous êtes un Gentil. Vous devez faire réussir 3 Quêtes.",
-            color = 0x2e64fe
+            description = "Vous êtes un Fidèle Vassal d'Arthur. Vous devez faire réussir 3 Quêtes.",
+            color = self.color
         ))
 
 class Merlin(Good):
     role = "merlin"
 
-    async def game_start(self, game):
+    async def _game_start(self, game):
         embed = discord.Embed(title = "Début de partie 🧙‍♂️",
-            description = "Vous êtes Merlin. Vous devez faire réussir 3 Quêtes et ne pas vous révéler. Vous connaissez les méchants:",
-            color = 0x2e64fe
+            description = "Vous êtes Merlin. Vous devez faire réussir 3 Quêtes et ne pas vous révéler. Vous connaissez les méchants.",
+            color = self.color
         )
 
-        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "mordred"]
+        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "mordred" or game.players[x].role == "karadoc"]
         if len(evils):
             embed.add_field(name = "Vos ennemis:",
                 value = '\n'.join(evils)
@@ -101,10 +114,10 @@ class Merlin(Good):
 class Percival(Good):
     role = "percival"
 
-    async def game_start(self, game):
+    async def _game_start(self, game):
         embed = discord.Embed(title = "Début de partie 🤴",
-            description = "Vous êtes Perceval. Vous devez faire réussir 3 Quêtes et protéger Merlin. Vous connaissez Merlin et Morgane:",
-            color = 0x2e64fe
+            description = "Vous êtes Perceval. Vous devez faire réussir 3 Quêtes et protéger Merlin. Vous connaissez Merlin et Morgane.",
+            color = self.color
         )
 
         mages = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role in ["merlin", "morgane"]]
@@ -120,23 +133,46 @@ class Lancelot(Good):
     quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
     quest_choices = ["Réussite", "Echec", "Inversion"]
 
-    async def game_start(self, game):
+    async def _game_start(self, game):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie ️🛡️",
-            description = "Vous êtes Lancelot. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez pas les méchants mais les méchants vous connaisent.",
-            color = 0x2e64fe
+            description = "Vous êtes Lancelot. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans.",
+            color = self.color
         ))
+
+class Karadoc(Good):
+    role = "karadoc"
+
+    async def _game_start(self, game):
+        await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie ️🥴",
+            description = "Vous êtes Karadoc. Vous devez faire réussir 3 Quêtes et protéger Merlin. Merlin vous voit comme un méchant.",
+            color = self.color
+        ))
+
+# class Blaise(Good):
+#     role = "blaise"
+#
+#     async def _game_start(self, game):
+#         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie ️✍️",
+#             description = "Vous êtes Blaise. Vous devez faire réussir 3 Quêtes. Tout le monde vout connait, et vousne pouvez pas être dans une quête. A chaque quête, vous connaissez le choix d'une personne au choix.",
+#             color = self.color
+#         ))
 
 class Evil(Player):
     allegiance = "evil"
     role = "evil"
+    evils = []
+    color = 0xef223f
 
-    async def game_start(self, game):
+    async def team_game_start(self, game):
+        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
+        await self._game_start(game)
+
+    async def _game_start(self, game):
         embed = discord.Embed(title = "Début de partie 🟥",
-            description = "Vous êtes un Méchant. Vous devez faire échouer 3 Quêtes.",
-            color = 0xef223f
+            description = "Vous êtes un Serviteur de Mordred. Vous devez faire échouer 3 Quêtes.",
+            color = self.color
         )
 
-        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
         if len(evils):
             embed.add_field(name = "Vos co-équipiers:",
                 value = '\n'.join(evils)
@@ -147,13 +183,12 @@ class Evil(Player):
 class Assassin(Evil):
     role = "assassin"
 
-    async def game_start(self, game):
+    async def _game_start(self, game):
         embed = discord.Embed(title = "Début de partie 🗡️",
             description = "Vous êtes l'Assassin. Vous devez faire échouer 3 Quêtes ou trouver Merlin et l'assassiner.",
-            color = 0xef223f
+            color = self.color
         )
 
-        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
         if len(evils):
             embed.add_field(name = "Vos co-équipiers:",
                 value = '\n'.join(evils)
@@ -188,13 +223,12 @@ class Assassin(Evil):
 class Morgane(Evil):
     role = "morgane"
 
-    async def game_start(self, game):
+    async def _game_start(self, game):
         embed = discord.Embed(title = "Début de partie 🧙‍♀️",
             description = "Vous êtes Morgane. Vous devez faire échouer 3 Quêtes ou trouver Merlin. Perceval vous voit aux côtés de Merlin.",
-            color = 0xef223f
+            color = self.color
         )
 
-        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
         if len(evils):
             embed.add_field(name = "Vos co-équipiers:",
                 value = '\n'.join(evils)
@@ -205,13 +239,12 @@ class Morgane(Evil):
 class Mordred(Evil):
     role = "mordred"
 
-    async def game_start(self, game):
+    async def _game_start(self, game):
         embed = discord.Embed(title = "Début de partie 😈",
             description = "Vous êtes Mordred. Vous devez faire échouer 3 Quêtes ou trouver Merlin. Merlin ne vous connait pas.",
-            color = 0xef223f
+            color = self.color
         )
 
-        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
         if len(evils):
             embed.add_field(name = "Vos co-équipiers:",
                 value = '\n'.join(evils)
@@ -222,10 +255,10 @@ class Mordred(Evil):
 class Oberon(Evil):
     role = "oberon"
 
-    async def game_start(self, game):
+    async def _game_start(self, game):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie 😶",
             description = "Vous êtes Oberon. Vous devez faire échouer 3 Quêtes. Vous ne connaissez pas les méchants et les méchants ne vous connaisent pas.",
-            color = 0xef223f
+            color = self.color
         ))
 
 class Agrav1(Evil):
@@ -233,10 +266,10 @@ class Agrav1(Evil):
     quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
     quest_choices = ["Réussite", "Echec", "Inversion"]
 
-    async def game_start(self, game):
+    async def _game_start(self, game):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie ⚔️️",
             description = "Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez pas les méchants mais les méchants vous connaisent.",
-            color = 0xef223f
+            color = self.color
         ))
 
 class Agrav2(Evil):
@@ -244,16 +277,31 @@ class Agrav2(Evil):
     quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
     quest_choices = ["Réussite", "Echec", "Inversion"]
 
-    async def game_start(self, game):
+    async def _game_start(self, game):
         embed = discord.Embed(title = "Début de partie ⚔️️",
             description = "Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent.",
-            color = 0xef223f
+            color = self.color
         )
 
-        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
         if len(evils):
             embed.add_field(name = "Un de vos co-équipiers:",
                 value = random.choice(evils)
             )
 
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = embed)
+
+# class Solo(Player):
+#     allegiance = "solo"
+#     color = 0x76EE00
+#
+#     async def team_game_start(self, game):
+#         await self._game_start(game)
+#
+# class Venec(Solo):
+#     role = "venec"
+#
+#     async def _game_start(self, game):
+#         embed = discord.Embed(title = "Début de partie 🤘",
+#             description = "Vous êtes Venec. Vous devez faire atteindre la 5e quête. Faites en sorte qu'aucun camp ne gagne avant.",
+#             color = self.color
+#         )

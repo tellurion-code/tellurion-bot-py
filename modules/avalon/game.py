@@ -2,7 +2,7 @@ import discord
 import random
 import math
 
-from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Lancelot, Assassin, Morgane, Mordred, Oberon, Agrav1, Agrav2
+from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Lancelot, Karadoc, Assassin, Morgane, Mordred, Oberon, Agrav1, Agrav2
 from modules.avalon.reaction_message import ReactionMessage
 
 import modules.avalon.globals as globals
@@ -78,6 +78,7 @@ class Game:
             "merlin": Merlin,
             "percival": Percival,
             "lancelot": Lancelot,
+            "karadoc": Karadoc,
             "assassin": Assassin,
             "morgane": Morgane,
             "mordred": Mordred,
