@@ -97,7 +97,7 @@ class MainClass(BaseClassPython):
     #Réitinitialise et supprime la partie
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in globals.games:
-            await message.channel.send("La partie a été reset")
+            await message.channel.send("La partie a été réinitialisée")
             #globals.games[message.channel.id].delete_save()
             globals.games.pop(message.channel.id)
         else:
@@ -148,24 +148,30 @@ class MainClass(BaseClassPython):
             if len(args) > 1:
                 if game.turn == -1:
                     if message.author.id in game.players:
-                        roles = args
-                        roles.pop(0)
-                        if len(roles) >= len(game.players):
-                            done = True
-                            valid_roles = {"gentil": "good", "méchant": "evil", "merlin": "merlin", "perceval": "percival", "lancelot": "lancelot", "karadoc": "karadoc", "galaad": "galaad", "uther": "uther", "assassin": "assassin", "morgane": "morgane", "mordred": "mordred", "oberon": "oberon", "agrav1": "agrav1", "agrav2": "agrav2"}
-
-                            for role in roles:
-                                if role not in valid_roles:
-                                    done = False
-                                    break
-
-                            if done:
-                                game.roles = [valid_roles[x] for x in roles]
-                                await message.channel.send("Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]))
-                            else:
-                                await message.channel.send('Il faut préciser autant de roles que de joueurs en arguments (Un des roles était invalide)')
+                        if args[1] == "reset":
+                            game.roles = []
+                            await message.channel.send("Les rôles ont été réinitialisés")
                         else:
-                            await message.channel.send('Il faut préciser autant de roles que de joueurs en arguments (Pas assez de rôles)')
+                            roles = args
+                            roles.pop(0)
+                            #faire un par un
+                            #ajouter reset
+                            if len(roles) >= len(game.players):
+                                done = True
+                                valid_roles = {"gentil": "good", "méchant": "evil", "merlin": "merlin", "perceval": "percival", "lancelot": "lancelot", "karadoc": "karadoc", "galaad": "galaad", "uther": "uther", "assassin": "assassin", "morgane": "morgane", "mordred": "mordred", "oberon": "oberon", "agrav1": "agrav1", "agrav2": "agrav2"}
+
+                                for role in roles:
+                                    if role not in valid_roles:
+                                        done = False
+                                        break
+
+                                if done:
+                                    game.roles = [valid_roles[x] for x in roles]
+                                    await message.channel.send("Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]))
+                                else:
+                                    await message.channel.send('Il faut préciser autant de roles que de joueurs en arguments (Un des roles était invalide)')
+                            else:
+                                await message.channel.send('Il faut préciser autant de roles que de joueurs en arguments (Pas assez de rôles)')
                     else:
                         await message.channel.send("Vous n'êtes pas dans la partie")
                 else:

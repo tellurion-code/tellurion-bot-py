@@ -96,7 +96,7 @@ class Good(Player):
         galaad = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "galaad"]
         if len(galaad):
             self.embed.add_field(name = "Galaad",
-                value = galaad[0])
+                value = '\n'.join(galaad))
 
     async def _game_start(self, game):
         self.embed = discord.Embed(title = "Début de partie 🟦",
@@ -340,6 +340,6 @@ class Agrav2(Evil):
 #
 #     async def _game_start(self, game):
 #         self.embed = discord.Embed(title = "Début de partie 🤘",
-#             description = "Vous êtes Venec. Vous devez faire atteindre la 5e quête. Faites en sorte qu'aucun camp ne gagne avant.",
+#             description = "Vous êtes Venec. Vous devez faire assassiner.",
 #             color = self.color
 #         )

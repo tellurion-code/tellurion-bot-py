@@ -198,7 +198,7 @@ class Game:
 
         leader = self.players[self.order[self.turn]] #Tour actuel
 
-        valid_candidates = [x for i, x in enumerate(self.order) if i != self.turn or globals.debug]
+        valid_candidates = [x for i, x in enumerate(self.order)]
         emojis = [globals.number_emojis[self.order.index(x)] for x in valid_candidates]
         choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
 
@@ -220,7 +220,7 @@ class Game:
 
         async def propose_team(reactions):
             for i in reactions[leader.user.id]:
-                self.team[i] = valid_candidates[i]
+                self.team[self.order.index(valid_candidates[i])] = valid_candidates[i]
 
             await team_message.delete()
             await self.send_info()
@@ -302,12 +302,12 @@ class Game:
 
                     embed.description = "Vous avez choisi " + player.last_vote
                     embed.color = (0x00ff00 if globals.quest_emojis["success"] in player.last_vote else 0xff0000 if globals.quest_emojis["failure"] in player.last_vote else 0x0000ff)
+
+                    await player.vote_message.message.edit(embed = embed)
                 else:
                     missing = True
 
-                await player.vote_message.message.edit(embed = embed)
-
-        if not missing:
+        if not missing and len(self.team):
             self.played = [self.players[x].last_vote[:1] for x in self.team.values()]
             random.shuffle(self.played)
 
