@@ -309,7 +309,7 @@ class Game:
             if player.vote_message:
                 embed = player.vote_message.message.embeds[0]
 
-                if player.last_vote != "":
+                if player.last_choice != "":
                     embed.description = "Vous avez choisi " + player.last_choice
                     embed.color = (0x00ff00 if globals.quest_emojis["success"] in player.last_choice else 0xff0000 if globals.quest_emojis["failure"] in player.last_choice else 0x0000ff)
 
