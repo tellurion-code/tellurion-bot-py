@@ -123,7 +123,7 @@ class Lancelot(Good):
     async def game_start(self, game):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie ️🛡️",
             description = "Vous êtes Lancelot. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez pas les méchants mais les méchants vous connaisent.",
-            color = 0xef223f
+            color = 0x2e64fe
         ))
 
 class Evil(Player):
