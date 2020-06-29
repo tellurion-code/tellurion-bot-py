@@ -105,6 +105,8 @@ class Game:
         for i in range(len(self.order)):
             await self.players[self.order[i]].game_start(self)
 
+        random.shuffle(self.roles)
+
         await self.send_info(mode = "set")
         await self.send_team_choice()
 
@@ -285,7 +287,6 @@ class Game:
                 )
 
                 for id in self.team.values():
-                    self.players[id].last_vote = ""
                     await self.players[id].send_choice(self)
             else:
                 self.refused += 1
@@ -336,13 +337,14 @@ class Game:
                 success = not success
 
             self.quests[self.round] = -1 if success else 0
-            self.round += 1
-            self.refused = 0
 
             await self.send_info(info = {"name": ((str(globals.quest_emojis["success"]) + " Quête réussie " + str(globals.quest_emojis["success"])) if success else (str(globals.quest_emojis["failure"]) + " Quête échouée " + str(globals.quest_emojis["failure"]))),
-                "value": "La quête a été " + ("une réussite" if success else "un échec") + " avec les choix suivants : " + " ".join(self.played)},
+                "value": "Choix : " + " ".join(self.played)},
                 color = 0x2e64fe if success else 0xef223f
             )
+
+            self.round += 1
+            self.refused = 0
 
             if len([x for x in self.quests if x == 0]) == 3:
                 await self.end_game(False, "3 Quêtes échouées")
