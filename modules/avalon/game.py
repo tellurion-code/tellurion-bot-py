@@ -168,7 +168,7 @@ class Game:
         )
 
         embed.add_field(name = "Quêtes :",
-            value = " ".join([globals.number_emojis[x - 1] if x > 0 else (globals.quest_emojis["success"] if x else globals.quest_emojis["failure"]) for x in self.quests]))
+            value = " ".join([globals.number_emojis[x - 1] if x > 0 else (str(globals.quest_emojis["success"]) if x else str(globals.quest_emojis["failure"])) for x in self.quests]))
 
         embed.add_field(name = "Equipes refusées :",
             value = "🟧" * self.refused + "🔸" * ( 4 - self.refused ))
@@ -312,7 +312,7 @@ class Game:
 
                 if player.last_choice != "":
                     embed.description = "Vous avez choisi " + player.last_choice
-                    embed.color = (0x00ff00 if globals.quest_emojis["success"] in player.last_choice else 0xff0000 if globals.quest_emojis["failure"] in player.last_choice else 0x0000ff)
+                    embed.color = (0x00ff00 if str(globals.quest_emojis["success"]) in player.last_choice else 0xff0000 if str(globals.quest_emojis["failure"]) in player.last_choice else 0x0000ff)
 
                     await player.vote_message.message.edit(embed = embed)
                 else:
@@ -329,8 +329,8 @@ class Game:
             self.played = [self.players[x].last_choice[:1] for x in self.team.values()]
             random.shuffle(self.played)
 
-            fails = len([x for x in self.played if x == globals.quest_emojis["failure"]])
-            reverses = len([x for x in self.played if x == globals.quest_emojis["reverse"]])
+            fails = len([x for x in self.played if x == str(globals.quest_emojis["failure"]]))
+            reverses = len([x for x in self.played if x == str(globals.quest_emojis["reverse"]]))
 
             success = fails < (2 if self.round == 3 and len(self.players) >= 7 else 1)
             if reverses == 1:

@@ -66,7 +66,7 @@ class Player:
 
     async def send_choice(self, game):
         async def cast_choice(reactions):
-            self.last_choice = self.quest_emojis[reactions[self.user.id][0]] + " " + self.quest_choices[reactions[self.user.id][0]]
+            self.last_choice = str(self.quest_emojis[reactions[self.user.id][0]]) + " " + self.quest_choices[reactions[self.user.id][0]]
             await game.check_quest_end()
 
         async def cond_player(reactions):
