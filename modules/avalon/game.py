@@ -2,7 +2,7 @@ import discord
 import random
 import math
 
-from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Lancelot, Karadoc, Assassin, Morgane, Mordred, Oberon, Agrav1, Agrav2
+from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Lancelot, Karadoc, Galaad, Uther, Assassin, Morgane, Mordred, Oberon, Agrav1, Agrav2
 from modules.avalon.reaction_message import ReactionMessage
 
 import modules.avalon.globals as globals
@@ -79,6 +79,8 @@ class Game:
             "percival": Percival,
             "lancelot": Lancelot,
             "karadoc": Karadoc,
+            "galaad": Galaad,
+            "uther": Uther,
             "assassin": Assassin,
             "morgane": Morgane,
             "mordred": Mordred,
@@ -220,6 +222,7 @@ class Game:
             for i in reactions[leader.user.id]:
                 self.team[i] = valid_candidates[i]
 
+            await team_message.delete()
             await self.send_info()
 
             for id in self.order:
@@ -327,7 +330,7 @@ class Game:
             if len([x for x in self.quests if x == 0]) == 3:
                 await self.end_game(False, "3 Quêtes échouées")
             elif len([x for x in self.quests if x == -1]) == 3:
-                if len([x for x in self.players.values() if x.role == "merlin"]):
+                if len([x for x in self.players.values() if x.role == "merlin" or x.role == "assassin"]) > 1:
                     await self.broadcast(discord.Embed(title = "Assassinat",
                         description = "3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
                         color = globals.color
@@ -358,21 +361,7 @@ class Game:
         else:
             embed = discord.Embed(title = "Victoire des Méchants 🟥 par " + cause  + " !", color = 0xef223f)
 
-        roles = {
-            "good": "🟦 Libéral",
-            "evil": "🟥 Fasciste",
-            "merlin": "🧙‍♂️ Merlin",
-            "percival": "🤴 Perceval",
-            "lancelot": "🛡️ Lancelot",
-            "assassin": "🗡️ Assassin",
-            "morgane": "🧙‍♀️ Morgane",
-            "mordred": "😈 Mordred",
-            "oberon": "😶 Oberon",
-            "agrav1": "⚔️ Agravain",
-            "agrav2": "⚔️ Agravain"
-        }
-
-        embed.description = "__Joueurs :__\n" + '\n'.join([globals.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + roles[self.players[x].role] for i,x in enumerate(self.order)])
+        embed.description = "__Joueurs :__\n" + '\n'.join([globals.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + globals.visual_roles[self.players[x].role] for i,x in enumerate(self.order)])
 
         await self.broadcast(embed)
         #self.delete_save()

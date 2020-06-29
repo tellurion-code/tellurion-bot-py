@@ -27,14 +27,14 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"help_active": True,
-            "color": globals.color,
-            "auth_everyone": True,
-            "authorized_roles": [],
-            "authorized_users": [],
-            "command_text": "avalon",
-            "configured": True
-        })
+        # self.config.init({"help_active": True,
+        #     "color": globals.color,
+        #     "auth_everyone": True,
+        #     "authorized_roles": [],
+        #     "authorized_users": [],
+        #     "command_text": "avalon",
+        #     "configured": True
+        # })
 
     async def command(self, message, args, kwargs):
         if args[0] == "join't":
@@ -113,7 +113,7 @@ class MainClass(BaseClassPython):
                         if len(game.roles) in [0, len(game.players)]:
                             await game.start_game()
                         else:
-                            await message.channel.send("Le nombre de rôles ne correspond pasau nombre de joueurs")
+                            await message.channel.send("Le nombre de rôles ne correspond pas au nombre de joueurs")
                     else:
                         await message.channel.send("Il faut au minimum 5 joueurs")
                 else:
@@ -152,7 +152,7 @@ class MainClass(BaseClassPython):
                         roles.pop(0)
                         if len(roles) >= len(game.players):
                             done = True
-                            valid_roles = {"gentil": "good", "méchant": "evil", "merlin": "merlin", "perceval": "percival", "lancelot": "lancelot", "karadoc": "karadoc", "assassin": "assassin", "morgane": "morgane", "mordred": "mordred", "oberon": "oberon", "agrav1": "agrav1", "agrav2": "agrav2"}
+                            valid_roles = {"gentil": "good", "méchant": "evil", "merlin": "merlin", "perceval": "percival", "lancelot": "lancelot", "karadoc": "karadoc", "galaad": "galaad", "uther": "uther", "assassin": "assassin", "morgane": "morgane", "mordred": "mordred", "oberon": "oberon", "agrav1": "agrav1", "agrav2": "agrav2"}
 
                             for role in roles:
                                 if role not in valid_roles:
@@ -160,8 +160,8 @@ class MainClass(BaseClassPython):
                                     break
 
                             if done:
-                                await message.channel.send("Rôles changés pour : " + ', '.join(roles))
                                 game.roles = [valid_roles[x] for x in roles]
+                                await message.channel.send("Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]))
                             else:
                                 await message.channel.send('Il faut préciser autant de roles que de joueurs en arguments (Un des roles était invalide)')
                         else:
@@ -172,8 +172,8 @@ class MainClass(BaseClassPython):
                     await message.author.send("La partie a déjà commencé")
             else:
                 if len(game.roles):
-                    await message.channel.send('Rôles actuels: ```' + ', '.join([x for x in game.roles]) + '```')
+                    await message.channel.send('Rôles actuels: ' + ', '.join([globals.visual_roles[x] for x in game.roles]))
                 else:
-                    await message.channel.send('Rôles actuels: ```Dépendant du nombre de joueurs```')
+                    await message.channel.send('Rôles actuels: [Dépendant du nombre de joueurs]')
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
