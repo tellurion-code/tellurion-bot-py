@@ -273,7 +273,7 @@ class Game:
                 #self.save({"type": "send_laws"})
 
                 await self.send_info(info = {"name": "Equipe acceptée",
-                    "value" = "L'Equipe proposée a été acceptée. Elle va partir en quête et choisir si elle sera une Réussite ou un Echec."},
+                    "value": "L'Equipe proposée a été acceptée. Elle va partir en quête et choisir si elle sera une Réussite ou un Echec."},
                     color = 0x00ff00
                 )
 
@@ -287,7 +287,7 @@ class Game:
                     await self.end_game(False, "5 Equipes refusées")
                 elif self.refused >= 1:
                     await self.next_turn({"name": "Equipe acceptée",
-                        "value" = "L'Equipe proposée a été refusée. Le nouveau leader va proposer une nouvelle équipe."})
+                        "value": "L'Equipe proposée a été refusée. Le nouveau leader va proposer une nouvelle équipe."})
 
     async def check_quest_end(self):
         missing = False
