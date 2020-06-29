@@ -12,13 +12,15 @@ class Player:
     inspected = False
     vote_message = None
     info_message = None
-    quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"]]
+    quest_emojis = []
     quest_choices = ["Réussite", "Echec"]
 
     def __init__(self, user):
         self.user = user
 
     async def game_start(self, game):
+        self.quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"]]
+
         await self.team_game_start(game)
 
         # blaise = [x for x in game.players if x.role == "blaise"]
@@ -138,10 +140,11 @@ class Percival(Good):
 
 class Lancelot(Good):
     role = "lancelot"
-    quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
     quest_choices = ["Réussite", "Echec", "Inversion"]
 
     async def _game_start(self, game):
+        self.quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
+
         self.embed = discord.Embed(title = "Début de partie ️🛡️",
             description = "Vous êtes Lancelot. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans.",
             color = self.color
@@ -300,13 +303,14 @@ class Oberon(Evil):
 
 class Agrav1(Evil):
     role = "agrav1"
-    quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
     quest_choices = ["Réussite", "Echec", "Inversion"]
 
     async def team_game_start(self, game):
         await self._game_start(game)
 
     async def _game_start(self, game):
+        self.quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
+
         self.embed = discord.Embed(title = "Début de partie ⚔️️",
             description = "Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez pas les méchants mais les méchants vous connaisent.",
             color = self.color
@@ -314,13 +318,14 @@ class Agrav1(Evil):
 
 class Agrav2(Evil):
     role = "agrav2"
-    quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
     quest_choices = ["Réussite", "Echec", "Inversion"]
 
     async def team_game_start(self, game):
         await self._game_start(game)
 
     async def _game_start(self, game):
+        self.quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
+
         self.embed = discord.Embed(title = "Début de partie ⚔️️",
             description = "Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent.",
             color = self.color
