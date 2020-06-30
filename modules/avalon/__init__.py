@@ -205,7 +205,7 @@ class MainClass(BaseClassPython):
 
     async def com_rules(self, message, args, kwargs):
         await message.channel.send(embed = discord.Embed(title = ":small_orange_diamond: Règle du Avalon :small_orange_diamond:",
-            descrption = """:small_blue_diamond: But du jeu : :small_blue_diamond:
+            description = """:small_blue_diamond: But du jeu : :small_blue_diamond:
                 Il a 2 équipes, les gentils et les méchants, leur but est :
                  - Pour les gentils faire réussir 3 quêtes
                  - Pour les méchants faire échouer 3 quêtes OU faire annuler 5 propositions d’équipe à la suite.
