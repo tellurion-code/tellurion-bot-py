@@ -15,6 +15,7 @@ class MainClass(BaseClassPython):
         "commands": {
             "`{prefix}{command} join`": "Rejoint la partie. S'il n'y en a pas dans le salon, en crée une nouvelle",
             "`{prefix}{command} quit`": "Quitte la partie",
+            "`{prefix}{command} kick`": "Enlève un joueur de la partie",
             "`{prefix}{command} start`": "Démarre la partie",
             "`{prefix}{command} players`": "Affiche les joueurs de la partie",
             "`{prefix}{command} reset`": "Reinitialise la partie",
@@ -79,6 +80,36 @@ class MainClass(BaseClassPython):
 
                     if len(game.players) == 0:
                         globals.games.pop(message.channel.id)
+                else:
+                    await message.channel.send("Vous n'êtes pas dans la partie")
+            else:
+                await message.author.send("La partie a déjà commencé")
+        else:
+            await message.channel.send("Il n'y a pas de partie en cours")
+
+    async def com_kick(self, message, args, kwargs):
+        if message.channel.id in globals.games:
+            game = globals.games[message.channel.id]
+            if game.turn == -1:
+                if message.author.id in game.players:
+                    if len(args) > 1:
+                        kicked = 0
+
+                        if int(args[1][3:-1]) in game.players:
+                            kicked = int(args[1][3:-1])
+                        elif int(args[1]) in game.players:
+                            kicked = int(args[1])
+
+                        if kicked:
+                            await message.channel.send(game.players[kicked].user.mention + " a été kick de la partie")
+                            del game.players[kicked]
+
+                            if len(game.players) == 0:
+                                globals.games.pop(message.channel.id)
+                        else:
+                            await message.channel.send("La mention ou l'identifiant sont erronés ou ne sont pas dans la partie")
+                    else:
+                        await message.channel.send("Veuillez préciser un identifiant ou une mention")
                 else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
             else:
@@ -220,7 +251,7 @@ class MainClass(BaseClassPython):
                     Mordred 😈 : Il n’est pas connu de Merlin.
                     Morgane 🧙‍♀️ : Elle apparait aux yeux de Perceval.
                     Oberon 😶 : Il ne connait pas ses alliés et ses alliés ne savent pas qui il est.
-                    Lancelot ⚔️ : Peut inverser le résultat de la quête s'il est dedans.
+                    Lancelot ⚔️ : Peut inverser le résultat de la quête s'il est dedans. Ne peut pas mettre d'Echec.
 
                     🟩 Les solos: 🟩
                     Elias 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.""",
