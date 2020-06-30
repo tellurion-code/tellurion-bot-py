@@ -1,4 +1,3 @@
-import datetime
 import discord
 
 import modules.avalon.globals as globals
@@ -61,13 +60,14 @@ class MainClass(BaseClassPython):
                     else:
                         await message.channel.send("Il y a déjà le nombre maximum de joueurs (10)")
         else:
-            embed = discord.Embed(title = "Création de la partie d'Avalon",
-                description = "Tapez %avalon join pour rejoindre la partie",
-                color = self.color)
+            embed = discord.Embed(title="Création de la partie d'Avalon",
+                                  description="Tapez %avalon join pour rejoindre la partie",
+                                  color=self.color)
 
-            await message.channel.send(embed = embed)
+            await message.channel.send(embed=embed)
+            await message.channel.send("<@" + str(message.author.id) + "> a rejoint la partie")
 
-            globals.games[message.channel.id] = Game(self, message = message)
+            globals.games[message.channel.id] = Game(self, message=message)
 
     #Quitter la partie
     async def com_quit(self, message, args, kwargs):
@@ -123,36 +123,36 @@ class MainClass(BaseClassPython):
         if message.channel.id in globals.games:
             game = globals.games[message.channel.id]
             embed = discord.Embed(
-                title = "Liste des joueurs (" + str(len(globals.games[message.channel.id].players)) + ")",
-                color = self.color,
-                description = "```" + ', '.join([str(self.client.get_user(x)) for x, y in globals.games[message.channel.id].players.items()]) + "```"
+                title="Liste des joueurs (" + str(len(globals.games[message.channel.id].players)) + ")",
+                color=self.color,
+                description="```" + ', '.join([str(self.client.get_user(x)) for x, y in globals.games[message.channel.id].players.items()]) + "```"
             )
-            await message.channel.send(embed = embed)
+            await message.channel.send(embed=embed)
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
-    #Réitinitialise et supprime la partie
+    # Réitinitialise et supprime la partie
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in globals.games:
             async def confirm(reactions):
                 if reactions[message.author.id][0] == 0:
                     await message.channel.send("La partie a été réinitialisée")
-                    #globals.games[message.channel.id].delete_save()
+                    # globals.games[message.channel.id].delete_save()
                     globals.games.pop(message.channel.id)
 
             async def cond(reactions):
                 return len(reactions[message.author.id]) == 1
 
             await ReactionMessage(cond,
-                confirm
-            ).send(message.channel,
-                "Êtes vous sûr.e de vouloir réinitialiser la partie?",
-                "",
-                self.color,
-                ["Oui", "Non"],
-                emojis = ["✅", "❎"],
-                validation_emoji = "⭕"
-            )
+                                  confirm
+                                  ).send(message.channel,
+                                         "Êtes vous sûr.e de vouloir réinitialiser la partie?",
+                                         "",
+                                         self.color,
+                                         ["Oui", "Non"],
+                                         emojis=["✅", "❎"],
+                                         validation_emoji="⭕"
+                                         )
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -210,7 +210,8 @@ class MainClass(BaseClassPython):
                         else:
                             roles = args
                             invalid_roles = []
-                            valid_roles = {"gentil": "good",
+                            valid_roles = {
+                                "gentil": "good",
                                 "méchant": "evil",
                                 "mechant": "evil",
                                 "merlin": "merlin",
@@ -225,7 +226,8 @@ class MainClass(BaseClassPython):
                                 "oberon": "oberon",
                                 "agrav1": "agrav1",
                                 "agrav2": "agrav2",
-                                "elias": "elias"}
+                                "elias": "elias"
+                            }
 
                             for role in roles:
                                 role = role.lower()
@@ -245,9 +247,10 @@ class MainClass(BaseClassPython):
                                 else:
                                     await message.channel.send("Sous-commande invalide")
 
-                                await message.channel.send(embed = discord.Embed(title = "Rôles (" + str(len(game.roles)) + ")",
-                                    description = "Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]),
-                                    color = self.color))
+                                await message.channel.send(embed=discord.Embed(
+                                    title="Liste des rôles (" + str(len(game.roles)) + ") :",
+                                    description=', '.join([globals.visual_roles[x] for x in game.roles]),
+                                    color=self.color))
                             else:
                                 await message.channel.send(', '.join(invalid_roles) + " est/sont un/des rôle(s) invalide(s))")
                     else:
@@ -255,21 +258,24 @@ class MainClass(BaseClassPython):
                 else:
                     await message.author.send("La partie a déjà commencé")
             elif len(game.roles):
-                await message.channel.send(embed = discord.Embed(title = "Rôles (" + str(len(game.roles)) + ")",
-                    description = "Rôles actuels : " + ', '.join([globals.visual_roles[x] for x in game.roles]),
-                    color = self.color))
+                await message.channel.send(embed=discord.Embed(
+                    title="Liste des rôles (" + str(len(game.roles)) + ") :",
+                    description=', '.join([globals.visual_roles[x] for x in game.roles]),
+                    color=self.color))
             else:
-                await message.channel.send(embed = discord.Embed(title = "Rôles",
-                    description = "Rôles actuels : [Dépendant du nombre de joueurs]",
-                    color = self.color))
+                await message.channel.send(embed=discord.Embed(
+                    title="Liste des rôles :",
+                    description="Aucun rôle n'a été défini, la composition par défaut va être utilisé.",
+                    color=self.color))
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
-    async def com_rules(self, message, args, kwargs):
+    async def com_rules(self, message, args):
         if len(args) > 1:
             if args[1] == "roles":
-                await message.channel.send(embed = discord.Embed(title = ":small_blue_diamond: Les rôles spéciaux : :small_blue_diamond:",
-                    description = """🟦 Les gentils: 🟦
+                await message.channel.send(embed=discord.Embed(
+                    title=":small_blue_diamond: Les rôles spéciaux : :small_blue_diamond:",
+                    description="""🟦 Les gentils: 🟦
                     __Merlin__ 🧙‍♂️ : Il connaît tous les noms des méchants et celui de Karadoc (Hormis Mordred).
                     __Perceval__ 🤴 : Il connaît le pseudo de Merlin et de Morgane mais pas qui est qui.
                     __Karadoc__ 🥴 : Il apparaît comme un méchant à Merlin.
@@ -286,12 +292,13 @@ class MainClass(BaseClassPython):
 
                     🟩 Les solos: 🟩
                     __Elias__ 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.""",
-                    color = globals.color))
+                    color=globals.color))
             else:
                 await message.channel.send("Sous-section inconnue")
         else:
-            await message.channel.send(embed = discord.Embed(title = ":small_orange_diamond: Règles du Avalon :small_orange_diamond:",
-                description = """:small_blue_diamond: But du jeu : :small_blue_diamond:
+            await message.channel.send(embed=discord.Embed(
+                title=":small_orange_diamond: Règles du Avalon :small_orange_diamond:",
+                description=""":small_blue_diamond: But du jeu : :small_blue_diamond:
                     Il a 2 équipes, les gentils et les méchants, leur but est :
                      - Pour les gentils faire réussir 3 quêtes
                      - Pour les méchants faire échouer 3 quêtes OU faire annuler 5 propositions d’équipe à la suite.
@@ -312,4 +319,4 @@ class MainClass(BaseClassPython):
                     :small_blue_diamond: **Utilisez "avalon rules roles" poura voir la liste des rôles spéciaux** :small_blue_diamond:
 
                     *Note : Tous les votes se font par le biais des réactions ( :white_check_mark: et :negative_squared_cross_mark: )""",
-                color = globals.color))
+                color=globals.color))
