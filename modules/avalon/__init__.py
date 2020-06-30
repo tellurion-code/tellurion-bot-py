@@ -253,15 +253,14 @@ class MainClass(BaseClassPython):
                         await message.channel.send("Vous n'êtes pas dans la partie")
                 else:
                     await message.author.send("La partie a déjà commencé")
+            elif len(game.roles):
+                await message.channel.send(embed = discord.Embed(title = "Rôles (" + str(len(game.roles)) + ")",
+                    description = "Rôles actuels : " + ', '.join([globals.visual_roles[x] for x in game.roles])),
+                    color = self.color)
             else:
-                if len(game.roles):
-                    await message.channel.send(embed = discord.Embed(title = "Rôles (" + str(len(game.roles)) + ")",
-                        description = "Rôles actuels : " + ', '.join([globals.visual_roles[x] for x in game.roles])),
-                        color = self.color)
-                else:
-                    await message.channel.send(embed = discord.Embed(title = "Rôles",
-                        description = "Rôles actuels : [Dépendant du nombre de joueurs]",
-                        color = self.color)
+                await message.channel.send(embed = discord.Embed(title = "Rôles",
+                    description = "Rôles actuels : [Dépendant du nombre de joueurs]",
+                    color = self.color)
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
