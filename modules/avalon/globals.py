@@ -15,13 +15,13 @@ def init():
     quest_emojis = {"success": "✅", "failure": "❌", "reverse": "🔄"}
     visual_roles = {
         "good": "🟦 Gentil",
-        "evil": "🟥 Méchant",
         "merlin": "🧙‍♂️ Merlin",
         "percival": "🤴 Perceval",
         "lancelot": "🛡️ Lancelot",
         "karadoc": "🥴 Karadoc",
         "galaad": "🙋 Galaad",
         "uther": "👨‍🦳 Uther",
+        "evil": "🟥 Méchant",
         "assassin": "🗡️ Assassin",
         "morgane": "🧙‍♀️ Morgane",
         "mordred": "😈 Mordred",

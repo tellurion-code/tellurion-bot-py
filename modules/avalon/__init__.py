@@ -60,9 +60,10 @@ class MainClass(BaseClassPython):
                     else:
                         await message.channel.send("Il y a déjà le nombre maximum de joueurs (10)")
         else:
-            embed = discord.Embed(title="Création de la partie d'Avalon",
-                                  description="Tapez %avalon join pour rejoindre la partie",
-                                  color=self.color)
+            embed = discord.Embed(
+                title="Création de la partie d'Avalon",
+                description="Tapez %avalon join pour rejoindre la partie",
+                color=self.color)
 
             await message.channel.send(embed=embed)
             await message.channel.send("<@" + str(message.author.id) + "> a rejoint la partie")
@@ -125,8 +126,7 @@ class MainClass(BaseClassPython):
             embed = discord.Embed(
                 title="Liste des joueurs (" + str(len(globals.games[message.channel.id].players)) + ")",
                 color=self.color,
-                description="```" + ', '.join([str(self.client.get_user(x)) for x, y in globals.games[message.channel.id].players.items()]) + "```"
-            )
+                description="```" + ', '.join([str(self.client.get_user(x)) for x, y in globals.games[message.channel.id].players.items()]) + "```")
             await message.channel.send(embed=embed)
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
@@ -272,7 +272,7 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
-    async def com_rules(self, message, args):
+    async def com_rules(self, message, args, kwargs):
         if len(args) > 1:
             if args[1] == "roles":
                 await message.channel.send(embed=discord.Embed(
