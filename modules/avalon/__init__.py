@@ -245,8 +245,8 @@ class MainClass(BaseClassPython):
                                     await message.channel.send("Sous-commande invalide")
 
                                 await message.channel.send(embed = discord.Embed(title = "Rôles (" + str(len(game.roles)) + ")",
-                                    description = "Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles])),
-                                    color = self.color)
+                                    description = "Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]),
+                                    color = self.color))
                             else:
                                 await message.channel.send(', '.join(invalid_roles) + " est/sont un/des rôle(s) invalide(s))")
                     else:
@@ -255,12 +255,12 @@ class MainClass(BaseClassPython):
                     await message.author.send("La partie a déjà commencé")
             elif len(game.roles):
                 await message.channel.send(embed = discord.Embed(title = "Rôles (" + str(len(game.roles)) + ")",
-                    description = "Rôles actuels : " + ', '.join([globals.visual_roles[x] for x in game.roles])),
-                    color = self.color)
+                    description = "Rôles actuels : " + ', '.join([globals.visual_roles[x] for x in game.roles]),
+                    color = self.color))
             else:
                 await message.channel.send(embed = discord.Embed(title = "Rôles",
                     description = "Rôles actuels : [Dépendant du nombre de joueurs]",
-                    color = self.color)
+                    color = self.color))
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
