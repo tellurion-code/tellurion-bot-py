@@ -108,7 +108,7 @@ class Game:
 
         random.shuffle(self.roles)
 
-        await self.send_info(mode = "set")
+        await self.send_info(mode="set")
         await self.send_team_choice()
 
     #Envoies un message à tous les joueurs + le channel
@@ -121,9 +121,9 @@ class Game:
                 embed = self.info_message.embeds[0]
                 embed.description += _embed.description
 
-                await self.info_message.edit(embed = embed)
+                await self.info_message.edit(embed=embed)
             else:
-                self.info_message = await self.channel.send(embed = _embed)
+                self.info_message = await self.channel.send(embed=_embed)
 
             for id, player in self.players.items():
                 if id not in exceptions:
@@ -131,31 +131,31 @@ class Game:
                         embed = player.info_message.embeds[0]
                         embed.description += _embed.description
 
-                        await player.info_message.edit(embed = embed)
+                        await player.info_message.edit(embed=embed)
                     else:
-                        player.info_message = await player.user.send(embed = _embed)
+                        player.info_message = await player.user.send(embed=_embed)
         elif mode == "replace": #replace = modifie le dernier message
             if self.info_message:
-                await self.info_message.edit(embed = _embed)
+                await self.info_message.edit(embed=_embed)
             else:
-                self.info_message = await self.channel.send(embed = _embed)
+                self.info_message = await self.channel.send(embed=_embed)
 
             for id, player in self.players.items():
                 if id not in exceptions:
                     if player.info_message:
-                        await player.info_message.edit(embed = _embed)
+                        await player.info_message.edit(embed=_embed)
                     else:
-                        player.info_message = await player.user.send(embed = _embed)
+                        player.info_message = await player.user.send(embed=_embed)
         elif mode == "set": #set = nouveau message
-            self.info_message = await self.channel.send(embed = _embed)
+            self.info_message = await self.channel.send(embed=_embed)
             for id, player in self.players.items():
                 if id not in exceptions:
-                    player.info_message = await player.user.send(embed = _embed)
+                    player.info_message = await player.user.send(embed=_embed)
         else: #normal = nouveau message sans mémoire
-            await self.channel.send(embed = _embed)
+            await self.channel.send(embed=_embed)
             for id, player in self.players.items():
                 if id not in exceptions:
-                    await player.user.send(embed = _embed)
+                    await player.user.send(embed=_embed)
 
     #Envoies le résumé de la partie aux joueurs + le channel
     async def send_info(self, **kwargs):
@@ -163,42 +163,45 @@ class Game:
         info = kwargs["info"] if "info" in kwargs else None
         color = kwargs["color"] if "color" in kwargs else globals.color
 
-        embed = discord.Embed(title = "[AVALON] Tour de `" + str(self.players[self.order[self.turn]].user) + "` 👑️",
-            description = "",
-            color = color
-        )
+        embed = discord.Embed(
+            title="[AVALON] Tour de `" + str(self.players[self.order[self.turn]].user) + "` 👑️",
+            description="",
+            color=color)
 
-        embed.add_field(name = "Quêtes :",
-            value = " ".join([globals.number_emojis[x - 1] if x > 0 else (str(globals.quest_emojis["success"]) if x else str(globals.quest_emojis["failure"])) for x in self.quests]))
+        embed.add_field(
+            name="Quêtes :",
+            value=" ".join([globals.number_emojis[x - 1] if x > 0 else (str(globals.quest_emojis["success"]) if x else str(globals.quest_emojis["failure"])) for x in self.quests]))
 
-        embed.add_field(name = "Equipes refusées :",
-            value = "🟧 " * self.refused + "🔸 " * ( 4 - self.refused ))
+        embed.add_field(
+            name="Equipes refusées :",
+            value="🟧 " * self.refused + "🔸 " * ( 5 - self.refused ))
 
-        embed.add_field(name = "Chevaliers:",
-            value = '\n'.join([self.players[x].last_vote[:2] + globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]),
-            inline = False
-        )
+        embed.add_field(
+            name="Chevaliers:",
+            value='\n'.join([self.players[x].last_vote[:2] + globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]),
+            inline=False)
 
         if len(self.team):
-            embed.add_field(name = "Participants à la Quête :",
-                value = '\n'.join([(globals.number_emojis[i] + ' `' + str(self.players[x].user) + '`') for i, x in self.team.items()]),
-                inline = False)
+            embed.add_field(
+                name="Participants à la Quête :",
+                value='\n'.join([(globals.number_emojis[i] + ' `' + str(self.players[x].user) + '`') for i, x in self.team.items()]),
+                inline=False)
 
         if self.round == 3 and len(self.players) >= 7:
-            embed.add_field(name = "4e Quête",
-                value = "⚠️ **Deux Echecs requis pour faire rater la quête** ⚠️\n",
-                inline = False)
+            embed.add_field(
+                name="4e Quête",
+                value="⚠️ **Deux Echecs requis pour faire rater la quête** ⚠️\n",
+                inline=False)
 
         if info:
-            embed.add_field(name = info["name"],
-                value = info["value"])
+            embed.add_field(name=info["name"], value=info["value"])
 
         # --[ANCIEN BROADCAST]--
         # await self.channel.send(embed = embed)
         # for player in self.players.values():
         #     await player.user.send(embed = embed)
 
-        await self.broadcast(embed, mode = mode)
+        await self.broadcast(embed, mode=mode)
 
     #Est aussi un début de tour, envoies le choix de chancelier
     async def send_team_choice(self):
@@ -211,20 +214,23 @@ class Game:
         choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
 
         embed = discord.Embed(
-            title = "Equipe Choisie",
-            color = globals.color
-        )
+            title="Equipe Choisie",
+            color=globals.color)
 
-        embed.add_field(name = "Equipe (" + str(self.quests[self.round]) + (" restants)" if self.quests[self.round] > 1 else " restant)"),
-            value = "❌ Pas de participants choisis")
+        embed.add_field(
+            name="Equipe (" + str(self.quests[self.round]) + (" restants)" if self.quests[self.round] > 1 else " restant)"),
+            value="❌ Pas de participants choisis")
 
-        team_message = await leader.user.send(embed = embed)
+        team_message = await leader.user.send(embed=embed)
 
         async def update(reactions):
             embed = team_message.embeds[0]
-            embed.set_field_at(0, name = "Equipe (" + str(max(0, self.quests[self.round] - len(reactions[leader.user.id]))) + (" restants)" if self.quests[self.round] - len(reactions[leader.user.id]) > 1 else " restant)"),
-                value = '\n'.join([(globals.number_emojis[self.order.index(valid_candidates[i])] + ' `' + str(self.players[valid_candidates[i]].user) + '`') for i in reactions[leader.user.id]]) if len(reactions[leader.user.id]) else "❌ Pas de participants choisis")
-            await team_message.edit(embed = embed)
+            embed.set_field_at(
+                0,
+                name="Equipe (" + str(max(0, self.quests[self.round] - len(reactions[leader.user.id]))) + (" restants)" if self.quests[self.round] - len(reactions[leader.user.id]) > 1 else " restant)"),
+                value='\n'.join([(globals.number_emojis[self.order.index(valid_candidates[i])] + ' `' + str(self.players[valid_candidates[i]].user) + '`') for i in reactions[leader.user.id]]) if len(reactions[leader.user.id]) else "❌ Pas de participants choisis")
+
+            await team_message.edit(embed=embed)
 
         async def propose_team(reactions):
             for i in reactions[leader.user.id]:
@@ -239,15 +245,17 @@ class Game:
         async def cond(reactions):
             return len(reactions[self.order[self.turn]]) == self.quests[self.round]
 
-        await ReactionMessage(cond,
+        await ReactionMessage(
+            cond,
             propose_team,
-            update = update
-        ).send(leader.user,
+            update=update
+        ).send(
+            leader.user,
             "Choisissez votre Equipe (" + str(self.quests[self.round]) + (" participants)" if self.quests[self.round] > 1 else " participant)"),
             "",
             globals.color,
             choices,
-            emojis = emojis
+            emojis=emojis
         )
 
     #Appelé à chaque fois qu'un joueur vote. Vérifie les votes manquants puis la majorité
@@ -260,9 +268,10 @@ class Game:
 
             if player.vote_message:
                 embed = player.vote_message.message.embeds[0]
-                embed.set_field_at(0, name = "Votes:",
-                    value = ' '.join(["✉️" if self.players[x].last_vote == "" else "📩" for x in self.order])
-                )
+                embed.set_field_at(
+                    0,
+                    name="Votes:",
+                    value=' '.join(["✉️" if self.players[x].last_vote == "" else "📩" for x in self.order]))
 
                 if player.last_vote != "":
                     embed.description = "Le Leader `" + str(self.players[self.order[self.turn]].user) + "` a proposé comme Equipe:\n" + '\n'.join([(globals.number_emojis[i] + ' `' + str(self.players[x].user) + '`') for i, x in self.team.items()]) + "\n\nVous avez voté " + player.last_vote
@@ -270,7 +279,7 @@ class Game:
                 else:
                     missing = True
 
-                await player.vote_message.message.edit(embed = embed)
+                await player.vote_message.message.edit(embed=embed)
 
         if not missing and self.phase == "team_selection":
             self.phase = "vote_for_team"
@@ -287,10 +296,12 @@ class Game:
             if for_votes > len(self.order)/2:
                 #self.save({"type": "send_laws"})
 
-                await self.send_info(info = {"name": "Equipe acceptée",
-                    "value": "L'Equipe proposée a été acceptée. Elle va partir en quête et choisir si elle sera une Réussite ou un Echec."},
-                    color = 0x2e64fe
-                )
+                await self.send_info(
+                    info={
+                        "name": "Equipe acceptée",
+                        "value": "L'Equipe proposée a été acceptée. Elle va partir en quête et choisir si elle sera une Réussite ou un Echec."
+                    },
+                    color=0x2e64fe)
 
                 for id in self.team.values():
                     await self.players[id].send_choice(self)
@@ -298,9 +309,11 @@ class Game:
                 if self.refused == 4:
                     await self.end_game(False, "5 Equipes refusées")
                 else:
-                    await self.send_info(info = {"name": "Equipe refusée",
-                        "value": "L'Equipe proposée a été refusée. Le prochain leader va proposer une nouvelle composition."}
-                    )
+                    await self.send_info(
+                        info={
+                            "name": "Equipe refusée",
+                            "value": "L'Equipe proposée a été refusée. Le prochain leader va proposer une nouvelle composition."
+                        })
 
                     self.refused += 1
 
@@ -343,10 +356,12 @@ class Game:
 
             self.quests[self.round] = -1 if success else 0
 
-            await self.send_info(info = {"name": ((str(globals.quest_emojis["success"]) + " Quête réussie " + str(globals.quest_emojis["success"])) if success else (str(globals.quest_emojis["failure"]) + " Quête échouée " + str(globals.quest_emojis["failure"]))),
-                "value": "Choix : " + " ".join(self.played)},
-                color = 0x76ee00 if success else 0xef223f
-            )
+            await self.send_info(
+                info={
+                    "name": ((str(globals.quest_emojis["success"]) + " Quête réussie " + str(globals.quest_emojis["success"])) if success else (str(globals.quest_emojis["failure"]) + " Quête échouée " + str(globals.quest_emojis["failure"]))),
+                    "value": "Choix : " + " ".join(self.played)
+                },
+                color=0x76ee00 if success else 0xef223f)
 
             self.round += 1
             self.refused = 0
@@ -355,10 +370,10 @@ class Game:
                 await self.end_game(False, "3 Quêtes échouées")
             elif len([x for x in self.quests if x == -1]) == 3:
                 if len([x for x in self.players.values() if x.role == "merlin" or x.role == "assassin"]) > (0 if globals.debug else 1):
-                    await self.broadcast(discord.Embed(title = "Assassinat",
-                        description = "3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
-                        color = globals.color
-                    ))
+                    await self.broadcast(discord.Embed(
+                        title="Assassinat",
+                        description="3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
+                        color=globals.color))
 
                     await [x for x in self.players.values() if x.role == "assassin"][0].send_assassin_choice(self)
                 else:
@@ -367,7 +382,7 @@ class Game:
                 await self.next_turn()
 
     #Passe au prochain tour
-    async def next_turn(self, message = None):
+    async def next_turn(self, message=None):
         self.phase = "team_selection"
         self.turn = (self.turn + 1) % len(self.order)
 
@@ -383,11 +398,11 @@ class Game:
     #Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, good_wins, cause):
         if good_wins is True:
-            embed = discord.Embed(title = "[AVALON] Victoire des Gentils 🟦️ par " + cause  + " !", color = 0x2e64fe)
+            embed = discord.Embed(title="[AVALON] Victoire des Gentils 🟦️ par " + cause  + " !", color=0x2e64fe)
         elif good_wins is False:
-            embed = discord.Embed(title = "[AVALON] Victoire des Méchants 🟥 par " + cause  + " !", color = 0xef223f)
+            embed = discord.Embed(title="[AVALON] Victoire des Méchants 🟥 par " + cause  + " !", color=0xef223f)
         else:
-            embed = discord.Embed(title = "[AVALON] Victoire " + ("d'" if good_wins[:1] in ["E", "A", "I", "O", "U", "Y"] else "de ") + good_wins + " par " + cause  + " !", color = 0x76ee00)
+            embed = discord.Embed(title="[AVALON] Victoire " + ("d'" if good_wins[:1] in ["E", "A", "I", "O", "U", "Y"] else "de ") + good_wins + " par " + cause  + " !", color=0x76ee00)
 
         embed.description = "__Joueurs :__\n" + '\n'.join([globals.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + globals.visual_roles[self.players[x].role] for i,x in enumerate(self.order)])
 

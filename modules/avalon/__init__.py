@@ -143,16 +143,18 @@ class MainClass(BaseClassPython):
             async def cond(reactions):
                 return len(reactions[message.author.id]) == 1
 
-            await ReactionMessage(cond,
-                                  confirm
-                                  ).send(message.channel,
-                                         "Êtes vous sûr.e de vouloir réinitialiser la partie?",
-                                         "",
-                                         self.color,
-                                         ["Oui", "Non"],
-                                         emojis=["✅", "❎"],
-                                         validation_emoji="⭕"
-                                         )
+            await ReactionMessage(
+                cond,
+                confirm
+            ).send(
+                message.channel,
+                "Êtes vous sûr.e de vouloir réinitialiser la partie?",
+                "",
+                self.color,
+                ["Oui", "Non"],
+                emojis=["✅", "❎"],
+                validation_emoji="⭕"
+            )
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
