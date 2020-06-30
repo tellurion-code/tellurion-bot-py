@@ -184,51 +184,61 @@ class MainClass(BaseClassPython):
             if len(args) > 1:
                 if game.turn == -1:
                     if message.author.id in game.players:
-                        if args[1] == "reset":
+                        args.pop(0)
+                        subcommand = args.pop(0)
+
+                        if subcommand == "reset":
                             game.roles = []
                             await message.channel.send("Les rôles ont été réinitialisés")
                         else:
                             roles = args
-                            roles.pop(0)
-                            #faire un par un
-                            #ajouter reset
-                            if len(roles) >= len(game.players):
-                                done = True
-                                valid_roles = {"gentil": "good",
-                                    "méchant": "evil",
-                                    "merlin": "merlin",
-                                    "perceval": "percival",
-                                    "lancelot": "lancelot",
-                                    "karadoc": "karadoc",
-                                    "galaad": "galaad",
-                                    "uther": "uther",
-                                    "assassin": "assassin",
-                                    "morgane": "morgane",
-                                    "mordred": "mordred",
-                                    "oberon": "oberon",
-                                    "agrav1": "agrav1",
-                                    "agrav2": "agrav2",
-                                    "elias": "elias"}
+                            invalid_roles = []
+                            valid_roles = {"gentil": "good",
+                                "méchant": "evil",
+                                "mechant": "evil",
+                                "merlin": "merlin",
+                                "perceval": "percival",
+                                "lancelot": "lancelot",
+                                "karadoc": "karadoc",
+                                "galaad": "galaad",
+                                "uther": "uther",
+                                "assassin": "assassin",
+                                "morgane": "morgane",
+                                "mordred": "mordred",
+                                "oberon": "oberon",
+                                "agrav1": "agrav1",
+                                "agrav2": "agrav2",
+                                "elias": "elias"}
 
-                                for role in roles:
-                                    if role not in valid_roles:
-                                        done = False
-                                        break
+                            for role in roles:
+                                if role not in valid_roles:
+                                    invalid_roles.push(role)
 
-                                if done:
+                            if not len(invalid_roles):
+                                if subcommand == "set":
                                     game.roles = [valid_roles[x] for x in roles]
                                     await message.channel.send("Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]))
+                                if subcommand == "add":
+                                    game.roles.extend([valid_roles[x] for x in roles])
+                                    await message.channel.send("Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]))
+                                elif subcommand == "remove":
+                                    for x in roles:
+                                        for role in game.roles:
+                                            if role == valid_roles[x]:
+                                                game.roles.remove(role)
+
+                                    await message.channel.send("Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]))
                                 else:
-                                    await message.channel.send('Il faut préciser autant de roles que de joueurs en arguments (Un des roles était invalide)')
+                                    await message.channel.send("Sous-commande invalide")
                             else:
-                                await message.channel.send('Il faut préciser autant de roles que de joueurs en arguments (Pas assez de rôles)')
+                                await message.channel.send(', '.join(invalid_roles) + " est/sont un/des rôle(s) invalide(s))")
                     else:
                         await message.channel.send("Vous n'êtes pas dans la partie")
                 else:
                     await message.author.send("La partie a déjà commencé")
             else:
                 if len(game.roles):
-                    await message.channel.send('Rôles actuels: ' + ', '.join([globals.visual_roles[x] for x in game.roles]))
+                    await message.channel.send('Rôles actuels (' +  + '): ' + ', '.join([globals.visual_roles[x] for x in game.roles]))
                 else:
                     await message.channel.send('Rôles actuels: [Dépendant du nombre de joueurs]')
         else:

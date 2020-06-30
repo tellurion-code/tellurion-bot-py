@@ -99,7 +99,7 @@ class Good(Player):
 
         galaad = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "galaad"]
         if len(galaad):
-            self.embed.add_field(name = "Galaad",
+            self.embed.add_field(name = "🙋 Galaad",
                 value = '\n'.join(galaad))
 
     async def _game_start(self, game):
@@ -360,3 +360,12 @@ class Elias(Solo):
             self.embed.add_field(name = "Merlin :",
                 value = random.choice(merlin)
             )
+
+# class Maleagant(Solo):
+#     role = "maleagant"
+#
+#     async def _game_start(self, game):
+#         self.embed = discord.Embed(title = "Début de partie 🧿",
+#             description = "Vous êtes Méléagant. A chaque quête, vous devrez parier sur sa réussite ou son échec. Si vous faites un sans-faute, vous gagnez seul. Sinon, vous devrez gagner avec les méchants.",
+#             color = self.color
+#         )
