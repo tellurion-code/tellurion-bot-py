@@ -204,37 +204,47 @@ class MainClass(BaseClassPython):
             await message.channel.send("Il n'y a pas de partie en cours")
 
     async def com_rules(self, message, args, kwargs):
-        await message.channel.send(embed = discord.Embed(title = ":small_orange_diamond: Règle du Avalon :small_orange_diamond:",
-            description = """:small_blue_diamond: But du jeu : :small_blue_diamond:
-                Il a 2 équipes, les gentils et les méchants, leur but est :
-                 - Pour les gentils faire réussir 3 quêtes
-                 - Pour les méchants faire échouer 3 quêtes OU faire annuler 5 propositions d’équipe à la suite.
+        if args[1] == "roles":
+            await message.channel.send(embed = discord.Embed(title = ":small_blue_diamond: Les rôles spéciaux : :small_blue_diamond:",
+                description = """🟦 Les gentils: 🟦
+                Merlin 🧙‍♂️ : Il connaît tous les noms des méchants et celui de Karadoc (Hormis Mordred).
+                Perceval 🤴 : Il connaît le pseudo de Merlin et de Morgane mais pas qui est qui.
+                Karadoc 🥴 : Il apparaît comme un méchant à Merlin.
+                Gauvain 🛡️ : Peut inverser le résultat de la quête s'il est dedans.
+                Galaad 🙋 : Les gentils le connaissent.
+                Uther 👨‍🦳 : En début de partie, il choisit un joueur dont il apprend le rôle.
 
-                :small_blue_diamond: Déroulement d’un tour : :small_blue_diamond:
-                 -  Au début du tour le chef d’équipe choisit qui partira en quête
-                 -  Les joueurs votent* pour ou contre la composition de l’équipe
-                      -  Si l’équipe est validée, ses membres valident en secret pour ou contre la réussite de la quête. Attention, il suffit d’un seul vote échec pour faire échouer la quête
-                      -  Si l’équipe n’est pas validée, c’est au chef d’équipe suivant de choisir la composition de l’équipe
-                Attention S’il y a 7 participants ou plus, la quête n°4 doit avoir 2 échecs pour échouer
+                🟥 Les méchants: 🟥
+                Assassin 🗡️ : Si les gentils ont réussi 3 quêtes, il peut tenter d’assassiner Merlin. S’il y parvient les méchants gagnent la partie.
+                Mordred 😈 : Il n’est pas connu de Merlin.
+                Morgane 🧙‍♀️ : Elle apparait aux yeux de Perceval.
+                Oberon 😶 : Il ne connait pas ses alliés et ses alliés ne savent pas qui il est.
+                Lancelot ⚔️ : Peut inverser le résultat de la quête s'il est dedans.
 
-                :small_blue_diamond: Les clans : :small_blue_diamond:
-                Gentils  : Simplement gentil
-                Méchant  : Les méchants se connaissent entre eux
-                Solo     : Ils gagnent autrement qu'avec la réussite ou l'échec des quêtes
-                (Conseil : Ne vous faites jamais passer pour un méchant)
+                🟩 Les solos: 🟩
+                Elias 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils.""",
+                color = globals.color))
+        else:
+            await message.channel.send(embed = discord.Embed(title = ":small_orange_diamond: Règle du Avalon :small_orange_diamond:",
+                description = """:small_blue_diamond: But du jeu : :small_blue_diamond:
+                    Il a 2 équipes, les gentils et les méchants, leur but est :
+                     - Pour les gentils faire réussir 3 quêtes
+                     - Pour les méchants faire échouer 3 quêtes OU faire annuler 5 propositions d’équipe à la suite.
 
-                :small_blue_diamond: Les rôles spéciaux : :small_blue_diamond:
-                Merlin (gentil) : Il connaît tous les noms des méchants et celui de Karadoc (Hormis Mordred)
-                Perceval (gentil) : Il connaît le pseudo de Merlin et de Morgane mais pas qui est qui.
-                Karadoc (gentil): Il apparaît comme un méchant à Merlin
-                Gauvain (gentil): Peut inverser le résultat de la quête s'il est dedans.
-                Galaad (gentil): Les gentils connaissent son pseudo.
-                Uther (gentil): En début de partie, il choisit un joueur dont il apprend le rôle
-                Assassin (méchant) : Si les gentils ont réussi 3 quêtes, il peut tenter d’assassiner Merlin. S’il y parvient les méchants gagnent la partie.
-                Mordred (méchant) : Il n’est pas connu de Merlin.
-                Morgane (méchant) : Elle apparait aux yeux de Perceval.
-                Oberon (méchant) : Il ne connait pas ses alliés et ses alliés ne savent pas qui il est.
-                Lancelot (méchant): Peut inverser le résultat de la quête s'il est dedans.
-                Elias (solo): S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils.
+                    :small_blue_diamond: Déroulement d’un tour : :small_blue_diamond:
+                     -  Au début du tour le chef d’équipe choisit qui partira en quête
+                     -  Les joueurs votent* pour ou contre la composition de l’équipe
+                          -  Si l’équipe est validée, ses membres valident en secret pour ou contre la réussite de la quête. Attention, il suffit d’un seul vote échec pour faire échouer la quête
+                          -  Si l’équipe n’est pas validée, c’est au chef d’équipe suivant de choisir la composition de l’équipe
+                    Attention S’il y a 7 participants ou plus, la quête n°4 doit avoir 2 échecs pour échouer
 
-                *Note : Tous les votes se font par le biais des réactions ( :white_check_mark: et :negative_squared_cross_mark: )"""))
+                    :small_blue_diamond: Les clans : :small_blue_diamond:
+                    Gentils  : Simplement gentil
+                    Méchant  : Les méchants se connaissent entre eux
+                    Solo     : Ils gagnent autrement qu'avec la réussite ou l'échec des quêtes
+                    (Conseil : Ne vous faites jamais passer pour un méchant)
+
+                    :small_blue_diamond: **Utilisez "avalon rules roles" poura voir la liste des rôels spéciaux** :small_blue_diamond:
+
+                    *Note : Tous les votes se font par le biais des réactions ( :white_check_mark: et :negative_squared_cross_mark: )""",
+                color = globals.color))
