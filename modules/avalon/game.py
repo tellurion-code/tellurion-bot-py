@@ -300,9 +300,11 @@ class Game:
                 if self.refused == 5:
                     await self.end_game(False, "5 Equipes refusées")
                 elif self.refused >= 1:
-                    await self.next_turn({"name": "Equipe refusée",
-                        "value": "L'Equipe proposée a été refusée. Le prochain leader va proposer une nouvelle composition."},
-                        False)
+                    await self.send_info(info = {"name": "Equipe refusée",
+                        "value": "L'Equipe proposée a été refusée. Le prochain leader va proposer une nouvelle composition."}
+                    )
+
+                    await self.next_turn()
 
     async def check_quest_end(self):
         missing = False
@@ -365,7 +367,7 @@ class Game:
                 await self.next_turn()
 
     #Passe au prochain tour
-    async def next_turn(self, message = None, new = True):
+    async def next_turn(self, message = None):
         self.phase = "team_selection"
         self.turn = (self.turn + 1) % len(self.order)
 
@@ -375,7 +377,7 @@ class Game:
 
         self.team = {}
 
-        await self.send_info(mode = "set" if new else "replace", info = message)
+        await self.send_info(mode = "set", info = message)
         await self.send_team_choice()
 
     #Fin de partie, envoies le message de fin et détruit la partie
