@@ -2,7 +2,7 @@ import discord
 import random
 import math
 
-from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Lancelot, Karadoc, Galaad, Uther, Assassin, Morgane, Mordred, Oberon, Agrav1, Agrav2
+from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Lancelot, Karadoc, Galaad, Uther, Assassin, Morgane, Mordred, Oberon, Agrav1, Agrav2, Elias
 from modules.avalon.reaction_message import ReactionMessage
 
 import modules.avalon.globals as globals
@@ -47,8 +47,8 @@ class Game:
             [], #0
             [], #1
             [1, 1, 2, 2, 2], #2, Debug
-            [2, 2, 2, 2, 2], #3
-            [1, 2, 2, 2, 2], #4
+            [1, 2, 2, 2, 2], #3
+            [2, 2, 2, 2, 2], #4
             [2, 3, 2, 3, 3], #5
             [2, 3, 4, 3, 4], #6
             [2, 3, 3, 4, 4], #7
@@ -87,7 +87,8 @@ class Game:
             "mordred": Mordred,
             "oberon": Oberon,
             "agrav1": Agrav1,
-            "agrav2": Agrav2
+            "agrav2": Agrav2,
+            "elias": Elias
         }
 
         if len(self.roles) == 0:
@@ -209,14 +210,14 @@ class Game:
             color = globals.color
         )
 
-        embed.add_field(name = "Equipe",
+        embed.add_field(name = "Equipe (" + self.quests[self.round] + " restants)",
             value = "❌ Pas de participants choisis")
 
         team_message = await leader.user.send(embed = embed)
 
         async def update(reactions):
             embed = team_message.embeds[0]
-            embed.set_field_at(0, name = "Equipe",
+            embed.set_field_at(0, name = "Equipe (" +  max(0, self.quests[self.round] - len(reactions[leader.user.id])) + " restants)",
                 value = '\n'.join([(globals.number_emojis[self.order.index(valid_candidates[i])] + ' `' + str(self.players[valid_candidates[i]].user) + '`') for i in reactions[leader.user.id]]) if len(reactions[leader.user.id]) else "❌ Pas de participants choisis")
             await team_message.edit(embed = embed)
 
@@ -283,7 +284,7 @@ class Game:
 
                 await self.send_info(info = {"name": "Equipe acceptée",
                     "value": "L'Equipe proposée a été acceptée. Elle va partir en quête et choisir si elle sera une Réussite ou un Echec."},
-                    color = 0x00ff00
+                    color = 0x2e64fe
                 )
 
                 for id in self.team.values():
@@ -340,7 +341,7 @@ class Game:
 
             await self.send_info(info = {"name": ((str(globals.quest_emojis["success"]) + " Quête réussie " + str(globals.quest_emojis["success"])) if success else (str(globals.quest_emojis["failure"]) + " Quête échouée " + str(globals.quest_emojis["failure"]))),
                 "value": "Choix : " + " ".join(self.played)},
-                color = 0x2e64fe if success else 0xef223f
+                color = 0x76ee00 if success else 0xef223f
             )
 
             self.round += 1

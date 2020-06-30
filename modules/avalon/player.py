@@ -60,7 +60,7 @@ class Player:
             emojis = emojis,
             fields = [
                 {
-                    "name": "Votes:",
+                    "name": "Votes :",
                     "value": ' '.join(["✉️" for x in game.order])
                 }
             ]
@@ -119,7 +119,7 @@ class Merlin(Good):
 
         evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "mordred" or game.players[x].role == "karadoc"]
         if len(evils):
-            self.embed.add_field(name = "Vos ennemis:",
+            self.embed.add_field(name = "Vos ennemis :",
                 value = '\n'.join(evils)
             )
 
@@ -134,7 +134,7 @@ class Percival(Good):
 
         mages = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role in ["merlin", "morgane"]]
         if len(mages):
-            self.embed.add_field(name = "Les mages:",
+            self.embed.add_field(name = "Les mages :",
                 value = '\n'.join(mages)
             )
 
@@ -226,7 +226,7 @@ class Evil(Player):
 
         evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
         if len(evils):
-            self.embed.add_field(name = "Vos co-équipiers:",
+            self.embed.add_field(name = "Vos co-équipiers :",
                 value = '\n'.join(evils)
             )
 
@@ -333,22 +333,28 @@ class Agrav2(Evil):
 
         evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
         if len(evils):
-            self.embed.add_field(name = "Un de vos co-équipiers:",
+            self.embed.add_field(name = "Un de vos co-équipiers :",
                 value = random.choice(evils)
             )
 
-# class Solo(Player):
-#     allegiance = "solo"
-#     color = 0x76EE00
-#
-#     async def team_game_start(self, game):
-#         await self._game_start(game)
-#
-# class Venec(Solo):
-#     role = "venec"
-#
-#     async def _game_start(self, game):
-#         self.embed = discord.Embed(title = "Début de partie 🤘",
-#             description = "Vous êtes Venec. Vous devez faire assassiner.",
-#             color = self.color
-#         )
+class Solo(Player):
+    allegiance = "solo"
+    color = 0x76ee00
+
+    async def team_game_start(self, game):
+        await self._game_start(game)
+
+class Elias(Solo):
+    role = "elias"
+
+    async def _game_start(self, game):
+        self.embed = discord.Embed(title = "Début de partie 🧙",
+            description = "Vous êtes Elias. Vous devez vous faire assassiner pour prendre la place de Merlin. Vous connaissez Merlin.",
+            color = self.color
+        )
+
+        merlin = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "merlin"]
+        if len(merlin):
+            self.embed.add_field(name = "Merlin :",
+                value = random.choice(merlin)
+            )

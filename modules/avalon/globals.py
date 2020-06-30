@@ -27,5 +27,6 @@ def init():
         "mordred": "😈 Mordred",
         "oberon": "😶 Oberon",
         "agrav1": "⚔️ Agravain",
-        "agrav2": "⚔️ Agravain"
+        "agrav2": "⚔️ Agravain",
+        "elias": "🧙 Elias"
     }
