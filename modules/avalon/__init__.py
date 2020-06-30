@@ -217,17 +217,17 @@ class MainClass(BaseClassPython):
                             if not len(invalid_roles):
                                 if subcommand == "set":
                                     game.roles = [valid_roles[x] for x in roles]
-                                    await message.channel.send("Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]))
-                                if subcommand == "add":
+                                    await message.channel.send("Rôles changés pour (" + len(game.roles) + "): " + ', '.join([globals.visual_roles[x] for x in game.roles]))
+                                elif subcommand == "add":
                                     game.roles.extend([valid_roles[x] for x in roles])
-                                    await message.channel.send("Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]))
+                                    await message.channel.send("Rôles changés pour (" + len(game.roles) + "): " + ', '.join([globals.visual_roles[x] for x in game.roles]))
                                 elif subcommand == "remove":
                                     for x in roles:
                                         for role in game.roles:
                                             if role == valid_roles[x]:
                                                 game.roles.remove(role)
 
-                                    await message.channel.send("Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles]))
+                                    await message.channel.send("Rôles changés pour (" + len(game.roles) + "): " + ', '.join([globals.visual_roles[x] for x in game.roles]))
                                 else:
                                     await message.channel.send("Sous-commande invalide")
                             else:
@@ -238,7 +238,7 @@ class MainClass(BaseClassPython):
                     await message.author.send("La partie a déjà commencé")
             else:
                 if len(game.roles):
-                    await message.channel.send('Rôles actuels (' +  + '): ' + ', '.join([globals.visual_roles[x] for x in game.roles]))
+                    await message.channel.send('Rôles actuels (' + len(game.roles) + '): ' + ', '.join([globals.visual_roles[x] for x in game.roles]))
                 else:
                     await message.channel.send('Rôles actuels: [Dépendant du nombre de joueurs]')
         else:
