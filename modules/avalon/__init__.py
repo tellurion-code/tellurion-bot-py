@@ -239,22 +239,22 @@ class MainClass(BaseClassPython):
             if args[1] == "roles":
                 await message.channel.send(embed = discord.Embed(title = ":small_blue_diamond: Les rôles spéciaux : :small_blue_diamond:",
                     description = """🟦 Les gentils: 🟦
-                    Merlin 🧙‍♂️ : Il connaît tous les noms des méchants et celui de Karadoc (Hormis Mordred).
-                    Perceval 🤴 : Il connaît le pseudo de Merlin et de Morgane mais pas qui est qui.
-                    Karadoc 🥴 : Il apparaît comme un méchant à Merlin.
-                    Gauvain 🛡️ : Peut inverser le résultat de la quête s'il est dedans.
-                    Galaad 🙋 : Les gentils le connaissent.
-                    Uther 👨‍🦳 : En début de partie, il choisit un joueur dont il apprend le rôle.
+                    __Merlin__ 🧙‍♂️ : Il connaît tous les noms des méchants et celui de Karadoc (Hormis Mordred).
+                    __Perceval__ 🤴 : Il connaît le pseudo de Merlin et de Morgane mais pas qui est qui.
+                    __Karadoc__ 🥴 : Il apparaît comme un méchant à Merlin.
+                    __Gauvain__ 🛡️ : Peut inverser le résultat de la quête s'il est dedans.
+                    __Galaad__ 🙋 : Les gentils le connaissent.
+                    __Uther__ 👨‍🦳 : En début de partie, il choisit un joueur dont il apprend le rôle.
 
                     🟥 Les méchants: 🟥
-                    Assassin 🗡️ : Si les gentils ont réussi 3 quêtes, il peut tenter d’assassiner Merlin. S’il y parvient les méchants gagnent la partie.
-                    Mordred 😈 : Il n’est pas connu de Merlin.
-                    Morgane 🧙‍♀️ : Elle apparait aux yeux de Perceval.
-                    Oberon 😶 : Il ne connait pas ses alliés et ses alliés ne savent pas qui il est.
-                    Lancelot ⚔️ : Peut inverser le résultat de la quête s'il est dedans. Ne peut pas mettre d'Echec.
+                    __Assassin__ 🗡️ : Si les gentils ont réussi 3 quêtes, il peut tenter d’assassiner Merlin. S’il y parvient les méchants gagnent la partie.
+                    __Mordred__ 😈 : Il n’est pas connu de Merlin.
+                    __Morgane__ 🧙‍♀️ : Elle apparait aux yeux de Perceval.
+                    __Oberon__ 😶 : Il ne connait pas ses alliés et ses alliés ne savent pas qui il est.
+                    __Lancelot__ ⚔️ : Peut inverser le résultat de la quête s'il est dedans. Ne peut pas mettre d'Echec.
 
                     🟩 Les solos: 🟩
-                    Elias 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.""",
+                    __Elias__ 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.""",
                     color = globals.color))
             else:
                 await message.channel.send("Sous-section inconnue")
