@@ -133,9 +133,25 @@ class MainClass(BaseClassPython):
     #Réitinitialise et supprime la partie
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in globals.games:
-            await message.channel.send("La partie a été réinitialisée")
-            #globals.games[message.channel.id].delete_save()
-            globals.games.pop(message.channel.id)
+            async def confirm(reactions):
+                if reactions[message.author.id][0] == 0:
+                    await message.channel.send("La partie a été réinitialisée")
+                    #globals.games[message.channel.id].delete_save()
+                    globals.games.pop(message.channel.id)
+
+            async def cond(reactions):
+                return len(reactions[message.author.id]) == 1
+
+            await ReactionMessage(cond,
+                confirm
+            ).send(message.channel,
+                "Êtes vous sûr.e de vouloir réinitialiser la partie?",
+                "",
+                self.color,
+                ["Oui", "Non"],
+                emojis = ["✅", "❎"],
+                validation_emoji = "⭕"
+            )
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -211,28 +227,26 @@ class MainClass(BaseClassPython):
                                 "elias": "elias"}
 
                             for role in roles:
+                                role = role.lower()
                                 if role not in valid_roles:
                                     invalid_roles.append(role)
 
                             if not len(invalid_roles):
                                 if subcommand == "set":
                                     game.roles = [valid_roles[x] for x in roles]
-                                    await message.channel.send(embed = discord.Embed(title = "Rôles",
-                                        description = "Rôles changés pour (" + str(len(game.roles)) + "): " + ', '.join([globals.visual_roles[x] for x in game.roles])))
                                 elif subcommand == "add":
                                     game.roles.extend([valid_roles[x] for x in roles])
-                                    await message.channel.send(embed = discord.Embed(title = "Rôles",
-                                        description = "Rôles changés pour (" + str(len(game.roles)) + "): " + ', '.join([globals.visual_roles[x] for x in game.roles])))
                                 elif subcommand == "remove":
                                     for x in roles:
                                         for role in game.roles:
                                             if role == valid_roles[x]:
                                                 game.roles.remove(role)
-
-                                    await message.channel.send(embed = discord.Embed(title = "Rôles",
-                                        description = "Rôles changés pour (" + str(len(game.roles)) + "): " + ', '.join([globals.visual_roles[x] for x in game.roles])))
                                 else:
                                     await message.channel.send("Sous-commande invalide")
+
+                                await message.channel.send(embed = discord.Embed(title = "Rôles (" + str(len(game.roles)) + ")",
+                                    description = "Rôles changés pour : " + ', '.join([globals.visual_roles[x] for x in game.roles])),
+                                    color = self.color)
                             else:
                                 await message.channel.send(', '.join(invalid_roles) + " est/sont un/des rôle(s) invalide(s))")
                     else:
@@ -241,10 +255,13 @@ class MainClass(BaseClassPython):
                     await message.author.send("La partie a déjà commencé")
             else:
                 if len(game.roles):
-                    await message.channel.send(embed = discord.Embed(title = "Rôles",
-                        description = "Rôles actuels (" + str(len(game.roles)) + "): " + ', '.join([globals.visual_roles[x] for x in game.roles])))
+                    await message.channel.send(embed = discord.Embed(title = "Rôles (" + str(len(game.roles)) + ")",
+                        description = "Rôles actuels : " + ', '.join([globals.visual_roles[x] for x in game.roles])),
+                        color = self.color)
                 else:
-                    await message.channel.send('Rôles actuels: [Dépendant du nombre de joueurs]')
+                    await message.channel.send(embed = discord.Embed(title = "Rôles",
+                        description = "Rôles actuels : [Dépendant du nombre de joueurs]",
+                        color = self.color)
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 

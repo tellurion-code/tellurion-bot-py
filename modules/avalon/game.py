@@ -295,14 +295,14 @@ class Game:
                 for id in self.team.values():
                     await self.players[id].send_choice(self)
             else:
-                self.refused += 1
-
-                if self.refused == 5:
+                if self.refused == 4:
                     await self.end_game(False, "5 Equipes refusées")
-                elif self.refused >= 1:
+                else:
                     await self.send_info(info = {"name": "Equipe refusée",
                         "value": "L'Equipe proposée a été refusée. Le prochain leader va proposer une nouvelle composition."}
                     )
+
+                    self.refused += 1
 
                     await self.next_turn()
 
