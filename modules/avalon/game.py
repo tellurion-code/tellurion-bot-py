@@ -171,10 +171,10 @@ class Game:
             value = " ".join([globals.number_emojis[x - 1] if x > 0 else (str(globals.quest_emojis["success"]) if x else str(globals.quest_emojis["failure"])) for x in self.quests]))
 
         embed.add_field(name = "Equipes refusées :",
-            value = "🟧" * self.refused + "🔸" * ( 4 - self.refused ))
+            value = "🟧 " * self.refused + "🔸 " * ( 4 - self.refused ))
 
         embed.add_field(name = "__Chevaliers:__",
-            value = '\n'.join([self.players[x].last_vote[:1] + globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]),
+            value = '\n'.join([self.players[x].last_vote[:1] + " " +    globals.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]),
             inline = False
         )
 
