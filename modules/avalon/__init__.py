@@ -223,12 +223,12 @@ class MainClass(BaseClassPython):
                     Lancelot ⚔️ : Peut inverser le résultat de la quête s'il est dedans.
 
                     🟩 Les solos: 🟩
-                    Elias 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils.""",
+                    Elias 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.""",
                     color = globals.color))
             else:
                 await message.channel.send("Sous-section inconnue")
         else:
-            await message.channel.send(embed = discord.Embed(title = ":small_orange_diamond: Règle du Avalon :small_orange_diamond:",
+            await message.channel.send(embed = discord.Embed(title = ":small_orange_diamond: Règles du Avalon :small_orange_diamond:",
                 description = """:small_blue_diamond: But du jeu : :small_blue_diamond:
                     Il a 2 équipes, les gentils et les méchants, leur but est :
                      - Pour les gentils faire réussir 3 quêtes
@@ -242,12 +242,12 @@ class MainClass(BaseClassPython):
                     Attention S’il y a 7 participants ou plus, la quête n°4 doit avoir 2 échecs pour échouer
 
                     :small_blue_diamond: Les clans : :small_blue_diamond:
-                    Gentils  : Simplement gentil
-                    Méchant  : Les méchants se connaissent entre eux
-                    Solo     : Ils gagnent autrement qu'avec la réussite ou l'échec des quêtes
+                    🟦 Gentils  : Simplement gentil
+                    🟥 Méchant  : Les méchants se connaissent entre eux
+                    🟩 Solo     : Ils gagnent autrement qu'avec la réussite ou l'échec des quêtes
                     (Conseil : Ne vous faites jamais passer pour un méchant)
 
-                    :small_blue_diamond: **Utilisez "avalon rules roles" poura voir la liste des rôels spéciaux** :small_blue_diamond:
+                    :small_blue_diamond: **Utilisez "avalon rules roles" poura voir la liste des rôles spéciaux** :small_blue_diamond:
 
                     *Note : Tous les votes se font par le biais des réactions ( :white_check_mark: et :negative_squared_cross_mark: )""",
                 color = globals.color))

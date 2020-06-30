@@ -140,10 +140,10 @@ class Percival(Good):
 
 class Lancelot(Good):
     role = "lancelot"
-    quest_choices = ["Réussite", "Echec", "Inversion"]
+    quest_choices = ["Réussite", "Inversion"]
 
     async def _game_start(self, game):
-        self.quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
+        self.quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["reverse"]]
 
         self.embed = discord.Embed(title = "Début de partie ️🛡️",
             description = "Vous êtes Lancelot. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans.",
@@ -305,13 +305,13 @@ class Oberon(Evil):
 
 class Agrav1(Evil):
     role = "agrav1"
-    quest_choices = ["Réussite", "Echec", "Inversion"]
+    quest_choices = ["Réussite", "Inversion"]
 
     async def team_game_start(self, game):
         await self._game_start(game)
 
     async def _game_start(self, game):
-        self.quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
+        self.quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["reverse"]]
 
         self.embed = discord.Embed(title = "Début de partie ⚔️️",
             description = "Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez pas les méchants mais les méchants vous connaisent.",
@@ -320,13 +320,13 @@ class Agrav1(Evil):
 
 class Agrav2(Evil):
     role = "agrav2"
-    quest_choices = ["Réussite", "Echec", "Inversion"]
+    quest_choices = ["Réussite", "Inversion"]
 
     async def team_game_start(self, game):
         await self._game_start(game)
 
     async def _game_start(self, game):
-        self.quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["failure"], globals.quest_emojis["reverse"]]
+        self.quest_emojis = [globals.quest_emojis["success"], globals.quest_emojis["reverse"]]
 
         self.embed = discord.Embed(title = "Début de partie ⚔️️",
             description = "Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent.",

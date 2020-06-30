@@ -184,7 +184,7 @@ class Game:
                 value = '\n'.join([(globals.number_emojis[i] + ' `' + str(self.players[x].user) + '`') for i, x in self.team.items()]),
                 inline = False)
 
-        if info:
+        if info or self.round == 3 and len(self.players) >= 7:
             embed.add_field(name = info["name"],
                 value = ("⚠️ **Deux Echecs requis pour faire rater la quête** ⚠️\n" if self.round == 3 and len(self.players) >= 7 else "") + info["value"])
 
@@ -350,7 +350,7 @@ class Game:
             if len([x for x in self.quests if x == 0]) == 3:
                 await self.end_game(False, "3 Quêtes échouées")
             elif len([x for x in self.quests if x == -1]) == 3:
-                if len([x for x in self.players.values() if x.role == "merlin" or x.role == "assassin"]) > 0 if globals.debug else 1:
+                if len([x for x in self.players.values() if x.role == "merlin" or x.role == "assassin"]) > (0 if globals.debug else 1):
                     await self.broadcast(discord.Embed(title = "Assassinat",
                         description = "3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
                         color = globals.color
