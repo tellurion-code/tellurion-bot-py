@@ -212,7 +212,7 @@ class MainClass(BaseClassPython):
 
                             for role in roles:
                                 if role not in valid_roles:
-                                    invalid_roles.push(role)
+                                    invalid_roles.append(role)
 
                             if not len(invalid_roles):
                                 if subcommand == "set":
