@@ -184,9 +184,13 @@ class Game:
                 value = '\n'.join([(globals.number_emojis[i] + ' `' + str(self.players[x].user) + '`') for i, x in self.team.items()]),
                 inline = False)
 
-        if info or self.round == 3 and len(self.players) >= 7:
+        if self.round == 3 and len(self.players) >= 7:
+            embed.add_field(name = "4e Quête",
+                value = "⚠️ **Deux Echecs requis pour faire rater la quête** ⚠️\n")
+
+        if info:
             embed.add_field(name = info["name"],
-                value = ("⚠️ **Deux Echecs requis pour faire rater la quête** ⚠️\n" if self.round == 3 and len(self.players) >= 7 else "") + info["value"])
+                value = info["value"])
 
         # --[ANCIEN BROADCAST]--
         # await self.channel.send(embed = embed)
