@@ -37,7 +37,8 @@ class MainClass(BaseClassPython):
         # })
 
     async def on_ready(self):
-        globals.quest_emojis["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782) #Get the custom emoji
+        if self.client.get_guild(297780867286433792):
+            globals.quest_emojis["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782) #Get the custom emoji
 
     async def command(self, message, args, kwargs):
         if args[0] == "join't":

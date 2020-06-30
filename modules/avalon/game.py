@@ -210,14 +210,14 @@ class Game:
             color = globals.color
         )
 
-        embed.add_field(name = "Equipe (" + self.quests[self.round] + " restants)",
+        embed.add_field(name = "Equipe (" + str(self.quests[self.round]) + (" restants)" if self.quests[self.round] > 1 else " restant)"),
             value = "❌ Pas de participants choisis")
 
         team_message = await leader.user.send(embed = embed)
 
         async def update(reactions):
             embed = team_message.embeds[0]
-            embed.set_field_at(0, name = "Equipe (" +  max(0, self.quests[self.round] - len(reactions[leader.user.id])) + " restants)",
+            embed.set_field_at(0, name = "Equipe (" + str(max(0, self.quests[self.round] - len(reactions[leader.user.id]))) + (" restants)" if self.quests[self.round] - len(reactions[leader.user.id]) > 1 else " restant)"),
                 value = '\n'.join([(globals.number_emojis[self.order.index(valid_candidates[i])] + ' `' + str(self.players[valid_candidates[i]].user) + '`') for i in reactions[leader.user.id]]) if len(reactions[leader.user.id]) else "❌ Pas de participants choisis")
             await team_message.edit(embed = embed)
 
@@ -350,7 +350,7 @@ class Game:
             if len([x for x in self.quests if x == 0]) == 3:
                 await self.end_game(False, "3 Quêtes échouées")
             elif len([x for x in self.quests if x == -1]) == 3:
-                if len([x for x in self.players.values() if x.role == "merlin" or x.role == "assassin"]) > 1:
+                if len([x for x in self.players.values() if x.role == "merlin" or x.role == "assassin"]) > 0 if globals.debug else 1:
                     await self.broadcast(discord.Embed(title = "Assassinat",
                         description = "3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
                         color = globals.color
@@ -378,10 +378,12 @@ class Game:
 
     #Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, good_wins, cause):
-        if good_wins:
+        if good_wins is True:
             embed = discord.Embed(title = "Victoire des Gentils 🟦️ par " + cause  + " !", color = 0x2e64fe)
-        else:
+        elif good_wins is False:
             embed = discord.Embed(title = "Victoire des Méchants 🟥 par " + cause  + " !", color = 0xef223f)
+        else:
+            embed = discord.Embed(title = "Victoire de " + good_wins + " par " + cause  + " !", color = 0x76ee00)
 
         embed.description = "__Joueurs :__\n" + '\n'.join([globals.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + globals.visual_roles[self.players[x].role] for i,x in enumerate(self.order)])
 

@@ -246,7 +246,7 @@ class Assassin(Evil):
         )
 
     async def send_assassin_choice(self, game):
-        valid_candidates = [x for x in game.order if game.players[x].allegiance == "good"]
+        valid_candidates = [x for x in game.order if game.players[x].allegiance != "evil"]
         emojis = [globals.number_emojis[game.order.index(x)] for x in valid_candidates]
         choices = ["`" + str(game.players[x].user) + "`" for x in valid_candidates]
 
@@ -255,6 +255,8 @@ class Assassin(Evil):
 
             if killed.role == "merlin":
                 await game.end_game(False, "assassinat de Merlin (`" + str(killed.user) + "`)")
+            elif killed.role == "elias":
+                await game.end_game(globals.visual_roles[killed.role], "usurpation (`" + str(killed.user) + "`)")
             else:
                 await game.end_game(True, "3 Quêtes réussies (Assassinat de `" + str(killed.user) + "` qui était " + globals.visual_roles[killed.role] + ")")
 
