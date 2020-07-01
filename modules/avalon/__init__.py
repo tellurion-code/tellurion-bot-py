@@ -55,7 +55,7 @@ class MainClass(BaseClassPython):
                 if message.author.id in game.players:
                     await message.channel.send("Vous êtes déjà dans la partie")
                 else:
-                    if len(game.players) < 14:
+                    if len(game.players) < 10:
                         await message.channel.send("<@" + str(message.author.id) + "> a rejoint la partie")
 
                         game.players[message.author.id] = Player(message.author)
@@ -201,7 +201,7 @@ class MainClass(BaseClassPython):
                     else:
                         await message.channel.send(embed=discord.Embed(
                             title="Règles modifiables:",
-                            description='\n'.join([str(i) + " = " + str(x) for i, x in game.game_rules]),
+                            description='\n'.join([str(i) + " = " + str(x) for i, x in game.game_rules.items()]),
                             color=self.color))
                 else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
