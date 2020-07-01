@@ -17,8 +17,8 @@ def init():
         "good": "🟦 Gentil",
         "merlin": "🧙‍♂️ Merlin",
         "percival": "🤴 Perceval",
-        "lancelot": "🛡️ Lancelot",
         "karadoc": "🥴 Karadoc",
+        "gawain": "🛡️ Gauvain",
         "galaad": "🙋 Galaad",
         "uther": "👨‍🦳 Uther",
         "evil": "🟥 Méchant",
@@ -26,7 +26,6 @@ def init():
         "morgane": "🧙‍♀️ Morgane",
         "mordred": "😈 Mordred",
         "oberon": "😶 Oberon",
-        "agrav1": "⚔️ Agravain",
-        "agrav2": "⚔️ Agravain",
+        "lancelot": "⚔️ Lancelot",
         "elias": "🧙 Elias"
     }

@@ -146,8 +146,8 @@ class Percival(Good):
                 value='\n'.join(mages))
 
 
-class Lancelot(Good):
-    role = "lancelot"
+class Gawain(Good):
+    role = "gawain"
     quest_choices = ["Réussite", "Inversion"]
 
     async def _game_start(self, game):
@@ -155,7 +155,7 @@ class Lancelot(Good):
 
         self.embed = discord.Embed(
             title="Début de partie ️🛡️",
-            description="Vous êtes Lancelot. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans.",
+            description="Vous êtes Gauvain. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans.",
             color=self.color)
 
 
@@ -245,6 +245,12 @@ class Evil(Player):
                 name="Vos co-équipiers :",
                 value='\n'.join(evils))
 
+        lancelot = [global_values.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role in ["agrav1", "agrav2"]]
+        if len(lancelot):
+            self.embed.add_field(
+                name="Lancelot ⚔️️",
+                value='\n'.join(evils))
+
     async def _game_start(self, game):
         self.embed = discord.Embed(
             title="Début de partie 🟥",
@@ -324,8 +330,8 @@ class Oberon(Evil):
             color=self.color)
 
 
-class Agrav1(Evil):
-    role = "agrav1"
+class Lancelot(Evil):
+    role = "lancelot"
     quest_choices = ["Réussite", "Inversion"]
 
     async def team_game_start(self, game):
@@ -336,30 +342,15 @@ class Agrav1(Evil):
 
         self.embed = discord.Embed(
             title="Début de partie ⚔️️",
-            description="Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez pas les méchants mais les méchants vous connaisent.",
+            description="Vous êtes Lancelot. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent en tant que Lancelot.",
             color=self.color)
 
-
-class Agrav2(Evil):
-    role = "agrav2"
-    quest_choices = ["Réussite", "Inversion"]
-
-    async def team_game_start(self, game):
-        await self._game_start(game)
-
-    async def _game_start(self, game):
-        self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["reverse"]]
-
-        self.embed = discord.Embed(
-            title="Début de partie ⚔️️",
-            description="Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent.",
-            color=self.color)
-
-        evils = [global_values.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
-        if len(evils):
-            self.embed.add_field(
-                name="Un de vos co-équipiers :",
-                value=random.choice(evils))
+        if game.game_rules["lancelot_know_evil"]:
+            evils = [global_values.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
+            if len(evils):
+                self.embed.add_field(
+                    name="Un de vos co-équipiers :",
+                    value=random.choice(evils))
 
 
 class Solo(Player):

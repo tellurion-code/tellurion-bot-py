@@ -20,8 +20,9 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} start`": "Démarre la partie",
             "`{prefix}{command} players`": "Affiche les joueurs de la partie",
             "`{prefix}{command} reset`": "Reinitialise la partie",
-            "`{prefix}{command} roles`": "Change les rôles",
-            "`{prefix}{command} rules`": "Affiche les règles et les explications des rôles"
+            "`{prefix}{command} roles set/add/remove`": "Change les rôles, ou affiche les rôles en jeu si aucune sous-commande n'est donnée",
+            "`{prefix}{command} rules`": "Affiche les règles et les explications des rôles",
+            "`{prefix}{command} gamerules`": "Modifie les règles du jeu"
         }
     }
     help_active = True
@@ -181,6 +182,34 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
+    async def com_gamerules(self, message, args, kwargs):
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
+            if game.turn == -1:
+                if message.author.id in game.players:
+                    args.pop(0)
+                    if len(args):
+                        subcommand = args.pop(0)
+
+                        if not len(args):
+                            args.append(False)
+
+                        if subcommand in game.game_rules:
+                            game.game_rules[subcommand] = bool(args[0])
+                        else:
+                            await message.channel.send("Règle modifiable invalide")
+                    else:
+                        await message.channel.send(embed=discord.Embed(
+                            title="Règles modifiables:",
+                            description='\n'.join([str(i) + " = " + str(x) for i, x in game.game_rules]),
+                            color=self.color))
+                else:
+                    await message.channel.send("Vous n'êtes pas dans la partie")
+            else:
+                await message.author.send("La partie a déjà commencé")
+        else:
+            await message.channel.send("Il n'y a pas de partie en cours")
+
     # Idem
     async def com_SUTARUTO(self, message, args, kwargs):
         if message.author.id == 118399702667493380:
@@ -221,16 +250,15 @@ class MainClass(BaseClassPython):
                                 "mechant": "evil",
                                 "merlin": "merlin",
                                 "perceval": "percival",
-                                "lancelot": "lancelot",
                                 "karadoc": "karadoc",
+                                "gauvain": "gawain",
                                 "galaad": "galaad",
                                 "uther": "uther",
                                 "assassin": "assassin",
                                 "morgane": "morgane",
                                 "mordred": "mordred",
                                 "oberon": "oberon",
-                                "agrav1": "agrav1",
-                                "agrav2": "agrav2",
+                                "lancelot": "lancelot",
                                 "elias": "elias"
                             }
 
@@ -273,7 +301,7 @@ class MainClass(BaseClassPython):
             else:
                 await message.channel.send(embed=discord.Embed(
                     title="Liste des rôles :",
-                    description="Aucun rôle n'a été défini, la composition par défaut va être utilisé.",
+                    description="Aucun rôle n'a été défini, la composition par défaut va être utilisé (Merlin, Perceval, Morgane, Assassin).",
                     color=self.color))
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
@@ -297,7 +325,7 @@ __Assassin__ 🗡️ : Si les gentils ont réussi 3 quêtes, il peut tenter d’
 __Mordred__ 😈 : Il n’est pas connu de Merlin.
 __Morgane__ 🧙‍♀️ : Elle apparait aux yeux de Perceval.
 __Oberon__ 😶 : Il ne connait pas ses alliés et ses alliés ne savent pas qui il est.
-__Lancelot__ ⚔️ : Peut inverser le résultat de la quête s'il est dedans. Ne peut pas mettre d'Echec.
+__Lancelot__ ⚔️ : Peut inverser le résultat de la quête s'il est dedans. Ne peut pas mettre d'Echec. Il ne connait pas les méchants mais eux le connaissent en tant que Lancelot.
 
 🟩 Les solos: 🟩
 __Elias__ 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.

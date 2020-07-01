@@ -1,7 +1,7 @@
 import discord
 import random
 
-from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Lancelot, Karadoc, Galaad, Uther, Assassin, Morgane, Mordred, Oberon, Agrav1, Agrav2, Elias
+from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Assassin, Morgane, Mordred, Oberon, Lancelot, Elias
 from modules.avalon.reaction_message import ReactionMessage
 
 import modules.avalon.globals as global_values
@@ -31,6 +31,10 @@ class Game:
         self.played = []  # Dernière cartes jouées
         self.roles = []  # Rôles
         self.phase = "team_selection"
+        self.game_rules = {
+            "lancelot_know_evil": False,
+            "4th_quest_two_failures": True
+        }
 
     # async def reload(self, object, client):
     #     await self.deserialize(object, client)
@@ -78,16 +82,15 @@ class Game:
             "evil": Evil,
             "merlin": Merlin,
             "percival": Percival,
-            "lancelot": Lancelot,
             "karadoc": Karadoc,
+            "gawain": Gawain,
             "galaad": Galaad,
             "uther": Uther,
             "assassin": Assassin,
             "morgane": Morgane,
             "mordred": Mordred,
             "oberon": Oberon,
-            "agrav1": Agrav1,
-            "agrav2": Agrav2,
+            "lancelot": Lancelot,
             "elias": Elias
         }
 
@@ -192,7 +195,7 @@ class Game:
                 inline=False
             )
 
-        if self.round == 3 and len(self.players) >= 7:
+        if self.round == 3 and len(self.players) >= 7 and self.game_rules["4th_quest_two_failures"]:
             embed.add_field(
                 name="4e Quête",
                 value="⚠️ **Quête échouée à partir de deux échecs** ⚠️\n",
@@ -357,7 +360,7 @@ class Game:
             fails = len([x for x in self.played if x == str(global_values.quest_emojis["failure"])])
             reverses = len([x for x in self.played if x == str(global_values.quest_emojis["reverse"])])
 
-            success = fails < (2 if self.round == 3 and len(self.players) >= 7 else 1)
+            success = fails < (2 if self.round == 3 and len(self.players) >= 7 and self.game_rules["4th_quest_two_failures"] else 1)
             if reverses == 1:
                 success = not success
 
