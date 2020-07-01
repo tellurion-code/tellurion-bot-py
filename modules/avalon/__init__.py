@@ -369,7 +369,7 @@ Attention S’il y a 7 participants ou plus, la quête n°4 doit avoir 2 échecs
 
     async def on_reaction_add(self, reaction, user):
         if not user.bot:
-            for message in globals.reaction_messages:
+            for message in global_values.reaction_messages:
                 if message.message.id == reaction.message.id:
                     if reaction.emoji in message.number_emojis:
                         if message.check(reaction, user):
@@ -381,7 +381,7 @@ Attention S’il y a 7 participants ou plus, la quête n°4 doit avoir 2 échecs
 
     async def on_reaction_remove(self, reaction, user):
         if not user.bot:
-            for message in globals.reaction_messages:
+            for message in global_values.reaction_messages:
                 if user.id in message.reactions:
                     if reaction.emoji in message.number_emojis:
                         if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
