@@ -8,6 +8,9 @@ from modules.avalon.reaction_message import ReactionMessage
 from modules.avalon.game import Game
 from modules.base import BaseClassPython
 
+global_values.init()
+
+
 class MainClass(BaseClassPython):
     name = "Avalon"
     help = {
@@ -25,7 +28,7 @@ class MainClass(BaseClassPython):
     }
     help_active = True
     command_text = "avalon"
-    color = globals.color
+    color = global_values.color
 
     def __init__(self, client):
         super().__init__(client)
@@ -40,15 +43,15 @@ class MainClass(BaseClassPython):
 
     async def on_ready(self):
         if self.client.get_guild(297780867286433792):
-            globals.quest_emojis["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782) #Get the custom emoji
+            global_values.quest_emojis["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782) #Get the custom emoji
 
     async def command(self, message, args, kwargs):
         if args[0] == "join't":
             await message.channel.send(message.author.mention + " n'a pas rejoint la partie")
 
     async def com_join(self, message, args, kwargs):
-        if message.channel.id in globals.games:
-            game = globals.games[message.channel.id]
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
             if game.turn == -1:
                 if message.author.id in game.players:
                     await message.channel.send("Vous êtes déjà dans la partie")
@@ -63,17 +66,18 @@ class MainClass(BaseClassPython):
             embed = discord.Embed(
                 title="Création de la partie d'Avalon",
                 description="Tapez %avalon join pour rejoindre la partie",
-                color=self.color)
+                color=self.color
+            )
 
             await message.channel.send(embed=embed)
             await message.channel.send("<@" + str(message.author.id) + "> a rejoint la partie")
 
-            globals.games[message.channel.id] = Game(self, message=message)
+            global_values.games[message.channel.id] = Game(self, message=message)
 
-    #Quitter la partie
+    # Quitter la partie
     async def com_quit(self, message, args, kwargs):
-        if message.channel.id in globals.games:
-            game = globals.games[message.channel.id]
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
             if game.turn == -1:
                 if message.author.id in game.players:
                     await message.channel.send(message.author.mention + " a quitté la partie")
@@ -81,7 +85,7 @@ class MainClass(BaseClassPython):
                     del game.players[message.author.id]
 
                     if len(game.players) == 0:
-                        globals.games.pop(message.channel.id)
+                        global_values.games.pop(message.channel.id)
                 else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
             else:
@@ -90,8 +94,8 @@ class MainClass(BaseClassPython):
             await message.channel.send("Il n'y a pas de partie en cours")
 
     async def com_kick(self, message, args, kwargs):
-        if message.channel.id in globals.games:
-            game = globals.games[message.channel.id]
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
             if game.turn == -1:
                 if message.author.id in game.players:
                     if len(args) > 1:
@@ -107,7 +111,7 @@ class MainClass(BaseClassPython):
                             del game.players[kicked]
 
                             if len(game.players) == 0:
-                                globals.games.pop(message.channel.id)
+                                global_values.games.pop(message.channel.id)
                         else:
                             await message.channel.send("La mention ou l'identifiant sont erronés ou ne sont pas dans la partie")
                     else:
@@ -119,26 +123,27 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
-    #Liste des joueurs
+    # Liste des joueurs
     async def com_players(self, message, args, kwargs):
-        if message.channel.id in globals.games:
-            game = globals.games[message.channel.id]
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
             embed = discord.Embed(
-                title="Liste des joueurs (" + str(len(globals.games[message.channel.id].players)) + ")",
+                title="Liste des joueurs (" + str(len(game.players)) + ")",
                 color=self.color,
-                description="```" + ', '.join([str(self.client.get_user(x)) for x, y in globals.games[message.channel.id].players.items()]) + "```")
+                description="```" + ', '.join([str(self.client.get_user(x)) for x, y in game.players.items()]) + "```"
+            )
             await message.channel.send(embed=embed)
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
     # Réitinitialise et supprime la partie
     async def com_reset(self, message, args, kwargs):
-        if message.channel.id in globals.games:
+        if message.channel.id in global_values.games:
             async def confirm(reactions):
                 if reactions[message.author.id][0] == 0:
                     await message.channel.send("La partie a été réinitialisée")
                     # globals.games[message.channel.id].delete_save()
-                    globals.games.pop(message.channel.id)
+                    global_values.games.pop(message.channel.id)
 
             async def cond(reactions):
                 return len(reactions[message.author.id]) == 1
@@ -158,13 +163,13 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
-    #Lance la partie
+    # Lance la partie
     async def com_start(self, message, args, kwargs):
-        if message.channel.id in globals.games:
-            game = globals.games[message.channel.id]
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
             if game.turn == -1:
                 if message.author.id in game.players:
-                    if len(game.players) >= 5 or globals.debug:
+                    if len(game.players) >= 5 or global_values.debug:
                         if len(game.roles) in [0, len(game.players)]:
                             await game.start_game()
                         else:
@@ -178,28 +183,28 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
-    #Idem
+    # Idem
     async def com_SUTARUTO(self, message, args, kwargs):
         if message.author.id == 118399702667493380:
             await self.com_start(message, args, kwargs)
 
-    #Active le debug: enlève la limitation de terme, et le nombre minimal de joueurs
+    # Active le debug: enlève la limitation de terme, et le nombre minimal de joueurs
     async def com_debug(self, message, args, kwargs):
         if message.author.id == 240947137750237185:
-            globals.debug = not globals.debug
-            await message.channel.send("Debug: " + str(globals.debug))
+            global_values.debug = not global_values.debug
+            await message.channel.send("Debug: " + str(global_values.debug))
 
             if self.objects.save_exists("globals"):
-                object = self.objects.load_object("globals")
+                save = self.objects.load_object("globals")
             else:
-                object = {}
+                save = {}
 
-            object["debug"] = globals.debug
-            self.objects.save_object("globals", object)
+            save["debug"] = global_values.debug
+            self.objects.save_object("globals", save)
 
     async def com_roles(self, message, args, kwargs):
-        if message.channel.id in globals.games:
-            game = globals.games[message.channel.id]
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
             if len(args) > 1:
                 if game.turn == -1:
                     if message.author.id in game.players:
@@ -251,10 +256,13 @@ class MainClass(BaseClassPython):
 
                                 await message.channel.send(embed=discord.Embed(
                                     title="Liste des rôles (" + str(len(game.roles)) + ") :",
-                                    description=', '.join([globals.visual_roles[x] for x in game.roles]),
+                                    description=', '.join([global_values.visual_roles[x] for x in game.roles]),
                                     color=self.color))
                             else:
-                                await message.channel.send(', '.join(invalid_roles) + " est/sont un/des rôle(s) invalide(s))")
+                                if len(invalid_roles) - 1:
+                                    await message.channel.send(', '.join(invalid_roles) + " sont des rôles invalides.")
+                                else:
+                                    await message.channel.send(', '.join(invalid_roles) + " est un rôle invalide.")
                     else:
                         await message.channel.send("Vous n'êtes pas dans la partie")
                 else:
@@ -262,7 +270,7 @@ class MainClass(BaseClassPython):
             elif len(game.roles):
                 await message.channel.send(embed=discord.Embed(
                     title="Liste des rôles (" + str(len(game.roles)) + ") :",
-                    description=', '.join([globals.visual_roles[x] for x in game.roles]),
+                    description=', '.join([global_values.visual_roles[x] for x in game.roles]),
                     color=self.color))
             else:
                 await message.channel.send(embed=discord.Embed(
@@ -294,7 +302,7 @@ class MainClass(BaseClassPython):
 
                     🟩 Les solos: 🟩
                     __Elias__ 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.""",
-                    color=globals.color))
+                    color=global_values.color))
             else:
                 await message.channel.send("Sous-section inconnue")
         else:
@@ -321,4 +329,4 @@ class MainClass(BaseClassPython):
                     :small_blue_diamond: **Utilisez "avalon rules roles" poura voir la liste des rôles spéciaux** :small_blue_diamond:
 
                     *Note : Tous les votes se font par le biais des réactions ( :white_check_mark: et :negative_squared_cross_mark: )""",
-                color=globals.color))
+                color=global_values.color))
