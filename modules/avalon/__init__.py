@@ -22,7 +22,7 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} reset`": "Reinitialise la partie",
             "`{prefix}{command} roles set/add/remove`": "Change les rôles, ou affiche les rôles en jeu si aucune sous-commande n'est donnée",
             "`{prefix}{command} rules`": "Affiche les règles et les explications des rôles",
-            "`{prefix}{command} gamerules`": "Modifie les règles du jeu"
+            "`{prefix}{command} gamerules`": "Active/désactive les règles du jeu"
         }
     }
     help_active = True
@@ -197,12 +197,13 @@ class MainClass(BaseClassPython):
                                 invalid_rules.append(rule)
 
                         if len(invalid_rules):
-                            await message.channel.send(', '.join(invalid_rules) + (" sont des règles invalides" if len(invalid_rules) > 1 else " est une règles invalide"))
+                            await message.channel.send(', '.join(invalid_rules) + (" sont des règles invalides" if len(invalid_rules) > 1 else " est une règle invalide"))
 
-                        await message.channel.send(embed=discord.Embed(
-                            title="Règles modifiées:",
-                            description='\n'.join([str(i) + " = **" + str(x)+ "**" for i, x in game.game_rules.items()]),
-                            color=self.color))
+                        if len(invalid_rules) < len(args):
+                            await message.channel.send(embed=discord.Embed(
+                                title="Règles modifiées:",
+                                description='\n'.join([str(i) + " = **" + str(x)+ "**" for i, x in game.game_rules.items()]),
+                                color=self.color))
                     else:
                         await message.channel.send(embed=discord.Embed(
                             title="Règles modifiables:",
