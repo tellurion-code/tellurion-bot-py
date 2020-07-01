@@ -189,19 +189,24 @@ class MainClass(BaseClassPython):
                 if message.author.id in game.players:
                     args.pop(0)
                     if len(args):
-                        subcommand = args.pop(0)
+                        invalid_rules = []
+                        for rule in args:
+                            if rule in game.game_rules:
+                                game.game_rules[rule] = not game.game_rules[rule]
+                            else:
+                                invalid_rules.append(rule)
 
-                        if not len(args):
-                            args.append(False)
+                        if len(invalid_rules):
+                            await message.channel.send(', '.join(invalid_rules) + (" sont des règles invalides" if len(invalid_rules) > 1 else " est une règles invalide"))
 
-                        if subcommand in game.game_rules:
-                            game.game_rules[subcommand] = bool(args[0])
-                        else:
-                            await message.channel.send("Règle modifiable invalide")
+                        await message.channel.send(embed=discord.Embed(
+                            title="Règles modifiées:",
+                            description='\n'.join([str(i) + " = **" + str(x)+ "**" for i, x in game.game_rules.items()]),
+                            color=self.color))
                     else:
                         await message.channel.send(embed=discord.Embed(
                             title="Règles modifiables:",
-                            description='\n'.join([str(i) + " = " + str(x) for i, x in game.game_rules.items()]),
+                            description='\n'.join([str(i) + " = **" + str(x)+ "**" for i, x in game.game_rules.items()]),
                             color=self.color))
                 else:
                     await message.channel.send("Vous n'êtes pas dans la partie")
