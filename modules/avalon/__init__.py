@@ -366,3 +366,24 @@ Attention S’il y a 7 participants ou plus, la quête n°4 doit avoir 2 échecs
 *Note : Tous les votes se font par le biais des réactions ( :white_check_mark: et :negative_squared_cross_mark: )
                 """,
                 color=global_values.color))
+
+    async def on_reaction_add(self, reaction, user):
+        if not user.bot:
+            for message in globals.reaction_messages:
+                if message.message.id == reaction.message.id:
+                    if reaction.emoji in message.number_emojis:
+                        if message.check(reaction, user):
+                            await message.add_reaction(reaction, user)
+                        else:
+                            await message.message.remove_reaction(reaction, user)
+                    else:
+                        await message.message.remove_reaction(reaction, user)
+
+    async def on_reaction_remove(self, reaction, user):
+        if not user.bot:
+            for message in globals.reaction_messages:
+                if user.id in message.reactions:
+                    if reaction.emoji in message.number_emojis:
+                        if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
+                            if message.check(reaction, user) and message.message.id == reaction.message.id:
+                                await message.remove_reaction(reaction, user)
