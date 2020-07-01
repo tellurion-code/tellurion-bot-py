@@ -335,7 +335,7 @@ class Agrav2(Evil):
             description="Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent.",
             color=self.color)
 
-        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
+        evils = [globals.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon" and game.players[x].user.id != self.user.id]
         if len(evils):
             self.embed.add_field(
                 name="Un de vos co-équipiers :",
