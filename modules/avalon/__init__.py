@@ -1,13 +1,11 @@
 import discord
 
-import modules.avalon.globals as globals
-globals.init()
-
 from modules.avalon.player import Player
 from modules.avalon.reaction_message import ReactionMessage
 from modules.avalon.game import Game
 from modules.base import BaseClassPython
 
+import modules.avalon.globals as global_values
 global_values.init()
 
 
