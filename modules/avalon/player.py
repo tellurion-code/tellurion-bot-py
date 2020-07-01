@@ -346,7 +346,7 @@ class Lancelot(Evil):
             color=self.color)
 
         if game.game_rules["lancelot_know_evil"]:
-            evils = [global_values.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon"]
+            evils = [global_values.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon" and game.players[x].user.id != self.user.id]
             if len(evils):
                 self.embed.add_field(
                     name="Un de vos co-équipiers :",
