@@ -2,19 +2,19 @@ import discord
 import asyncio
 import random
 
-from modules.wonderland.game import Game
-from modules.wonderland.player import Player
-from modules.wonderland.reaction_message import ReactionMessage
+from modules.borderland.game import Game
+from modules.borderland.player import Player
+from modules.borderland.reaction_message import ReactionMessage
 from modules.base import BaseClassPython
 
-import modules.wonderland.globals as global_values
+import modules.borderland.globals as global_values
 global_values.init()
 
 class MainClass(BaseClassPython):
-    name = "Wonderland"
+    name = "Borderland"
     help_active = True
     help = {
-        "description": "Module du jeu Wonderland",
+        "description": "Module du jeu Borderland",
         "commands": {
             "`{prefix}{command} create`": "Crée une partie. Le salon où la commande est utilisée sera utilisé pour les messages d'infos.",
             "`{prefix}{command} start`": "Démarre la partie",
@@ -89,7 +89,7 @@ class MainClass(BaseClassPython):
                                 await message.author.send("Symbole envoyé à `" + str(game.players[id].user) + "`")
 
                                 await game.players[id].user.send(embed=discord.Embed(
-                                    title="[WONDERLAND] Symbole reçu",
+                                    title="[borderland] Symbole reçu",
                                     description="`" + str(message.author) + "` vous a envoyé son symbole. Son symbole est : " + game.players[message.author.id].symbol,
                                     color=self.color
                                 ))

@@ -3,10 +3,10 @@ import random
 import datetime
 import asyncio
 
-from modules.wonderland.player import Player, Jack
-from modules.wonderland.reaction_message import ReactionMessage
+from modules.borderland.player import Player, Jack
+from modules.borderland.reaction_message import ReactionMessage
 
-import modules.wonderland.globals as global_values
+import modules.borderland.globals as global_values
 
 class Timer:
     def __init__(self, timeout, callback):
@@ -58,7 +58,7 @@ class Game:
 
         await game_creation_message.send(
             message.channel,
-            "🎴 🃏 Création de la partie de Wonderland ❤️ ♠️ 🔷 🍀",
+            "🎴 🃏 Création de la partie de borderland ❤️ ♠️ 🔷 🍀",
             "Appuyez sur la réaction 📩 pour vous inscrire au jeu.\n\n__Joueurs:__\n",
             global_values.color,
             ["Inscription"],
@@ -151,7 +151,7 @@ class Game:
         color = kwargs["color"] if "color" in kwargs else global_values.color
 
         embed = discord.Embed(
-            title="[WONDERLAND] Manche " + str(self.round),
+            title="[borderland] Manche " + str(self.round),
             description="**N'oubliez pas d'envoyer votre choix avant demain, " + self.time.strftime("%H") + "h00.**\n" + info,
             color=color
         )
@@ -168,7 +168,7 @@ class Game:
             player = self.players[player_id]
             if player.choice != player.symbol:
                 await player.user.send(embed=discord.Embed(
-                    title="[WONDERLAND] Elimination",
+                    title="[borderland] Elimination",
                     description="Vous avez été éliminé.",
                     color=0))
                 eliminated.append(player)

@@ -1,9 +1,9 @@
 import discord
 import random
 
-from modules.wonderland.reaction_message import ReactionMessage
+from modules.borderland.reaction_message import ReactionMessage
 
-import modules.wonderland.globals as global_values
+import modules.borderland.globals as global_values
 
 class Player:
     role = "random"
