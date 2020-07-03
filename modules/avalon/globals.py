@@ -21,7 +21,7 @@ def init():
         "gawain": "🛡️ Gauvain",
         "galaad": "🙋 Galaad",
         "uther": "👨‍🦳 Uther",
-        "arthur": "👑️ Arthur",
+        "arthur": "👑 Arthur",
         "evil": "🟥 Méchant",
         "assassin": "🗡️ Assassin",
         "morgane": "🧙‍♀️ Morgane",

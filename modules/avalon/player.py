@@ -227,7 +227,7 @@ class Arthur(Good):
         self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["reverse"], global_values.quest_emojis["cancel"]]
 
         self.embed = discord.Embed(
-            title="Début de partie 👑️",
+            title="Début de partie 👑",
             description="Vous êtes Arthur. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'annuler la quête si vous êtes dedans.",
             color=self.color)
 

@@ -168,7 +168,7 @@ class Game:
         color = kwargs["color"] if "color" in kwargs else global_values.color
 
         embed = discord.Embed(
-            title="[AVALON] Tour de `" + str(self.players[self.order[self.turn]].user) + "` 👑️",
+            title="[AVALON] Tour de `" + str(self.players[self.order[self.turn]].user) + "` 👑",
             description="",
             color=color
         )
