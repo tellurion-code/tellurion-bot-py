@@ -1,7 +1,7 @@
 import discord
 import random
 
-from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Assassin, Morgane, Mordred, Oberon, Lancelot, Elias
+from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Arthur, Assassin, Morgane, Mordred, Oberon, Lancelot, Elias
 from modules.avalon.reaction_message import ReactionMessage
 
 import modules.avalon.globals as global_values
@@ -86,6 +86,7 @@ class Game:
             "gawain": Gawain,
             "galaad": Galaad,
             "uther": Uther,
+            "arthur": Arthur,
             "assassin": Assassin,
             "morgane": Morgane,
             "mordred": Mordred,
@@ -357,38 +358,54 @@ class Game:
             self.played = [self.players[x].last_choice.split(" ")[0] for x in self.team.values()]
             random.shuffle(self.played)
 
+            cancels = len([x for x in self.played if x == str(global_values.quest_emojis["cancel"])])
             fails = len([x for x in self.played if x == str(global_values.quest_emojis["failure"])])
             reverses = len([x for x in self.played if x == str(global_values.quest_emojis["reverse"])])
 
-            success = fails < (2 if self.round == 3 and len(self.players) >= 7 and self.game_rules["4th_quest_two_failures"] else 1)
-            if reverses == 1:
-                success = not success
+            if len(cancels):
+                success = fails < (2 if self.round == 3 and len(self.players) >= 7 and self.game_rules["4th_quest_two_failures"] else 1)
+                if reverses == 1:
+                    success = not success
 
-            self.quests[self.round] = -1 if success else 0
+                self.quests[self.round] = -1 if success else 0
 
-            await self.send_info(
-                info={
-                    "name": ((str(global_values.quest_emojis["success"]) + " Quête réussie " + str(global_values.quest_emojis["success"])) if success else (str(global_values.quest_emojis["failure"]) + " Quête échouée " + str(global_values.quest_emojis["failure"]))),
-                    "value": "Choix : " + " ".join(self.played)
-                },
-                color=0x76ee00 if success else 0xef223f)
+                await self.send_info(
+                    info={
+                        "name": ((str(global_values.quest_emojis["success"]) + " Quête réussie " + str(global_values.quest_emojis["success"])) if success else (str(global_values.quest_emojis["failure"]) + " Quête échouée " + str(global_values.quest_emojis["failure"]))),
+                        "value": "Choix : " + " ".join(self.played)
+                    },
+                    color=0x76ee00 if success else 0xef223f)
 
-            self.round += 1
-            self.refused = 0
+                self.round += 1
+                self.refused = 0
 
-            if len([x for x in self.quests if x == 0]) == 3:
-                await self.end_game(False, "3 Quêtes échouées")
-            elif len([x for x in self.quests if x == -1]) == 3:
-                if len([x for x in self.players.values() if x.role == "merlin" or x.role == "assassin"]) > (0 if global_values.debug else 1):
-                    await self.broadcast(discord.Embed(
-                        title="Assassinat",
-                        description="3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
-                        color=global_values.color))
+                if len([x for x in self.quests if x == 0]) == 3:
+                    await self.end_game(False, "3 Quêtes échouées")
+                elif len([x for x in self.quests if x == -1]) == 3:
+                    if len([x for x in self.players.values() if x.role == "merlin" or x.role == "assassin"]) > (0 if global_values.debug else 1):
+                        await self.broadcast(discord.Embed(
+                            title="Assassinat",
+                            description="3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
+                            color=global_values.color))
 
-                    await ([x for x in self.players.values() if x.role == "assassin"][0]).send_assassin_choice(self)
+                        await ([x for x in self.players.values() if x.role == "assassin"][0]).send_assassin_choice(self)
+                    else:
+                        await self.end_game(True, "3 Quêtes réussies")
                 else:
-                    await self.end_game(True, "3 Quêtes réussies")
+                    await self.next_turn()
             else:
+                for player_id in self.team.values():
+                    if "Annulation" in self.players[player_id].quest_choices:
+                        self.players[player_id].quest_choices.remove("Annulation")
+
+                await self.send_info(
+                    info={
+                        "name": str(global_values.quest_emojis["cancel"]) + " Quête annulée " + str(global_values.quest_emojis["cancel"]),
+                        "value": "**Arthur a décidé d'annuler la quête.** Le prochain leader va proposer une nouvelle composition."
+                    })
+
+                self.refused += 1
+
                 await self.next_turn()
 
     # Passe au prochain tour

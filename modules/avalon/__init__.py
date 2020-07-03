@@ -325,6 +325,7 @@ __Karadoc__ 🥴 : Il apparaît comme un méchant à Merlin.
 __Gauvain__ 🛡️ : Peut inverser le résultat de la quête s'il est dedans.
 __Galaad__ 🙋 : Les gentils le connaissent.
 __Uther__ 👨‍🦳 : En début de partie, il choisit un joueur dont il apprend le rôle.
+__Arthur__ 👑️ : Une fois dans la partie, il peut faire annuler une quête. Les choix ne sont alors par révélés et l'équipe est considérée comme refusée.
 
 🟥 Les méchants: 🟥
 __Assassin__ 🗡️ : Si les gentils ont réussi 3 quêtes, il peut tenter d’assassiner Merlin. S’il y parvient les méchants gagnent la partie.
