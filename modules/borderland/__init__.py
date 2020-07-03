@@ -32,7 +32,7 @@ class MainClass(BaseClassPython):
         self.config["auth_everyone"] = True
         self.config["configured"] = True
         self.config["color"] = self.color
-        self.command_text = self.command_text
+        self.config["command_text"] = self.command_text
 
     async def com_create(self, message, args, kwargs):
         if message.channel.id in global_values.games:
