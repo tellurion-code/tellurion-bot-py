@@ -161,7 +161,7 @@ class Game:
 
     def time_next_turn(self):
         # delay = datetime.timedelta(minutes=1).total_seconds()
-        delay = ((datetime.date.today() + datetime.timedelta(days=1,hours=self.time)) - datetime.now()).total_seconds()
+        delay = ((datetime.date.today() + datetime.timedelta(days=1,hours=int(self.time.strftime("%H")))) - datetime.now()).total_seconds()
         self.next_turn_timer = Timer(delay, self.next_turn)
 
     #Elimine les joueurs qui n'ont pas répondu ou qui se sont trompés
@@ -188,7 +188,6 @@ class Game:
             self.in_game.remove(player.user.id)
 
         self.round += 1
-        print("Passed")
 
         await self.send_info(
             info="__Joueurs éliminés:__\n" + ('\n'.join(["• `" + str(x.user) + "` " + x.symbol for x in eliminated]) if len(eliminated) else "Personne!"),
@@ -196,7 +195,7 @@ class Game:
 
         if len([x for x in eliminated if x.role == "jack"]):
             await self.end_game(False)
-        elif len(self.players) <= (1 if global_values.debug else 2):
+        elif len(self.in_game) <= (1 if global_values.debug else 2):
             await self.end_game(True)
         else:
             for player_id in self.in_game:

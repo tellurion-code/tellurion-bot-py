@@ -24,7 +24,7 @@ class Player:
 
     async def send_game_start_info(self):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie 🎴",
-            description = "Vous êtes un random. Vous devez éliminer le Valet de Coeur. Vous pouvez utiliser `tell <id>` pour envoyer votre symbole à quelqu'un d'autre.\n**Vous devrez confirmer votre symbole avant 24h sous peine d'être éliminé. Un symbole erroné vous éliminera.**",
+            description = "Vous êtes un random. Vous devez éliminer le Valet de Coeur. Vous pouvez utiliser `%bl tell <id>` pour envoyer votre symbole à quelqu'un d'autre.\n**Vous devrez confirmer votre symbole avant 24h sous peine d'être éliminé. Un symbole erroné vous éliminera.**",
             color = global_values.color
         ))
 
@@ -68,6 +68,6 @@ class Jack(Player):
 
     async def send_game_start_info(self):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed = discord.Embed(title = "Début de partie 🃏",
-            description = "Vous êtes le valet de Coeur. Vous devez rester en vie jusqu'à ce qu'il ne reste que deux joueurs. Vous pouvez utiliser `tell <id>` pour envoyer votre symbole à quelqu'un d'autre.\n**Vous devrez confirmer votre symbole avant 24h sous peine d'être éliminé. Un symbole erroné vous éliminera.**",
+            description = "Vous êtes le valet de Coeur. Vous devez rester en vie jusqu'à ce qu'il ne reste que deux joueurs. Vous pouvez utiliser `%bl tell <id>` pour envoyer votre symbole à quelqu'un d'autre.\n**Vous devrez confirmer votre symbole avant 24h sous peine d'être éliminé. Un symbole erroné vous éliminera.**",
             color = 0xfffffe
         ))
