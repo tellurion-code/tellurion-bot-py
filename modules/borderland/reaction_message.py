@@ -1,6 +1,6 @@
 import discord
 
-import modules.timebomb.globals as globals
+import modules.borderland.globals as globals
 
 class ReactionMessage:
     def __init__(self, _cond, _effect, **kwargs):

@@ -151,7 +151,7 @@ class Game:
         color = kwargs["color"] if "color" in kwargs else global_values.color
 
         embed = discord.Embed(
-            title="[borderland] Manche " + str(self.round),
+            title="[BORDERLAND] Manche " + str(self.round),
             description="**N'oubliez pas d'envoyer votre choix avant demain, " + self.time.strftime("%H") + "h00.**\n" + info,
             color=color
         )
@@ -168,7 +168,7 @@ class Game:
             player = self.players[player_id]
             if player.choice != player.symbol:
                 await player.user.send(embed=discord.Embed(
-                    title="[borderland] Elimination",
+                    title="[BORDERLAND] Elimination",
                     description="Vous avez été éliminé.",
                     color=0))
                 eliminated.append(player)
