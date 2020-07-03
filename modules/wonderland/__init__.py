@@ -29,6 +29,11 @@ class MainClass(BaseClassPython):
     def __init__(self, client):
         super().__init__(client)
 
+        self.config["auth_everyone"] = True
+        self.config["configured"] = True
+        self.config["color"] = self.color
+        self.command_text = self.command_text
+
     async def com_create(self, message, args, kwargs):
         if message.channel.id in global_values.games:
             await message.channel.send("Il y a déjà une partie en cours dans ce channel")
