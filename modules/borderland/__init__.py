@@ -24,7 +24,7 @@ class MainClass(BaseClassPython):
         }
     }
     color = global_values.color
-    command_text = "wl"
+    command_text = "bl"
 
     def __init__(self, client):
         super().__init__(client)
