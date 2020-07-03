@@ -358,11 +358,11 @@ class Game:
             self.played = [self.players[x].last_choice.split(" ")[0] for x in self.team.values()]
             random.shuffle(self.played)
 
-            cancels = len([x for x in self.played if x == str(global_values.quest_emojis["cancel"])])
+            cancelled = len([x for x in self.played if x == str(global_values.quest_emojis["cancel"])])
             fails = len([x for x in self.played if x == str(global_values.quest_emojis["failure"])])
             reverses = len([x for x in self.played if x == str(global_values.quest_emojis["reverse"])])
 
-            if len(cancels):
+            if not cancelled:
                 success = fails < (2 if self.round == 3 and len(self.players) >= 7 and self.game_rules["4th_quest_two_failures"] else 1)
                 if reverses == 1:
                     success = not success

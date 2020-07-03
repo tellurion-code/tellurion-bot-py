@@ -12,7 +12,7 @@ global_values.init()
 class MainClass(BaseClassPython):
     name = "Avalon"
     help = {
-        "description": "Maître du jeu Avalon.",
+        "description": "Maître du jeu Avalon",
         "commands": {
             "`{prefix}{command} join`": "Rejoint la partie. S'il n'y en a pas dans le salon, en crée une nouvelle",
             "`{prefix}{command} quit`": "Quitte la partie",
@@ -260,6 +260,7 @@ class MainClass(BaseClassPython):
                                 "gauvain": "gawain",
                                 "galaad": "galaad",
                                 "uther": "uther",
+                                "arthur": "arthur",
                                 "assassin": "assassin",
                                 "morgane": "morgane",
                                 "mordred": "mordred",

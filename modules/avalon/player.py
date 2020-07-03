@@ -224,7 +224,7 @@ class Arthur(Good):
     quest_choices = ["Réussite", "Echec", "Annulation"]
 
     async def _game_start(self, game):
-        self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["reverse"], global_values.quest_emojis["cancel"]]
+        self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["failure"], global_values.quest_emojis["cancel"]]
 
         self.embed = discord.Embed(
             title="Début de partie 👑",
