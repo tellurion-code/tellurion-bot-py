@@ -60,7 +60,7 @@ class Game:
 
         await game_creation_message.send(
             message.channel,
-            "🎴 🃏 Création de la partie de borderland ❤️ ♠️ 🔷 🍀",
+            "🎴 🃏 Création de la partie de Borderland ❤️ ♠️ 🔷 🍀",
             "Appuyez sur la réaction 📩 pour vous inscrire au jeu.\n\n__Joueurs:__\n",
             global_values.color,
             ["Inscription"],
@@ -161,7 +161,8 @@ class Game:
 
     def time_next_turn(self):
         # delay = datetime.timedelta(minutes=1).total_seconds()
-        delay = ((datetime.date.today() + datetime.timedelta(days=1,hours=int(self.time.strftime("%H")))) - datetime.now()).total_seconds()
+        # delay = (datetime.datetime.combine(datetime.datetime.today() + datetime.timedelta(days=1), self.time) - datetime.datetime.now()).total_seconds()
+        delay = datetime.timedelta(hours=24).total_seconds()
         self.next_turn_timer = Timer(delay, self.next_turn)
 
     #Elimine les joueurs qui n'ont pas répondu ou qui se sont trompés
