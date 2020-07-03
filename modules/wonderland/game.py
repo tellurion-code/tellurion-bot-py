@@ -91,8 +91,8 @@ class Game:
 
         await self.send_info(info="Début de partie")
 
-        delay = datetime.timedelta(minutes=1).total_seconds()
-        # delay = ((datetime.date.today() + datetime.timedelta(day=1,hours=self.time)) - datetime.now()).total_seconds()
+        # delay = datetime.timedelta(minutes=1).total_seconds()
+        delay = ((datetime.date.today() + datetime.timedelta(day=1,hours=self.time)) - datetime.now()).total_seconds()
         timer = Timer(delay, self.next_turn)
 
     #Envoies un message à tous les joueurs + le channel
@@ -194,8 +194,8 @@ class Game:
             for player_id in self.in_game:
                 await self.players[player_id].send_choice_message()
 
-            delay = datetime.timedelta(minutes=1).total_seconds()
-            # delay = ((datetime.date.today() + datetime.timedelta(day=1,hours=self.time)) - datetime.now()).total_seconds()
+            # delay = datetime.timedelta(minutes=1).total_seconds()
+            delay = ((datetime.date.today() + datetime.timedelta(day=1,hours=self.time)) - datetime.now()).total_seconds()
             timer = Timer(delay, self.next_turn)
 
     #Fin de partie, envoies le message de fin et détruit la partie
