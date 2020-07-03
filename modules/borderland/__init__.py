@@ -19,7 +19,6 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} create`": "Crée une partie. Le salon où la commande est utilisée sera utilisé pour les messages d'infos.",
             "`{prefix}{command} start`": "Démarre la partie",
             "`{prefix}{command} reset`": "Reinitialise la partie",
-            "`{prefix}{command} roles`": "Change les rôles en jeu",
             "`{prefix}{command} rules`": "Affiche les règles"
         }
     }
@@ -45,9 +44,15 @@ class MainClass(BaseClassPython):
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in global_values.games:
             await message.channel.send("La partie a été reset")
-            global_values.games.pop(message.channel.id)
+            del global_values.games[message.channel.id]
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
+
+    async def com_turn(self, message, args, kwargs):
+         if message.channel.id in global_values.games:
+             game = global_values.games[message.channel.id]
+             if message.author.id == game.starter:
+                 await game.next_turn()
 
     #Lance la partie
     async def com_start(self, message, args, kwargs):
@@ -65,6 +70,12 @@ class MainClass(BaseClassPython):
                 await message.author.send("La partie a déjà commencé")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
+
+    async def com_rules(self, message, args, kwargs):
+        await message.channel.send(embed=discord.Embed(
+            title="Règles de Borderland",
+            description=""
+        ))
 
     #Idem
     async def com_SUTARUTO(self, message, args, kwargs):
@@ -89,7 +100,7 @@ class MainClass(BaseClassPython):
                                 await message.author.send("Symbole envoyé à `" + str(game.players[id].user) + "`")
 
                                 await game.players[id].user.send(embed=discord.Embed(
-                                    title="[borderland] Symbole reçu",
+                                    title="[BORDERLAND] Symbole reçu",
                                     description="`" + str(message.author) + "` vous a envoyé son symbole. Son symbole est : " + game.players[message.author.id].symbol,
                                     color=self.color
                                 ))

@@ -25,12 +25,14 @@ class Game:
     def __init__(self, message, mainclass):
         self.mainclass = mainclass
         self.channel = message.channel
+        self.starter = message.author.id
         self.players = {} #Dict pour rapidement accéder aux infos
         self.round = 0 #Nombre de manches
         self.time = 0 #Heure à laquelle le jour finit
         self.roles = [] #Roles vides = à générer
         self.info_message = None
         self.in_game = []
+        self.next_turn_timer = None
 
     async def on_creation(self, message):
         async def update(reactions):
@@ -90,10 +92,7 @@ class Game:
         self.time = datetime.datetime.now().time()
 
         await self.send_info(info="Début de partie")
-
-        # delay = datetime.timedelta(minutes=1).total_seconds()
-        delay = ((datetime.date.today() + datetime.timedelta(day=1,hours=self.time)) - datetime.now()).total_seconds()
-        timer = Timer(delay, self.next_turn)
+        self.time_next_turn()
 
     #Envoies un message à tous les joueurs + le channel
     async def broadcast(self, _embed, **kwargs):
@@ -160,8 +159,17 @@ class Game:
 
         await self.broadcast(embed, mode=mode)
 
+    def time_next_turn(self):
+        # delay = datetime.timedelta(minutes=1).total_seconds()
+        delay = ((datetime.date.today() + datetime.timedelta(days=1,hours=self.time)) - datetime.now()).total_seconds()
+        self.next_turn_timer = Timer(delay, self.next_turn)
+
     #Elimine les joueurs qui n'ont pas répondu ou qui se sont trompés
     async def next_turn(self):
+        if self.next_turn_timer:
+            self.next_turn_timer.cancel()
+            del self.next_turn_timer
+
         eliminated = []
 
         for player_id in self.in_game:
@@ -194,9 +202,7 @@ class Game:
             for player_id in self.in_game:
                 await self.players[player_id].send_choice_message()
 
-            # delay = datetime.timedelta(minutes=1).total_seconds()
-            delay = ((datetime.date.today() + datetime.timedelta(day=1,hours=self.time)) - datetime.now()).total_seconds()
-            timer = Timer(delay, self.next_turn)
+            self.time_next_turn()
 
     #Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, jack_wins):

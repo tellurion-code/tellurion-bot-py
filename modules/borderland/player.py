@@ -38,7 +38,7 @@ class Player:
         async def confirm_symbol(reactions):
             embed = self.symbol_choice_message.message.embeds[0]
 
-            embed.description = "Vous avez validé " + emojis[reactions[self.user.id][0]] + " " + choices[reactions[self.user.id][0]] + "."
+            embed.description = "Vous avez choisi " + emojis[reactions[self.user.id][0]] + " " + choices[reactions[self.user.id][0]] + "."
             embed.color = 0xfffffe
 
             await self.symbol_choice_message.message.edit(embed=embed)
@@ -56,7 +56,7 @@ class Player:
 
         await self.symbol_choice_message.send(
             self.user,
-            "Choisissez le symbole que vous souhaitez confirmer comme étant le vôtre " + (self.symbol if global_values.debug else ""),
+            "Choisissez le symbole que vous pensez avoir " + (self.symbol if global_values.debug else ""),
             "",
             global_values.color,
             choices,
