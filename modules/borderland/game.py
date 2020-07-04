@@ -8,6 +8,7 @@ from modules.borderland.reaction_message import ReactionMessage
 
 import modules.borderland.globals as global_values
 
+
 class Timer:
     def __init__(self, timeout, callback):
         self._timeout = timeout
@@ -21,15 +22,16 @@ class Timer:
     def cancel(self):
         self._task.cancel()
 
+
 class Game:
     def __init__(self, message, mainclass):
         self.mainclass = mainclass
         self.channel = message.channel
         self.starter = message.author.id
-        self.players = {} #Dict pour rapidement accéder aux infos
-        self.round = 0 #Nombre de manches
-        self.time = 0 #Heure à laquelle le jour finit
-        self.roles = [] #Roles vides = à générer
+        self.players = {}  # Dict pour rapidement accéder aux infos
+        self.round = 0  # Nombre de manches
+        self.time = 0  # Heure à laquelle le jour finit
+        self.roles = []  # Roles vides = à générer
         self.info_message = None
         self.in_game = []
         self.next_turn_timer = None
@@ -94,12 +96,12 @@ class Game:
         await self.send_info(info="Début de partie")
         self.time_next_turn()
 
-    #Envoies un message à tous les joueurs + le channel
+    # Envoies un message à tous les joueurs + le channel
     async def broadcast(self, _embed, **kwargs):
         exceptions = kwargs["exceptions"] if "exceptions" in kwargs else []
         mode = kwargs["mode"] if "mode" in kwargs else "normal"
 
-        if mode == "append": #append = ajoute à la description
+        if mode == "append":  # append = ajoute à la description
             if self.info_message:
                 embed = self.info_message.embeds[0]
                 embed.description += _embed.description
@@ -117,33 +119,33 @@ class Game:
                         await player.info_message.edit(embed=embed)
                     else:
                         player.info_message = await player.user.send(embed=_embed)
-        elif mode == "replace": #replace = modifie le dernier message
+        elif mode == "replace":  # replace = modifie le dernier message
             if self.info_message:
                 await self.info_message.edit(embed=_embed)
             else:
                 self.info_message = await self.channel.send(embed=_embed)
 
-            for id in self.in_game:
-                player = self.players[id]
-                if id not in exceptions:
+            for player_id in self.in_game:
+                player = self.players[player_id]
+                if player_id not in exceptions:
                     if player.info_message:
                         await player.info_message.edit(embed=_embed)
                     else:
                         player.info_message = await player.user.send(embed=_embed)
-        elif mode == "set": #set = nouveau message avec mémoire
+        elif mode == "set":  # set = nouveau message avec mémoire
             self.info_message = await self.channel.send(embed=_embed)
-            for id in self.in_game:
-                player = self.players[id]
-                if id not in exceptions:
+            for player_id in self.in_game:
+                player = self.players[player_id]
+                if player_id not in exceptions:
                     player.info_message = await player.user.send(embed=_embed)
-        else: #normal = nouveau message sans mémoire
+        else:  # normal = nouveau message sans mémoire
             await self.channel.send(embed=_embed)
-            for id in self.in_game:
-                player = self.players[id]
-                if id not in exceptions:
+            for player_id in self.in_game:
+                player = self.players[player_id]
+                if player_id not in exceptions:
                     await player.user.send(embed=_embed)
 
-    #Envoies le résumé de la partie aux joueurs + le channel
+    # Envoies le résumé de la partie aux joueurs + le channel
     async def send_info(self, **kwargs):
         mode = kwargs["mode"] if "mode" in kwargs else "replace"
         info = kwargs["info"] if "info" in kwargs else ""
@@ -165,7 +167,7 @@ class Game:
         delay = datetime.timedelta(hours=24).total_seconds()
         self.next_turn_timer = Timer(delay, self.next_turn)
 
-    #Elimine les joueurs qui n'ont pas répondu ou qui se sont trompés
+    # Elimine les joueurs qui n'ont pas répondu ou qui se sont trompés
     async def next_turn(self):
         if self.next_turn_timer:
             self.next_turn_timer.cancel()
@@ -204,7 +206,7 @@ class Game:
 
             self.time_next_turn()
 
-    #Fin de partie, envoies le message de fin et détruit la partie
+    # Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, jack_wins):
         if jack_wins:
             embed = discord.Embed(title="🃏 Victoire du Valet de Coeur! 🃏", color=0xfffffe)
