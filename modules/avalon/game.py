@@ -44,6 +44,15 @@ class Game:
     #     elif object["state"]["type"] == "send_laws":
     #         await self.send_laws()
 
+    async def reload(self, object, client):
+        await self.deserialize(object, client)
+
+        if object["state"]["type"] == "send_team_choice":
+            await self.send_team_choice()
+        elif object["state"]["type"] == "quest":
+            for player_id in self.team.values():
+                await self.players[player_id].send_choice(self)
+
     async def start_game(self):
         self.turn = 0
 
@@ -316,6 +325,8 @@ class Game:
 
                 for player_id in self.team.values():
                     await self.players[player_id].send_choice(self)
+
+                self.save({"type":"quest"})
             else:
                 if self.refused == 4:
                     await self.end_game(False, "5 Equipes refusées")
@@ -422,6 +433,8 @@ class Game:
         await self.send_info(mode="set", info=message)
         await self.send_team_choice()
 
+        self.save({"type":"send_team_choice"})
+
     # Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, good_wins, cause):
         if good_wins is True:
@@ -437,83 +450,91 @@ class Game:
         # self.delete_save()
         global_values.games.pop(self.channel.id)
 
-    # def serialize(self, state):
-    #     object = {
-    #         "channel": self.channel.id,
-    #         "order": self.order,
-    #         "turn": self.turn,
-    #         "chancellor": self.chancellor,
-    #         "after_special_election": self.after_special_election,
-    #         "deck": self.deck,
-    #         "discard": self.discard,
-    #         "policies": self.policies,
-    #         "liberal_laws": self.liberal_laws,
-    #         "fascist_laws": self.fascist_laws,
-    #         "term_limited": self.term_limited,
-    #         "refused": self.refused,
-    #         "info_message": self.info_message.id if self.info_message else None,
-    #         "played": self.played,
-    #         "players": {},
-    #         "state": state
-    #     }
-    #
-    #     for id, player in self.players.items():
-    #         object["players"][id] = {
-    #             "role": player.role,
-    #             "last_vote": player.last_vote,
-    #             "inspected": player.inspected,
-    #             "info_message": player.info_message.id if player.info_message else None,
-    #             "user": player.user.id
-    #         }
-    #
-    #     return object
-    #
-    # async def deserialize(self, object, client):
-    #     self.channel = client.get_channel(object["channel"])
-    #     self.order = object["order"]
-    #     self.turn = object["turn"]
-    #     self.chancellor = object["chancellor"]
-    #     self.after_special_election = object["after_special_election"]
-    #     self.deck = object["deck"]
-    #     self.discard = object["discard"]
-    #     self.policies = object["policies"]
-    #     self.liberal_laws = object["liberal_laws"]
-    #     self.fascist_laws = object["fascist_laws"]
-    #     self.term_limited = object["term_limited"]
-    #     self.refused = object["refused"]
-    #     self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None
-    #     self.played = object["played"]
-    #     self.players = {}
-    #
-    #     classes = {
-    #         "liberal": Liberal,
-    #         "fascist": Fascist,
-    #         "hitler": Hitler,
-    #         "goebbels": Goebbels,
-    #         "merliner": Merliner
-    #     }
-    #
-    #     for id, info in object["players"].items():
-    #         player = self.players[int(id)] = classes[info["role"]](client.get_user(info["user"]))
-    #         player.last_vote = info["last_vote"]
-    #         player.inspected = info["inspected"]
-    #         player.info_message = await player.user.fetch_message(info["info_message"]) if info["info_message"] else None
-    #
-    # def save(self, state):
-    #     if self.mainclass.objects.save_exists("games"):
-    #         object = self.mainclass.objects.load_object("games")
-    #     else:
-    #         object = {}
-    #
-    #     object[self.channel.id] = self.serialize(state)
-    #     self.mainclass.objects.save_object("games", object)
-    #
-    # def delete_save(self):
-    #     if self.mainclass.objects.save_exists("games"):
-    #         object = self.mainclass.objects.load_object("games")
-    #         if str(self.channel.id) in object:
-    #             object.pop(str(self.channel.id))
-    #
-    #         self.mainclass.objects.save_object("games", object)
-    #     else:
-    #         print("no save")
+    def serialize(self, state):
+        object = {
+            "channel": self.channel.id,
+            "order": self.order,
+            "turn": self.turn,
+            "round": self.round,
+            "team": self.team,
+            "refused": self.refused,
+            "quests": self.quests,
+            "info_message": self.info_message.id if self.info_message else None,
+            "played": self.played,
+            "roles": self.roles,
+            "phase": self.phase,
+            "gamerules": self.gamerules,
+            "players": {},
+            "state": state
+        }
+
+        for id, player in self.players.items():
+            object["players"][id] = {
+                "role": player.role,
+                "last_vote": player.last_vote,
+                "inspected": player.inspected,
+                "quest_choices": player.quest_choices,
+                "info_message": player.info_message.id if player.info_message else None,
+                "user": player.user.id
+            }
+
+        return object
+
+    async def deserialize(self, object, client):
+        self.channel = client.get_channel(object["channel"])
+        self.order = object["order"]
+        self.turn = int(object["turn"])
+        self.round = int(object["round"])
+        self.team = object["team"]
+        self.quests = object["quests"]
+        self.roles = object["roles"]
+        self.phase = object["phase"]
+        self.gamerules = object["gamerules"]
+        self.refused = int(object["refused"])
+        self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None
+        self.played = object["played"]
+        self.players = {}
+
+        classes = {
+            "good": Good,
+            "evil": Evil,
+            "merlin": Merlin,
+            "percival": Percival,
+            "karadoc": Karadoc,
+            "gawain": Gawain,
+            "galaad": Galaad,
+            "uther": Uther,
+            "arthur": Arthur,
+            "assassin": Assassin,
+            "morgane": Morgane,
+            "mordred": Mordred,
+            "oberon": Oberon,
+            "lancelot": Lancelot,
+            "elias": Elias
+        }
+
+        for id, info in object["players"].items():
+            player = self.players[int(id)] = classes[info["role"]](client.get_user(info["user"]))
+            player.last_vote = info["last_vote"]
+            player.inspected = info["inspected"]
+            player.quest_choices = info["quest_choices"]
+            player.info_message = await player.user.fetch_message(info["info_message"]) if info["info_message"] else None
+
+    def save(self, state):
+        if self.mainclass.objects.save_exists("games"):
+            object = self.mainclass.objects.load_object("games")
+        else:
+            object = {}
+
+        object[self.channel.id] = self.serialize(state)
+        self.mainclass.objects.save_object("games", object)
+
+    def delete_save(self):
+        if self.mainclass.objects.save_exists("games"):
+            object = self.mainclass.objects.load_object("games")
+            if str(self.channel.id) in object:
+                object.pop(str(self.channel.id))
+
+            self.mainclass.objects.save_object("games", object)
+        else:
+            print("no save")
