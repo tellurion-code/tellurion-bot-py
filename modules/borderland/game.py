@@ -109,6 +109,7 @@ class Game:
                 self.info_message = await self.channel.send(embed=_embed)
 
             for id in self.in_game:
+                player = self.players[id]
                 if id not in exceptions:
                     if player.info_message:
                         embed = player.info_message.embeds[0]
