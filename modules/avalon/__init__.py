@@ -269,8 +269,8 @@ class MainClass(BaseClassPython):
                                 "elias": "elias"
                             }
 
-                            for role in roles:
-                                role = role.lower()
+                            for i, role in enumerate(roles):
+                                role = roles[i] = role.lower()
                                 if role not in valid_roles:
                                     invalid_roles.append(role)
 
