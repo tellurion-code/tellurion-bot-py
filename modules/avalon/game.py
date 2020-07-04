@@ -425,7 +425,7 @@ class Game:
     # Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, good_wins, cause):
         if good_wins is True:
-            embed = discord.Embed(title="[AVALON] Victoire des Gentils 🟦️ par " + cause + " !", color=0x2e64fe)
+            embed = discord.Embed(title="[AVALON] Victoire des Gentils 🟦 par " + cause + " !", color=0x2e64fe)
         elif good_wins is False:
             embed = discord.Embed(title="[AVALON] Victoire des Méchants 🟥 par " + cause + " !", color=0xef223f)
         else:
