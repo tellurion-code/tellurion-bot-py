@@ -33,6 +33,7 @@ class Player:
     async def send_choice_message(self):
         if self.symbol_choice_message:
             await self.symbol_choice_message.message.delete()
+            del self.symbol_choice_message
 
         choices = ["Coeur", "Pique", "Carreau", "Trèfle"]
         emojis = ["❤️", "♠️", "🔷", "🍀"]

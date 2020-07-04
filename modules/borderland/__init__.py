@@ -32,17 +32,25 @@ class MainClass(BaseClassPython):
         self.config["color"] = self.color
         self.config["command_text"] = self.command_text
 
+    async def on_ready(self):
+        if self.objects.save_exists("games"):
+            games = self.objects.load_object("games")
+            for game in games.values():
+                globals.games[game["channel"]] = Game(self)
+                await globals.games[game["channel"]].reload(game, self.client)
+
     async def com_create(self, message, args, kwargs):
         if message.channel.id in global_values.games:
             await message.channel.send("Il y a déjà une partie en cours dans ce channel")
         else:
-            global_values.games[message.channel.id] = Game(message, self)
+            global_values.games[message.channel.id] = Game(self,message=message)
             await global_values.games[message.channel.id].on_creation(message)
 
     # Réitinitialise et supprime la partie
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in global_values.games:
             await message.channel.send("La partie a été reset")
+            globals.games[message.channel.id].delete_save()
             del global_values.games[message.channel.id]
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
@@ -87,7 +95,7 @@ A vous de voir à qui vous pouvez faire confiance et à qui vous aller dire la v
  - Les joueurs doivent alors trouver quel est leur symbole dans un délai de 24 heures sous peine d'être éliminés
  - Ils ne peuvent pas directement en prendre connaissance mais ont la possibilité de montrer leur symbole à un autre participant
  - Lorsque 24h se sont écoulées, tous les joueurs n'ayant pas trouvé son symbole ou ayant mal répondu est éliminé du jeu
- 
+
 (Une personne éliminée ne doit plus s'impliquer d'une quelconque manière dans le déroulement du jeu)
             """,
             color=self.color

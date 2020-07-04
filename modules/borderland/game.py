@@ -24,17 +24,28 @@ class Timer:
 
 
 class Game:
-    def __init__(self, message, mainclass):
+    def __init__(self, mainclass, **kwargs):
+        message = kwargs["message"] if "message" in kwargs else None
         self.mainclass = mainclass
-        self.channel = message.channel
-        self.starter = message.author.id
+
+        if message:
+            self.channel = message.channel
+            self.starter = message.author.id
+        else:
+            self.start = 0
+            self.channel = None
+
         self.players = {}  # Dict pour rapidement accéder aux infos
         self.round = 0  # Nombre de manches
-        self.time = 0  # Heure à laquelle le jour finit
         self.roles = []  # Roles vides = à générer
         self.info_message = None
         self.in_game = []
         self.next_turn_timer = None
+
+    async def reload(self, object, client):
+        await self.deserialize(object, client)
+
+        # self.time_next_turn()  # Rajouter heure à laquelle ça doit restart
 
     async def on_creation(self, message):
         async def update(reactions):
@@ -91,7 +102,6 @@ class Game:
             await player.game_start(self)
             self.in_game.append(player_id)
 
-        self.time = datetime.datetime.now().time()
 
         await self.send_info(info="Début de partie")
         self.time_next_turn()
@@ -154,7 +164,7 @@ class Game:
 
         embed = discord.Embed(
             title="[BORDERLAND] Manche " + str(self.round),
-            description="**N'oubliez pas d'envoyer votre choix avant demain, " + self.time.strftime("%H") + "h00.**\n" + info,
+            description="**N'oubliez pas d'envoyer votre choix avant demain.**\n" + info,
             color=color
         )
 
@@ -165,8 +175,10 @@ class Game:
     def time_next_turn(self):
         # delay = datetime.timedelta(minutes=1).total_seconds()
         # delay = (datetime.datetime.combine(datetime.datetime.today() + datetime.timedelta(days=1), self.time) - datetime.datetime.now()).total_seconds()
-        delay = datetime.timedelta(hours=24).total_seconds()
+        tomorrow = datetime.timedelta(hours=24)
+        delay = tomorrow.total_seconds()
         self.next_turn_timer = Timer(delay, self.next_turn)
+        self.save(tomorrow)
 
     # Elimine les joueurs qui n'ont pas répondu ou qui se sont trompés
     async def next_turn(self):
@@ -222,4 +234,68 @@ class Game:
         embed.description="__Joueurs restants:__\n" + '\n'.join(["`" + str(x.user) + "` : " + roles[x.role] for x in self.players.values()])
 
         await self.broadcast(embed)
+        self.delete_save()
         global_values.games.pop(self.channel.id)
+
+    def serialize(self, time):
+        object = {
+            "channel": self.channel.id,
+            "round": self.round,
+            "starter": self.starter,
+            "time": time,
+            "roles": self.roles,
+            "info_message": self.info_message.id if self.info_message else None,
+            "in_game": self.in_game,
+            "players": {},
+            "state": state
+        }
+
+        for id, player in self.players.items():
+            object["players"][id] = {
+                "role": player.role,
+                "symbol": player.symbol,
+                "choice": player.choice,
+                "info_message": player.info_message.id if player.info_message else None,
+                "user": player.user.id
+            }
+
+        return object
+
+    async def deserialize(self, object, client):
+        self.channel = client.get_channel(object["channel"])
+        self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None
+        self.in_game = object["in_game"]
+        self.players = {}
+        self.round = object["round"]
+        self.starter = object["starter"]
+        self.roles = object["roles"]
+
+        classes = {
+            "random": Player,
+            "jack": Jack
+        }
+
+        for id, info in object["players"].items():
+            player = self.players[int(id)] = classes[info["role"]](client.get_user(info["user"]))
+            player.symbol = info["symbol"]
+            player.choice = info["choice"]
+            player.info_message = await player.user.fetch_message(info["info_message"]) if info["info_message"] else None
+
+    def save(self, time):
+        if self.mainclass.objects.save_exists("games"):
+            object = self.mainclass.objects.load_object("games")
+        else:
+            object = {}
+
+        object[self.channel.id] = self.serialize(time)
+        self.mainclass.objects.save_object("games", object)
+
+    def delete_save(self):
+        if self.mainclass.objects.save_exists("games"):
+            object = self.mainclass.objects.load_object("games")
+            if str(self.channel.id) in object:
+                object.pop(str(self.channel.id))
+
+            self.mainclass.objects.save_object("games", object)
+        else:
+            print("no save")
