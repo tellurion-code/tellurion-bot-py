@@ -32,7 +32,7 @@ class Game:
             self.channel = message.channel
             self.starter = message.author.id
         else:
-            self.start = 0
+            self.starter = 0
             self.channel = None
 
         self.players = {}  # Dict pour rapidement accéder aux infos
@@ -176,7 +176,7 @@ class Game:
 
         await self.broadcast(embed, mode=mode)
 
-    def time_next_turn(self, tomorrow = None):
+    def time_next_turn(self, tomorrow=None):
         # delay = datetime.timedelta(minutes=1).total_seconds()
         # delay = (datetime.datetime.combine(datetime.datetime.today() + datetime.timedelta(days=1), self.time) - datetime.datetime.now()).total_seconds()
         if not tomorrow:
