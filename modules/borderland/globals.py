@@ -4,7 +4,6 @@ def init():
     global reaction_messages
     global number_emojis
     global color
-    global couleurs
 
     games = {}
     debug = False
