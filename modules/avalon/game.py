@@ -310,7 +310,7 @@ class Game:
                 await self.send_info(
                     info={
                         "name": "Equipe acceptée",
-                        "value": "Les membres vont partir en quête et décider de la faire réussire ou un échouer."
+                        "value": "Les membres vont partir en quête et décider de la faire réussire ou échouer."
                     },
                     color=0x2e64fe)
 

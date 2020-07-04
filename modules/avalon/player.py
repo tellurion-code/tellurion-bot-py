@@ -37,7 +37,7 @@ class Player:
         pass
 
     async def send_vote(self, game):
-        emojis = ["✅", "❎"]
+        emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["failure"]]
         choices = ["Pour", "Contre"]
 
         async def cast_vote(reactions):
@@ -84,7 +84,7 @@ class Player:
         await self.vote_message.send(
             self.user,
             "Quête",
-            "Êtes-vous pour la réussite la quête?",
+            "Êtes-vous pour la réussite de la quête?",
             global_values.color,
             self.quest_choices,
             validation_emoji="⭕",
