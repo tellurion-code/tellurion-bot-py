@@ -45,7 +45,11 @@ class Game:
     async def reload(self, object, client):
         await self.deserialize(object, client)
 
-        # self.time_next_turn()  # Rajouter heure à laquelle ça doit restart
+        self.time_next_turn(datetime.datetime.fromtimestamp(object["time"]))
+
+        for player in self.players.values():
+            if player.choice == "":
+                await player.send_choice_message()
 
     async def on_creation(self, message):
         async def update(reactions):
@@ -172,11 +176,14 @@ class Game:
 
         await self.broadcast(embed, mode=mode)
 
-    def time_next_turn(self):
+    def time_next_turn(self, tomorrow = None):
         # delay = datetime.timedelta(minutes=1).total_seconds()
         # delay = (datetime.datetime.combine(datetime.datetime.today() + datetime.timedelta(days=1), self.time) - datetime.datetime.now()).total_seconds()
-        tomorrow = datetime.timedelta(hours=24)
+        if not tomorrow:
+            tomorrow = datetime.timedelta(hours=24)
+
         delay = tomorrow.total_seconds()
+
         self.next_turn_timer = Timer(delay, self.next_turn)
         self.save(tomorrow)
 
@@ -242,7 +249,7 @@ class Game:
             "channel": self.channel.id,
             "round": self.round,
             "starter": self.starter,
-            "time": time,
+            "time": datetime.datetime.timestamp(time),
             "roles": self.roles,
             "info_message": self.info_message.id if self.info_message else None,
             "in_game": self.in_game,
