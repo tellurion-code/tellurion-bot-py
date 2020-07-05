@@ -108,7 +108,7 @@ class MainClass(BaseClassPython):
         if message.channel.id in globals.games:
             await message.channel.send("La partie a été reset")
             globals.games[message.channel.id].delete_save()
-            globals.games.pop(message.channel.id)
+            del globals.games[message.channel.id]
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
