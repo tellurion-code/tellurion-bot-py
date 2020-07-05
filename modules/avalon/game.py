@@ -36,14 +36,6 @@ class Game:
             "4th_quest_two_failures": True
         }
 
-    # async def reload(self, object, client):
-    #     await self.deserialize(object, client)
-    #
-    #     if object["state"]["type"] == "send_chancellor_choice":
-    #         await self.send_chancellor_choice()
-    #     elif object["state"]["type"] == "send_laws":
-    #         await self.send_laws()
-
     async def reload(self, object, client):
         await self.deserialize(object, client)
 

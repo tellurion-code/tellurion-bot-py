@@ -51,7 +51,6 @@ class MainClass(BaseClassPython):
                 globals.games[game["channel"]] = Game(self)
                 await globals.games[game["channel"]].reload(game, self.client)
 
-    async def on_ready(self):
         if self.client.get_guild(297780867286433792):
             global_values.quest_emojis["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782) #Get the custom emoji
 

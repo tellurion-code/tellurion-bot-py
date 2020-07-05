@@ -18,10 +18,12 @@ class Player:
 
     def __init__(self, user):
         self.user = user
+        self.setup_emojis()
 
-    async def game_start(self, game):
+    def setup_emojis(self):
         self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["failure"]]
 
+    async def game_start(self, game):
         await self.team_game_start(game)
 
         # blaise = [x for x in game.players if x.role == "blaise"]
@@ -150,9 +152,10 @@ class Gawain(Good):
     role = "gawain"
     quest_choices = ["Réussite", "Inversion"]
 
-    async def _game_start(self, game):
+    def setup_emojis(self):
         self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["reverse"]]
 
+    async def _game_start(self, game):
         self.embed = discord.Embed(
             title="Début de partie ️🛡️",
             description="Vous êtes Gauvain. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans.",
@@ -223,9 +226,10 @@ class Arthur(Good):
     role = "arthur"
     quest_choices = ["Réussite", "Echec", "Annulation"]
 
-    async def _game_start(self, game):
+    def setup_emojis(self):
         self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["failure"], global_values.quest_emojis["cancel"]]
 
+    async def _game_start(self, game):
         self.embed = discord.Embed(
             title="Début de partie 👑",
             description="Vous êtes Arthur. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'annuler la quête si vous êtes dedans.",
@@ -349,8 +353,10 @@ class Lancelot(Evil):
     async def team_game_start(self, game):
         await self._game_start(game)
 
-    async def _game_start(self, game):
+    def setup_emojis(self):
         self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["reverse"]]
+
+    async def _game_start(self, game):
 
         self.embed = discord.Embed(
             title="Début de partie ⚔️️",
