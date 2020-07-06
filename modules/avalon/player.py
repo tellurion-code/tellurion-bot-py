@@ -43,7 +43,7 @@ class Player:
         choices = ["Pour", "Contre"]
 
         async def cast_vote(reactions):
-            self.last_vote = emojis[reactions[self.user.id][0]] + " " + choices[reactions[self.user.id][0]]
+            self.last_vote = str(emojis[reactions[self.user.id][0]]) + " " + choices[reactions[self.user.id][0]]
             await game.check_vote_end()
 
         async def cond_player(reactions):
@@ -63,6 +63,7 @@ class Player:
             choices,
             validation_emoji="⭕",
             emojis=emojis,
+            silent=True,
             fields=[{
                 "name": "Votes :",
                 "value": ' '.join(["✉️"] * len(game.order))
