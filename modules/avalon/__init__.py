@@ -376,7 +376,7 @@ Attention S’il y a 7 participants ou plus, la quête n°4 doit avoir 2 échecs
 🟩 Solo     : Ils gagnent autrement qu'avec la réussite ou l'échec des quêtes
 (Conseil : Ne vous faites jamais passer pour un méchant)
 
-:small_blue_diamond: **Utilisez "avalon rules roles" poura voir la liste des rôles spéciaux** :small_blue_diamond:
+:small_blue_diamond: **Utilisez "avalon rules roles" pour avoir la liste des rôles spéciaux** :small_blue_diamond:
 
 *Note : Tous les votes se font par le biais des réactions ( :white_check_mark: et :negative_squared_cross_mark: )
                 """,

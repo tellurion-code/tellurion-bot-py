@@ -185,8 +185,8 @@ class Game:
         )
 
         embed.add_field(
-            name="Chevaliers:",
-            value='\n'.join([self.players[x].last_vote.split(":")[0] + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]),
+            name="Chevaliers :",
+            value='\n'.join([self.players[x].last_vote.split(" ")[0] + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]),
             inline=False
         )
 
@@ -385,7 +385,7 @@ class Game:
                 if len([x for x in self.quests if x == 0]) == 3:
                     await self.end_game(False, "3 Quêtes échouées")
                 elif len([x for x in self.quests if x == -1]) == 3:
-                    if len([x for x in self.players.values() if x.role == "merlin" or x.role == "assassin"]) > (0 if global_values.debug else 1):
+                    if len([x for x in self.players.values() if x.role == "assassin"]):
                         await self.broadcast(discord.Embed(
                             title="Assassinat",
                             description="3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
