@@ -59,7 +59,7 @@ class MainClass(BaseClassPython):
         if message.channel.id in global_values.games:
             game = global_values.games[message.channel.id]
             if message.author.id == game.starter:
-                await game.next_turn()
+                await game.next_turn(True)
 
     # Lance la partie
     async def com_start(self, message, args, kwargs):

@@ -8,21 +8,6 @@ from modules.borderland.reaction_message import ReactionMessage
 
 import modules.borderland.globals as global_values
 
-
-class Timer:
-    def __init__(self, timeout, callback):
-        self._timeout = timeout
-        self._callback = callback
-        self._task = asyncio.create_task(self._job())
-
-    async def _job(self):
-        await asyncio.sleep(self._timeout)
-        await self._callback()
-
-    def cancel(self):
-        self._task.cancel()
-
-
 class Game:
     def __init__(self, mainclass, **kwargs):
         message = kwargs["message"] if "message" in kwargs else None
@@ -32,24 +17,24 @@ class Game:
             self.channel = message.channel
             self.starter = message.author.id
         else:
-            self.starter = 0
             self.channel = None
+            self.starter = 0
 
         self.players = {}  # Dict pour rapidement accéder aux infos
         self.round = 0  # Nombre de manches
         self.roles = []  # Roles vides = à générer
         self.info_message = None
         self.in_game = []
-        self.next_turn_timer = None
 
     async def reload(self, object, client):
         await self.deserialize(object, client)
 
-        self.time_next_turn(datetime.datetime.fromtimestamp(object["time"]))
-
         for player in self.players.values():
             if player.choice == "":
-                await player.send_choice_message()
+                await player.send_choice_message(self)
+
+        self.tomorrow = datetime.datetime.fromtimestamp(object["time"])
+        await self.time_next_turn()
 
     async def on_creation(self, message):
         async def update(reactions):
@@ -108,7 +93,9 @@ class Game:
 
 
         await self.send_info(info="Début de partie")
-        self.time_next_turn()
+
+        self.tomorrow = datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+        await self.time_next_turn()
 
     # Envoies un message à tous les joueurs + le channel
     async def broadcast(self, _embed, **kwargs):
@@ -176,24 +163,24 @@ class Game:
 
         await self.broadcast(embed, mode=mode)
 
-    def time_next_turn(self, tomorrow=None):
-        # delay = datetime.timedelta(minutes=1).total_seconds()
-        # delay = (datetime.datetime.combine(datetime.datetime.today() + datetime.timedelta(days=1), self.time) - datetime.datetime.now()).total_seconds()
-        if not tomorrow:
-            tomorrow = datetime.timedelta(hours=24)
-
-        delay = tomorrow.total_seconds()
-
-        self.next_turn_timer = Timer(delay, self.next_turn)
-        self.save(tomorrow)
+    async def time_next_turn(self):
+        self.save(self.tomorrow)
+        print("START")
+        await discord.utils.sleep_until(self.tomorrow)
+        print("END")
+        await asyncio.sleep(1)
+        print("1SEC")
+        await self.next_turn()
 
     # Elimine les joueurs qui n'ont pas répondu ou qui se sont trompés
-    async def next_turn(self):
-        if self.next_turn_timer:
-            self.next_turn_timer.cancel()
-            del self.next_turn_timer
+    async def next_turn(self, force=False):
+        if datetime.datetime.utcnow() < self.tomorrow and not force:
+            return
+
+        print("next")
 
         eliminated = []
+        print("passed")
 
         for player_id in self.in_game:
             player = self.players[player_id]
@@ -202,10 +189,13 @@ class Game:
                     title="[BORDERLAND] Elimination",
                     description="Vous avez été éliminé.",
                     color=0))
+
                 eliminated.append(player)
             else:
                 player.choice = ""
                 player.symbol = random.choice(["❤️", "♠️", "🔷", "🍀"])
+
+        print("passed")
 
         for player in eliminated:
             self.in_game.remove(player.user.id)
@@ -216,18 +206,25 @@ class Game:
             info="__Joueurs éliminés:__\n" + ('\n'.join(["• `" + str(x.user) + "` " + x.symbol for x in eliminated]) if len(eliminated) else "Personne!"),
             mode="set")
 
+        print("passed")
+
         if len([x for x in eliminated if x.role == "jack"]):
             await self.end_game(False)
         elif len(self.in_game) <= (1 if global_values.debug else 2):
             await self.end_game(True)
         else:
             for player_id in self.in_game:
-                await self.players[player_id].send_choice_message()
+                await self.players[player_id].send_choice_message(self)
 
-            self.time_next_turn()
+            print("turn")
+
+            self.tomorrow = datetime.datetime.utcnow() + datetime.timedelta(hours=24)
+            await self.time_next_turn()
 
     # Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, jack_wins):
+        print("end")
+
         if jack_wins:
             embed = discord.Embed(title="🃏 Victoire du Valet de Coeur! 🃏", color=0xfffffe)
         else:
@@ -242,7 +239,7 @@ class Game:
 
         await self.broadcast(embed)
         self.delete_save()
-        global_values.games.pop(self.channel.id)
+        del global_values.games[self.channel.id]
 
     def serialize(self, time):
         object = {
@@ -253,8 +250,7 @@ class Game:
             "roles": self.roles,
             "info_message": self.info_message.id if self.info_message else None,
             "in_game": self.in_game,
-            "players": {},
-            "state": state
+            "players": {}
         }
 
         for id, player in self.players.items():

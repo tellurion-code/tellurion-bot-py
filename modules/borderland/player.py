@@ -21,7 +21,7 @@ class Player:
 
         self.symbol = random.choice(["❤️", "♠️", "🔷", "🍀"])
 
-        await self.send_choice_message()
+        await self.send_choice_message(game)
 
     async def send_game_start_info(self):
         await self.user.send("||\n\n\n\n\n\n\n\n\n\n||", embed=discord.Embed(
@@ -30,7 +30,7 @@ class Player:
             color=global_values.color
         ))
 
-    async def send_choice_message(self):
+    async def send_choice_message(self, game):
         if self.symbol_choice_message:
             await self.symbol_choice_message.message.delete()
             del self.symbol_choice_message
@@ -47,6 +47,8 @@ class Player:
             await self.symbol_choice_message.message.edit(embed=embed)
 
             self.choice = emojis[reactions[self.user.id][0]]
+
+            game.save(game.tomorrow)
 
         async def cond(reactions):
             return len(reactions[self.user.id]) == 1
