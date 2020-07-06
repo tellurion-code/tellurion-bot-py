@@ -186,7 +186,7 @@ class Game:
 
         embed.add_field(
             name="Chevaliers:",
-            value='\n'.join([self.players[x].last_vote[:2] + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]),
+            value='\n'.join([self.players[x].last_vote.split(":")[0] + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]),
             inline=False
         )
 
@@ -455,7 +455,7 @@ class Game:
             "played": self.played,
             "roles": self.roles,
             "phase": self.phase,
-            "gamerules": self.gamerules,
+            "gamerules": self.game_rules,
             "players": {},
             "state": state
         }
@@ -481,7 +481,7 @@ class Game:
         self.quests = object["quests"]
         self.roles = object["roles"]
         self.phase = object["phase"]
-        self.gamerules = object["gamerules"]
+        self.game_rules = object["gamerules"]
         self.refused = int(object["refused"])
         self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None
         self.played = object["played"]
