@@ -199,10 +199,14 @@ class Uther(Good):
 
         async def inspect_role(reactions):
             inspected = game.players[valid_candidates[reactions[self.user.id][0]]]
+            if game.game_rules["uther_learns_role"]:
+                information = global_values.visual_roles[inspected.role]
+            else:
+                information = ("🟦 Gentil" if inspected.allegiance == "good" else "🟥 Méchant" if inspected.allegiance == "evil" else "🟩 Solo")
 
             await inspection_message.message.edit(embed=discord.Embed(
                 title="🔍 Inspection",
-                description="Vous avez inspecté `" + str(inspected.user) + "` qui se révèle être " + global_values.visual_roles[inspected.role],
+                description="Vous avez inspecté `" + str(inspected.user) + "` qui se révèle être " + information,
                 color=global_values.color))
 
         async def cond(reactions):
@@ -358,7 +362,6 @@ class Lancelot(Evil):
         self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["reverse"]]
 
     async def _game_start(self, game):
-
         self.embed = discord.Embed(
             title="Début de partie ⚔️️",
             description="Vous êtes Lancelot. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent en tant que Lancelot.",
@@ -397,11 +400,43 @@ class Elias(Solo):
                 value=random.choice(merlin))
 
 
-# class Maleagant(Solo):
-#     role = "maleagant"
-#
-#     async def _game_start(self, game):
-#         self.embed = discord.Embed(title = "Début de partie 🧿",
-#             description = "Vous êtes Méléagant. A chaque quête, vous devrez parier sur sa réussite ou son échec. Si vous faites un sans-faute, vous gagnez seul. Sinon, vous devrez gagner avec les méchants.",
-#             color = self.color
-#         )
+class Maleagant(Solo):
+    role = "maleagant"
+    guess = None
+    can_guess = True
+
+    async def _game_start(self, game):
+        self.embed = discord.Embed(title = "Début de partie 🧿",
+            description = "Vous êtes Méléagant. A chaque quête, vous devrez parier sur sa réussite ou son échec. Si vous faites un sans-faute, vous gagnerez seul. Sinon, vous devrez gagner avec les méchants.",
+            color = self.color
+        )
+
+    async def send_guess(self):
+        async def guess(reactions):
+            choice = str(self.quest_emojis[reactions[self.user.id][0]]) + " " + self.quest_choices[reactions[self.user.id][0]]
+            embed = guess_message.message.embeds[0]
+            embed.description = "Vous avez parié sur " + choice
+
+            guess = (reactions[self.user.id][0] == 0)
+
+            await guess_message.message.edit(embed=embed)
+
+        async def cond(reactions):
+            return len(reactions[self.user.id]) == 1
+
+        guess_message = ReactionMessage(
+            cond,
+            guess,
+            temporary=False
+        )
+
+        await self.vote_message.send(
+            self.user,
+            "Pari",
+            "Devinez le résultat de la Quête",
+            global_values.color,
+            self.quest_choices,
+            validation_emoji="⭕",
+            silent=True,
+            emojis=self.quest_emojis
+        )

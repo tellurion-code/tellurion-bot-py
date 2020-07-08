@@ -152,7 +152,7 @@ class MainClass(BaseClassPython):
                 if reactions[message.author.id][0] == 0:
                     await message.channel.send("La partie a été réinitialisée")
                     globals.games[message.channel.id].delete_save()
-                    global_values.games.pop(message.channel.id)
+                    del global_values.games[message.channel.id]
 
             async def cond(reactions):
                 if message.author.id in reactions:
@@ -279,7 +279,9 @@ class MainClass(BaseClassPython):
                                 "mordred": "mordred",
                                 "oberon": "oberon",
                                 "lancelot": "lancelot",
-                                "elias": "elias"
+                                "elias": "elias",
+                                "meleagant": "maleagant",
+                                "méléagant": "maleagant"
                             }
 
                             for i, role in enumerate(roles):
@@ -350,6 +352,7 @@ __Lancelot__ ⚔️ : Peut inverser le résultat de la quête s'il est dedans. N
 
 🟩 Les solos: 🟩
 __Elias__ 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.
+__Méléagant__ 🧿: A chaque quête, il parie sur sa réussite ou son échec. S'il ne se trompe jamais, il vole la victoire. Sinon, il doit gagner avec les méchants.
                     """,
                     color=global_values.color))
             else:

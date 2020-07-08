@@ -1,11 +1,29 @@
 import discord
 import random
 
-from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Arthur, Assassin, Morgane, Mordred, Oberon, Lancelot, Elias
+from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Arthur, Assassin, Morgane, Mordred, Oberon, Lancelot, Elias, Maleagant
 from modules.avalon.reaction_message import ReactionMessage
 
 import modules.avalon.globals as global_values
 
+classes = {
+    "good": Good,
+    "evil": Evil,
+    "merlin": Merlin,
+    "percival": Percival,
+    "karadoc": Karadoc,
+    "gawain": Gawain,
+    "galaad": Galaad,
+    "uther": Uther,
+    "arthur": Arthur,
+    "assassin": Assassin,
+    "morgane": Morgane,
+    "mordred": Mordred,
+    "oberon": Oberon,
+    "lancelot": Lancelot,
+    "elias": Elias,
+    "maleagant": Maleagant
+}
 
 class Game:
     def __init__(self, mainclass, **kwargs):
@@ -33,7 +51,8 @@ class Game:
         self.phase = "team_selection"
         self.game_rules = {
             "lancelot_know_evil": False,
-            "4th_quest_two_failures": True
+            "4th_quest_two_failures": True,
+            "uther_learns_role": False
         }
 
     async def reload(self, object, client):
@@ -77,24 +96,6 @@ class Game:
             ["merlin", "percival", "good", "good", "good", "good", "evil", "morgane", "assassin"],  # 9
             ["merlin", "percival", "good", "good", "good", "good", "evil", "evil", "morgane", "assassin"],  # 10
         ]
-
-        classes = {
-            "good": Good,
-            "evil": Evil,
-            "merlin": Merlin,
-            "percival": Percival,
-            "karadoc": Karadoc,
-            "gawain": Gawain,
-            "galaad": Galaad,
-            "uther": Uther,
-            "arthur": Arthur,
-            "assassin": Assassin,
-            "morgane": Morgane,
-            "mordred": Mordred,
-            "oberon": Oberon,
-            "lancelot": Lancelot,
-            "elias": Elias
-        }
 
         if len(self.roles) == 0:
             self.roles = roles[len(self.players)]
@@ -318,6 +319,11 @@ class Game:
                 for player_id in self.team.values():
                     await self.players[player_id].send_choice(self)
 
+                for player in self.players.values():
+                    if player.role == "maleagant":
+                        if player.can_guess:
+                            await player.send_guess()
+
                 self.save({"type":"quest"})
             else:
                 if self.refused == 4:
@@ -350,6 +356,11 @@ class Game:
                 else:
                     missing = True
 
+        for player in self.players.values():
+            if player.role == "maleagant" and:
+                if player.can_guess and player.guess is None:
+                    missing = True
+
         if not missing and self.phase == "vote_for_team":
             self.phase = "quest"
 
@@ -372,6 +383,13 @@ class Game:
 
                 self.quests[self.round] = -1 if success else 0
 
+                if len([x for x in self.players.values() if x.role == "maleagant"]):
+                    for maleagant in [x for x in self.players.values() if x.role == "maleagant"]:
+                        if maleagant.guess != success:
+                            maleagant.can_guess = False
+
+                        maleagant.guess = None
+
                 await self.send_info(
                     info={
                         "name": ((str(global_values.quest_emojis["success"]) + " Quête réussie " + str(global_values.quest_emojis["success"])) if success else (str(global_values.quest_emojis["failure"]) + " Quête échouée " + str(global_values.quest_emojis["failure"]))),
@@ -383,8 +401,20 @@ class Game:
                 self.refused = 0
 
                 if len([x for x in self.quests if x == 0]) == 3:
+                    for player in self.players.values():
+                        if player.role == "maleagant":
+                            if player.can_guess:
+                                await self.end_game("Méléagant 🧿", "sans-faute")
+                                return
+
                     await self.end_game(False, "3 Quêtes échouées")
                 elif len([x for x in self.quests if x == -1]) == 3:
+                    for player in self.players.values():
+                        if player.role == "maleagant":
+                            if player.can_guess:
+                                await self.end_game("Méléagant 🧿", "sans-faute")
+                                return
+
                     if len([x for x in self.players.values() if x.role == "assassin"]):
                         await self.broadcast(discord.Embed(
                             title="Assassinat",
@@ -439,8 +469,8 @@ class Game:
         embed.description = "**Joueurs :**\n" + '\n'.join([global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + global_values.visual_roles[self.players[x].role] for i, x in enumerate(self.order)])
 
         await self.broadcast(embed)
-        # self.delete_save()
-        global_values.games.pop(self.channel.id)
+        self.delete_save()
+        del global_values.games[self.channel.id]
 
     def serialize(self, state):
         object = {
@@ -486,24 +516,6 @@ class Game:
         self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None
         self.played = object["played"]
         self.players = {}
-
-        classes = {
-            "good": Good,
-            "evil": Evil,
-            "merlin": Merlin,
-            "percival": Percival,
-            "karadoc": Karadoc,
-            "gawain": Gawain,
-            "galaad": Galaad,
-            "uther": Uther,
-            "arthur": Arthur,
-            "assassin": Assassin,
-            "morgane": Morgane,
-            "mordred": Mordred,
-            "oberon": Oberon,
-            "lancelot": Lancelot,
-            "elias": Elias
-        }
 
         for id, info in object["players"].items():
             player = self.players[int(id)] = classes[info["role"]](client.get_user(info["user"]))
