@@ -357,7 +357,7 @@ class Game:
                     missing = True
 
         for player in self.players.values():
-            if player.role == "maleagant" and:
+            if player.role == "maleagant":
                 if player.can_guess and player.guess is None:
                     missing = True
 
@@ -387,8 +387,6 @@ class Game:
                     for maleagant in [x for x in self.players.values() if x.role == "maleagant"]:
                         if maleagant.guess != success:
                             maleagant.can_guess = False
-
-                        maleagant.guess = None
 
                 await self.send_info(
                     info={
@@ -449,6 +447,9 @@ class Game:
         for player in self.players.values():
             player.last_vote = ""
             player.last_choice = ""
+
+            if player.role == "maleagant":
+                player.guess = None
 
         self.team = {}
 
