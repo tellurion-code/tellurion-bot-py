@@ -417,7 +417,7 @@ class Maleagant(Solo):
             embed = guess_message.message.embeds[0]
             embed.description = "Vous avez parié sur " + choice
 
-            guess = (reactions[self.user.id][0] == 0)
+            self.guess = (reactions[self.user.id][0] == 0)
 
             await guess_message.message.edit(embed=embed)
 
