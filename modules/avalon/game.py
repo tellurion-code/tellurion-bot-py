@@ -61,8 +61,7 @@ class Game:
         if object["state"]["type"] == "send_team_choice":
             await self.send_team_choice()
         elif object["state"]["type"] == "quest":
-            for player_id in self.team.values():
-                await self.players[player_id].send_choice(self)
+            await self.send_players_quest_choice()
 
     async def start_game(self):
         self.turn = 0
@@ -316,13 +315,7 @@ class Game:
                     },
                     color=0x2e64fe)
 
-                for player_id in self.team.values():
-                    await self.players[player_id].send_choice(self)
-
-                for player in self.players.values():
-                    if player.role == "maleagant":
-                        if player.can_guess:
-                            await player.send_guess()
+                await self.send_players_quest_choice()
 
                 self.save({"type":"quest"})
             else:
@@ -338,6 +331,15 @@ class Game:
                     self.refused += 1
 
                     await self.next_turn()
+
+    async def send_players_quest_choice(self):
+        for player_id in self.team.values():
+            await self.players[player_id].send_choice(self)
+
+        for player in self.players.values():
+            if player.role == "maleagant":
+                if player.can_guess:
+                    await player.send_guess()
 
     async def check_quest_end(self):
         missing = False
