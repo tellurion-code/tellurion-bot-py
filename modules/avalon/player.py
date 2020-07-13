@@ -430,7 +430,7 @@ class Maleagant(Solo):
             temporary=False
         )
 
-        await self.vote_message.send(
+        await guess_message.send(
             self.user,
             "Pari",
             "Devinez le résultat de la Quête",
