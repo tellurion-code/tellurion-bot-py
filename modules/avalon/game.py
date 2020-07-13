@@ -520,7 +520,7 @@ class Game:
         self.players = {}
         self.team = {}
 
-        for i, id in object["team"]:
+        for i, id in object["team"].items():
             self.team[int(i)] = int(id)
 
         for id, info in object["players"].items():
