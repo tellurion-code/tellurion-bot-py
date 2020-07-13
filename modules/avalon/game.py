@@ -510,7 +510,6 @@ class Game:
         self.order = object["order"]
         self.turn = int(object["turn"])
         self.round = int(object["round"])
-        self.team = object["team"]
         self.quests = object["quests"]
         self.roles = object["roles"]
         self.phase = object["phase"]
@@ -519,6 +518,10 @@ class Game:
         self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None
         self.played = object["played"]
         self.players = {}
+        self.team = {}
+
+        for i, id in object["team"]:
+            self.team[int(i)] = int(id)
 
         for id, info in object["players"].items():
             player = self.players[int(id)] = classes[info["role"]](client.get_user(info["user"]))
