@@ -49,10 +49,12 @@ class Game:
         self.played = []  # Dernière cartes jouées
         self.roles = []  # Rôles
         self.phase = "team_selection"
+        self.lady_of_the_lake = 0  # Index du joueur qui a la Dame du Lac
         self.game_rules = {
             "lancelot_know_evil": False,
             "4th_quest_two_failures": True,
-            "uther_learns_role": False
+            "uther_learns_role": False,
+            "lady_of_the_lake": False
         }
 
     async def reload(self, object, client):
@@ -62,6 +64,8 @@ class Game:
             await self.send_team_choice()
         elif object["state"]["type"] == "quest":
             await self.send_players_quest_choice()
+        elif object["state"]["type"] == "next_turn":
+            await self.next_turn()
 
     async def start_game(self):
         self.turn = 0
@@ -112,6 +116,8 @@ class Game:
             await self.players[self.order[i]].game_start(self)
 
         random.shuffle(self.roles)
+
+        self.lady_of_the_lake = len(self.players)-1
 
         await self.send_info(mode="set")
         await self.send_team_choice()
@@ -186,7 +192,7 @@ class Game:
 
         embed.add_field(
             name="Chevaliers :",
-            value='\n'.join([self.players[x].last_vote.split(" ")[0] + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") for i, x in enumerate(self.order)]),
+            value='\n'.join([self.players[x].last_vote.split(" ")[0] + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") + ("🌊" if self.lady_of_the_lake == i else "") for i, x in enumerate(self.order)]),
             inline=False
         )
 
@@ -213,6 +219,24 @@ class Game:
         #     await player.user.send(embed = embed)
 
         await self.broadcast(embed, mode=mode)
+
+    async def start_turn(self, message):
+        self.phase = "team_selection"
+        self.turn = (self.turn + 1) % len(self.order)
+
+        for player in self.players.values():
+            player.last_vote = ""
+            player.last_choice = ""
+
+            if player.role == "maleagant":
+                player.guess = None
+
+        self.team = {}
+
+        await self.send_info(mode="set", info=message)
+        await self.send_team_choice()
+
+        self.save({"type":"send_team_choice"})
 
     # Est aussi un début de tour, envoies le choix de team
     async def send_team_choice(self):
@@ -442,22 +466,49 @@ class Game:
 
     # Passe au prochain tour
     async def next_turn(self, message=None):
-        self.phase = "team_selection"
-        self.turn = (self.turn + 1) % len(self.order)
+        if self.game_rules["lady_of_the_lake"] and self.round >= 2:
+            lady = self.players[self.order[self.lady_of_the_lake]]
 
-        for player in self.players.values():
-            player.last_vote = ""
-            player.last_choice = ""
+            valid_candidates = [x for i, x in enumerate(self.order) if x != lady.user.id]
+            emojis = [global_values.number_emojis[self.order.index(x)] for x in valid_candidates]
+            choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
 
-            if player.role == "maleagant":
-                player.guess = None
+            async def inspect(reactions):
+                inspected = self.players[valid_candidates[reactions[lady.user.id][0]]]
+                embed = lady_choice_message.message.embeds[0]
 
-        self.team = {}
+                embed.title = "🔎 Inspection 🔎"
+                embed.description = "L'allégeance de `" + str(inspected.user) + "` est " + ("🟦 Gentil" if inspected.allegiance == "good" else "🟥 Méchant" if inspected.allegiance == "evil" else "🟩 Solo")
 
-        await self.send_info(mode="set", info=message)
-        await self.send_team_choice()
+                self.lady_of_the_lake = self.order.index(inspected.user.id)
 
-        self.save({"type":"send_team_choice"})
+                await lady_choice_message.message.edit(embed=embed)
+                await self.start_turn({
+                    "name": "🔎 Inspection 🔎",
+                    "value": "La Dame du Lac (`" + str(lady.user) + "`) a inspecté l'allégeance de `" + str(inspected.user) + "`"
+                })
+
+            async def cond(reactions):
+                return len(reactions[self.order[self.lady_of_the_lake]]) == 1
+
+            lady_choice_message = ReactionMessage(
+                cond,
+                inspect,
+                temporary=False
+            )
+
+            await lady_choice_message.send(
+                lady.user,
+                "Choisissez qui vous souhaitez inspecter",
+                "",
+                0x2e64fe,
+                choices,
+                emojis=emojis
+            )
+
+            self.save({"type":"next_turn"})
+        else:
+            await self.start_turn(message)
 
     # Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, good_wins, cause):
@@ -485,6 +536,7 @@ class Game:
             "quests": self.quests,
             "info_message": self.info_message.id if self.info_message else None,
             "played": self.played,
+            "lady_of_the_lake": self.lady_of_the_lake,
             "roles": self.roles,
             "phase": self.phase,
             "gamerules": self.game_rules,
@@ -516,6 +568,7 @@ class Game:
         self.refused = int(object["refused"])
         self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None
         self.played = object["played"]
+        self.lady_of_the_lake = object["lady_of_the_lake"]
         self.players = {}
         self.team = {}
 
