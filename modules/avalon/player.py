@@ -104,7 +104,7 @@ class Good(Player):
     async def team_game_start(self, game):
         await self._game_start(game)
 
-        galaad = [global_values.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "galaad"]
+        galaad = [global_values.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role in ["galaad", "accolon"]]
         if len(galaad):
             self.embed.add_field(
                 name="🙋 Galaad",
@@ -179,7 +179,7 @@ class Galaad(Good):
     async def _game_start(self, game):
         self.embed = discord.Embed(
             title="Début de partie ️🙋",
-            description="Vous êtes Galaad. Vous devez faire réussir 3 Quêtes. En tant que fils de Lancelot, les gentils vous connaissent.",
+            description="Vous êtes Galaad. Vous devez faire réussir 3 Quêtes. Les gentils vous connaissent.",
             color=self.color)
 
 
@@ -239,6 +239,53 @@ class Arthur(Good):
             title="Début de partie 👑",
             description="Vous êtes Arthur. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'annuler la quête si vous êtes dedans.",
             color=self.color)
+
+
+class Vortigern(Good):
+    role = "vortigern"
+
+    async def _game_start(self, game):
+        self.embed = discord.Embed(
+            title="Début de partie 👴",
+            description="Vous êtes Vortigern. Vous devez faire réussir 3 Quêtes. Vous pouvez choisir un joueur à qui vous allez vous révéler.",
+            color=self.color)
+
+    async def post_game_start(self, game):
+        valid_candidates = [x for x in game.order if x != self.user.id]
+        emojis = [global_values.number_emojis[game.order.index(x)] for x in valid_candidates]
+        choices = ["`" + str(game.players[x].user) + "`" for x in valid_candidates]
+
+        async def reveal_self(reactions):
+            got_revelation = game.players[valid_candidates[reactions[self.user.id][0]]]
+
+            await reveal_message.message.edit(embed=discord.Embed(
+                title="📨 Révélation 📨",
+                description="Vous vous êtes révélé à `" + str(got_revelation.user) "`",
+                color=global_values.color))
+
+            await got_revelation.user.send(embed=discord.Embed(
+                title="📨 Révélation 📨",
+                description="`" + str(self.user) "` s'est révélé à vous comme étant Vortigern",
+                color=global_values.color))
+            ))
+
+        async def cond(reactions):
+            return len(reactions[self.user.id]) == 1
+
+        reveal_message = ReactionMessage(
+            cond,
+            reveal_self,
+            temporary=False
+        )
+
+        await inspection_message.send(
+            self.user,
+            "Choisissez le joueur à qui vous voulez vous révéler",
+            "",
+            global_values.color,
+            choices,
+            emoji=emojis
+        )
 
 
 # class Blaise(Good):
@@ -373,6 +420,30 @@ class Lancelot(Evil):
                 self.embed.add_field(
                     name="Un de vos co-équipiers :",
                     value=random.choice(evils))
+
+
+class Accolon(Evil):
+    role = "accolon"
+
+    async def _game_start(self, game):
+        self.embed = discord.Embed(
+            title="Début de partie 🤘",
+            description="Vous êtes Accolon. Vous devez faire échouer 3 Quêtes. Les gentils vous connaissent.",
+            color=self.color)
+
+
+class Kay(Evil):
+    role = "kay"
+
+    async def _game_start(self, game):
+        self.embed = discord.Embed(
+            title="Début de partie 🔮",
+            description="Vous êtes Sir Kay. Vous devez faire échouer 3 Quêtes. Vous connaissez les rôles de vos co-équipiers.",
+            color=self.color)
+
+        self.embed.add_field(
+            name="Rôles",
+            value='\n'.join([global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + global_values.visual_roles[self.players[x].role] for i, x in enumerate(self.order) if game.players[x].allegiance == "evil"]))
 
 
 class Solo(Player):

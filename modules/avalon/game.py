@@ -475,14 +475,14 @@ class Game:
 
             async def inspect(reactions):
                 inspected = self.players[valid_candidates[reactions[lady.user.id][0]]]
-                embed = lady_choice_message.message.embeds[0]
-
-                embed.title = "🔎 Inspection 🔎"
-                embed.description = "L'allégeance de `" + str(inspected.user) + "` est " + ("🟦 Gentil" if inspected.allegiance == "good" else "🟥 Méchant" if inspected.allegiance == "evil" else "🟩 Solo")
 
                 self.lady_of_the_lake = self.order.index(inspected.user.id)
 
-                await lady_choice_message.message.edit(embed=embed)
+                await lady_choice_message.message.edit(embed=discord.Embed(
+                    title="🔎 Inspection 🔎",
+                    description="L'allégeance de `" + str(inspected.user) + "` est " + ("🟦 Gentil" if inspected.allegiance == "good" else "🟥 Méchant" if inspected.allegiance == "evil" else "🟩 Solo"),
+                    color=global_values.color)))
+
                 await self.start_turn({
                     "name": "🔎 Inspection 🔎",
                     "value": "La Dame du Lac (`" + str(lady.user) + "`) a inspecté l'allégeance de `" + str(inspected.user) + "`"
