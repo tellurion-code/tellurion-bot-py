@@ -306,8 +306,6 @@ class Game:
             # await self.send_info(color = 0x00ff00 if for_votes > len(self.order)/2 else 0xff0000)
 
             if for_votes > len(self.order)/2:
-                # self.save({"type": "send_laws"})
-
                 await self.send_info(
                     info={
                         "name": "Equipe acceptée",
@@ -347,16 +345,17 @@ class Game:
         for player_id in self.team.values():
             player = self.players[player_id]
 
-            if player.vote_message:
-                embed = player.vote_message.message.embeds[0]
+            if player.last_choice != "":
+                if player.vote_message:
+                    if player.vote_message.message:
+                        embed = player.vote_message.message.embeds[0]
 
-                if player.last_choice != "":
-                    embed.description = "Vous avez choisi " + player.last_choice
-                    embed.color = (0x00ff00 if str(global_values.quest_emojis["success"]) in player.last_choice else 0xff0000 if str(global_values.quest_emojis["failure"]) in player.last_choice else 0x0000ff)
+                        embed.description = "Vous avez choisi " + player.last_choice
+                        embed.color = (0x00ff00 if str(global_values.quest_emojis["success"]) in player.last_choice else 0xff0000 if str(global_values.quest_emojis["failure"]) in player.last_choice else 0x0000ff)
 
-                    await player.vote_message.message.edit(embed=embed)
-                else:
-                    missing = True
+                        await player.vote_message.message.edit(embed=embed)
+            else:
+                missing = True
 
         for player in self.players.values():
             if player.role == "maleagant":
