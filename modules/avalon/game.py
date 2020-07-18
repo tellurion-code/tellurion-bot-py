@@ -1,7 +1,7 @@
 import discord
 import random
 
-from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Arthur, Assassin, Morgane, Mordred, Oberon, Lancelot, Elias, Maleagant
+from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Arthur, Vortigern, Assassin, Morgane, Mordred, Oberon, Lancelot, Accolon, Kay, Elias, Maleagant
 from modules.avalon.reaction_message import ReactionMessage
 
 import modules.avalon.globals as global_values
@@ -16,11 +16,14 @@ classes = {
     "galaad": Galaad,
     "uther": Uther,
     "arthur": Arthur,
+    "vortigern": Vortigern,
     "assassin": Assassin,
     "morgane": Morgane,
     "mordred": Mordred,
     "oberon": Oberon,
     "lancelot": Lancelot,
+    "accolon": Accolon,
+    "kay": Kay,
     "elias": Elias,
     "maleagant": Maleagant
 }

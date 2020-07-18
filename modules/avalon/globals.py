@@ -22,12 +22,15 @@ def init():
         "galaad": "🙋 Galaad",
         "uther": "👨‍🦳 Uther",
         "arthur": "👑 Arthur",
+        "vortigern": "👴 Vortigern",
         "evil": "🟥 Méchant",
         "assassin": "🗡️ Assassin",
         "morgane": "🧙‍♀️ Morgane",
         "mordred": "😈 Mordred",
         "oberon": "😶 Oberon",
         "lancelot": "⚔️ Lancelot",
+        "accolon": "🤘 Accolon",
+        "kay": "🔮 Kay",
         "elias": "🧙 Elias",
         "maleagant": "🧿 Méléagant"
     }

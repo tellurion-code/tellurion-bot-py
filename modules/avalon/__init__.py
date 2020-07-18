@@ -274,11 +274,15 @@ class MainClass(BaseClassPython):
                                 "galaad": "galaad",
                                 "uther": "uther",
                                 "arthur": "arthur",
+                                "vortigern": "vortigern",
                                 "assassin": "assassin",
                                 "morgane": "morgane",
                                 "mordred": "mordred",
                                 "oberon": "oberon",
                                 "lancelot": "lancelot",
+                                "accolon": "accolon",
+                                "kay": "kay",
+                                "sir_kay": "kay",
                                 "elias": "elias",
                                 "meleagant": "maleagant",
                                 "méléagant": "maleagant"
@@ -342,6 +346,7 @@ __Gauvain__ 🛡️ : Peut inverser le résultat de la quête s'il est dedans.
 __Galaad__ 🙋 : Les gentils le connaissent.
 __Uther__ 👨‍🦳 : En début de partie, il choisit un joueur dont il apprend le rôle.
 __Arthur__ 👑 : Une fois dans la partie, il peut faire annuler une quête s'il est dedans. Les choix ne sont alors pas révélés et l'équipe est considérée comme refusée.
+__Vortigern__ 👴 : En début de partie, il choisit un joueur à qui il se révèle.
 
 🟥 Les méchants: 🟥
 __Assassin__ 🗡️ : Si les gentils ont réussi 3 quêtes, il peut tenter d’assassiner Merlin. S’il y parvient les méchants gagnent la partie.
@@ -349,6 +354,8 @@ __Mordred__ 😈 : Il n’est pas connu de Merlin.
 __Morgane__ 🧙‍♀️ : Elle apparait aux yeux de Perceval.
 __Oberon__ 😶 : Il ne connait pas ses alliés et ses alliés ne savent pas qui il est.
 __Lancelot__ ⚔️ : Peut inverser le résultat de la quête s'il est dedans. Ne peut pas mettre d'Echec. Il ne connait pas les méchants mais eux le connaissent en tant que Lancelot.
+__Accolon__ 🤘 : Les gentils le connaissent aux côtés de Galaad.
+__Sir Kay__ 🔮 : Il connaît le rôle de chacun de ses co-équipiers
 
 🟩 Les solos: 🟩
 __Elias__ 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.
