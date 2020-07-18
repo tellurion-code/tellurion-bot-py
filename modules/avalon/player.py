@@ -260,14 +260,13 @@ class Vortigern(Good):
 
             await reveal_message.message.edit(embed=discord.Embed(
                 title="📨 Révélation 📨",
-                description="Vous vous êtes révélé à `" + str(got_revelation.user) "`",
+                description="Vous vous êtes révélé à `" + str(got_revelation.user) + "`",
                 color=global_values.color))
 
             await got_revelation.user.send(embed=discord.Embed(
                 title="📨 Révélation 📨",
-                description="`" + str(self.user) "` s'est révélé à vous comme étant Vortigern",
+                description="`" + str(self.user) + "` s'est révélé à vous comme étant Vortigern",
                 color=global_values.color))
-            ))
 
         async def cond(reactions):
             return len(reactions[self.user.id]) == 1

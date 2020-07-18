@@ -484,12 +484,11 @@ class Game:
                 await lady_choice_message.message.edit(embed=discord.Embed(
                     title="🔎 Inspection 🔎",
                     description="L'allégeance de `" + str(inspected.user) + "` est " + ("🟦 Gentil" if inspected.allegiance == "good" else "🟥 Méchant" if inspected.allegiance == "evil" else "🟩 Solo"),
-                    color=global_values.color)))
+                    color=global_values.color))
 
                 await self.start_turn({
                     "name": "🔎 Inspection 🔎",
-                    "value": "La Dame du Lac (`" + str(lady.user) + "`) a inspecté l'allégeance de `" + str(inspected.user) + "`"
-                })
+                    "value": "La Dame du Lac (`" + str(lady.user) + "`) a inspecté l'allégeance de `" + str(inspected.user) + "`"})
 
             async def cond(reactions):
                 return len(reactions[self.order[self.lady_of_the_lake]]) == 1

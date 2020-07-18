@@ -355,7 +355,7 @@ __Morgane__ 🧙‍♀️ : Elle apparait aux yeux de Perceval.
 __Oberon__ 😶 : Il ne connait pas ses alliés et ses alliés ne savent pas qui il est.
 __Lancelot__ ⚔️ : Peut inverser le résultat de la quête s'il est dedans. Ne peut pas mettre d'Echec. Il ne connait pas les méchants mais eux le connaissent en tant que Lancelot.
 __Accolon__ 🤘 : Les gentils le connaissent aux côtés de Galaad.
-__Sir Kay__ 🔮 : Il connaît le rôle de chacun de ses co-équipiers
+__Sir Kay__ 🔮 : Il connaît le rôle de chacun de ses co-équipiers.
 
 🟩 Les solos: 🟩
 __Elias__ 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.
