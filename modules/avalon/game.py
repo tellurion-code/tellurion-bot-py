@@ -195,7 +195,7 @@ class Game:
 
         embed.add_field(
             name="Chevaliers :",
-            value='\n'.join([self.players[x].last_vote.split(" ")[0] + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") + ("🌊" if self.lady_of_the_lake == i else "") for i, x in enumerate(self.order)]),
+            value='\n'.join([self.players[x].last_vote.split(" ")[0] + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") + ("🌊" if self.lady_of_the_lake == i and self.game_rules["lady_of_the_lake"] else "") for i, x in enumerate(self.order)]),
             inline=False
         )
 
