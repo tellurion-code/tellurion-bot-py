@@ -13,15 +13,10 @@ class Player:
     inspected = False
     vote_message = None
     info_message = None
-    quest_emojis = []
-    quest_choices = ["Réussite", "Echec"]
+    quest_choices = ["success", "failure"]
 
     def __init__(self, user):
         self.user = user
-        self.setup_emojis()
-
-    def setup_emojis(self):
-        self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["failure"]]
 
     async def game_start(self, game):
         await self.team_game_start(game)
@@ -39,7 +34,7 @@ class Player:
         pass
 
     async def send_vote(self, game):
-        emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["failure"]]
+        emojis = [global_values.quest_choices["emojis"]["success"], global_values.quest_choices["emojis"]["failure"]]
         choices = ["Pour", "Contre"]
 
         async def cast_vote(reactions):
@@ -72,7 +67,7 @@ class Player:
 
     async def send_choice(self, game):
         async def cast_choice(reactions):
-            self.last_choice = str(self.quest_emojis[reactions[self.user.id][0]]) + " " + self.quest_choices[reactions[self.user.id][0]]
+            self.last_choice = self.quest_choices[reactions[self.user.id][0]]
             await game.check_quest_end()
 
         async def cond_player(reactions):
@@ -87,12 +82,12 @@ class Player:
         await self.vote_message.send(
             self.user,
             "Quête",
-            "Êtes-vous pour la réussite de la quête?",
+            "Êtes-vous pour la réussite de la Quête?",
             global_values.color,
-            self.quest_choices,
+            [str(global_values.quest_choices["names"][x]) for x in self.quest_choices],
             validation_emoji="⭕",
             silent=True,
-            emojis=self.quest_emojis
+            emojis=[str(global_values.quest_choices["emojis"][x]) for x in self.quest_choices]
         )
 
 
@@ -151,15 +146,12 @@ class Percival(Good):
 
 class Gawain(Good):
     role = "gawain"
-    quest_choices = ["Réussite", "Inversion"]
-
-    def setup_emojis(self):
-        self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["reverse"]]
+    quest_choices = ["success", "reverse"]
 
     async def _game_start(self, game):
         self.embed = discord.Embed(
             title="Début de partie ️🛡️",
-            description="Vous êtes Gauvain. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans.",
+            description="Vous êtes Gauvain. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la Quête si vous êtes dedans.",
             color=self.color)
 
 
@@ -229,15 +221,12 @@ class Uther(Good):
 
 class Arthur(Good):
     role = "arthur"
-    quest_choices = ["Réussite", "Echec", "Annulation"]
-
-    def setup_emojis(self):
-        self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["failure"], global_values.quest_emojis["cancel"]]
+    quest_choices = ["success", "failure", "cancel"]
 
     async def _game_start(self, game):
         self.embed = discord.Embed(
             title="Début de partie 👑",
-            description="Vous êtes Arthur. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'annuler la quête si vous êtes dedans.",
+            description="Vous êtes Arthur. Vous devez faire réussir 3 Quêtes. Vous avez la possibilité d'annuler la Quête si vous êtes dedans.",
             color=self.color)
 
 
@@ -292,7 +281,7 @@ class Vortigern(Good):
 #
 #     async def _game_start(self, game):
 #         self.embed = discord.Embed(title = "Début de partie ️✍️",
-#             description = "Vous êtes Blaise. Vous devez faire réussir 3 Quêtes. Tout le monde vous connait, et vousne pouvez pas être dans une quête. A chaque quête, vous connaissez le choix d'une personne au choix.",
+#             description = "Vous êtes Blaise. Vous devez faire réussir 3 Quêtes. Tout le monde vous connait, et vousne pouvez pas être dans une Quête. A chaque Quête, vous connaissez le choix d'une personne au choix.",
 #             color = self.color
 #         )
 
@@ -399,18 +388,15 @@ class Oberon(Evil):
 
 class Lancelot(Evil):
     role = "lancelot"
-    quest_choices = ["Réussite", "Inversion"]
+    quest_choices = ["success", "reverse"]
 
     async def team_game_start(self, game):
         await self._game_start(game)
 
-    def setup_emojis(self):
-        self.quest_emojis = [global_values.quest_emojis["success"], global_values.quest_emojis["reverse"]]
-
     async def _game_start(self, game):
         self.embed = discord.Embed(
             title="Début de partie ⚔️️",
-            description="Vous êtes Lancelot. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent en tant que Lancelot.",
+            description="Vous êtes Lancelot. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la Quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent en tant que Lancelot.",
             color=self.color)
 
         if game.game_rules["lancelot_know_evil"]:
@@ -427,17 +413,28 @@ class Accolon(Evil):
     async def _game_start(self, game):
         self.embed = discord.Embed(
             title="Début de partie 🤘",
-            description="Vous êtes Accolon. Vous devez faire échouer 3 Quêtes. Les gentils vous connaissent.",
+            description="Vous êtes Accolon. Vous devez faire échouer 3 Quêtes. Les gentils vous voient aux côtés de Galaad.",
             color=self.color)
 
 
 class Kay(Evil):
     role = "kay"
+    quest_choices = ["success", "failure", "sabotage"]
+
+    async def _game_start(self, game):
+        self.embed = discord.Embed(
+            title="Début de partie 🧐",
+            description="Vous êtes Sir Kay. Vous devez faire échouer 3 Quêtes. Vous aves la possibilité de changer tous les choix de la Quête en Echec si vous êtes dedans.",
+            color=self.color)
+
+
+class Agravain(Evil):
+    role = "agravain"
 
     async def _game_start(self, game):
         self.embed = discord.Embed(
             title="Début de partie 🔮",
-            description="Vous êtes Sir Kay. Vous devez faire échouer 3 Quêtes. Vous connaissez les rôles de vos co-équipiers.",
+            description="Vous êtes Agravain. Vous devez faire échouer 3 Quêtes. Vous connaissez les rôles de vos co-équipiers.",
             color=self.color)
 
         self.embed.add_field(
@@ -477,13 +474,13 @@ class Maleagant(Solo):
 
     async def _game_start(self, game):
         self.embed = discord.Embed(title = "Début de partie 🧿",
-            description = "Vous êtes Méléagant. A chaque quête, vous devrez parier sur sa réussite ou son échec. Si vous faites un sans-faute, vous gagnerez seul. Sinon, vous devrez gagner avec les méchants.",
+            description = "Vous êtes Méléagant. A chaque Quête, vous devrez parier sur sa réussite ou son échec. Si vous faites un sans-faute, vous gagnerez seul. Sinon, vous devrez gagner avec les méchants.",
             color = self.color
         )
 
     async def send_guess(self):
         async def guess(reactions):
-            choice = str(self.quest_emojis[reactions[self.user.id][0]]) + " " + self.quest_choices[reactions[self.user.id][0]]
+            choice = str(self.quest_choices["emojis"][reactions[self.user.id][0]]) + " " + self.quest_choices[reactions[self.user.id][0]]
             embed = guess_message.message.embeds[0]
             embed.description = "Vous avez parié sur " + choice
 
@@ -505,8 +502,8 @@ class Maleagant(Solo):
             "Pari",
             "Devinez le résultat de la Quête",
             global_values.color,
-            self.quest_choices,
+            [global_values.quest_choices["names"]["success"], global_values.quest_choices["names"]["failure"]],
             validation_emoji="⭕",
             silent=True,
-            emojis=self.quest_emojis
+            emojis=[global_values.quest_choices["emojis"]["success"], global_values.quest_choices["emojis"]["failure"]]
         )

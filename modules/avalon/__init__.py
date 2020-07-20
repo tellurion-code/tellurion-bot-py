@@ -283,6 +283,7 @@ class MainClass(BaseClassPython):
                                 "accolon": "accolon",
                                 "kay": "kay",
                                 "sir_kay": "kay",
+                                "agravain": "agravain",
                                 "elias": "elias",
                                 "meleagant": "maleagant",
                                 "méléagant": "maleagant"
@@ -342,10 +343,10 @@ class MainClass(BaseClassPython):
 __Merlin__ 🧙‍♂️ : Il connaît tous les noms des méchants et celui de Karadoc (Hormis Mordred).
 __Perceval__ 🤴 : Il connaît le pseudo de Merlin et de Morgane mais pas qui est qui.
 __Karadoc__ 🥴 : Il apparaît comme un méchant à Merlin.
-__Gauvain__ 🛡️ : Peut inverser le résultat de la quête s'il est dedans.
+__Gauvain__ 🛡️ : Peut inverser le résultat de la Quête s'il est dedans.
 __Galaad__ 🙋 : Les gentils le connaissent.
 __Uther__ 👨‍🦳 : En début de partie, il choisit un joueur dont il apprend le rôle ou l'allégeance.
-__Arthur__ 👑 : Une fois dans la partie, il peut faire annuler une quête s'il est dedans. Les choix ne sont alors pas révélés et l'équipe est considérée comme refusée.
+__Arthur__ 👑 : Une fois dans la partie, il peut faire annuler une Quête s'il est dedans. Les choix ne sont alors pas révélés et l'équipe est considérée comme refusée.
 __Vortigern__ 👴 : En début de partie, il choisit un joueur à qui il se révèle.
 
 🟥 **Les méchants:** 🟥
@@ -353,13 +354,14 @@ __Assassin__ 🗡️ : Si les gentils ont réussi 3 quêtes, il peut tenter d’
 __Mordred__ 😈 : Il n’est pas connu de Merlin.
 __Morgane__ 🧙‍♀️ : Elle apparait aux yeux de Perceval.
 __Oberon__ 😶 : Il ne connait pas ses alliés et ses alliés ne savent pas qui il est.
-__Lancelot__ ⚔️ : Peut inverser le résultat de la quête s'il est dedans. Ne peut pas mettre d'Echec. Il ne connait pas les méchants mais eux le connaissent en tant que Lancelot.
+__Lancelot__ ⚔️ : Peut inverser le résultat de la Quête s'il est dedans. Ne peut pas mettre d'Echec. Il ne connait pas les méchants mais eux le connaissent en tant que Lancelot.
 __Accolon__ 🤘 : Les gentils le voient aux côtés de Galaad.
-__Sir Kay__ 🔮 : Il connaît le rôle de chacun de ses co-équipiers.
+__Sir Kay__ 🧐 : Peut changer tous les choix de la Quête en Echec s'il est dedans.
+__Agravain__ 🔮 : Il connaît le rôle de chacun de ses co-équipiers.
 
 🟩 **Les solos:** 🟩
 __Elias__ 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.
-__Méléagant__ 🧿: A chaque quête, il parie sur sa réussite ou son échec. S'il ne se trompe jamais, il vole la victoire. Sinon, il doit gagner avec les méchants.
+__Méléagant__ 🧿: A chaque Quête, il parie sur sa réussite ou son échec. S'il ne se trompe jamais, il vole la victoire. Sinon, il doit gagner avec les méchants.
                     """,
                     color=global_values.color))
             else:
@@ -374,11 +376,11 @@ Il a 2 équipes, les gentils et les méchants, leur but est :
  - Pour les méchants faire échouer 3 quêtes OU faire annuler 5 propositions d’équipe à la suite.
 
 :small_blue_diamond: **Déroulement d’un tour** : :small_blue_diamond:
- -  Au début du tour le chef d’équipe choisit qui partira en quête
+ -  Au début du tour le chef d’équipe choisit qui partira en Quête
  -  Les joueurs votent* pour ou contre la composition de l’équipe
-      -  Si l’équipe est validée, ses membres valident en secret pour ou contre la réussite de la quête. Attention, il suffit d’un seul vote échec pour faire échouer la quête
+      -  Si l’équipe est validée, ses membres valident en secret pour ou contre la réussite de la Quête. Attention, il suffit d’un seul vote échec pour faire échouer la Quête
       -  Si l’équipe n’est pas validée, c’est au chef d’équipe suivant de choisir la composition de l’équipe
-Attention S’il y a 7 participants ou plus, la quête n°4 doit avoir 2 échecs pour échouer
+Attention S’il y a 7 participants ou plus, la Quête n°4 doit avoir 2 échecs pour échouer
 
 :small_blue_diamond: **Les clans** : :small_blue_diamond:
 🟦 Gentils  : Simplement gentil

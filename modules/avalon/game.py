@@ -1,7 +1,7 @@
 import discord
 import random
 
-from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Arthur, Vortigern, Assassin, Morgane, Mordred, Oberon, Lancelot, Accolon, Kay, Elias, Maleagant
+from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Arthur, Vortigern, Assassin, Morgane, Mordred, Oberon, Lancelot, Accolon, Kay, Agravain, Elias, Maleagant
 from modules.reaction_message.reaction_message import ReactionMessage
 
 import modules.avalon.globals as global_values
@@ -24,6 +24,7 @@ classes = {
     "lancelot": Lancelot,
     "accolon": Accolon,
     "kay": Kay,
+    "agravain": Agravain,
     "elias": Elias,
     "maleagant": Maleagant
 }
@@ -46,7 +47,7 @@ class Game:
         self.turn = -1  # Le tour (index du leader) en cours, -1 = pas commencé
         self.round = 0  # Quête en cours
         self.team = {}  # Equipe qui part en quête. Contient les indices d'ordre et les id
-        self.quests = []  # Réussite (-1) ou échec (0) des quêtes. Chiffre = pas faite
+        self.quests = []  # Réussite (-1) ou échec (0) des quêtes. Chiffre supérieur à 0 = pas faite
         self.refused = 0  # Nombre de gouvernements refusés
         self.info_message = None
         self.played = []  # Dernière cartes jouées
@@ -58,7 +59,7 @@ class Game:
             "4th_quest_two_failures": True,
             "uther_learns_role": False,
             "lady_of_the_lake": False,
-            "kay_know_oberon": False
+            "agravain_know_oberon": False
         }
 
     async def reload(self, object, client):
@@ -186,7 +187,7 @@ class Game:
 
         embed.add_field(
             name="Quêtes :",
-            value=" ".join([global_values.number_emojis[x - 1] if x > 0 else (str(global_values.quest_emojis["success"]) if x else str(global_values.quest_emojis["failure"])) for x in self.quests])
+            value=" ".join([global_values.number_emojis[x - 1] if x > 0 else (str(global_values.quest_choices["emojis"]["success"]) if x else str(global_values.quest_choices["emojis"]["failure"])) for x in self.quests])
         )
 
         embed.add_field(
@@ -378,8 +379,8 @@ class Game:
                     if player.vote_message.message:
                         embed = player.vote_message.message.embeds[0]
 
-                        embed.description = "Vous avez choisi " + player.last_choice
-                        embed.color = (0x00ff00 if str(global_values.quest_emojis["success"]) in player.last_choice else 0xff0000 if str(global_values.quest_emojis["failure"]) in player.last_choice else 0x0000ff)
+                        embed.description = "Vous avez choisi " + str(global_values.quest_choices["emojis"][player.last_choice]) + " " + global_values.quest_choices["names"][player.last_choice]
+                        embed.color = global_values.quest_choices["colors"][player.last_choice]
 
                         await player.vote_message.message.edit(embed=embed)
             else:
@@ -395,15 +396,20 @@ class Game:
 
             for player_id in self.team.values():
                 player = self.players[player_id]
+
                 if player.vote_message:
                     await player.vote_message.message.delete()
 
-            self.played = [self.players[x].last_choice.split(" ")[0] for x in self.team.values()]
+                if player.last_choice == "sabotage":
+                    for id in self.team.values():
+                        self.players[id].last_choice = "failure"
+
+            self.played = [self.players[x].last_choice for x in self.team.values()]
             random.shuffle(self.played)
 
-            cancelled = len([x for x in self.played if x == str(global_values.quest_emojis["cancel"])])
-            fails = len([x for x in self.played if x == str(global_values.quest_emojis["failure"])])
-            reverses = len([x for x in self.played if x == str(global_values.quest_emojis["reverse"])])
+            cancelled = len([x for x in self.played if x == "cancel"])
+            fails = len([x for x in self.played if x == "failure"])
+            reverses = len([x for x in self.played if x == "reverse"])
 
             if not cancelled:
                 success = fails < (2 if self.round == 3 and len(self.players) >= 7 and self.game_rules["4th_quest_two_failures"] else 1)
@@ -419,8 +425,8 @@ class Game:
 
                 await self.send_info(
                     info={
-                        "name": ((str(global_values.quest_emojis["success"]) + " Quête réussie " + str(global_values.quest_emojis["success"])) if success else (str(global_values.quest_emojis["failure"]) + " Quête échouée " + str(global_values.quest_emojis["failure"]))),
-                        "value": "Choix : " + " ".join(self.played)
+                        "name": ((str(global_values.quest_choices["emojis"]["success"]) + " Quête réussie " + str(global_values.quest_choices["emojis"]["success"])) if success else (str(global_values.quest_choices["emojis"]["failure"]) + " Quête échouée " + str(global_values.quest_choices["emojis"]["failure"]))),
+                        "value": "Choix : " + " ".join([str(global_values.quest_choices["emojis"][x]) for x in self.played])
                     },
                     color=0x76ee00 if success else 0xef223f)
 
@@ -455,12 +461,12 @@ class Game:
                     await self.next_turn()
             else:
                 for player_id in self.team.values():
-                    if "Annulation" in self.players[player_id].quest_choices:
-                        self.players[player_id].quest_choices.remove("Annulation")
+                    if "cancel" in self.players[player_id].quest_choices:
+                        self.players[player_id].quest_choices.remove("cancel")
 
                 await self.send_info(
                     info={
-                        "name": str(global_values.quest_emojis["cancel"]) + " Quête annulée " + str(global_values.quest_emojis["cancel"]),
+                        "name": str(global_values.quest_choices["emojis"]["cancel"]) + " Quête annulée " + str(global_values.quest_choices["emojis"]["cancel"]),
                         "value": "**Arthur a décidé d'annuler la quête.** Le prochain leader va proposer une nouvelle composition."
                     })
 
