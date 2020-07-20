@@ -1,7 +1,7 @@
 import discord
 import random
 
-from modules.avalon.reaction_message import ReactionMessage
+from modules.reaction_message.reaction_message import ReactionMessage
 
 import modules.avalon.globals as global_values
 

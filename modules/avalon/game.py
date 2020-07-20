@@ -2,7 +2,7 @@ import discord
 import random
 
 from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Arthur, Vortigern, Assassin, Morgane, Mordred, Oberon, Lancelot, Accolon, Kay, Elias, Maleagant
-from modules.avalon.reaction_message import ReactionMessage
+from modules.reaction_message.reaction_message import ReactionMessage
 
 import modules.avalon.globals as global_values
 

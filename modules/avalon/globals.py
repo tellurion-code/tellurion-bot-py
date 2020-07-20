@@ -30,7 +30,7 @@ def init():
         "oberon": "😶 Oberon",
         "lancelot": "⚔️ Lancelot",
         "accolon": "🤘 Accolon",
-        "kay": "🔮 Kay",
+        "kay": "🔮 Sir Kay",
         "elias": "🧙 Elias",
         "maleagant": "🧿 Méléagant"
     }

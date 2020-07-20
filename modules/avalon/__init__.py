@@ -1,8 +1,8 @@
 import discord
 
 from modules.avalon.player import Player
-from modules.avalon.reaction_message import ReactionMessage
 from modules.avalon.game import Game
+from modules.reaction_message.reaction_message import ReactionMessage
 from modules.base import BaseClassPython
 
 import modules.avalon.globals as global_values
@@ -338,7 +338,7 @@ class MainClass(BaseClassPython):
                 await message.channel.send(embed=discord.Embed(
                     title=":small_blue_diamond: Les rôles spéciaux : :small_blue_diamond:",
                     description="""
-🟦 Les gentils: 🟦
+🟦 **Les gentils:** 🟦
 __Merlin__ 🧙‍♂️ : Il connaît tous les noms des méchants et celui de Karadoc (Hormis Mordred).
 __Perceval__ 🤴 : Il connaît le pseudo de Merlin et de Morgane mais pas qui est qui.
 __Karadoc__ 🥴 : Il apparaît comme un méchant à Merlin.
@@ -348,7 +348,7 @@ __Uther__ 👨‍🦳 : En début de partie, il choisit un joueur dont il appren
 __Arthur__ 👑 : Une fois dans la partie, il peut faire annuler une quête s'il est dedans. Les choix ne sont alors pas révélés et l'équipe est considérée comme refusée.
 __Vortigern__ 👴 : En début de partie, il choisit un joueur à qui il se révèle.
 
-🟥 Les méchants: 🟥
+🟥 **Les méchants:** 🟥
 __Assassin__ 🗡️ : Si les gentils ont réussi 3 quêtes, il peut tenter d’assassiner Merlin. S’il y parvient les méchants gagnent la partie.
 __Mordred__ 😈 : Il n’est pas connu de Merlin.
 __Morgane__ 🧙‍♀️ : Elle apparait aux yeux de Perceval.
@@ -357,7 +357,7 @@ __Lancelot__ ⚔️ : Peut inverser le résultat de la quête s'il est dedans. N
 __Accolon__ 🤘 : Les gentils le voient aux côtés de Galaad.
 __Sir Kay__ 🔮 : Il connaît le rôle de chacun de ses co-équipiers.
 
-🟩 Les solos: 🟩
+🟩 **Les solos:** 🟩
 __Elias__ 🧙 : S'il est assassiné, il gagne seul. Si les méchants font rater 3 quêtes, il perd avec les gentils. Il connaît Merlin.
 __Méléagant__ 🧿: A chaque quête, il parie sur sa réussite ou son échec. S'il ne se trompe jamais, il vole la victoire. Sinon, il doit gagner avec les méchants.
                     """,
@@ -368,19 +368,19 @@ __Méléagant__ 🧿: A chaque quête, il parie sur sa réussite ou son échec. 
             await message.channel.send(embed=discord.Embed(
                 title=":small_orange_diamond: Règles du Avalon :small_orange_diamond:",
                 description="""
-:small_blue_diamond: But du jeu : :small_blue_diamond:
+:small_blue_diamond: **But du jeu** : :small_blue_diamond:
 Il a 2 équipes, les gentils et les méchants, leur but est :
  - Pour les gentils faire réussir 3 quêtes
  - Pour les méchants faire échouer 3 quêtes OU faire annuler 5 propositions d’équipe à la suite.
 
-:small_blue_diamond: Déroulement d’un tour : :small_blue_diamond:
+:small_blue_diamond: **Déroulement d’un tour** : :small_blue_diamond:
  -  Au début du tour le chef d’équipe choisit qui partira en quête
  -  Les joueurs votent* pour ou contre la composition de l’équipe
       -  Si l’équipe est validée, ses membres valident en secret pour ou contre la réussite de la quête. Attention, il suffit d’un seul vote échec pour faire échouer la quête
       -  Si l’équipe n’est pas validée, c’est au chef d’équipe suivant de choisir la composition de l’équipe
 Attention S’il y a 7 participants ou plus, la quête n°4 doit avoir 2 échecs pour échouer
 
-:small_blue_diamond: Les clans : :small_blue_diamond:
+:small_blue_diamond: **Les clans** : :small_blue_diamond:
 🟦 Gentils  : Simplement gentil
 🟥 Méchant  : Les méchants se connaissent entre eux
 🟩 Solo     : Ils gagnent autrement qu'avec la réussite ou l'échec des quêtes
@@ -391,24 +391,3 @@ Attention S’il y a 7 participants ou plus, la quête n°4 doit avoir 2 échecs
 *Note : Tous les votes se font par le biais des réactions ( :white_check_mark: et :negative_squared_cross_mark: )
                 """,
                 color=global_values.color))
-
-    async def on_reaction_add(self, reaction, user):
-        if not user.bot:
-            for message in global_values.reaction_messages:
-                if message.message.id == reaction.message.id:
-                    if reaction.emoji in message.number_emojis:
-                        if message.check(reaction, user):
-                            await message.add_reaction(reaction, user)
-                        else:
-                            await message.message.remove_reaction(reaction, user)
-                    else:
-                        await message.message.remove_reaction(reaction, user)
-
-    async def on_reaction_remove(self, reaction, user):
-        if not user.bot:
-            for message in global_values.reaction_messages:
-                if user.id in message.reactions:
-                    if reaction.emoji in message.number_emojis:
-                        if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
-                            if message.check(reaction, user) and message.message.id == reaction.message.id:
-                                await message.remove_reaction(reaction, user)
