@@ -344,7 +344,7 @@ __Perceval__ 🤴 : Il connaît le pseudo de Merlin et de Morgane mais pas qui e
 __Karadoc__ 🥴 : Il apparaît comme un méchant à Merlin.
 __Gauvain__ 🛡️ : Peut inverser le résultat de la quête s'il est dedans.
 __Galaad__ 🙋 : Les gentils le connaissent.
-__Uther__ 👨‍🦳 : En début de partie, il choisit un joueur dont il apprend le rôle.
+__Uther__ 👨‍🦳 : En début de partie, il choisit un joueur dont il apprend le rôle ou l'allégeance.
 __Arthur__ 👑 : Une fois dans la partie, il peut faire annuler une quête s'il est dedans. Les choix ne sont alors pas révélés et l'équipe est considérée comme refusée.
 __Vortigern__ 👴 : En début de partie, il choisit un joueur à qui il se révèle.
 
@@ -354,7 +354,7 @@ __Mordred__ 😈 : Il n’est pas connu de Merlin.
 __Morgane__ 🧙‍♀️ : Elle apparait aux yeux de Perceval.
 __Oberon__ 😶 : Il ne connait pas ses alliés et ses alliés ne savent pas qui il est.
 __Lancelot__ ⚔️ : Peut inverser le résultat de la quête s'il est dedans. Ne peut pas mettre d'Echec. Il ne connait pas les méchants mais eux le connaissent en tant que Lancelot.
-__Accolon__ 🤘 : Les gentils le connaissent aux côtés de Galaad.
+__Accolon__ 🤘 : Les gentils le voient aux côtés de Galaad.
 __Sir Kay__ 🔮 : Il connaît le rôle de chacun de ses co-équipiers.
 
 🟩 Les solos: 🟩
