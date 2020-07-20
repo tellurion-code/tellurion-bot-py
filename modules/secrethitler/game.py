@@ -3,8 +3,8 @@ import random
 import math
 
 from modules.secrethitler.player import Player, Liberal, Fascist, Hitler, Goebbels, Merliner
-from modules.secrethitler.reaction_message import ReactionMessage
 from modules.secrethitler.law_names import get_law_name
+from modules.reaction_message.reaction_message import ReactionMessage
 
 import modules.secrethitler.globals as globals
 

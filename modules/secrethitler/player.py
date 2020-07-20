@@ -1,6 +1,6 @@
 import discord
 
-from modules.secrethitler.reaction_message import ReactionMessage
+from modules.reaction_message.reaction_message import ReactionMessage
 
 import modules.secrethitler.globals as globals
 

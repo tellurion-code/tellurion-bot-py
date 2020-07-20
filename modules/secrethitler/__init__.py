@@ -4,7 +4,7 @@ import random
 
 from modules.secrethitler.game import Game
 from modules.secrethitler.player import Player
-from modules.secrethitler.reaction_message import ReactionMessage
+from modules.reaction_message.reaction_message import ReactionMessage
 from modules.base import BaseClassPython
 
 import modules.secrethitler.globals as globals
@@ -228,24 +228,3 @@ class MainClass(BaseClassPython):
                 await message.author.send("La partie a déjà commencé")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
-
-    async def on_reaction_add(self, reaction, user):
-        if not user.bot:
-            for message in globals.reaction_messages:
-                if message.message.id == reaction.message.id:
-                    if reaction.emoji in message.number_emojis:
-                        if message.check(reaction, user):
-                            await message.add_reaction(reaction, user)
-                        else:
-                            await message.message.remove_reaction(reaction, user)
-                    else:
-                        await message.message.remove_reaction(reaction, user)
-
-    async def on_reaction_remove(self, reaction, user):
-        if not user.bot:
-            for message in globals.reaction_messages:
-                if user.id in message.reactions:
-                    if reaction.emoji in message.number_emojis:
-                        if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
-                            if message.check(reaction, user) and message.message.id == reaction.message.id:
-                                await message.remove_reaction(reaction, user)
