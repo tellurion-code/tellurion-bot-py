@@ -258,7 +258,7 @@ class Vortigern(Good):
         async def reveal_self(reactions):
             got_revelation = game.players[valid_candidates[reactions[self.user.id][0]]]
 
-            await reveal_message.message.edit(embed=discord.Embed(
+            await revelation_message.message.edit(embed=discord.Embed(
                 title="📨 Révélation 📨",
                 description="Vous vous êtes révélé à `" + str(got_revelation.user) + "`",
                 color=global_values.color))
@@ -271,13 +271,13 @@ class Vortigern(Good):
         async def cond(reactions):
             return len(reactions[self.user.id]) == 1
 
-        reveal_message = ReactionMessage(
+        revelation_message = ReactionMessage(
             cond,
             reveal_self,
             temporary=False
         )
 
-        await inspection_message.send(
+        await revelation_message.send(
             self.user,
             "Choisissez le joueur à qui vous voulez vous révéler",
             "",
@@ -442,7 +442,7 @@ class Kay(Evil):
 
         self.embed.add_field(
             name="Rôles",
-            value='\n'.join([global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + global_values.visual_roles[self.players[x].role] for i, x in enumerate(self.order) if game.players[x].allegiance == "evil"]))
+            value='\n'.join([global_values.number_emojis[i] + " `" + str(game.players[x].user) + "` : " + global_values.visual_roles[game.players[x].role] for i, x in enumerate(game.order) if game.players[x].allegiance == "evil"]))
 
 
 class Solo(Player):
