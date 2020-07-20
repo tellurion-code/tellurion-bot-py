@@ -57,7 +57,8 @@ class Game:
             "lancelot_know_evil": False,
             "4th_quest_two_failures": True,
             "uther_learns_role": False,
-            "lady_of_the_lake": False
+            "lady_of_the_lake": False,
+            "kay_know_oberon": False
         }
 
     async def reload(self, object, client):

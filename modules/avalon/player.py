@@ -442,7 +442,7 @@ class Kay(Evil):
 
         self.embed.add_field(
             name="Rôles",
-            value='\n'.join([global_values.number_emojis[i] + " `" + str(game.players[x].user) + "` : " + global_values.visual_roles[game.players[x].role] for i, x in enumerate(game.order) if game.players[x].allegiance == "evil"]))
+            value='\n'.join([global_values.number_emojis[i] + " `" + str(game.players[x].user) + "` : " + global_values.visual_roles[game.players[x].role] for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and (not game.players[x].role == "oberon" or game.game_rules["kay_know_oberon"])]))
 
 
 class Solo(Player):
