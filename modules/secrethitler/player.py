@@ -158,7 +158,7 @@ class Goebbels(Fascist):
             temporary = False
         ).send(self.user,
             "👨‍⚖️ __Pouvoir de Goebbels__",
-            "Une loi fasciste a été votée au dernier tour. Choisissez les deux joueurs dont vous voulez échanger les votes.\n**Votre vote vous sera envoyé après.**\n",
+            "Choisissez les deux joueurs dont vous voulez échanger les votes.\n**Votre vote vous sera envoyé après.**\n",
             globals.color,
             choices
         )
