@@ -253,30 +253,19 @@ class Game:
         emojis = [global_values.number_emojis[self.order.index(x)] for x in valid_candidates]
         choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
 
-        embed = discord.Embed(
-            title="Equipe Choisie",
-            color=global_values.color)
-
-        embed.add_field(
-            name="Equipe (" + str(self.quests[self.round]) + (" restants)" if self.quests[self.round] > 1 else " restant)"),
-            value="❌ Pas de participant choisi")
-
-        team_message = await leader.user.send(embed=embed)
-
         async def update(reactions):
-            embed = team_message.embeds[0]
+            embed = team_message.message.embeds[0]
             embed.set_field_at(
                 0,
                 name="Equipe (" + str(max(0, self.quests[self.round] - len(reactions[leader.user.id]))) + (" restants)" if self.quests[self.round] - len(reactions[leader.user.id]) > 1 else " restant)"),
                 value='\n'.join([(global_values.number_emojis[self.order.index(valid_candidates[i])] + ' `' + str(self.players[valid_candidates[i]].user) + '`') for i in reactions[leader.user.id]]) if len(reactions[leader.user.id]) else "❌ Pas de participants choisis")
 
-            await team_message.edit(embed=embed)
+            await team_message.message.edit(embed=embed)
 
         async def propose_team(reactions):
             for i in reactions[leader.user.id]:
                 self.team[self.order.index(valid_candidates[i])] = valid_candidates[i]
 
-            await team_message.delete()
             await self.send_info()
 
             for player_id in self.order:
@@ -285,17 +274,23 @@ class Game:
         async def cond(reactions):
             return len(reactions[self.order[self.turn]]) == self.quests[self.round]
 
-        await ReactionMessage(
+        team_message = ReactionMessage(
             cond,
             propose_team,
             update=update
-        ).send(
+        )
+
+        await team_message.send(
             leader.user,
             "Choisissez votre Equipe (" + str(self.quests[self.round]) + (" participants)" if self.quests[self.round] > 1 else " participant)"),
             "",
             global_values.color,
             choices,
-            emojis=emojis
+            emojis=emojis,
+            fields=[{
+                "name": "Equipe (" + str(self.quests[self.round]) + (" restants)" if self.quests[self.round] > 1 else " restant)"),
+                "value": "🚫 Pas de participant choisi"
+            }]
         )
 
     # Appelé à chaque fois qu'un joueur vote. Vérifie les votes manquants puis la majorité
