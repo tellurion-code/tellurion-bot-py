@@ -301,11 +301,12 @@ class Evil(Player):
                 name="Vos co-équipiers :",
                 value='\n'.join(evils))
 
-        lancelot = [global_values.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role in ["agrav1", "agrav2"]]
-        if len(lancelot):
-            self.embed.add_field(
-                name="Lancelot ⚔️️",
-                value='\n'.join(evils))
+        if game.game_rules["evil_know_lancelot"]:
+            lancelot = [global_values.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].role == "lancelot"]
+            if len(lancelot):
+                self.embed.add_field(
+                    name="Lancelot ⚔️️",
+                    value='\n'.join(lancelot))
 
     async def _game_start(self, game):
         self.embed = discord.Embed(
@@ -393,18 +394,18 @@ class Lancelot(Evil):
     async def team_game_start(self, game):
         await self._game_start(game)
 
-    async def _game_start(self, game):
-        self.embed = discord.Embed(
-            title="Début de partie ⚔️️",
-            description="Vous êtes Lancelot. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la Quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent en tant que Lancelot.",
-            color=self.color)
-
         if game.game_rules["lancelot_know_evil"]:
             evils = [global_values.number_emojis[i] + " `" + str(game.players[x].user) + "`" for i, x in enumerate(game.order) if game.players[x].allegiance == "evil" and game.players[x].role != "oberon" and game.players[x].user.id != self.user.id]
             if len(evils):
                 self.embed.add_field(
                     name="Un de vos co-équipiers :",
                     value=random.choice(evils))
+
+    async def _game_start(self, game):
+        self.embed = discord.Embed(
+            title="Début de partie ⚔️️",
+            description="Vous êtes Lancelot. Vous devez faire échouer 3 Quêtes. Vous avez la possibilité d'inverser le résultat de la Quête si vous êtes dedans. Vous ne connaissez uniquement un méchant aléatoire mais les méchants vous connaisent en tant que Lancelot.",
+            color=self.color)
 
 
 class Accolon(Evil):

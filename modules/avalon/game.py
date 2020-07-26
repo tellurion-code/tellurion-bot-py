@@ -56,6 +56,7 @@ class Game:
         self.lady_of_the_lake = 0  # Index du joueur qui a la Dame du Lac
         self.game_rules = {
             "lancelot_know_evil": False,
+            "evil_know_lancelot": True,
             "4th_quest_two_failures": True,
             "uther_learns_role": False,
             "lady_of_the_lake": False,
