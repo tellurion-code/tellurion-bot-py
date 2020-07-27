@@ -26,14 +26,6 @@ class MainClass(BaseClassPython):
         self.config["color"] = self.color
         self.config["help_active"] = self.help_active
         self.config["configured"] = True
-        # self.config.init({"help_active": True,
-        #     "color": globals.color,
-        #     "auth_everyone": True,
-        #     "authorized_roles": [],
-        #     "authorized_users": [],
-        #     "command_text": "avalon",
-        #     "configured": True
-        # })
 
     async def com_test(self, message, args, kwargs):
         async def effect(reactions):

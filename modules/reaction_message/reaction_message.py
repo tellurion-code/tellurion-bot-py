@@ -67,7 +67,7 @@ class ReactionMessage:
 
             global_values.reaction_messages.remove(self)
         else:
-            await self.update(reaction)
+            await self.update(reaction, user)
 
     # Trigger quand une réaction est retirée
     async def remove_reaction(self, reaction, user):
@@ -77,12 +77,12 @@ class ReactionMessage:
         # if len(self.reactions[user.id]) == 0:
         #     self.reactions.pop(user.id)
 
-        await self.update(reaction)
+        await self.update(reaction, user)
 
     # Vérifie si la coche doit être affichée et fait la fonction update_function si elle existe
-    async def update(self, reaction):
-        print("UPDATE")
+    async def update(self, reaction, user):
         print(self.reactions)
+        print("UPDATE")
 
         if self.update_function:
             await self.update_function(self.reactions)
@@ -95,3 +95,10 @@ class ReactionMessage:
                 await self.message.remove_reaction(self.number_emojis[-1], reaction.message.guild.me)
             else:
                 await self.message.remove_reaction(self.number_emojis[-1], reaction.message.channel.me)
+
+    #Supprime l'objet (et le message si force=True)
+    async def delete(self, force=False):
+        if self.temporary or force:
+            await self.message.delete()
+
+        global_values.reaction_messages.remove(self)
