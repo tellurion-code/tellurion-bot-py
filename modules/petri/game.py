@@ -29,7 +29,7 @@ class Game:
         self.ranges = [10, 10, 2]  # Taille horizontale, taille verticale, nombre de murs par quartiers
         self.info_message = None
         self.game_creation_message = None
-        self.last_choice = 0
+        self.last_choice = -1
 
     async def reload(self, object, client):
         await self.deserialize(object, client)
@@ -131,7 +131,7 @@ class Game:
         fields = []
 
         fields.append({
-            "name": "Joueurs (Score de Domination : " + str(int((self.ranges[0] * self.ranges[1])/2)) +  ")" + (" / Dernière direction choisie : " + global_values.choice_emojis[self.last_choice] if self.last_choice else ""),
+            "name": "Joueurs (Score de Domination : " + str(int((self.ranges[0] * self.ranges[1])/2)) +  ")" + (" / Dernière direction choisie : " + global_values.choice_emojis[self.last_choice] if self.last_choice != -1 else ""),
             "value":'\n'.join([global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(self.order)])
         })
 
@@ -180,8 +180,8 @@ class Game:
 
                                 for i in reactions[self.order[self.turn]]:
                                     await self.info_message.message.remove_reaction(global_values.choice_emojis[i], self.players[self.order[self.turn]].user)
-                                self.info_message.reactions = {}
                                 self.last_choice = 4
+                                self.info_message.reactions = {}
 
                                 await self.next_turn({
                                     "name": "Capitulation",
@@ -194,8 +194,8 @@ class Game:
 
                             for i in reactions[self.order[self.turn]]:
                                 await self.info_message.message.remove_reaction(global_values.choice_emojis[i], self.players[self.order[self.turn]].user)
-                            self.info_message.reactions = {}
                             self.last_choice = reactions[self.order[self.turn]][0]
+                            self.info_message.reactions = {}
 
                             await self.next_turn({
                                 "name": "Combats",
