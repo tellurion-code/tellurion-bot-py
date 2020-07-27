@@ -120,11 +120,15 @@ class MainClass(BaseClassPython):
 
                     if args[0] % 2 == 0 and args[1] % 2 == 0:
                         game.ranges = args
-                        await message.channel.send("La carte a été changée pour être " + game.ranges[0] + "x" + game.ranges[1] + " avec " + game.ranges[2] + " par quartier")
+                        await message.channel.send("La carte a été changée pour être " + str(game.ranges[0]) + "x" + str(game.ranges[1]) + " avec " + str(game.ranges[2]) + (" murs" if game.ranges[2] > 1 else " mur") + " par quartier")
                     else:
                         await message.channel.send("La carte doit avoir des dimensions paires")
                 else:
                     await message.channel.send("Il faut préciser la hauteur, la largeur, et le nombre de murs par quartier")
+            else:
+                await message.channel.send("Vous n'êtes pas dans la partie")
+        else:
+            await message.channel.send("Il n'y a pas de partie en cours")
 
     async def com_rules(self, message, args, kwargs):
         if len(args) > 1:
