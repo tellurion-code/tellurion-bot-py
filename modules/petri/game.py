@@ -135,7 +135,7 @@ class Game:
             "value":'\n'.join([global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(self.order)])
         })
 
-        if self.round > 50:
+        if self.round > 40:
             fields.append({
                 "name": "💀 Mort Subite 💀",
                 "value": "Le premier joueur à prendre l'avantage gagne"
@@ -178,9 +178,9 @@ class Game:
                                         if self.map[y][x] == self.turn:
                                             self.map[y][x] = -1
 
+                                self.last_choice = 4
                                 for i in reactions[self.order[self.turn]]:
                                     await self.info_message.message.remove_reaction(global_values.choice_emojis[i], self.players[self.order[self.turn]].user)
-                                self.last_choice = 4
                                 self.info_message.reactions = {}
 
                                 await self.next_turn({
@@ -192,9 +192,9 @@ class Game:
                         elif reactions[self.order[self.turn]][0] < 4:
                             summary = self.process_direction(reactions[self.order[self.turn]][0])
 
+                            self.last_choice = reactions[self.order[self.turn]][0]
                             for i in reactions[self.order[self.turn]]:
                                 await self.info_message.message.remove_reaction(global_values.choice_emojis[i], self.players[self.order[self.turn]].user)
-                            self.last_choice = reactions[self.order[self.turn]][0]
                             self.info_message.reactions = {}
 
                             await self.next_turn({
@@ -284,7 +284,7 @@ class Game:
 
         await self.send_info(info=message)
 
-        if self.round == 51:
+        if self.round == 41:
             max_score, winner, tie = 0, 0, False
             for i, player_id in enumerate(self.order):
                 score = len([0 for row in self.map for tile in row if tile == i])
