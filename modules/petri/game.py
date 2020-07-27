@@ -29,7 +29,7 @@ class Game:
         self.ranges = [10, 10, 2]  # Taille horizontale, taille verticale, nombre de murs par quartiers
         self.info_message = None
         self.game_creation_message = None
-        self.last_choice = ""
+        self.last_choice = 0
 
     async def reload(self, object, client):
         await self.deserialize(object, client)
@@ -131,7 +131,7 @@ class Game:
         fields = []
 
         fields.append({
-            "name": "Joueurs (Score de Domination : " + str(int((self.ranges[0] * self.ranges[1])/2)) +  ")" + (" / Dernière direction choisie : " + global_values.choice_emojis[self.last_choice] if len(self.last_choice) else ""),
+            "name": "Joueurs (Score de Domination : " + str(int((self.ranges[0] * self.ranges[1])/2)) +  ")" + (" / Dernière direction choisie : " + global_values.choice_emojis[self.last_choice] if self.last_choice else ""),
             "value":'\n'.join([global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(self.order)])
         })
 
