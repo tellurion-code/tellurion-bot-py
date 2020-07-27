@@ -26,7 +26,7 @@ class Game:
         self.turn = -1  # Le tour (index du joueur en cours) en cours, -1 = pas commencé
         self.round = 1  # Le nombre de tours de table complets
         self.map = []  # Carte où la partie se déroule
-        self.ranges = [12, 12, 10]
+        self.ranges = [10, 10, 2]  # Taille horizontale, taille verticale, nombre de murs par quartiers
         self.info_message = None
         self.game_creation_message = None
 
@@ -91,14 +91,16 @@ class Game:
             for _ in range(self.ranges[0]):
                 self.map[y].append(-1)  # -1 = vide, -2 = mur
 
-        for _ in range(self.ranges[2]):
-            while True:
-                x = random.randrange(self.ranges[0])
-                y = random.randrange(self.ranges[1])
-                if self.map[y][x] == -1:
-                    break
+        for my in range(self.ranges[1], int(self.ranges[1]/2)):
+            for mx in range(self.ranges[0], int(self.ranges[0]/2)):
+                for _ in range(self.ranges[2]):
+                    while True:
+                        x = random.randrange(mx, int(mx + self.ranges[0]/2))
+                        y = random.randrange(my, int(my + self.ranges[1]/2))
+                        if self.map[y][x] == -1:
+                            break
 
-            self.map[y][x] = -2
+                    self.map[y][x] = -2
 
         r, a = round(min(self.ranges[0], self.ranges[1])/3), random.uniform(0, math.pi*2)
 
@@ -285,7 +287,7 @@ class Game:
         else:
             for i in range(len(self.order)):
                 if len([0 for row in self.map for tile in row if tile == i]) >= (self.ranges[0] * self.ranges[1])/2:
-                    await self.end_game(str(self.players[self.order[i]].user), "Petri")
+                    await self.end_game(str(self.players[self.order[i]].user), "Domination")
                     return
 
     # Fin de partie, envoies le message de fin et détruit la partie
