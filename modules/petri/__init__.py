@@ -106,6 +106,14 @@ class MainClass(BaseClassPython):
             save["debug"] = global_values.debug
             self.objects.save_object("globals", save)
 
+    async def com_config(self, message, args, kwargs):
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
+            if message.author.id in game.players:
+                args.pop(0)
+                if args[0] % 2 == 0 and args[1] % 2 == 0:
+                    game.ranges = args
+
     async def com_rules(self, message, args, kwargs):
         if len(args) > 1:
             await message.channel.send("Sous-section inconnue")
