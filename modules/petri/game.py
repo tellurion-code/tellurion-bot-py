@@ -51,15 +51,12 @@ class Game:
                 await self.game_creation_message.message.add_reaction("📩")
 
             self.players = {}
-
             for player_id, reaction in reactions.items():
                 if 0 in reaction:
                     self.players[player_id] = Player(self.mainclass.client.get_user(player_id))
 
             embed = self.game_creation_message.message.embeds[0]
-
             embed.description = "Appuyez sur la réaction 📩 pour rejoindre la partie.\n\n__Joueurs:__\n" + '\n'.join(["`"+ str(x.user) + "`" for x in self.players.values()])
-
             await self.game_creation_message.message.edit(embed=embed)
 
         async def cond(reactions):
@@ -91,12 +88,12 @@ class Game:
             for _ in range(self.ranges[0]):
                 self.map[y].append(-1)  # -1 = vide, -2 = mur
 
-        for my in range(self.ranges[1], int(self.ranges[1]/2)):
-            for mx in range(self.ranges[0], int(self.ranges[0]/2)):
+        for my in range(0, self.ranges[1], int(self.ranges[1]/2)):
+            for mx in range(0, self.ranges[0], int(self.ranges[0]/2)):
                 for _ in range(self.ranges[2]):
                     while True:
-                        x = random.randrange(mx, int(mx + self.ranges[0]/2))
-                        y = random.randrange(my, int(my + self.ranges[1]/2))
+                        x = mx + random.randrange(self.ranges[0]/2)
+                        y = my + random.randrange(self.ranges[1]/2)
                         if self.map[y][x] == -1:
                             break
 
@@ -173,15 +170,34 @@ class Game:
             async def next_turn(reactions):
                 if self.order[self.turn] in reactions:
                     if len(reactions[self.order[self.turn]]):
-                        summary = self.process_direction(reactions[self.order[self.turn]][0])
-                        await self.info_message.message.remove_reaction(global_values.arrow_emojis[reactions[self.order[self.turn]][0]], self.players[self.order[self.turn]].user)
+                        if reactions[self.order[self.turn]][0] == 4:
+                            if 5 in reactions[self.order[self.turn]]:
+                                for y in range(self.ranges[1]):
+                                    for x in range(self.ranges[0]):
+                                        if self.map[y][x] == self.turn:
+                                            self.map[y][x] = -1
 
-                        self.info_message.reactions = {}
+                                for i in reactions[self.order[self.turn]]:
+                                    await self.info_message.message.remove_reaction(global_values.choice_emojis[i], self.players[self.order[self.turn]].user)
+                                self.info_message.reactions = {}
 
-                        await self.next_turn(None if len(summary) == 0 else {
-                            "name": "Combats",
-                            "value": summary
-                        })
+                                await self.next_turn({
+                                    "name": "Capitulation",
+                                    "value": global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "` a capitulé"
+                                })
+
+                                return
+                        elif reactions[self.order[self.turn]][0] < 4:
+                            summary = self.process_direction(reactions[self.order[self.turn]][0])
+
+                            for i in reactions[self.order[self.turn]]:
+                                await self.info_message.message.remove_reaction(global_values.choice_emojis[i], self.players[self.order[self.turn]].user)
+                            self.info_message.reactions = {}
+
+                            await self.next_turn({
+                                "name": "Combats",
+                                "value": summary
+                            } if len(summary) else None)
 
             async def cond(reactions):
                 return False
@@ -199,8 +215,8 @@ class Game:
                 "[PETRI Manche " + str(self.round) + "] Tour de `" + str(self.players[self.order[self.turn]].user) + "`",
                 map_string,
                 global_values.player_colors[self.turn],
-                ["Haut", "Droite", "Bas", "Gauche"],
-                emojis=global_values.arrow_emojis,
+                ["Haut", "Droite", "Bas", "Gauche", "Capituler", "Valider"],
+                emojis=global_values.choice_emojis,
                 silent=True,
                 fields=fields
             )
@@ -255,8 +271,6 @@ class Game:
 
     # Passe au prochain tour
     async def next_turn(self, message=None):
-        old_turn = self.turn
-
         while True:
             self.turn = (self.turn + 1) % len(self.order)
             if self.turn == 0:
@@ -282,8 +296,10 @@ class Game:
                 await self.end_game(str(self.players[self.order[self.turn]].user), "Usure")
                 return
 
-        if self.turn == old_turn:
-            await self.end_game(str(self.players[self.order[self.turn]].user), "Annihiliation")
+        alives = [i for i in range(len(self.order)) if len([0 for row in self.map for tile in row if tile == i])]
+
+        if len(alives) == 1:
+            await self.end_game(str(self.players[self.order[alives[0]]].user), "Annihiliation")
         else:
             for i in range(len(self.order)):
                 if len([0 for row in self.map for tile in row if tile == i]) >= (self.ranges[0] * self.ranges[1])/2:
