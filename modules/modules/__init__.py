@@ -109,11 +109,11 @@ class MainClass(BaseClassPython):
         list_files = self.get_all_modules()
         activated = set(self.client.config["modules"])
         if len(activated):
-            activated_string = "\n+ " + "\n+ ".join(activated)
+            activated_string = "\n+ " + "\n+ ".join(sorted(activated))
         else:
             activated_string = ""
         if len(activated) != len(list_files):
-            deactivated_string = "\n- " + "\n- ".join(list_files.difference(activated))
+            deactivated_string = "\n- " + "\n- ".join(sorted(list_files.difference(activated)))
         else:
             deactivated_string = ""
         embed = discord.Embed(title="[Modules] - Liste des modules",
