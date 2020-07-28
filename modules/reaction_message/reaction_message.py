@@ -102,3 +102,5 @@ class ReactionMessage:
             await self.message.delete()
 
         global_values.reaction_messages.remove(self)
+
+ #  Module créé par Le Codex#9836

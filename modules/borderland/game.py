@@ -302,3 +302,5 @@ class Game:
             self.mainclass.objects.save_object("games", object)
         else:
             print("no save")
+
+ #  Module créé par Le Codex#9836

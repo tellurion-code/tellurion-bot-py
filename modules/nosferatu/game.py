@@ -799,3 +799,5 @@ class Game:
         await self.broadcast(embed)
 
         globals.games.pop(self.channel.id)
+
+ #  Module créé par Le Codex#9836

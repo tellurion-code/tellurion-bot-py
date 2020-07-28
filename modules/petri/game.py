@@ -83,31 +83,56 @@ class Game:
             for _ in range(self.ranges[0]):
                 self.map[y].append(-1)  # -1 = vide, -2 = mur
 
-        for my in range(0, self.ranges[1], int(self.ranges[1]/2)):
-            for mx in range(0, self.ranges[0], int(self.ranges[0]/2)):
-                for _ in range(self.ranges[2]):
-                    while True:
-                        x = mx + random.randrange(self.ranges[0]/2)
-                        y = my + random.randrange(self.ranges[1]/2)
-                        if self.map[y][x] == -1:
-                            break
+        def check_bloating(map):
+            for y in range(1, self.ranges[1]-1):
+                for x in range(1, self.ranges[0]-1):
+                    count = 0
+                    for dx in range(-1, 2):
+                        for dy in range(-1, 2):
+                            if map[y + dy][x + dx] == -2:
+                                count += 1
 
-                    self.map[y][x] = -2
+                    if count >= 2:
+                        return False
 
-        r, a = round(min(self.ranges[0], self.ranges[1])/3), random.uniform(0, math.pi*2)
+            return True
+
+        new_map = None
+        while True:
+            new_map = copy.deepcopy(self.map)
+            for my in range(0, self.ranges[1], int(self.ranges[1]/2)):
+                for mx in range(0, self.ranges[0], int(self.ranges[0]/2)):
+                    for _ in range(self.ranges[2]):
+                        while True:
+                            x = mx + random.randrange(self.ranges[0]/2)
+                            y = my + random.randrange(self.ranges[1]/2)
+                            if self.map[y][x] == -1:
+                                break
+
+                        new_map[y][x] = -2
+
+            r, a = round(min(self.ranges[0], self.ranges[1])/3), random.uniform(0, math.pi*2)
+
+            for i, player_id in enumerate(self.players.keys()):
+                while new_map[int(self.ranges[1]/2 + .5 + r * math.sin(a))][int(self.ranges[0]/2 + .5 + r * math.cos(a))] != -1:
+                    a += math.pi/20
+
+                new_map[int(self.ranges[1]/2 + .5 + r * math.sin(a))][int(self.ranges[0]/2 + .5 + r * math.cos(a))] = i
+                a += math.pi/len(self.players) * 2
+
+            valid = check_bloating(new_map)
+
+            if valid:
+                break
+
+        self.map = new_map
 
         for player_id in self.players:
-            while self.map[int(self.ranges[1]/2 + .5 + r * math.sin(a))][int(self.ranges[0]/2 + .5 + r * math.cos(a))] != -1:
-                a += math.pi/20
-
-            self.map[int(self.ranges[1]/2 + .5 + r * math.sin(a))][int(self.ranges[0]/2 + .5 + r * math.cos(a))] = len(self.order)
             self.order.append(player_id)
-
-            a += math.pi/len(self.players) * 2
-
         random.shuffle(self.order)
 
         await self.send_info()
+        self.save()
 
     # Envoies le résumé de la partie aux joueurs + le channel
     async def send_info(self, **kwargs):
@@ -312,10 +337,10 @@ class Game:
     async def end_game(self, name, cause):
         embed = discord.Embed(title="[PETRI] Victoire " + ("d'`" if name[:1] in "EAIOU" else "de `") + name + "` par " + cause  + " !", color=global_values.color)
 
-        players = self.order.copy()
-        players.sort(key=lambda e: len([0 for row in self.map for tile in row if tile == self.order.index(e)]), reverse=True)
+        players = [i for i in range(len(self.order))]
+        players.sort(key=lambda e: len([0 for row in self.map for tile in row if tile == e]), reverse=True)
 
-        embed.description = "**Joueurs :**\n" + '\n'.join([global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(players)])
+        embed.description = "**Joueurs :**\n" + '\n'.join([global_values.number_emojis[i] + " " + global_values.tile_colors[index + 2] + " `" + str(self.players[self.order[index]].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == index])) for i, index in enumerate(players)])
 
         if self.info_message:
             await self.info_message.delete()
@@ -330,8 +355,10 @@ class Game:
             "channel": self.channel.id,
             "order": self.order,
             "turn": self.turn,
+            "map": self.map,
+            "ranges": self.ranges,
+            "last_choice": self.last_choice,
             "round": self.round,
-            "info_message": self.info_message.id if self.info_message else None,
             "players": {}
         }
 
@@ -347,7 +374,9 @@ class Game:
         self.order = object["order"]
         self.turn = int(object["turn"])
         self.round = int(object["round"])
-        self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None
+        self.map = list(object["map"])
+        self.ranges = object["ranges"]
+        self.last_choice = object["last_choice"]
         self.players = {}
 
         for id, info in object["players"].items():
@@ -359,7 +388,7 @@ class Game:
         else:
             object = {}
 
-        object[self.channel.id] = self.serialize(state)
+        object[self.channel.id] = self.serialize()
         self.mainclass.objects.save_object("games", object)
 
     def delete_save(self):
@@ -372,4 +401,4 @@ class Game:
         else:
             print("no save")
 
-  # Module créé par Le_Codex#9836 le 26/07/2020
+  # Module créé par Le Codex#9836

@@ -349,3 +349,5 @@ class Game:
             await self.players[id].message.edit(content = board, embed =  embed)
 
         globals.games.pop(self.channel.id)
+
+ #  Module créé par Le Codex#9836
