@@ -33,13 +33,7 @@ class Game:
 
     async def reload(self, object, client):
         await self.deserialize(object, client)
-
-        if object["state"]["type"] == "send_team_choice":
-            await self.send_team_choice()
-        elif object["state"]["type"] == "quest":
-            await self.send_players_quest_choice()
-        elif object["state"]["type"] == "next_turn":
-            await self.next_turn()
+        await self.send_info()
 
     async def on_creation(self, message):
         async def start(reactions):
@@ -305,17 +299,23 @@ class Game:
 
         if len(alives) == 1:
             await self.end_game(str(self.players[self.order[alives[0]]].user), "Annihiliation")
-        else:
-            for i in range(len(self.order)):
-                if len([0 for row in self.map for tile in row if tile == i]) >= (self.ranges[0] * self.ranges[1])/2:
-                    await self.end_game(str(self.players[self.order[i]].user), "Domination")
-                    return
+            return
+
+        for i in range(len(self.order)):
+            if len([0 for row in self.map for tile in row if tile == i]) >= (self.ranges[0] * self.ranges[1])/2:
+                await self.end_game(str(self.players[self.order[i]].user), "Domination")
+                return
+
+        self.save()
 
     # Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, name, cause):
         embed = discord.Embed(title="[PETRI] Victoire " + ("d'`" if name[:1] in "EAIOU" else "de `") + name + "` par " + cause  + " !", color=global_values.color)
 
-        embed.description = "**Joueurs :**\n" + '\n'.join([global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(self.order)])
+        players = self.order.copy()
+        players.sort(key=lambda e: len([0 for row in self.map for tile in row if tile == self.order.index(e)]), reverse=True)
+
+        embed.description = "**Joueurs :**\n" + '\n'.join([global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(players)])
 
         if self.info_message:
             await self.info_message.delete()
@@ -325,7 +325,7 @@ class Game:
         self.delete_save()
         del global_values.games[self.channel.id]
 
-    def serialize(self, state):
+    def serialize(self):
         object = {
             "channel": self.channel.id,
             "order": self.order,
@@ -347,28 +347,13 @@ class Game:
         self.order = object["order"]
         self.turn = int(object["turn"])
         self.round = int(object["round"])
-        self.quests = object["quests"]
-        self.roles = object["roles"]
-        self.phase = object["phase"]
-        self.game_rules = object["gamerules"]
-        self.refused = int(object["refused"])
         self.info_message = await self.channel.fetch_message(object["info_message"]) if object["info_message"] else None
-        self.played = object["played"]
-        self.lady_of_the_lake = object["lady_of_the_lake"]
         self.players = {}
-        self.team = {}
-
-        for i, id in object["team"].items():
-            self.team[int(i)] = int(id)
 
         for id, info in object["players"].items():
-            player = self.players[int(id)] = classes[info["role"]](client.get_user(info["user"]))
-            player.last_vote = info["last_vote"]
-            player.inspected = info["inspected"]
-            player.quest_choices = info["quest_choices"]
-            player.info_message = await player.user.fetch_message(info["info_message"]) if info["info_message"] else None
+            player = self.players[int(id)] = Player(client.get_user(info["user"]))
 
-    def save(self, state):
+    def save(self):
         if self.mainclass.objects.save_exists("games"):
             object = self.mainclass.objects.load_object("games")
         else:
@@ -386,3 +371,5 @@ class Game:
             self.mainclass.objects.save_object("games", object)
         else:
             print("no save")
+
+  # Module créé par Le_Codex#9836 le 26/07/2020
