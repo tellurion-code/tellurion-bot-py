@@ -61,7 +61,7 @@ class Game:
             await self.game_creation_message.message.edit(embed=embed)
 
         async def cond(reactions):
-            return len(reactions) in range(2, 7)
+            return len([0 for x in reactions.values() if len(x)]) in range(2, 7)
 
         self.game_creation_message = ReactionMessage(
             cond,
