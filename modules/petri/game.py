@@ -173,12 +173,13 @@ class Game:
                     if len(reactions[self.order[self.turn]]):
                         if reactions[self.order[self.turn]][0] == 4:
                             if 5 in reactions[self.order[self.turn]]:
+                                self.last_choice = 4
+
                                 for y in range(self.ranges[1]):
                                     for x in range(self.ranges[0]):
                                         if self.map[y][x] == self.turn:
                                             self.map[y][x] = -1
 
-                                self.last_choice = 4
                                 for i in reactions[self.order[self.turn]]:
                                     await self.info_message.message.remove_reaction(global_values.choice_emojis[i], self.players[self.order[self.turn]].user)
                                 self.info_message.reactions = {}
@@ -190,9 +191,10 @@ class Game:
 
                                 return
                         elif reactions[self.order[self.turn]][0] < 4:
+                            self.last_choice = reactions[self.order[self.turn]][0] if len(reactions[self.order[self.turn]]) else self.last_choice
+
                             summary = self.process_direction(reactions[self.order[self.turn]][0])
 
-                            self.last_choice = reactions[self.order[self.turn]][0]
                             for i in reactions[self.order[self.turn]]:
                                 await self.info_message.message.remove_reaction(global_values.choice_emojis[i], self.players[self.order[self.turn]].user)
                             self.info_message.reactions = {}
@@ -284,7 +286,7 @@ class Game:
 
         await self.send_info(info=message)
 
-        if self.round == 41:
+        if self.round > 40:
             max_score, winner, tie = 0, 0, False
             for i, player_id in enumerate(self.order):
                 score = len([0 for row in self.map for tile in row if tile == i])
@@ -329,26 +331,12 @@ class Game:
             "order": self.order,
             "turn": self.turn,
             "round": self.round,
-            "team": self.team,
-            "refused": self.refused,
-            "quests": self.quests,
             "info_message": self.info_message.id if self.info_message else None,
-            "played": self.played,
-            "lady_of_the_lake": self.lady_of_the_lake,
-            "roles": self.roles,
-            "phase": self.phase,
-            "gamerules": self.game_rules,
-            "players": {},
-            "state": state
+            "players": {}
         }
 
         for id, player in self.players.items():
             object["players"][id] = {
-                "role": player.role,
-                "last_vote": player.last_vote,
-                "inspected": player.inspected,
-                "quest_choices": player.quest_choices,
-                "info_message": player.info_message.id if player.info_message else None,
                 "user": player.user.id
             }
 

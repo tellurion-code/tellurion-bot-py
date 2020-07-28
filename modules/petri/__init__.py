@@ -92,6 +92,18 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
+    async def com_show(self, message, args, kwargs):
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
+            if game.turn > -1:
+                await game.info_message.delete(True)
+                game.info_message = None
+                await game.send_info()
+            else:
+                await message.channel.send("La partie n'a pas commencé")
+        else:
+            await message.channel.send("Il n'y a pas de partie en cours")
+
     # Active le debug: enlève la limitation de terme, et le nombre minimal de joueurs
     async def com_debug(self, message, args, kwargs):
         if message.author.id == 240947137750237185:
@@ -140,7 +152,7 @@ class MainClass(BaseClassPython):
 :small_blue_diamond: **But du jeu** : :small_blue_diamond:
 Chaque joueur commence avec une troupe à un endroit aléatoire de la carte de 10x10 au début de la partie.
 Le gagnant est le joueur qui est le dernier avec des troupes encore vivantes, ou bien qui arrive à contrôler 50% de la carte.
-Après 50 tours de table complets (manche) sans qu'un gagnant ne soit déterminé, le joueur avec le plus de troupes gagne.
+Après 40 tours de table complets (manche) sans qu'un gagnant ne soit déterminé, le joueur avec le plus de troupes gagne.
 
 :small_blue_diamond: **Déroulement d’un tour** : :small_blue_diamond:
  -  Le joueur choisit une direction
