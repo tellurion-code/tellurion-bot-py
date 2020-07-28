@@ -41,6 +41,9 @@ class MainClass(BaseClassPython):
         # })
 
     async def on_ready(self):
+        if self.client.get_guild(297780867286433792):
+            global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782) #Get the custom emoji
+
         if self.objects.save_exists("globals"):
             object = self.objects.load_object("globals")
             globals.debug = object["debug"]
@@ -51,12 +54,12 @@ class MainClass(BaseClassPython):
                 globals.games[game["channel"]] = Game(self)
                 await globals.games[game["channel"]].reload(game, self.client)
 
-        if self.client.get_guild(297780867286433792):
-            global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782) #Get the custom emoji
-
     async def command(self, message, args, kwargs):
         if args[0] == "join't":
             await message.channel.send(message.author.mention + " n'a pas rejoint la partie")
+
+    async def com_failure(self, message, args, kwargs):
+        await message.channel.send(str(global_values.quest_choices["emojis"]["failure"]))
 
     async def com_join(self, message, args, kwargs):
         if message.channel.id in global_values.games:
