@@ -73,11 +73,11 @@ class Game:
                 value="Activé" if len([0 for x in reactions.values() if 0 in x]) else "Désactivé"
             )
 
-            embed.description = "Appuyez sur la réaction 📩 pour rejoindre la partie.\n\n__Joueurs:__\n" + '\n'.join(["`"+ str(x.user) + "`" for x in self.players.values()])
+            embed.description = "Cliquez sur la réaction 📩 pour rejoindre la partie.\n\n__Joueurs:__\n" + '\n'.join(["`"+ str(x.user) + "`" for x in self.players.values()])
             await self.game_creation_message.message.edit(embed=embed)
 
         async def cond(reactions):
-            return len([0 for x in reactions.values() if len(x)]) in range(2, 7)
+            return len([0 for x in reactions.values() if 1 in x]) in range(2, 7)
 
         self.game_creation_message = ReactionMessage(
             cond,
@@ -119,7 +119,8 @@ class Game:
 
         self.power_selection_message = ReactionMessage(
             cond,
-            start
+            start,
+            check=lambda r, u: u.id in self.players
         )
 
         await self.power_selection_message.send(
