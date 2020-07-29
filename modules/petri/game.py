@@ -347,13 +347,13 @@ class Game:
                         diff += self.players[self.order[self.turn]].on_attack(attack - defense)
                         diff += self.players[self.order[new_tile]].on_defense(attack - defense)
 
-                        if diff > 1:
+                        if diff > 0:
                             new_map[y + dy][x + dx] = self.turn
                             summary.append(global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️ 🗡️ " + global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "`")
-                        elif diff == 1:
+                        elif diff == 0:
                             new_map[y + dy][x + dx] = -1
                             summary.append(global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "`")
-                        elif diff <= 0:
+                        else
                             summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "` 🛡️ " + global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️")
 
         self.map = new_map
