@@ -124,12 +124,13 @@ class Demolisher(Player):
         def check_circling(x, y):
             for dy in range(-1, 2):
                 for dx in range(-1, 2):
-                    if game.map[y + dy][x + dx] != self.index and dx != dy:
-                        return False
+                    if game.inside(x + dx, y + dy):
+                        if game.map[y + dy][x + dx] != self.index and dx != dy:
+                            return False
             return True
 
-        for y in range(1, game.ranges[1] - 1):
-            for x in range(1, game.ranges[0] - 1):
+        for y in range(game.ranges[1]):
+            for x in range(game.ranges[0]):
                 if game.map[y][x] == -2:
                     if check_circling(x, y):
                         game.map[y][x] = -1
