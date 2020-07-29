@@ -3,10 +3,20 @@ import random
 import math
 import copy
 
-from modules.petri.player import Player
+from modules.petri.player import Player, Defender, Attacker, Architect, Swarm, Racer, Demolisher
 from modules.reaction_message.reaction_message import ReactionMessage
 
 import modules.petri.globals as global_values
+
+classes = {
+    "player": Player,
+    "defender": Defender,
+    "attacker": Attacker,
+    "architect": Architect,
+    "swarm": Swarm,
+    "racer": Racer,
+    "demolisher": Demolisher
+}
 
 class Game:
     def __init__(self, mainclass, **kwargs):
@@ -29,6 +39,7 @@ class Game:
         self.ranges = [10, 10, 2]  # Taille horizontale, taille verticale, nombre de murs par quartiers
         self.info_message = None
         self.game_creation_message = None
+        self.power_selection_message = None
         self.last_choice = -1
 
     async def reload(self, object, client):
@@ -37,20 +48,30 @@ class Game:
 
     async def on_creation(self, message):
         async def start(reactions):
-            await self.start_game()
+            if len([0 for x in reactions.values() if 0 in x]):
+                await self.send_power_selection()
+            else:
+                await self.start_game()
 
         async def update(reactions):
-            if len([0 for x in reactions.values() if len(x)]):
+            if len([0 for x in reactions.values() if 1 in x]):
                 await self.game_creation_message.message.remove_reaction("📩", self.mainclass.client.user)
             else:
                 await self.game_creation_message.message.add_reaction("📩")
 
             self.players = {}
             for player_id, reaction in reactions.items():
-                if 0 in reaction:
+                if 1 in reaction:
                     self.players[player_id] = Player(self.mainclass.client.get_user(player_id))
 
             embed = self.game_creation_message.message.embeds[0]
+
+            embed.set_field_at(
+                0,
+                name="🦸 Pouvoirs",
+                value="Activé" if len([0 for x in reactions.values() if 0 in x]) else "Désactivé"
+            )
+
             embed.description = "Appuyez sur la réaction 📩 pour rejoindre la partie.\n\n__Joueurs:__\n" + '\n'.join(["`"+ str(x.user) + "`" for x in self.players.values()])
             await self.game_creation_message.message.edit(embed=embed)
 
@@ -61,7 +82,7 @@ class Game:
             cond,
             start,
             update=update,
-            check=lambda r, u: r.emoji != "✅" or u.id == message.author.id
+            check=lambda r, u: r.emoji == "📩" or u.id == message.author.id
         )
 
         await self.game_creation_message.send(
@@ -69,19 +90,65 @@ class Game:
             "Création de la partie de Petri",
             "Appuyez sur la réaction 📩 pour vous inscrire au jeu.\n\n__Joueurs:__\n",
             global_values.color,
-            ["Inscription"],
-            emojis=["📩"],
-            silent=True
+            ["Pouvoirs", "Inscription"],
+            emojis=["🦸", "📩"],
+            silent=True,
+            fields=[{
+                "name": "🦸 Pouvoirs",
+                "value": "Désactivé"
+            }]
+        )
+
+    async def send_power_selection(self):
+        choices = list(classes.keys())
+        emojis = [classes[x].name[:1] for x in choices]
+        fields = [{
+            "name": classes[x].name,
+            "value": classes[x].description
+        } for x in choices]
+
+        async def start(reactions):
+            for player_id, choice in reactions.items():
+                self.players[player_id] = classes[choices[choice[0]]](self.players[player_id].user)
+
+            await self.start_game()
+
+        async def cond(reactions):
+            return len([0 for x in reactions.values() if len(x) == 1]) == len(self.players)
+
+        self.power_selection_message = ReactionMessage(
+            cond,
+            start
+        )
+
+        await self.power_selection_message.send(
+            self.channel,
+            "🦸 Choix des pouvoirs",
+            "Choississez un pouvoir pour la partie",
+            global_values.color,
+            choices,
+            emojis=emojis,
+            silent=True,
+            fields=fields
         )
 
     async def start_game(self):
         self.turn = 0
         self.game_creation_message = None
+        self.power_selection_message = None
 
         for y in range(self.ranges[1]):
             self.map.append([])
             for _ in range(self.ranges[0]):
                 self.map[y].append(-1)  # -1 = vide, -2 = mur
+
+        for player_id, player in self.players.items():
+            self.order.append(player_id)
+
+        random.shuffle(self.order)
+
+        for i, player_id in enumerate(self.order):
+            self.players[player_id].index = i
 
         def check_bloating(map):
             for y in range(1, self.ranges[1]-1):
@@ -117,7 +184,7 @@ class Game:
                 while new_map[int(self.ranges[1]/2 + .5 + r * math.sin(a))][int(self.ranges[0]/2 + .5 + r * math.cos(a))] != -1:
                     a += math.pi/20
 
-                new_map[int(self.ranges[1]/2 + .5 + r * math.sin(a))][int(self.ranges[0]/2 + .5 + r * math.cos(a))] = i
+                self.players[player_id].spawn(self, new_map, int(self.ranges[1]/2 + .5 + r * math.sin(a)), int(self.ranges[0]/2 + .5 + r * math.cos(a)))
                 a += math.pi/len(self.players) * 2
 
             valid = check_bloating(new_map)
@@ -126,10 +193,6 @@ class Game:
                 break
 
         self.map = new_map
-
-        for player_id in self.players:
-            self.order.append(player_id)
-        random.shuffle(self.order)
 
         await self.send_info()
         self.save()
@@ -151,7 +214,7 @@ class Game:
 
         fields.append({
             "name": "Joueurs (Score de Domination : " + str(int((self.ranges[0] * self.ranges[1])/2)) +  ")" + (" / Dernière direction choisie : " + global_values.choice_emojis[self.last_choice] if self.last_choice != -1 else ""),
-            "value":'\n'.join([global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(self.order)])
+            "value":'\n'.join([(self.players[x].name[:1] + " " if self.players[x].__class__.__name__ != "Player" else "") + global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(self.order)])
         })
 
         if self.round > 40:
@@ -187,10 +250,25 @@ class Game:
 
             await self.info_message.message.edit(embed=embed)
         else:
+            choices = ["Gauche", "Haut", "Bas", "Droite", "Capituler", "Valider"]
+            if len([0 for x in self.players.values() if x.__class__.__name__ in ["Racer"]]):
+                choices.append("Pouvoir")
+
             async def next_turn(reactions):
                 if self.order[self.turn] in reactions:
                     if len(reactions[self.order[self.turn]]):
-                        if reactions[self.order[self.turn]][0] == 4:
+                        if reactions[self.order[self.turn]][0] == 6:
+                            field = self.players[self.order[self.turn]].active_power(self)
+                            embed = self.info_message.message.embeds[0]
+                            embed.add_field(
+                                name = field["name"],
+                                value = field["value"]
+                            )
+                            await self.info_message.message.edit(embed=embed)
+
+                            await self.info_message.message.remove_reaction(global_values.choice_emojis[6], self.players[self.order[self.turn]].user)
+                            self.info_message.reactions[self.order[self.turn]].pop(0)
+                        elif reactions[self.order[self.turn]][0] == 4:
                             if 5 in reactions[self.order[self.turn]]:
                                 self.last_choice = 4
 
@@ -231,7 +309,7 @@ class Game:
                 None,
                 update=next_turn,
                 temporary=False,
-                check=lambda r, u: u.id == self.order[self.turn]
+                check=lambda r, u: u.id == self.order[self.turn] and (r.emoji != global_values.choice_emojis[6] or self.players[u.id].power_active)
             )
 
             await self.info_message.send(
@@ -239,7 +317,7 @@ class Game:
                 "[PETRI Manche " + str(self.round) + "] Tour de `" + str(self.players[self.order[self.turn]].user) + "`",
                 map_string,
                 global_values.player_colors[self.turn],
-                ["Gauche", "Haut", "Bas", "Droite", "Capituler", "Valider"],
+                choices,
                 emojis=global_values.choice_emojis,
                 silent=True,
                 fields=fields
@@ -262,32 +340,21 @@ class Game:
                     if new_tile == -1:
                         new_map[y + dy][x + dx] = self.turn
                     elif new_tile >= 0 and new_tile != self.turn:
-                        attack, defense = 0, 0
-                        tdx, tdy = 0, 0
+                        attack = self.players[self.order[self.turn]].get_power(self, x, y, -dx, -dy)
+                        defense = self.players[self.order[new_tile]].get_power(self, x + dx, y + dy, dx, dy)
 
-                        while self.map[y + tdy][x + tdx] == self.turn:
-                            attack += 1
-                            tdx -= dx
-                            tdy -= dy
-                            if not self.inside(x + tdx, y + tdy):
-                                break
+                        diff = attack - defense
+                        diff += self.players[self.order[self.turn]].on_attack(attack - defense)
+                        diff += self.players[self.order[new_tile]].on_defense(attack - defense)
 
-                        tdx, tdy = dx, dy
-                        while self.map[y + tdy][x + tdx] == new_tile:
-                            defense += 1
-                            tdx += dx
-                            tdy += dy
-                            if not self.inside(x + tdx, y + tdy):
-                                break
-
-                        if attack > defense:
+                        if diff > 1:
                             new_map[y + dy][x + dx] = self.turn
                             summary.append(global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️ 🗡️ " + global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "`")
-                        elif attack == defense:
+                        elif diff == 1:
                             new_map[y + dy][x + dx] = -1
                             summary.append(global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "`")
-                        else:
-                            summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "` 🛡️ " + global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️")
+                        elif diff <= 0:
+                            summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[self.turn]].user) + "` 🛡️ " + global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️")
 
         self.map = new_map
         summary.sort()
@@ -296,6 +363,8 @@ class Game:
     # Passe au prochain tour
     async def next_turn(self, message=None):
         while True:
+            self.players[self.order[self.turn]].on_turn_end(self)
+
             self.turn = (self.turn + 1) % len(self.order)
             if self.turn == 0:
                 self.round += 1
@@ -364,7 +433,10 @@ class Game:
 
         for id, player in self.players.items():
             object["players"][id] = {
-                "user": player.user.id
+                "user": player.user.id,
+                "class": player.__class__.__name__.lower(),
+                "power_active": player.power_active,
+                "index": player.index
             }
 
         return object
@@ -380,7 +452,9 @@ class Game:
         self.players = {}
 
         for id, info in object["players"].items():
-            player = self.players[int(id)] = Player(client.get_user(info["user"]))
+            player = self.players[int(id)] = classes[info["class"]](client.get_user(info["user"]))
+            player.power_active = info["power_active"]
+            player.index = info["index"]
 
     def save(self):
         if self.mainclass.objects.save_exists("games"):

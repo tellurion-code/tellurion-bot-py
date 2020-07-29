@@ -64,6 +64,9 @@ class MainClass(BaseClassPython):
                     if globals.games[message.channel.id].game_creation_message:
                         await globals.games[message.channel.id].game_creation_message.delete()
 
+                    if globals.games[message.channel.id].power_selection_message:
+                        await globals.games[message.channel.id].power_selection_message.delete()
+
                     if globals.games[message.channel.id].info_message:
                         await globals.games[message.channel.id].info_message.delete()
 
@@ -144,7 +147,36 @@ class MainClass(BaseClassPython):
 
     async def com_rules(self, message, args, kwargs):
         if len(args) > 1:
-            await message.channel.send("Sous-section inconnue")
+            if args[1] == "powers":
+                await message.channel.send(embed=discord.Embed(
+                    title=":small_orange_diamond: Pouvoirs :small_orange_diamond:",
+                    description="""
+Les pouvoirs actifs sont déclenchés avec l'option 🦸
+
+🚫 **Sans-Pouvoir**
+N'a pas de pouvoir spécial
+
+🛡️ **Défenseur**
+Ne perd pas d'unités lors d'une égalité en défense
+
+🗡️ **Attaquant**
+Capture l'unité au lieu de la détruire lors d'une égalité en attaque
+
+🧱 **Architecte**
+Les murs comptent comme des unités pour lui en défense
+
+🐝 **Essaim**
+Commence avec une unité en plus
+
+🏎️ **Coureur**
+Peut prendre une fois dans la partie un second tour juste après le sien
+
+🧨 **Démolisseur**
+Peut détruire tous les murs qu'il encercle (diagonales non nécessaires)
+                    """,
+                    color=global_values.color))
+            else:
+                await message.channel.send("Sous-section inconnue")
         else:
             await message.channel.send(embed=discord.Embed(
                 title=":small_orange_diamond: Règles de Petri :small_orange_diamond:",
