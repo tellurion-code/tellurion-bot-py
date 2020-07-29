@@ -128,8 +128,8 @@ class Demolisher(Player):
                         return False
             return True
 
-        for y in range(game.ranges[1]):
-            for x in range(game.ranges[0]):
+        for y in range(1, game.ranges[1] - 1):
+            for x in range(1, game.ranges[0] - 1):
                 if game.map[y][x] == -2:
                     if check_circling(x, y):
                         game.map[y][x] = -1
