@@ -48,7 +48,7 @@ class Defender(Player):
     description = "Ne perd pas d'unités lors d'une égalité en défense"
 
     def on_defense(self, diff):
-        return (-1 if diff <= 1 else 0)
+        return (-1 if diff <= 0 else 0)
 
 
 class Attacker(Player):
@@ -56,7 +56,7 @@ class Attacker(Player):
     description = "Capture l'unité au lieu de la détruire lors d'une égalité en attaque"
 
     def on_attack(self, diff):
-        return (2 if diff >= 1 else 1)
+        return (2 if diff >= 0 else 1)
 
 
 class Architect(Player):
