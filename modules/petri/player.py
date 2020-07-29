@@ -137,7 +137,7 @@ class Demolisher(Player):
 
         return {
             "name": "🧨 Pouvoir du Démolisseur",
-            "value": amount + (" murs détruits" if amount - 1 else " mur détruit")
+            "value": str(amount) + (" murs détruits" if amount - 1 else " mur détruit")
         }
 
 # class Delayed(Player):
