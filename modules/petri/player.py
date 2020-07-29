@@ -1,5 +1,6 @@
 import discord
 import random
+import math
 
 from modules.reaction_message.reaction_message import ReactionMessage
 
@@ -14,6 +15,7 @@ class Player:
 
     def __init__(self, user):
         self.user = user
+        self.variables = {}
 
     def spawn(self, game, map, x, y):
         map[y][x] = self.index
@@ -30,10 +32,10 @@ class Player:
 
         return power
 
-    def on_attack(self, diff):
+    def on_attack(self, game, diff, defender):
         return 0
 
-    def on_defense(self, diff):
+    def on_defense(self, game, diff):
         return 0
 
     def on_turn_end(self, game):
@@ -47,7 +49,7 @@ class Defender(Player):
     name = "🛡️ Défenseur"
     description = "Ne perd pas d'unités lors d'une égalité en défense"
 
-    def on_defense(self, diff):
+    def on_defense(self, game, diff):
         return (-1 if diff == 0 else 0)
 
 
@@ -55,7 +57,7 @@ class Attacker(Player):
     name = "🗡️ Attaquant"
     description = "Capture l'unité au lieu de la détruire lors d'une égalité en attaque"
 
-    def on_attack(self, diff):
+    def on_attack(self, game, diff, defender):
         return (1 if diff == 0 else 0)
 
 
@@ -104,7 +106,7 @@ class Racer(Player):
         self.steal_turn = True
 
         return {
-            "name": "🏎️ Pouvoir du Coureur",
+            "name": "️👾 Pouvoir du Glitheur",
             "value": "Le prochain tour sera le vôtre"
         }
 
@@ -119,8 +121,6 @@ class Demolisher(Player):
     description = "Détruit tous les murs qu'il encercle à la fin de son tour (diagonales non nécessaires)"
 
     def on_turn_end(self, game):
-        amount = 0
-
         def check_circling(x, y):
             for dy in range(-1, 2):
                 for dx in range(-1, 2):
@@ -132,8 +132,32 @@ class Demolisher(Player):
             for x in range(game.ranges[0]):
                 if game.map[y][x] == -2:
                     if check_circling(x, y):
-                        game.map[y][x] == -1
-                        amount += 1
+                        game.map[y][x] = -1
+
+
+class Pacifist(Player):
+    name = "🕊️ Pacifiste"
+    description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué"
+
+    def __init__(self, user):
+        super().__init__(user)
+        self.variables = {
+            "peace_with": []
+        }
+
+    def spawn(self, game, map, x, y):
+        map[y][x] = self.index
+
+        self.variables["peace_with"] = [i for i in range(len(game.order))]
+
+    def on_defense(self, game, diff):
+        return (-math.inf if game.turn in self.variables["peace_with"] else 0)
+
+    def on_attack(self, game, diff, defender):
+        if defender in self.variables["peace_with"]:
+            self.variables["peace_with"].remove(defender)
+
+        return 0
 
 
 # class Delayed(Player):

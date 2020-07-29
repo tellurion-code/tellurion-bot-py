@@ -3,7 +3,7 @@ import random
 import math
 import copy
 
-from modules.petri.player import Player, Defender, Attacker, Architect, Swarm, Racer, Demolisher
+from modules.petri.player import Player, Defender, Attacker, Architect, Swarm, Racer, Demolisher, Pacifist
 from modules.reaction_message.reaction_message import ReactionMessage
 
 import modules.petri.globals as global_values
@@ -15,7 +15,8 @@ classes = {
     "architect": Architect,
     "swarm": Swarm,
     "racer": Racer,
-    "demolisher": Demolisher
+    "demolisher": Demolisher,
+    "pacifist": Pacifist
 }
 
 class Game:
@@ -101,7 +102,7 @@ class Game:
 
     async def send_power_selection(self):
         choices = list(classes.keys())
-        emojis = [classes[x].name[:1] for x in choices]
+        emojis = [classes[x].name.split()[0] for x in choices]
         fields = [{
             "name": classes[x].name,
             "value": classes[x].description
@@ -214,7 +215,7 @@ class Game:
 
         fields.append({
             "name": "Joueurs (Score de Domination : " + str(int((self.ranges[0] * self.ranges[1])/2)) +  ")" + (" / Dernière direction choisie : " + global_values.choice_emojis[self.last_choice] if self.last_choice != -1 else ""),
-            "value":'\n'.join([(self.players[x].name[:1] + " " if self.players[x].__class__.__name__ != "Player" else "") + global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(self.order)])
+            "value":'\n'.join([(self.players[x].name.split()[0] + " " if self.players[x].__class__.__name__ != "Player" else "") + global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(self.order)])
         })
 
         if self.round > 40:
@@ -344,8 +345,8 @@ class Game:
                         defense = self.players[self.order[new_tile]].get_power(self, x + dx, y + dy, dx, dy)
 
                         diff = attack - defense
-                        diff += self.players[self.order[self.turn]].on_attack(attack - defense)
-                        diff += self.players[self.order[new_tile]].on_defense(attack - defense)
+                        diff += self.players[self.order[self.turn]].on_attack(self, attack - defense, new_tile)
+                        diff += self.players[self.order[new_tile]].on_defense(self, attack - defense)
 
                         if diff > 0:
                             new_map[y + dy][x + dx] = self.turn
@@ -436,7 +437,8 @@ class Game:
                 "user": player.user.id,
                 "class": player.__class__.__name__.lower(),
                 "power_active": player.power_active,
-                "index": player.index
+                "index": player.index,
+                "variables": player.variables
             }
 
         return object
@@ -455,6 +457,7 @@ class Game:
             player = self.players[int(id)] = classes[info["class"]](client.get_user(info["user"]))
             player.power_active = info["power_active"]
             player.index = info["index"]
+            player.variables = info["variables"]
 
     def save(self):
         if self.mainclass.objects.save_exists("games"):

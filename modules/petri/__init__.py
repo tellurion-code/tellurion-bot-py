@@ -168,11 +168,14 @@ Les murs comptent comme des unités pour lui en défense
 🐝 **Essaim**
 Commence avec une unité en plus
 
-🏎️ **Coureur**
+👾 **Glitheur**
 Peut prendre une fois dans la partie un second tour juste après le sien
 
 🧨 **Démolisseur**
 Détruit tous les murs qu'il encercle à la fin de son tour (diagonales non nécessaires)
+
+🕊️ **Pacifiste**
+Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué
                     """,
                     color=global_values.color))
             else:
