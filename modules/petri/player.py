@@ -31,7 +31,7 @@ class Player:
         return power
 
     def on_attack(self, diff):
-        return 1
+        return 0
 
     def on_defense(self, diff):
         return 0
@@ -48,7 +48,7 @@ class Defender(Player):
     description = "Ne perd pas d'unités lors d'une égalité en défense"
 
     def on_defense(self, diff):
-        return (-1 if diff <= 0 else 0)
+        return (-1 if diff == 0 else 0)
 
 
 class Attacker(Player):
@@ -56,7 +56,7 @@ class Attacker(Player):
     description = "Capture l'unité au lieu de la détruire lors d'une égalité en attaque"
 
     def on_attack(self, diff):
-        return (2 if diff >= 0 else 1)
+        return (1 if diff == 0 else 0)
 
 
 class Architect(Player):
@@ -94,7 +94,7 @@ class Swarm(Player):
 
 
 class Racer(Player):
-    name = "🏎️ Coureur"
+    name = "👾 Glitheur"
     description = "Peut prendre une fois dans la partie un second tour juste après le sien"
     power_active = True
     steal_turn = False
@@ -112,6 +112,7 @@ class Racer(Player):
         if self.steal_turn:
             self.steal_turn = False
             game.turn = (self.index - 1)%len(game.players)
+
 
 class Demolisher(Player):
     name = "🧨 Démolisseur"
@@ -133,6 +134,7 @@ class Demolisher(Player):
                     if check_circling(x, y):
                         game.map[y][x] == -1
                         amount += 1
+
 
 # class Delayed(Player):
 #     name = "⏳ Délayé"
