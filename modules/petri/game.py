@@ -251,7 +251,7 @@ class Game:
             await self.info_message.message.edit(embed=embed)
         else:
             choices = ["Gauche", "Haut", "Bas", "Droite", "Capituler", "Valider"]
-            if len([0 for x in self.players.values() if x.__class__.__name__ in ["Racer"]]):
+            if len([0 for x in self.players.values() if x.__class__.__name__ in ["Racer", "Demolisher"]]):
                 choices.append("Pouvoir")
 
             async def next_turn(reactions):
