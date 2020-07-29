@@ -172,7 +172,7 @@ Commence avec une unité en plus
 Peut prendre une fois dans la partie un second tour juste après le sien
 
 🧨 **Démolisseur**
-Peut détruire tous les murs qu'il encercle (diagonales non nécessaires)
+Détruit tous les murs qu'il encercle à la fin de son tour (diagonales non nécessaires)
                     """,
                     color=global_values.color))
             else:

@@ -115,10 +115,9 @@ class Racer(Player):
 
 class Demolisher(Player):
     name = "🧨 Démolisseur"
-    description = "Peut détruire tous les murs qu'il encercle (diagonales non nécessaires)"
-    power_active = True
+    description = "Détruit tous les murs qu'il encercle à la fin de son tour (diagonales non nécessaires)"
 
-    def active_power(self, game):
+    def on_turn_end(self, game):
         amount = 0
 
         def check_circling(x, y):
@@ -134,11 +133,6 @@ class Demolisher(Player):
                     if check_circling(x, y):
                         game.map[y][x] == -1
                         amount += 1
-
-        return {
-            "name": "🧨 Pouvoir du Démolisseur",
-            "value": str(amount) + (" murs détruits" if amount - 1 else " mur détruit")
-        }
 
 # class Delayed(Player):
 #     name = "⏳ Délayé"

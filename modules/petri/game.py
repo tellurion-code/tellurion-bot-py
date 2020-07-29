@@ -251,7 +251,7 @@ class Game:
             await self.info_message.message.edit(embed=embed)
         else:
             choices = ["Gauche", "Haut", "Bas", "Droite", "Capituler", "Valider"]
-            if len([0 for x in self.players.values() if x.__class__.__name__ in ["Racer", "Demolisher"]]):
+            if len([0 for x in self.players.values() if x.__class__.__name__ in ["Racer"]]):
                 choices.append("Pouvoir")
 
             async def next_turn(reactions):
@@ -354,7 +354,7 @@ class Game:
                             new_map[y + dy][x + dx] = -1
                             summary.append(global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "`")
                         elif diff <= 0:
-                            summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[self.turn]].user) + "` 🛡️ " + global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️")
+                            summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "` 🛡️ " + global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️")
 
         self.map = new_map
         summary.sort()
