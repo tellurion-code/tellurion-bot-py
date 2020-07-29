@@ -168,7 +168,7 @@ Les murs comptent comme des unités pour lui en défense
 🐝 **Essaim**
 Commence avec une unité en plus
 
-👾 **Glitheur**
+👾 **Glitcheur**
 Peut prendre une fois dans la partie un second tour juste après le sien
 
 🧨 **Démolisseur**

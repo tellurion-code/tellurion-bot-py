@@ -96,7 +96,7 @@ class Swarm(Player):
 
 
 class Racer(Player):
-    name = "👾 Glitheur"
+    name = "👾 Glitcheur"
     description = "Peut prendre une fois dans la partie un second tour juste après le sien"
     power_active = True
     steal_turn = False
@@ -106,7 +106,7 @@ class Racer(Player):
         self.steal_turn = True
 
         return {
-            "name": "️👾 Pouvoir du Glitheur",
+            "name": "️👾 Pouvoir du Glitcheur",
             "value": "Le prochain tour sera le vôtre"
         }
 
