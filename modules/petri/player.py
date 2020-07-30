@@ -173,7 +173,7 @@ class Isolated(Player):
 
 class Border(Player):
     name = "🗺️ Frontalier"
-    description = "Peut détruire toutes les unités qui touchent ses frontières avec un autre joueur, une fois dans la partie"
+    description = "Peut détruire __toutes__ les unités qui touchent ses frontières avec un autre joueur (y compris les siennes), une fois dans la partie"
     power_active = True
 
     def active_power(self, game):
