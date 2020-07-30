@@ -80,23 +80,17 @@ class Architect(Player):
 
 class Swarm(Player):
     name = "🐝 Essaim"
-    description = "Commence avec deux unités en plus en coin"
+    description = "Commence avec deux unités en plus en ligne"
 
     def spawn(self, game, map, x, y):
         map[y][x] = self.index
 
-        dx = [-1, 1][random.randrange(2)]
-        dy = [-1, 1][random.randrange(2)]
-
-        if game.inside(x + dx, y):
-            map[y][x + dx] = self.index
+        if game.inside(x + 1, y) and game.inside(x - 1, y):
+            map[y][x + 1] = self.index
+            map[y][x - 1] = self.index
         else:
-            map[y][x - dx] = self.index
-
-        if game.inside(x, y + dy):
-            map[y + dy][x] = self.index
-        else:
-            map[y - dy][x] = self.index
+            map[y + 1][x] = self.index
+            map[y - 1][x] = self.index
 
 
 class Racer(Player):
