@@ -152,10 +152,8 @@ class Game:
                         for dy in range(-1, 2):
                             if map[y + dy][x + dx] == -2:
                                 count += 1
-
                     if count >= 2:
                         return False
-
             return True
 
         new_map = None
@@ -338,8 +336,8 @@ class Game:
                         defense = self.players[self.order[new_tile]].get_power(self, x + dx, y + dy, dx, dy)
 
                         diff = attack - defense
-                        diff += self.players[self.order[self.turn]].on_attack(self, attack - defense, new_tile)
-                        diff += self.players[self.order[new_tile]].on_defense(self, attack - defense)
+                        diff += self.players[self.order[self.turn]].on_attack(self, attack, defense, new_tile)
+                        diff += self.players[self.order[new_tile]].on_defense(self, attack, defense)
 
                         if diff > 0:
                             new_map[y + dy][x + dx] = self.turn

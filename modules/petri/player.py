@@ -32,10 +32,10 @@ class Player:
 
         return power
 
-    def on_attack(self, game, diff, defender):
+    def on_attack(self, game, attack, defense, defender):
         return 0
 
-    def on_defense(self, game, diff):
+    def on_defense(self, game, attack, defense):
         return 0
 
     def on_turn_end(self, game):
@@ -49,16 +49,16 @@ class Defender(Player):
     name = "🛡️ Défenseur"
     description = "Ne perd pas d'unités lors d'une égalité en défense"
 
-    def on_defense(self, game, diff):
-        return (-1 if diff == 0 else 0)
+    def on_defense(self, game, attack, defense):
+        return (-1 if attack == defense else 0)
 
 
 class Attacker(Player):
     name = "🗡️ Attaquant"
     description = "Capture l'unité au lieu de la détruire lors d'une égalité en attaque"
 
-    def on_attack(self, game, diff, defender):
-        return (1 if diff == 0 else 0)
+    def on_attack(self, game, attack, defense, defender):
+        return (1 if attack == defense else 0)
 
 
 class Architect(Player):
@@ -152,14 +152,22 @@ class Pacifist(Player):
 
         self.variables["peace_with"] = [i for i in range(len(game.order))]
 
-    def on_defense(self, game, diff):
+    def on_defense(self, game, attack, defense):
         return (-math.inf if game.turn in self.variables["peace_with"] else 0)
 
-    def on_attack(self, game, diff, defender):
+    def on_attack(self, game, attack, defense, defender):
         if defender in self.variables["peace_with"]:
             self.variables["peace_with"].remove(defender)
 
         return 0
+
+
+class Isolated(Player):
+    name = "🏚️ Isolé"
+    description = "Ne perd pas les combats où il a une seule unité en défense"
+
+    def on_defense(self, game, attack, defense):
+        return (-math.inf if defense == 1 else 0)
 
 
 # class Delayed(Player):
