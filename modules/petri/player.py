@@ -1,6 +1,7 @@
 import discord
 import random
 import math
+import copy
 
 from modules.reaction_message.reaction_message import ReactionMessage
 
@@ -170,12 +171,44 @@ class Isolated(Player):
         return (-math.inf if defense == 1 else 0)
 
 
+class Border(Player):
+    name = "🗺️ Frontalier"
+    description = "Peut détruire toutes les unités qui touchent ses frontières avec un autre joueur, une fois dans la partie"
+    power_active = True
+
+    def active_power(self, game):
+        self.power_active = False
+        amount = 0
+
+        new_map = copy.deepcopy(game.map)
+        for y in range(1, game.ranges[1] - 1):
+            for x in range(1, game.ranges[0] - 1):
+                if new_map[y][x] == game.turn:
+                    self_destruct = False
+                    for dy in range(-1, 2):
+                        for dx in range(-1, 2):
+                            if new_map[y + dy][x + dx] != game.turn and new_map[y + dy][x + dx] > -1 and dy != dx:
+                                new_map[y + dy][x + dx] = -1
+                                amount += 1
+                                self_destruct = True
+                    if self_destruct:
+                        new_map[y][x] = -1
+                        amount += 1
+
+        game.map = new_map
+
+        return {
+            "name": "️🗺️ Pouvoir du Frontalier",
+            "value": str(amount) + " unités détruites"
+        }
+
+
 # class Delayed(Player):
 #     name = "⏳ Délayé"
 #     description = "Arrive en jeu 3 tours après le début du jeu. Commence avec 12 unités"
 #     x, y = 0, 0
 #
-#     def spawn(self, game, x, y):
+#     def spawn(self, game, map, x, y):
 #         self.x, self.y = max(1, min(x, game.ranges[0]-2)), max(1, min(y, game.ranges[1]-1))
 #
 #     def on_turn_end(self, game):

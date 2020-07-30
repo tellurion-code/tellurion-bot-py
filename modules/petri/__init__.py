@@ -151,7 +151,7 @@ class MainClass(BaseClassPython):
             if args[1] == "powers":
                 await message.channel.send(embed=discord.Embed(
                     title=":small_orange_diamond: Pouvoirs :small_orange_diamond:",
-                    description="Les pouvoirs actifs sont déclenchés avec l'option 🦸\n\n" + '\n\n'.join(["**" + c.name + "**\n" + c.description for c in Player.__subclasses__()]),
+                    description="Les pouvoirs actifs sont déclenchés avec l'option 🦸 et ne prennent pas le tour\n\n" + '\n\n'.join(["**" + c.name + "**\n" + c.description for c in Player.__subclasses__()]),
                     color=global_values.color))
             else:
                 await message.channel.send("Sous-section inconnue")

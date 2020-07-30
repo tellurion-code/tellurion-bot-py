@@ -243,7 +243,7 @@ class Game:
             await self.info_message.message.edit(embed=embed)
         else:
             choices = ["Gauche", "Haut", "Bas", "Droite", "Capituler", "Valider"]
-            if len([0 for x in self.players.values() if x.__class__.__name__ in ["Racer"]]):
+            if len([0 for x in self.players.values() if x.__class__.__name__ in ["Racer", "Border"]]):
                 choices.append("Pouvoir")
 
             async def next_turn(reactions):
@@ -251,12 +251,7 @@ class Game:
                     if len(reactions[self.order[self.turn]]):
                         if reactions[self.order[self.turn]][0] == 6:
                             field = self.players[self.order[self.turn]].active_power(self)
-                            embed = self.info_message.message.embeds[0]
-                            embed.add_field(
-                                name = field["name"],
-                                value = field["value"]
-                            )
-                            await self.info_message.message.edit(embed=embed)
+                            await self.send_info(info=field)
 
                             await self.info_message.message.remove_reaction(global_values.choice_emojis[6], self.players[self.order[self.turn]].user)
                             self.info_message.reactions[self.order[self.turn]].pop(0)
