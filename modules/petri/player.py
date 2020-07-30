@@ -85,12 +85,16 @@ class Swarm(Player):
     def spawn(self, game, map, x, y):
         map[y][x] = self.index
 
-        if game.inside(x + 1, y) and game.inside(x - 1, y):
-            map[y][x + 1] = self.index
-            map[y][x - 1] = self.index
+        a = math.random(2)
+        d1 = [0, 1][a]
+        d2 = [1, 0][a]
+
+        if game.inside(x + d1, y + d2) and game.inside(x - d1, y - d2) and map[y + d2][x + d1] == -1 and map[y - d2][x - d1] == -1:
+            map[y + d2][x + d1] = self.index
+            map[y - d2][x - d1] = self.index
         else:
-            map[y + 1][x] = self.index
-            map[y - 1][x] = self.index
+            map[y + d1][x + d2] = self.index
+            map[y - d1][x - d2] = self.index
 
 
 class Racer(Player):
