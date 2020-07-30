@@ -2,6 +2,7 @@ import discord
 
 from modules.petri.player import Player
 from modules.petri.game import Game
+from modules.petri.player import Player
 from modules.reaction_message.reaction_message import ReactionMessage
 from modules.base import BaseClassPython
 
@@ -150,33 +151,7 @@ class MainClass(BaseClassPython):
             if args[1] == "powers":
                 await message.channel.send(embed=discord.Embed(
                     title=":small_orange_diamond: Pouvoirs :small_orange_diamond:",
-                    description="""
-Les pouvoirs actifs sont déclenchés avec l'option 🦸
-
-🚫 **Sans-Pouvoir**
-N'a pas de pouvoir spécial
-
-🛡️ **Défenseur**
-Ne perd pas d'unités lors d'une égalité en défense
-
-🗡️ **Attaquant**
-Capture l'unité au lieu de la détruire lors d'une égalité en attaque
-
-🧱 **Architecte**
-Les murs comptent comme des unités pour lui en défense
-
-🐝 **Essaim**
-Commence avec une unité en plus
-
-👾 **Glitcheur**
-Peut prendre une fois dans la partie un second tour juste après le sien
-
-🧨 **Démolisseur**
-Détruit tous les murs qu'il encercle à la fin de son tour (diagonales non nécessaires)
-
-🕊️ **Pacifiste**
-Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué
-                    """,
+                    description="Les pouvoirs actifs sont déclenchés avec l'option 🦸\n\n" + '\n\n'.join(["**" + c.name + "**\n" + c.description for c in Player.__subclasses__()]),
                     color=global_values.color))
             else:
                 await message.channel.send("Sous-section inconnue")

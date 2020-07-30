@@ -3,21 +3,13 @@ import random
 import math
 import copy
 
-from modules.petri.player import Player, Defender, Attacker, Architect, Swarm, Racer, Demolisher, Pacifist
 from modules.reaction_message.reaction_message import ReactionMessage
+from modules.petri.player import Player
 
 import modules.petri.globals as global_values
 
-classes = {
-    "player": Player,
-    "defender": Defender,
-    "attacker": Attacker,
-    "architect": Architect,
-    "swarm": Swarm,
-    "racer": Racer,
-    "demolisher": Demolisher,
-    "pacifist": Pacifist
-}
+classes = {"player": Player}
+classes.update({c.__name__.lower(): c for c in Player.__subclasses__()})
 
 class Game:
     def __init__(self, mainclass, **kwargs):
