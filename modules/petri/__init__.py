@@ -167,9 +167,9 @@ Après 40 tours de table complets (manche) sans qu'un gagnant ne soit détermin�
 :small_blue_diamond: **Déroulement d’un tour** : :small_blue_diamond:
  -  Le joueur choisit une direction
  -  Toutes ses troupes essaient de se répliquer dans cette direction:
-    -  Si la case dans cette direction est vide, une nouvelle troupe de sa couleur est créée
-    -  Si la case est occupée par une troupe alliée, rien ne se passe
-    -  Si la case est occupée par une troupe ennemie, un combat se déclenche entre cette troupe et celle qui essaie de se répliquer
+ ---  Si la case dans cette direction est vide, une nouvelle troupe de sa couleur est créée
+ ---  Si la case est occupée par une troupe alliée, rien ne se passe
+ ---  Si la case est occupée par une troupe ennemie, un combat se déclenche entre cette troupe et celle qui essaie de se répliquer
 
 :small_blue_diamond: **Les combats** : :small_blue_diamond:
 Pour déterminer qui gagne le combat, il suffit de regarder le nombre de troupes alliées se trouvant en une ligne derrière les deux troupes:

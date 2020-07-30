@@ -85,9 +85,8 @@ class Swarm(Player):
     def spawn(self, game, map, x, y):
         map[y][x] = self.index
 
-        a = math.random(2)
-        d1 = [0, 1][a]
-        d2 = [1, 0][a]
+        d1 = math.randrange(2)
+        d2 = 1 - d1
 
         if game.inside(x + d1, y + d2) and game.inside(x - d1, y - d2) and map[y + d2][x + d1] == -1 and map[y - d2][x - d1] == -1:
             map[y + d2][x + d1] = self.index
