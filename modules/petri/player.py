@@ -86,7 +86,7 @@ class Swarm(Player):
     def spawn(self, game, map, x, y):
         map[y][x] = self.index
 
-        d1 = math.randrange(2)
+        d1 = random.randrange(2)
         d2 = 1 - d1
 
         if game.inside(x + d1, y + d2) and game.inside(x - d1, y - d2) and map[y + d2][x + d1] == -1 and map[y - d2][x - d1] == -1:
@@ -173,7 +173,7 @@ class Isolated(Player):
 
 class Border(Player):
     name = "🗺️ Frontalier"
-    description = "Peut détruire __toutes__ les unités qui touchent ses frontières avec un autre joueur (y compris les siennes), une fois dans la partie"
+    description = "Peut détruire __toutes__ les unités (y compris les siennes) qui touchent ses frontières avec un autre joueur, une fois dans la partie"
     power_active = True
 
     def active_power(self, game):
