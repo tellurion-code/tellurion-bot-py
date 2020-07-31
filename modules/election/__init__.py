@@ -243,5 +243,13 @@ Il donne à ce joueur la capacité d'affecter un malus d'un point à un autre jo
 - S'il y a une égalité, un vote est lancé pour départager. Si l'égalité persiste, elle est résolue au hasard
 
 :small_blue_diamond: **Utilisez "election rules roles" pour avoir la liste des rôles spéciaux** :small_blue_diamond:
-                """,
+
+:small_blue_diamond: **Précisions** :small_blue_diamond:
+- Même si un joueur est éliminé, il vote encore et ce, jusqu'à la fin de la partie
+- Sauf exceptions, le rôle d'un joueur n'est plus effectif s'il est éliminé
+- Les rôles et les votes sont cachés
+- Les rôles sont inactifs lors de votes dûs à des égalités.
+- Les rôles de ministre et chef d'état sont cumulables
+- Le malus affecté par le chef d'état est visible par tous les joueurs.
+""",
                 color=global_values.color))

@@ -284,7 +284,7 @@ class Game:
                             "value": "`" + str(self.players[self.order[0]].user) + "` est devenu le Ministre 🎩, et aura donc une voix bonus au prochain tour"
                         }
 
-                    if self.players[self.order[0]].votes >= len(self.players)/2 and self.gamerules["head_of_state_on"]:
+                    if self.players[self.order[0]].votes > len(self.players)/2 and self.gamerules["head_of_state_on"]:
                         self.head_of_state = self.order[0]
 
                         message = {
