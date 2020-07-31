@@ -231,28 +231,16 @@ Il donne à ce joueur la capacité d'affecter un malus d'un point à un autre jo
                 await message.channel.send("Sous-section inconnue")
         else:
             await message.channel.send(embed=discord.Embed(
-                title=":small_orange_diamond: Règles du Avalon :small_orange_diamond:",
+                title=":small_orange_diamond: Règles d'Election (jeu de Kaznad) :small_orange_diamond:",
                 description="""
 :small_blue_diamond: **But du jeu** : :small_blue_diamond:
-Il a 2 équipes, les gentils et les méchants, leur but est :
- - Pour les gentils faire réussir 3 quêtes
- - Pour les méchants faire échouer 3 quêtes OU faire annuler 5 propositions d’équipe à la suite.
+Être le dernier joueur à ne pas être éliminé
 
 :small_blue_diamond: **Déroulement d’un tour** : :small_blue_diamond:
- -  Au début du tour le chef d’équipe choisit qui partira en Quête
- -  Les joueurs votent* pour ou contre la composition de l’équipe
-      -  Si l’équipe est validée, ses membres valident en secret pour ou contre la réussite de la Quête. Attention, il suffit d’un seul vote échec pour faire échouer la Quête
-      -  Si l’équipe n’est pas validée, c’est au chef d’équipe suivant de choisir la composition de l’équipe
-Attention S’il y a 7 participants ou plus, la Quête n°4 doit avoir 2 échecs pour échouer
+- Chaque joueur vote pour un autre joueur
+- Celui avec le moins de vote pour lui est éliminé
+- S'il y a une égalité, un vote est lancé pour départager. Si l'égalité persiste, elle est résolue au hasard
 
-:small_blue_diamond: **Les clans** : :small_blue_diamond:
-🟦 Gentils  : Simplement gentil
-🟥 Méchant  : Les méchants se connaissent entre eux
-🟩 Solo     : Ils gagnent autrement qu'avec la réussite ou l'échec des quêtes
-(Conseil : Ne vous faites jamais passer pour un méchant)
-
-:small_blue_diamond: **Utilisez "avalon rules roles" pour avoir la liste des rôles spéciaux** :small_blue_diamond:
-
-*Note : Tous les votes se font par le biais des réactions ( :white_check_mark: et :negative_squared_cross_mark: )
+:small_blue_diamond: **Utilisez "election rules roles" pour avoir la liste des rôles spéciaux** :small_blue_diamond:
                 """,
                 color=global_values.color))
