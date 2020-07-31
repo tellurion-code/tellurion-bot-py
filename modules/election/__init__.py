@@ -3,7 +3,7 @@ import discord
 import modules.election.globals as global_values
 global_values.init()
 
-from modules.election.player import Player
+from modules.election.player import Player, Le_Pen
 from modules.election.game import Game
 from modules.reaction_message.reaction_message import ReactionMessage
 from modules.base import BaseClassPython
@@ -48,6 +48,7 @@ class MainClass(BaseClassPython):
 
         if self.client.get_guild(297780867286433792):
             global_values.le_pen_emoji = await self.client.get_guild(297780867286433792).fetch_emoji(308640897090977792) #Get the custom emoji
+            Le_Pen.name = str(global_values.le_pen_emoji) + " Le Pen"
 
     async def command(self, message, args, kwargs):
         if args[0] == "join't":
