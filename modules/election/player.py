@@ -276,10 +276,6 @@ class Le_Pen(Player):
     name = str(global_values.le_pen_emoji) + " Le Pen"
     description = "Vous êtes Le Pen. Vous devez ne pas être éliminé avant la fin. Vous gagnez si vous êtes éliminé au dernier tour au lieu de le remporter"
 
-    def __init__(self, user):
-        super().__init__(user)
-        self.name = str(global_values.le_pen_emoji) + " Le Pen"
-
     async def on_kill(self, game, id):
         if len([0 for x in game.players.values() if x.alive]) == 1:
             if id == self.user.id:
