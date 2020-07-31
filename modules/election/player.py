@@ -23,7 +23,7 @@ class Player:
 
     async def game_start(self, game):
         self.embed = discord.Embed(
-            title=self.name.split()[0] + " Début de partie",
+            title="Début de partie " + self.name.split()[0],
             description=self.description,
             color=global_values.color
         )
@@ -182,7 +182,7 @@ class Lobbyist(Player):
 
 class Scientist(Player):
     name = "🥼 Scientifique"
-    description = "Vous êtes le scientifique. Vous devez ne pas être éliminé avant la fin. Tous les joueurs vous connaîssent. Vous connaissez le rôle de la personne éliminée chaque tour"
+    description = "Vous êtes le scientifique. Vous devez ne pas être éliminé avant la fin. Tous les joueurs vous connaissent. Vous connaissez le rôle de la personne éliminée chaque tour"
 
     async def on_kill(self, game, id):
         if self.alive:
@@ -259,7 +259,7 @@ class Journalist(Player):
     description = "Vous êtes le journaliste. Vous devez ne pas être éliminé avant la fin. Vous connaissez le rôle de ceux pour qui vous votez. Ils savent que le journaliste a voté pour eux"
 
     async def vote_power(self, game):
-        if not game.tied:
+        if not game.tied and self.alive:
             await self.user.send(embed=discord.Embed(
                 title="📰 Pouvoir du Journaliste",
                 description="Vous avez appris que `" + str(game.players[game.order[self.last_vote]].user) + "` a comme rôle " + game.players[game.order[self.last_vote]].name,
@@ -277,7 +277,7 @@ class Le_Pen(Player):
     description = "Vous êtes Le Pen. Vous devez ne pas être éliminé avant la fin. Vous gagnez si vous êtes éliminé au dernier tour au lieu de le remporter"
 
     async def on_kill(self, game, id):
-        if len([0 for x in game.players.values() if x.alive]) == 1:
+        if len([0 for x in game.players.values() if x.alive]) == 1 and self.alive:
             if id == self.user.id:
                 await game.end_game(str(self.user), "Elimination")
             else:
