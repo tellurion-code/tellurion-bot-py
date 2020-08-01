@@ -38,13 +38,13 @@ class MainClass(BaseClassPython):
     async def on_ready(self):
         if self.objects.save_exists("globals"):
             object = self.objects.load_object("globals")
-            globals.debug = object["debug"]
+            global_values.debug = object["debug"]
 
         if self.objects.save_exists("games"):
             games = self.objects.load_object("games")
             for game in games.values():
-                globals.games[game["channel"]] = Game(self)
-                await globals.games[game["channel"]].reload(game, self.client)
+                global_values.games[game["channel"]] = Game(self)
+                await global_values.games[game["channel"]].reload(game, self.client)
 
         if self.client.get_guild(297780867286433792):
             global_values.le_pen_emoji = await self.client.get_guild(297780867286433792).fetch_emoji(308640897090977792) #Get the custom emoji
@@ -67,7 +67,11 @@ class MainClass(BaseClassPython):
             async def confirm(reactions):
                 if reactions[message.author.id][0] == 0:
                     await message.channel.send("La partie a été réinitialisée")
-                    globals.games[message.channel.id].delete_save()
+
+                    if global_values.games[message.channel.id].game_creation_message:
+                        await global_values.games[message.channel.id].delete()
+
+                    global_values.games[message.channel.id].delete_save()
                     del global_values.games[message.channel.id]
 
             async def cond(reactions):

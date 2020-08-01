@@ -26,6 +26,7 @@ class Game:
         self.order = []  # Ordre des id des joueurs
         self.turn = -1  # Le nombre de tours, -1 = pas commencé
         self.info_message = None
+        self.game_creation_message = None
         self.roles = []  # Rôles
         self.tied = False
         self.minister = 0  # Id du ministre
@@ -86,6 +87,7 @@ class Game:
 
     async def start_game(self):
         self.turn = 0
+        self.game_creation_message = None
 
         if len(self.roles) == 0:
             self.roles = ["player" for _ in len(self.players)]
