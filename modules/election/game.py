@@ -192,7 +192,8 @@ class Game:
             self.tied = False
             self.turn = self.turn + 1
 
-            self.players[self.minister].bonus += 1
+            if self.minister:
+                self.players[self.minister].bonus += 1
 
             for player in self.players.values():
                 player.last_vote = -1
