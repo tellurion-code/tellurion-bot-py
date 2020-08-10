@@ -192,6 +192,8 @@ class Game:
             self.tied = False
             self.turn = self.turn + 1
 
+            self.players[self.minister].bonus += 1
+
             for player in self.players.values():
                 player.last_vote = -1
                 player.votes = player.bonus
@@ -277,10 +279,9 @@ class Game:
             self.minister = 0
             self.head_of_state = 0
             if len([0 for x in self.players.values() if x.alive]) > 2:
-                if len([0 for x in self.players.values() if x.votes == self.players[self.order[0]].votes]) == 1:
+                if len([0 for x in self.players.values() if x.votes == self.players[self.order[0]].votes and x.alive]) == 1:
                     if self.gamerules["minister_on"]:
                         self.minister = self.order[0]
-                        self.players[self.order[0]].bonus += 1
                         message = {
                             "name": "Nomination",
                             "value": "`" + str(self.players[self.order[0]].user) + "` est devenu le Ministre 🎩, et aura donc une voix bonus au prochain tour"
@@ -294,8 +295,8 @@ class Game:
                             "value": "`" + str(self.players[self.order[0]].user) + "` est devenu le Chef d'Etat 👑, et aura donc une voix bonus au prochain tour, ainsi que la possibilité de retirer une voix à un joueur"
                         }
 
-            if len([0 for x in self.players.values() if x.votes == self.players[self.order[-1]].votes]) > 1 and not self.tied:
-                tied = [i for i, x in enumerate(self.order) if self.players[x].votes == self.players[self.order[-1]].votes]
+            if len([0 for x in self.players.values() if x.votes == self.players[self.order[-1]].votes and x.alive]) > 1 and not self.tied:
+                tied = [i for i, x in enumerate(self.order) if self.players[x].votes == self.players[self.order[-1]].votes and self.players[x].alive]
                 info, next, end = "", False, False
                 for player in self.players.values():
                     i, n, e = await player.on_tie(self, tied)
@@ -322,7 +323,7 @@ class Game:
                 else:
                     await self.break_tie(tied)
             else:
-                eliminated = random.choice([x for x in self.order if self.players[x].votes == self.players[self.order[-1]].votes])
+                eliminated = random.choice([x for x in self.order if self.players[x].votes == self.players[self.order[-1]].votes and self.players[x].alive])
 
                 if await self.eliminate(eliminated):
                     return

@@ -246,7 +246,10 @@ class Corruptor(Player):
         return True
 
     async def on_tie(self, game, tied):
-        return "\nLe Corrupteur a été éliminé par défaut.", True, await game.eliminate(self.user.id)
+        if game.order.index(self.user.id) in tied:
+            return "\nLe Corrupteur a été éliminé par défaut.", True, await game.eliminate(self.user.id)
+        else:
+            return "", False, False
 
     async def on_kill(self, game, id):
         self.variables["transfered"] = False
