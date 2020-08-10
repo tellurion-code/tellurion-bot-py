@@ -168,7 +168,7 @@ class Game:
 
         embed.add_field(
             name="Joueurs :",
-            value='\n'.join([global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑 " if not self.head_of_state == x else "") + ("🎩 " if not self.minister == x else "") + ("💀 " if not self.players[x].alive else "") + ("✉️ " * max(0, self.players[x].votes + self.players[x].bonus)) + ("❌ " * min(0, -(self.players[x].votes + self.players[x].bonus))) for i, x in enumerate(self.order)]),
+            value='\n'.join([global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑 " if self.head_of_state == x else "") + ("🎩 " if self.minister == x else "") + ("💀 " if not self.players[x].alive else "") + ("✉️ " * max(0, self.players[x].votes + self.players[x].bonus)) + ("❌ " * min(0, -(self.players[x].votes + self.players[x].bonus))) for i, x in enumerate(self.order)]),
             inline=False
         )
 
