@@ -318,7 +318,7 @@ class Game:
                     return
 
                 if next:
-                    await self.next_turn(info=message)
+                    await self.next_turn(message)
                 else:
                     await self.break_tie(tied)
             else:
@@ -327,7 +327,7 @@ class Game:
                 if await self.eliminate(eliminated):
                     return
 
-                await self.next_turn(info=message)
+                await self.next_turn(message)
 
     async def eliminate(self, eliminated):
         self.players[eliminated].alive = False
