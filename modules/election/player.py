@@ -208,7 +208,7 @@ class Corruptor(Player):
     }
 
     async def other_choice(self, game):
-        if game.tied or self.variables["transfered"] or len([0 for x in game.players if x.alive]) < 2 or not self.alive:
+        if game.tied or self.variables["transfered"] or len([0 for x in game.players.values() if x.alive]) < 2 or not self.alive:
             return False
 
         choices = [i for i, x in enumerate(game.order) if game.players[x].alive and (x != self.user.id or global_values.debug)]
