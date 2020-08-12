@@ -53,9 +53,9 @@ class MainClass(BaseClassPython):
                     if str(reaction.emoji) in message.number_emojis:
                         if message.check(reaction, user):
                             await message.add_reaction(reaction, user)
-                        else:
+                        elif reaction.message.guild:
                             await message.message.remove_reaction(reaction.emoji, user)
-                    else:
+                    elif reaction.message.guild:
                         await message.message.remove_reaction(reaction.emoji, user)
 
     async def on_reaction_remove(self, reaction, user):
