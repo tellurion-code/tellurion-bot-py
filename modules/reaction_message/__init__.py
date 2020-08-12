@@ -65,4 +65,4 @@ class MainClass(BaseClassPython):
                     if str(reaction.emoji) in message.number_emojis:
                         if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
                             if message.check(reaction, user) and message.message.id == reaction.message.id:
-                                await message.remove_reaction(reaction.emoji, user)
+                                await message.remove_reaction(reaction, user)
