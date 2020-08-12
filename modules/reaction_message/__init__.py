@@ -54,9 +54,9 @@ class MainClass(BaseClassPython):
                         if message.check(reaction, user):
                             await message.add_reaction(reaction, user)
                         else:
-                            await message.message.remove_reaction(reaction, user)
+                            await message.message.remove_reaction(reaction.emoji, user)
                     else:
-                        await message.message.remove_reaction(reaction, user)
+                        await message.message.remove_reaction(reaction.emoji, user)
 
     async def on_reaction_remove(self, reaction, user):
         if not user.bot:
@@ -65,4 +65,4 @@ class MainClass(BaseClassPython):
                     if str(reaction.emoji) in message.number_emojis:
                         if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
                             if message.check(reaction, user) and message.message.id == reaction.message.id:
-                                await message.remove_reaction(reaction, user)
+                                await message.remove_reaction(reaction.emoji, user)
