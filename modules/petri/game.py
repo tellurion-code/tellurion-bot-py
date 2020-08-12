@@ -40,7 +40,7 @@ class Game:
         await self.send_info()
 
     async def on_creation(self, message):
-        async def start(reactions):            
+        async def start(reactions):
             if len([0 for x in reactions.values() if 0 in x]):
                 await self.send_power_selection()
             else:
