@@ -87,7 +87,7 @@ class Player:
             [str(global_values.quest_choices["names"][x]) for x in self.quest_choices],
             validation_emoji="⭕",
             silent=True,
-            emojis=[str(global_values.quest_choices["emojis"][x]) for x in self.quest_choices]
+            emojis=[global_values.quest_choices["emojis"][x] for x in self.quest_choices]
         )
 
 

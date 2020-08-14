@@ -74,7 +74,7 @@ class Game:
             await self.next_turn()
 
     async def start_game(self):
-        self.turn = 0
+        self.turn = -1
 
         quests = [
             [],  # 0
@@ -125,8 +125,7 @@ class Game:
 
         self.lady_of_the_lake = len(self.players)-1
 
-        await self.send_info(mode="set")
-        await self.send_team_choice()
+        await self.start_turn(None)
 
     # Envoie un message à tous les joueurs + le channel
     async def broadcast(self, _embed, **kwargs):
@@ -303,20 +302,19 @@ class Game:
             player = self.players[player_id]
 
             if player.vote_message:
-                if player.vote_message.message:
-                    embed = player.vote_message.message.embeds[0]
-                    embed.set_field_at(
-                        0,
-                        name="Votes:",
-                        value=' '.join(["✉️" if self.players[x].last_vote == "" else "📩" for x in self.order]))
+                embed = player.vote_message.message.embeds[0]
+                embed.set_field_at(
+                    0,
+                    name="Votes:",
+                    value=' '.join(["✉️" if self.players[x].last_vote == "" else "📩" for x in self.order]))
 
-                    if player.last_vote != "":
-                        embed.description = "Le Leader `" + str(self.players[self.order[self.turn]].user) + "` a proposé comme Equipe:\n" + '\n'.join([(global_values.number_emojis[i] + ' `' + str(self.players[x].user) + '`') for i, x in self.team.items()]) + "\n\nVous avez voté " + player.last_vote
-                        embed.color = 0x00ff00 if player.last_vote[:1] == "✅" else 0xff0000
-                    else:
-                        missing = True
+                if player.last_vote != "":
+                    embed.description = "Le Leader `" + str(self.players[self.order[self.turn]].user) + "` a proposé comme Equipe:\n" + '\n'.join([(global_values.number_emojis[i] + ' `' + str(self.players[x].user) + '`') for i, x in self.team.items()]) + "\n\nVous avez voté " + player.last_vote
+                    embed.color = 0x00ff00 if player.last_vote[:1] == "✅" else 0xff0000
+                else:
+                    missing = True
 
-                    await player.vote_message.message.edit(embed=embed)
+                await player.vote_message.message.edit(embed=embed)
 
         if not missing and self.phase == "team_selection":
             self.phase = "vote_for_team"

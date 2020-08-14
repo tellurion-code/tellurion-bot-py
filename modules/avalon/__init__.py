@@ -41,8 +41,11 @@ class MainClass(BaseClassPython):
         # })
 
     async def on_ready(self):
-        # if self.client.get_guild(297780867286433792):
-        #     global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782) #Get the custom emoji
+        if self.client.get_guild(297780867286433792):
+            global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782) #Get the custom emoji
+
+        if self.client.get_guild(459442405532499968):
+            global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(459442405532499968).fetch_emoji(727282149253971970) #Get the custom emoji
 
         if self.objects.save_exists("globals"):
             object = self.objects.load_object("globals")
@@ -165,7 +168,8 @@ class MainClass(BaseClassPython):
 
             await ReactionMessage(
                 cond,
-                confirm
+                confirm,
+                check=lambda r, u: u.id == message.author.id
             ).send(
                 message.channel,
                 "Êtes vous sûr.e de vouloir réinitialiser la partie?",
