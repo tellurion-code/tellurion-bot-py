@@ -50,7 +50,7 @@ class MainClass(BaseClassPython):
         if not user.bot:
             for message in global_values.reaction_messages:
                 if message.message.id == reaction.message.id:
-                    if str(reaction.emoji) in message.number_emojis:
+                    if reaction.emoji in message.number_emojis:
                         if message.check(reaction, user):
                             await message.add_reaction(reaction, user)
                         elif reaction.message.guild:
@@ -62,7 +62,7 @@ class MainClass(BaseClassPython):
         if not user.bot:
             for message in global_values.reaction_messages:
                 if user.id in message.reactions:
-                    if str(reaction.emoji) in message.number_emojis:
+                    if reaction.emoji in message.number_emojis:
                         if message.number_emojis.index(reaction.emoji) in message.reactions[user.id]:
                             if message.check(reaction, user) and message.message.id == reaction.message.id:
                                 await message.remove_reaction(reaction, user)

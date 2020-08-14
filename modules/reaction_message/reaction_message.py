@@ -52,10 +52,10 @@ class ReactionMessage:
     async def add_reaction(self, reaction, user):
         print("add " + str(user.id))
         if user.id in self.reactions:
-            if reaction.emoji != self.number_emojis[-1]:
-                self.reactions[user.id].append(self.number_emojis.index(str(reaction.emoji)))
+            if str(reaction.emoji) != str(self.number_emojis[-1]):
+                self.reactions[user.id].append(self.number_emojis.index(reaction.emoji))
         else:
-            self.reactions[user.id] = [self.number_emojis.index(str(reaction.emoji))]
+            self.reactions[user.id] = [self.number_emojis.index(reaction.emoji)]
 
         condition_on = await self.cond(self.reactions)
         if reaction.emoji == self.number_emojis[-1] and condition_on and not self.block:
@@ -72,7 +72,7 @@ class ReactionMessage:
     # Trigger quand une réaction est retirée
     async def remove_reaction(self, reaction, user):
         print("remove " + str(user.id))
-        self.reactions[user.id].remove(self.number_emojis.index(str(reaction.emoji)))
+        self.reactions[user.id].remove(self.number_emojis.index(reaction.emoji))
 
         # if len(self.reactions[user.id]) == 0:
         #     self.reactions.pop(user.id)
