@@ -222,7 +222,7 @@ class Game:
 
         if self.info_message:
             embed=discord.Embed(
-                title="[TANK Manche " + str(self.round) + "] Plannification",
+                title="[TANK Manche " + str(self.round) + "] Planification",
                 description=map_string,
                 color=global_values.color
             )
@@ -274,7 +274,7 @@ class Game:
 
             await self.info_message.send(
                 self.channel,
-                "[TANK Manche " + str(self.round) + "] Plannification",
+                "[TANK Manche " + str(self.round) + "] Planification",
                 map_string,
                 global_values.color,
                 choices,
