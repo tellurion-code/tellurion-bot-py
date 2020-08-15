@@ -153,7 +153,7 @@ class MainClass(BaseClassPython):
                 await message.channel.send("Sous-section inconnue")
         else:
             await message.channel.send(embed=discord.Embed(
-                title=":small_orange_diamond: Règles de Petri :small_orange_diamond:",
+                title=":small_orange_diamond: Règles de Tank :small_orange_diamond:",
                 description="""
 :small_blue_diamond: **But du jeu** : :small_blue_diamond:
 Chaque joueur joue un tank placé dans un des coins du plateau au début de la partie.
@@ -175,13 +175,13 @@ Le gagnant est le dernier joueur en vie.
 
  :small_blue_diamond: **La navigation** : :small_blue_diamond:
  -  Les murs empêchent les joueurs d'avancer et bloquent les tirs.
- -  Les murs empêchent aussi de tourner si le canon du tank doit se retrouver à sa place.
+ -  Les murs empêchent aussi de tourner si le canon du tank doit se retrouver à sa place ou passer en travers.
 
  :small_blue_diamond: **Les tirs** : :small_blue_diamond:
  -  Les tirs se font en ligne droite dans la direction actuelle du tank. Le tir est instantanné sur toute la distance.
  -  Ils s'arrêtent au premier joueur ou mur touché. Seul la partie colorée peut être touchée, les canons sont ignorés.
- -  Tous les tanks ont un seul point de vie, et sont donc éliminés au premier coup, laissant un obstacle à leur place.
- -  Les tirs sont plus rapides que les mouvements avant et arrière, et plus lents que les dash à droite ou à gauche
+ -  Tous les tanks ont un seul point de vie, et sont donc éliminés au premier coup.
+ -  Les tirs sont plus rapides que les mouvements avant et arrière, et plus lents que les dash à droite ou à gauche.
 
 
                 """,
