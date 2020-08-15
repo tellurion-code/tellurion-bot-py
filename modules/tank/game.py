@@ -239,7 +239,7 @@ class Game:
             choices = ["CCW", "CW", "FW", "BW", "DL", "DR", "S", "P", "V"]
 
             async def next_turn(reactions):
-                if len([0 for l in reactions.values() if 8 in l]) == len(self.players) and self.phase == "plan":
+                if len([0 for l in reactions.values() if 8 in l]) == len(self.order) and self.phase == "plan":
                     self.phase = "act"
                     embed = self.info_message.message.embeds[0]
                     embed.title = "[TANK Manche " + str(self.round) + "] Action"
@@ -256,6 +256,9 @@ class Game:
                 return False
 
             def check(reaction, user):
+                if user.id not in self.order:
+                    return False
+
                 if user.id in self.info_message.reactions:
                     return 8 not in self.info_message.reactions[user.id]
                 else:
