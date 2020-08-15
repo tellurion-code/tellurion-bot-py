@@ -350,7 +350,8 @@ class Game:
                 y = player.y + dy
 
                 while True:
-                    for p in self.players.values():
+                    for id in self.order:
+                        p = self.players[id]
                         if p.x == x and p.y == y:
                             toKill.append((p, player))
                             visual_cache[y][x] = "💥"

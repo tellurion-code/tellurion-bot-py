@@ -22,4 +22,5 @@ class Player:
     def kill(self, game, killer):
         if self.user.id in game.order:
             game.order.remove(self.user.id)
-            return random.choice(global_values.kill_phrases).format("`" + str(self.user) + "`", "`" + str(killer.user) + "`")
+
+        return random.choice(global_values.kill_phrases).format("`" + str(self.user) + "`", "`" + str(killer.user) + "`")
