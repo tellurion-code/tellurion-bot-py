@@ -6,6 +6,7 @@ import modules.reaction_message.globals as global_values
 class ReactionMessage:
     def __init__(self, _cond, _effect, **kwargs):
         self.check = kwargs["check"] if "check" in kwargs else lambda r, u: True
+        self.validation_cond = kwargs["validation"] if "validation" in kwargs else _cond
         self.update_function = kwargs["update"] if "update" in kwargs else None
         self.temporary = kwargs["temporary"] if "temporary" in kwargs else True
         self.cond = _cond
@@ -58,7 +59,8 @@ class ReactionMessage:
             self.reactions[user.id] = [self.number_emojis.index(reaction.emoji)]
 
         condition_on = await self.cond(self.reactions)
-        if reaction.emoji == self.number_emojis[-1] and condition_on and not self.block:
+        validation_on = await self.validation_cond(self.reactions)
+        if reaction.emoji == self.number_emojis[-1] and condition_on and validation_on and not self.block:
             self.block = True
             await self.effect(self.reactions)
 
@@ -96,11 +98,20 @@ class ReactionMessage:
             else:
                 await self.message.remove_reaction(self.number_emojis[-1], reaction.message.channel.me)
 
-    #Supprime l'objet (et le message si force=True)
+    # Supprime l'objet (et le message si force=True)
     async def delete(self, force=False):
         if self.temporary or force:
             await self.message.delete()
 
         global_values.reaction_messages.remove(self)
+
+    # Clear les réactions et les rajoute après
+    async def reset(self):
+        await self.message.clear_reactions()
+
+        for emoji in self.number_emojis[:-1]:
+            await self.message.add_reaction(emoji)
+
+        self.reactions = {}
 
  #  Module créé par Le Codex#9836
