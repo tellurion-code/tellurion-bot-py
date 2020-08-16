@@ -29,7 +29,6 @@ class Game:
         self.order = []
         self.round = -1  # Le nombre de tours de table complets
         self.map = []  # Carte où la partie se déroule
-        self.ranges = [8, 8, 1]  # Taille horizontale, taille verticale, nombre de murs par quartiers
         self.info_message = None
         self.game_creation_message = None
         self.phase = "plan"
@@ -124,10 +123,8 @@ class Game:
         self.game_creation_message = None
         # self.power_selection_message = None
 
-        for y in range(self.ranges[1]):
-            self.map.append([])
-            for _ in range(self.ranges[0]):
-                self.map[y].append(0)  # 0 = sol, 1 = mur, -1 = trou
+        map = copy.deepcopy(random.choice(global_values.maps[max(4, len(self.players)) - 4]))
+        self.map = map["map"]
 
         for player_id, player in self.players.items():
             self.order.append(player_id)
@@ -137,47 +134,8 @@ class Game:
         for i, player_id in enumerate(self.order):
             self.players[player_id].index = i
 
-        def check_bloating(map):
-            for y in range(1, self.ranges[1]-1):
-                for x in range(1, self.ranges[0]-1):
-                    count = 0
-                    for dx in range(-1, 2):
-                        for dy in range(-1, 2):
-                            if map[y + dy][x + dx] == 1:
-                                count += 1
-                    if count >= 2:
-                        return False
-            return True
-
-        new_map = None
-        while True:
-            new_map = copy.deepcopy(self.map)
-            for my in range(0, self.ranges[1], int(self.ranges[1]/2)):
-                for mx in range(0, self.ranges[0], int(self.ranges[0]/2)):
-                    for _ in range(self.ranges[2]):
-                        while True:
-                            x = mx + random.randrange(self.ranges[0]/2)
-                            y = my + random.randrange(self.ranges[1]/2)
-                            if new_map[y][x] == 0:
-                                break
-
-                        new_map[y][x] = 1
-
-            r, a = round(min(self.ranges[0], self.ranges[1])/3), random.uniform(0, math.pi*2)
-
-            for i, player_id in enumerate(self.players.keys()):
-                while new_map[int(self.ranges[1]/2 + .5 + r * math.sin(a))][int(self.ranges[0]/2 + .5 + r * math.cos(a))] != 0:
-                    a += math.pi/20
-
-                self.players[player_id].spawn(self, new_map, int(self.ranges[1]/2 + .5 + r * math.sin(a)), int(self.ranges[0]/2 + .5 + r * math.cos(a)))
-                a += math.pi/len(self.players) * 2
-
-            valid = check_bloating(new_map)
-
-            if valid:
-                break
-
-        self.map = new_map
+            spawnpoint = map["spawnpoints"][i]
+            self.players[player_id].spawn(self, self.map, spawnpoint[0], spawnpoint[1], spawnpoint[2])
 
         await self.send_info()
         # self.save()
@@ -200,9 +158,9 @@ class Game:
             row_strings[-1] += global_values.tile_colors[self.map[y][x] + 1]
 
         row_strings = []
-        for y in range(self.ranges[1]):
+        for y in range(len(self.map)):
             row_strings.append("")
-            for x in range(self.ranges[0]):
+            for x in range(len(self.map[y])):
                  draw_tile(x, y)
 
         map_string = '\n'.join(row_strings)
@@ -211,7 +169,7 @@ class Game:
 
         fields.append({
             "name": "Joueurs",
-            "value": ('\n'.join([global_values.player_colors[self.players[x].index] + " `" + str(self.players[x].user) + "`" for i, x in enumerate(self.order)]) if len(self.order) else "💀 Aucun")
+            "value": ('\n'.join([global_values.player_colors[self.players[x].index] + " `" + str(self.players[x].user) + "` " + ("▫️" * self.players[x].ammo if self.players[x].ammo else "🚫") + (" ✅" if self.players[x].confirmed else "") for i, x in enumerate(self.order)]) if len(self.order) else "💀 Aucun")
         })
 
         if info:
@@ -239,7 +197,12 @@ class Game:
             choices = ["CCW", "CW", "FW", "BW", "DL", "DR", "S", "P", "V"]
 
             async def next_turn(reactions):
-                if len([0 for l in reactions.values() if 8 in l]) == len(self.order) and self.phase == "plan":
+                for id, l in reactions.items():
+                    if 8 in l and not self.players[id].confirmed:
+                        self.players[id].confirmed = True
+                        await self.send_info()
+
+                if len([0 for id in self.order if self.players[id].confirmed]) == len(self.order) and self.phase == "plan":
                     self.phase = "act"
                     embed = self.info_message.message.embeds[0]
                     embed.title = "[TANK Manche " + str(self.round) + "] Action"
@@ -256,13 +219,10 @@ class Game:
                 return False
 
             def check(reaction, user):
-                if user.id not in self.order:
-                    return False
-
                 if user.id in self.info_message.reactions:
-                    return 8 not in self.info_message.reactions[user.id]
+                    return not self.players[user.id].confirmed
                 else:
-                    return user.id in self.players
+                    return user.id in self.order
 
             self.info_message = ReactionMessage(
                 cond,
@@ -285,7 +245,10 @@ class Game:
             )
 
     def inside(self, x, y):
-        return x >= 0 and x < self.ranges[0] and y >= 0 and y < self.ranges[1]
+        if y >= 0 and y < len(self.map):
+            return x >= 0 and x < len(self.map[y])
+        else:
+            return False
 
     #Gère les combats et les réplications
     async def process_inputs(self, reactions):
@@ -293,28 +256,32 @@ class Game:
         dead = []
         visual_cache = []
 
+        for player_id in self.order:
+            if 6 not in reactions[player_id]:
+                self.players[player_id].ammo = min(self.players[player_id].ammo_max, self.players[player_id].ammo + 1)
+
         while len([0 for id in self.order if len(reactions[id]) > 1]):
             print(reactions)
 
             # Reset du cache
             visual_cache = []
-            for _ in range(self.ranges[1]):
-                visual_cache.append(["" for _ in range(self.ranges[0])])
+            for y in range(len(self.map)):
+                visual_cache.append(["" for _ in range(len(self.map[y]))])
 
             # Rotation
             def try_and_change_direction(player, diff):
                 new_dir = (player.direction + diff) % 4
                 if self.inside(player.x + global_values.dir_x[new_dir], player.y + global_values.dir_y[new_dir]):
                     new_cannon_tile = new_map[player.y + global_values.dir_y[new_dir]][player.x + global_values.dir_x[new_dir]]
-                    corner_tile = new_map[player.y + global_values.dir_y[new_dir] + global_values.dir_y[player.direction]][player.x + global_values.dir_x[new_dir] + global_values.dir_x[player.direction]]
-                    if new_cannon_tile <= 0 and corner_tile <= 0:
+                    # corner_tile = new_map[player.y + global_values.dir_y[new_dir] + global_values.dir_y[player.direction]][player.x + global_values.dir_x[new_dir] + global_values.dir_x[player.direction]]
+                    if new_cannon_tile <= 0:
                         player.direction = new_dir
                     else:
                         if new_cannon_tile > 0:
                             visual_cache[player.y + global_values.dir_y[new_dir]][player.x + global_values.dir_x[new_dir]] = "⚪"
 
-                        if corner_tile > 0:
-                            visual_cache[player.y + global_values.dir_y[new_dir] + global_values.dir_y[player.direction]][player.x + global_values.dir_x[new_dir] + global_values.dir_x[player.direction]] = "⚪"
+                        # if corner_tile > 0:
+                        #     visual_cache[player.y + global_values.dir_y[new_dir] + global_values.dir_y[player.direction]][player.x + global_values.dir_x[new_dir] + global_values.dir_x[player.direction]] = "⚪"
 
             for player_id in self.order:
                 if len(reactions[player_id]):
@@ -332,6 +299,8 @@ class Game:
                     if new_tile == 0 and new_cannon_tile <= 0:
                         player.x += global_values.dir_x[direction]
                         player.y += global_values.dir_y[direction]
+                    elif new_tile == -1:
+                        dead.append(player.kill(self, "l'environnement"))
 
             for player_id in self.order:
                 if len(reactions[player_id]):
@@ -349,25 +318,31 @@ class Game:
                 x = player.x + dx
                 y = player.y + dy
 
-                while True:
-                    for id in self.order:
-                        p = self.players[id]
-                        if p.x == x and p.y == y:
-                            toKill.append((p, player))
-                            visual_cache[y][x] = "💥"
-                            return
+                if player.ammo > 0:
+                    player.ammo -= 1
 
-                    if new_map[y][x] > 0:
-                        visual_cache[y][x] = ""
-                        visual_cache[y - dy][x - dx] = "💥"
-                        break
+                    while True:
+                        for id in self.order:
+                            p = self.players[id]
+                            if p.x == x and p.y == y:
+                                toKill.append((p, player))
+                                visual_cache[y][x] = "💥"
+                                return
 
-                    if not self.inside(x + dx, y + dy):
-                        break
+                        if new_map[y][x] > 0:
+                            visual_cache[y][x] = ""
+                            visual_cache[y - dy][x - dx] = "💥"
+                            break
 
-                    x += dx
-                    y += dy
-                    visual_cache[y][x] = "◽"
+                        if not self.inside(x + dx, y + dy):
+                            break
+
+                        x += dx
+                        y += dy
+                        visual_cache[y][x] = "◽"
+                    else:
+                        if self.inside(x, y):
+                            visual_cache[y][x] = "💨"
 
             for player_id in self.order:
                 if len(reactions[player_id]):
@@ -410,9 +385,9 @@ class Game:
                 row_strings[-1] += global_values.tile_colors[new_map[y][x] + 1]
 
             row_strings = []
-            for y in range(self.ranges[1]):
+            for y in range(len(self.map)):
                 row_strings.append("")
-                for x in range(self.ranges[0]):
+                for x in range(len(self.map[y])):
                      draw_tile(x, y)
 
             map_string = '\n'.join(row_strings)
@@ -429,6 +404,9 @@ class Game:
     # Passe au prochain tour
     async def next_turn(self, message=None):
         self.round += 1
+
+        for player in self.players.values():
+            player.confirmed = False
 
         await self.send_info(info=message)
 
@@ -466,9 +444,7 @@ class Game:
         object = {
             "channel": self.channel.id,
             "order": self.order,
-            "turn": self.turn,
             "map": self.map,
-            "ranges": self.ranges,
             "last_choice": self.last_choice,
             "round": self.round,
             "players": {}
@@ -488,10 +464,8 @@ class Game:
     async def deserialize(self, object, client):
         self.channel = client.get_channel(object["channel"])
         self.order = object["order"]
-        self.turn = int(object["turn"])
         self.round = int(object["round"])
         self.map = list(object["map"])
-        self.ranges = object["ranges"]
         self.last_choice = object["last_choice"]
         self.players = {}
 
