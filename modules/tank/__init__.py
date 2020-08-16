@@ -172,14 +172,14 @@ Le gagnant est le dernier joueur en vie.
  -  Une fois les actions validées (✅), elles ne sont alorsplus modifiables. Retirer les réactions n'a aucun effet et en rajouter devient impossible.
  -  Un joueur peut choisir d'utiliser toutes, aucune, ou juste certaines des actions disponibles en un seul tour.
  -  Si jamais un joueur en choisit moins que les autres, il terminera alors son programme plus tôt.
- -  Toutes les actions choisies sont résolues dans l'ordre choisi par les joueurs
- -  __Les mouvements sont relatifs à la direction du tank__
+ -  Toutes les actions choisies sont résolues dans l'ordre choisi par les joueurs.
+ -  __Les mouvements sont relatifs à la direction du tank.__
 
- :small_blue_diamond: **La navigation** : :small_blue_diamond:
+:small_blue_diamond: **La navigation** : :small_blue_diamond:
  -  Les murs empêchent les joueurs d'avancer et bloquent les tirs.
  -  Les murs empêchent aussi de tourner si le canon du tank doit se retrouver à sa place. Un tank peut tourner même s'il a un mur sur le chemin (dans le coin).
 
- :small_blue_diamond: **Les tirs** : :small_blue_diamond:
+:small_blue_diamond: **Les tirs** : :small_blue_diamond:
  -  Chaque tir consomme une munition (▫️). Les muntions rechargent à la fin du tour si tu ne tires pas à un maximum de 3.
  -  Les tirs se font en ligne droite dans la direction actuelle du tank. Le tir est instantanné sur toute la distance.
  -  Ils s'arrêtent au premier joueur ou mur touché. Seul la partie colorée peut être touchée, les canons sont ignorés.
