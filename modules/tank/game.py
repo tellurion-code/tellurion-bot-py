@@ -257,8 +257,9 @@ class Game:
         visual_cache = []
 
         for player_id in self.order:
-            if 6 not in reactions[player_id]:
-                self.players[player_id].ammo = min(self.players[player_id].ammo_max, self.players[player_id].ammo + 1)
+            if player_id in reactions:
+                if 6 not in reactions[player_id]:
+                    self.players[player_id].ammo = min(self.players[player_id].ammo_max, self.players[player_id].ammo + 1)
 
         while len([0 for id in self.order if len(reactions[id]) > 1]):
             print(reactions)
