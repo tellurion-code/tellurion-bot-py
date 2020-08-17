@@ -96,9 +96,8 @@ class MainClass(BaseClassPython):
         if message.channel.id in global_values.games:
             game = global_values.games[message.channel.id]
             if game.round > -1:
-                await game.info_message.delete(True)
-                game.info_message = None
-                await game.send_info()
+                game.resend_info_message = True
+                await message.channel.send("Le message de jeu sera de nouveau renvoyé une fois cette manche terminée")
             else:
                 await message.channel.send("La partie n'a pas commencé")
         else:

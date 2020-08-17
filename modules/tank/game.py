@@ -31,6 +31,7 @@ class Game:
         self.map = []  # Carte où la partie se déroule
         self.info_message = None
         self.game_creation_message = None
+        self.resend_info_message = False
         self.phase = "plan"
         # self.power_selection_message = None
 
@@ -138,7 +139,7 @@ class Game:
             self.players[player_id].spawn(self, self.map, spawnpoint[0], spawnpoint[1], spawnpoint[2])
 
         await self.send_info()
-        # self.save()
+        self.save()
 
     # Envoies le résumé de la partie aux joueurs + le channel
     async def send_info(self, **kwargs):
@@ -257,9 +258,8 @@ class Game:
         visual_cache = []
 
         for player_id in self.order:
-            if player_id in reactions:
-                if 6 not in reactions[player_id]:
-                    self.players[player_id].ammo = min(self.players[player_id].ammo_max, self.players[player_id].ammo + 1)
+            if 6 not in reactions[player_id]:
+                self.players[player_id].ammo = min(self.players[player_id].ammo_max, self.players[player_id].ammo + 1)
 
         while len([0 for id in self.order if len(reactions[id]) > 1]):
             print(reactions)
@@ -409,6 +409,10 @@ class Game:
         for player in self.players.values():
             player.confirmed = False
 
+        if self.resend_info_message:
+            await self.info_message.delete(True)
+            self.info_message = None
+
         await self.send_info(info=message)
 
         alives = [i for i in range(len(self.order)) if len([0 for row in self.map for tile in row if tile == i])]
@@ -421,11 +425,13 @@ class Game:
             await self.end_game("Personne", "Annihilation")
             return
 
-        await self.info_message.reset()
+        if self.resend_info_message:
+            self.resend_info_message = False
+        else:
+            await self.info_message.reset()
 
         self.phase = "plan"
-
-        # self.save()
+        self.save()
 
     # Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, name, cause):
@@ -446,7 +452,6 @@ class Game:
             "channel": self.channel.id,
             "order": self.order,
             "map": self.map,
-            "last_choice": self.last_choice,
             "round": self.round,
             "players": {}
         }
@@ -454,10 +459,11 @@ class Game:
         for id, player in self.players.items():
             object["players"][id] = {
                 "user": player.user.id,
-                "class": player.__class__.__name__.lower(),
-                "power_active": player.power_active,
                 "index": player.index,
-                "variables": player.variables
+                "direction": player.direction,
+                "position": [player.x, player.y],
+                "ammo": player.ammo,
+                "ammo_max": player.ammo_max
             }
 
         return object
@@ -467,14 +473,16 @@ class Game:
         self.order = object["order"]
         self.round = int(object["round"])
         self.map = list(object["map"])
-        self.last_choice = object["last_choice"]
         self.players = {}
 
         for id, info in object["players"].items():
-            player = self.players[int(id)] = classes[info["class"]](client.get_user(info["user"]))
-            player.power_active = info["power_active"]
+            player = self.players[int(id)] = Player(client.get_user(info["user"]))
             player.index = info["index"]
-            player.variables = info["variables"]
+            player.x = info["position"][0]
+            player.y = info["position"][1]
+            player.direction = info["direction"]
+            player.ammo = info["ammo"]
+            player.ammo_max = info["ammo_max"]
 
     def save(self):
         if self.mainclass.objects.save_exists("games"):
