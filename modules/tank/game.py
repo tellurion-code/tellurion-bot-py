@@ -124,7 +124,7 @@ class Game:
         self.game_creation_message = None
         # self.power_selection_message = None
 
-        map = copy.deepcopy(random.choice(random.choice(global_values.maps[len(self.players)-2:-1])))
+        map = copy.deepcopy(random.choice(random.choice(global_values.maps[len(self.players)-2:])))
         self.map = map["map"]
 
         for player_id, player in self.players.items():
