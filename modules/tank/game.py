@@ -253,7 +253,6 @@ class Game:
 
     #Gère les combats et les réplications
     async def process_inputs(self, reactions):
-        new_map = copy.deepcopy(self.map)
         dead = []
         visual_cache = []
 
@@ -263,6 +262,7 @@ class Game:
 
         while len([0 for id in self.order if len(reactions[id]) > 1]):
             print(reactions)
+            new_map = copy.deepcopy(self.map)
 
             # Reset du cache
             visual_cache = []
@@ -273,8 +273,8 @@ class Game:
             def try_and_change_direction(player, diff):
                 new_dir = (player.direction + diff) % 4
                 if self.inside(player.x + global_values.dir_x[new_dir], player.y + global_values.dir_y[new_dir]):
-                    new_cannon_tile = new_map[player.y + global_values.dir_y[new_dir]][player.x + global_values.dir_x[new_dir]]
-                    # corner_tile = new_map[player.y + global_values.dir_y[new_dir] + global_values.dir_y[player.direction]][player.x + global_values.dir_x[new_dir] + global_values.dir_x[player.direction]]
+                    new_cannon_tile = self.map[player.y + global_values.dir_y[new_dir]][player.x + global_values.dir_x[new_dir]]
+                    # corner_tile = self.map[player.y + global_values.dir_y[new_dir] + global_values.dir_y[player.direction]][player.x + global_values.dir_x[new_dir] + global_values.dir_x[player.direction]]
                     if new_cannon_tile <= 0:
                         player.direction = new_dir
                     else:
@@ -295,8 +295,8 @@ class Game:
             # Dash
             def try_and_move(player, direction):
                 if self.inside(player.x + global_values.dir_x[direction], player.y + global_values.dir_y[direction]) and self.inside(player.x + global_values.dir_x[direction] + global_values.dir_x[player.direction], player.y + global_values.dir_y[direction] + global_values.dir_y[player.direction]):
-                    new_tile = new_map[player.y + global_values.dir_y[direction]][player.x + global_values.dir_x[direction]]
-                    new_cannon_tile = new_map[player.y + global_values.dir_y[direction] + global_values.dir_y[player.direction]][player.x + global_values.dir_x[direction] + global_values.dir_x[player.direction]]
+                    new_tile = self.map[player.y + global_values.dir_y[direction]][player.x + global_values.dir_x[direction]]
+                    new_cannon_tile = self.map[player.y + global_values.dir_y[direction] + global_values.dir_y[player.direction]][player.x + global_values.dir_x[direction] + global_values.dir_x[player.direction]]
                     if new_tile == 0 and new_cannon_tile <= 0:
                         player.x += global_values.dir_x[direction]
                         player.y += global_values.dir_y[direction]
@@ -330,9 +330,14 @@ class Game:
                                 visual_cache[y][x] = "💥"
                                 return
 
-                        if new_map[y][x] > 0:
+                        if self.map[y][x] == 1:
                             visual_cache[y][x] = ""
                             visual_cache[y - dy][x - dx] = "💥"
+                            break
+
+                        if self.map[y][x] == 2:
+                            visual_cache[y][x] = "💥"
+                            new_map[y][x] = 0
                             break
 
                         if not self.inside(x + dx, y + dy):
@@ -397,9 +402,10 @@ class Game:
             embed.description = map_string
             await self.info_message.message.edit(embed=embed)
 
+            self.map = new_map
+
             await asyncio.sleep(1)
 
-        self.map = new_map
         return '\n'.join(dead)
 
     # Passe au prochain tour
