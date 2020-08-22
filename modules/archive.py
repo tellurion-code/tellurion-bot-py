@@ -14,7 +14,7 @@ class MainClass(BaseClass):
     name = "Archive"
     color = 0x137584
     help_active = True
-    authorized_roles=[522918472548745217]
+    authorized_roles=[430777457898029057, 298516749702266880]
     help = {
         "description": "Module permettant d'archiver des salons",
         "commands": {
@@ -26,7 +26,7 @@ class MainClass(BaseClass):
 
     async def command(self, message, args, kwargs):
         if len(args) and args[0] == "*":
-            if not await self.auth(message.author, [522918472548745217]):
+            if not await self.auth(message.author, [298516749702266880]):
                 await message.channel.send("Vous n'avez pas les permossions pour effectuer une sauvegarde complète des "
                                            "salons")
                 return
