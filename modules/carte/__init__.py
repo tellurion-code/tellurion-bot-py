@@ -19,6 +19,7 @@ class MainClass(BaseClassPython):
         super().__init__(client)
 
     async def command(self, message, args, kwargs):
+        raise Exception("KERNEL PANIC!!!")
         await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
                                                        description="description"))
         await message.channel.send("coucou")
