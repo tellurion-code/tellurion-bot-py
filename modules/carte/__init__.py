@@ -7,7 +7,7 @@ NUMEROS = ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "valet", "dame", "
 COULEURS = ["coeur", "pique", "trèfle", "carreau"]
 
 class MainClass(BaseClassPython):
-    name = "card"
+    name = "carte"
     help = {
         "description": "Tire une carte",
         "commands": {
