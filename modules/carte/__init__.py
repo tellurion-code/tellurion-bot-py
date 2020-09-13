@@ -19,6 +19,6 @@ class MainClass(BaseClassPython):
         super().__init__(client)
 
     async def command(self, message, args, kwargs):
-        couleur = random.choice(COULEUR)
-        numero = random.choice(NUMERO)
+        couleur = random.choice(COULEURS)
+        numero = random.choice(NUMEROS)
         await message.channel.send(f"Vous avez tiré la carte: {numero} de {couleur}")
