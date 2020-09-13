@@ -18,6 +18,8 @@ class MainClass(BaseClassPython):
     def __init__(self, client):
         super().__init__(client)
         self.config["auth_everyone"] = True
+        self.config["configured"] = True
+        
         
     async def command(self, message, args, kwargs):
         await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
