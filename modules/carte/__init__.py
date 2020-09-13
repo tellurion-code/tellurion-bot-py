@@ -19,6 +19,8 @@ class MainClass(BaseClassPython):
         super().__init__(client)
 
     async def command(self, message, args, kwargs):
+        await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
+                                                       description="description"))
         await message.channel.send("coucou")
         couleur = random.choice(COULEURS)
         numero = random.choice(NUMEROS)
