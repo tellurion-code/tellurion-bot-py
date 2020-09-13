@@ -17,8 +17,9 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
+        self.config["auth_everyone"] = True
         
-    async def com_tire(self, message, args, kwargs):
+    async def command(self, message, args, kwargs):
         await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
                                                        description="description"))
         await message.channel.send("coucou")
