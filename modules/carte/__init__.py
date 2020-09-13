@@ -17,6 +17,9 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
+        
+    async def com_tire(self, message, args, kwargs):
+        raise Exception("KernelPANIC!!!!")
 
     async def command(self, message, args, kwargs):
         raise Exception("KERNEL PANIC!!!")
