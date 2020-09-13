@@ -22,9 +22,6 @@ class MainClass(BaseClassPython):
         
         
     async def command(self, message, args, kwargs):
-        await message.channel.send(embed=discord.Embed(title="G-Perdu - Tableau des scores",
-                                                       description="description"))
-        await message.channel.send("coucou")
         couleur = random.choice(COULEURS)
         numero = random.choice(NUMEROS)
         await message.channel.send(f"Vous avez tiré la carte: {numero} de {couleur}")
