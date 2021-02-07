@@ -113,6 +113,16 @@ class MainClass(BaseClassPython):
 		else:
 			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
 
+	async def com_end(self, message, args, kwargs):
+		if str(message.channel.id) in self.games:
+			await self.sendCardList(message.channel)
+			del self.games[str(message.channel.id)]
+			await message.channel.send("Partie finie!")
+
+			self.objects.save_object("games", self.games)
+		else:
+			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
+
 	async def sendBigMessage(self, message, channel):
 		sentences = message.split("\n")
 		form = ""
