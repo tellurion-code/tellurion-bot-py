@@ -34,15 +34,16 @@ class MainClass(BaseClassPython):
 			msg = None
 
 			if not game["list"][index]:
-				msg = await message.channel.send("```md\n [Carte Blanche] Envoyez un message pour définir la carte en tapant \"[Nom de la carte](Type): Effet\"! (Type) accepte Aura, Terrain ou Ephémère.```")
+				msg = await message.channel.send("```md\n" + str(index + 1) + ". [Carte Blanche] Envoyez un message pour définir la carte en tapant \"[Nom de la carte](Type): Effet\"! (Type) accepte Aura, Terrain ou Ephémère.```")
 				await self.startCardCreation(message.author, message.channel, index)
 				# await message.channel.send("Carte définie")
 
 			card = game["list"][index]
+			content = "```md\n" + str(index + 1) + ". " + self.printCard(card) + "```"
 			if msg:
-				await msg.edit(content="```md\n" + self.printCard(card) + "```")
+				await msg.edit(content=content)
 			else:
-				await message.channel.send("```md\n" + self.printCard(card) + "```")
+				await message.channel.send(content)
 
 			game["discard"].append(index)
 
@@ -159,4 +160,4 @@ class MainClass(BaseClassPython):
 		self.games[str(channel.id)]["list"][index] = card
 
 	def printCard(self, card):
-		return " [" + card["name"] +"](" + card["type"] + ") " + card["effect"]
+		return "[" + card["name"] +"](" + card["type"] + ") " + card["effect"]
