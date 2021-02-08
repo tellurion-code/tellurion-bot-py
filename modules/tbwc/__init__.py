@@ -97,13 +97,9 @@ class MainClass(BaseClassPython):
 		if str(message.channel.id) in self.games:
 			game = self.games[str(message.channel.id)]
 			if len(args) > 1:
-				index = None
 				try:
 					index = int(args[1]) - 1
-				except:
-					await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
 
-				if index:
 					if index < 0 or index >= len(game["list"]):
 						await message.channel.send("Aucune carte n'a cet index")
 					else:
@@ -117,6 +113,8 @@ class MainClass(BaseClassPython):
 						await msg.edit(content="```md\n" + str(index + 1) + ". " + self.printCard(game["list"][index]) + " " + self.printCardAuthors(game["list"][index]) + "```")
 
 					self.objects.save_object("games", self.games)
+				except:
+					await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
 			else:
 				await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
 		else:
