@@ -123,11 +123,13 @@ class MainClass(BaseClassPython):
 			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
 
 	async def com_end(self, message, args, kwargs):
-		if "force" in kwargs:
-			del self.games[str(message.channel.id)]
-			await message.channel.send("Partie finie!")
+		if len(args) > 1:
+			if args[1] == "force":
+				del self.games[str(message.channel.id)]
+				await message.channel.send("Partie finie!")
 
-			self.objects.save_object("games", self.games)
+				self.objects.save_object("games", self.games)
+				return
 
 		if str(message.channel.id) in self.games:
 			game = self.games[str(message.channel.id)]
