@@ -147,7 +147,7 @@ class MainClass(BaseClassPython):
 		form = ""
 
 		for sentence in sentences:
-			if (len(form) + len(sentence) > 2000):
+			if (len(form) + len(sentence) > 1990):
 				await channel.send("```md\n" + form + "```")
 				form = ""
 
