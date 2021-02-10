@@ -3,6 +3,12 @@ import discord
 import re
 from modules.base import BaseClassPython
 
+def userstr(user):
+	if user:
+		return user.name
+	else:
+		return "None"
+
 class MainClass(BaseClassPython):
 	name = "1KBWC"
 	help = {
@@ -94,7 +100,7 @@ class MainClass(BaseClassPython):
 							self.moveCards(game, [index], "discard")
 							success = True
 
-							# await message.channel.send("La carte `" + this.printCard(game["list"][index]) + "` a été défaussée depuis la " + ("pioche" if location == "deck" else "zone de " + str(self.client.get_user(int(location)))))
+							# await message.channel.send("La carte `" + this.printCard(game["list"][index]) + "` a été défaussée depuis la " + ("pioche" if location == "deck" else "zone de " + userstr(self.client.get_user(int(location)))))
 
 				if success: await message.channel.send(self.getRecap(game))
 				self.objects.save_object("games", self.games)
@@ -170,7 +176,7 @@ class MainClass(BaseClassPython):
 
 				content = "```md"
 				content += "\n= • - Recap - • =\n=================\n"
-				content += str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else str(self.client.get_user(int(location))))) + " :\n" + '\n'.join(["  • " + str(x + 1) + ". " + self.printCard(game["list"][x]) for x in game["zones"][location]])
+				content += str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else userstr(self.client.get_user(int(location))))) + " :\n" + '\n'.join(["  • " + str(x + 1) + ". " + self.printCard(game["list"][x], False) for x in game["zones"][location]])
 				content += "```"
 
 				await message.channel.send(content)
@@ -274,13 +280,15 @@ class MainClass(BaseClassPython):
 					index = int(args[1]) - 1
 				except:
 					await message.channel.send("Veuillez renseigner l'index de la carte à voir")
+					return
 
-				if index is not None:
-					if index < 0 or index >= len(game["list"]):
-						await message.channel.send("Aucune carte n'a cet index")
-					else:
-						card = game["list"][index]
-						await self.sendBigMessage("Carte actuelle : " + self.printCard(card) + "\n" + '\n'.join(["  ↳ " + self.printCard(e) for e in card["history"]]), message.channel)
+				if index < 0 or index >= len(game["list"]):
+					await message.channel.send("Aucune carte n'a cet index")
+				elif not game["list"][index]:
+					await message.channel.send("Carte Blanche")
+				else:
+					card = game["list"][index]
+					await self.sendBigMessage("Carte actuelle : " + self.printCard(card) + "\n" + '\n'.join(["  ↳ " + self.printCard(e) for e in card["history"]]), message.channel)
 			else:
 				await message.channel.send("Veuillez renseigner l'index de la carte à voir")
 		else:
@@ -315,12 +323,12 @@ class MainClass(BaseClassPython):
 
 	async def sendCardList(self, channel):
 		game = self.games[str(channel.id)]
-		await self.sendBigMessage("[Liste des cartes en jeu]\n=========================\n" + '\n'.join([str(i - 1).rjust(3, ' ') + ". " + (self.printCard(e) if e else "[Carte Blanche]") for i, e in enumerate(game["list"])]), channel)
+		await self.sendBigMessage("[Liste des cartes en jeu]\n=========================\n" + '\n'.join([str(i + 1).rjust(3, ' ') + ". " + (self.printCard(e, False) if e else "[Carte Blanche]") for i, e in enumerate(game["list"])]), channel)
 
 	def getRecap(self, game, message=""):
 		maxLength = len("Centre")
 		for i, k in enumerate(list(game["zones"].keys())):
-			if k not in ["center", "discard", "deck"]: maxLength = max(maxLength, len(str(self.client.get_user(int(k)))))
+			if k not in ["center", "discard", "deck"]: maxLength = max(maxLength, len(userstr(self.client.get_user(int(k)))))
 
 		def sendZone(zone):
 			return ' '.join(["(" + str(x + 1) + ")" for x in zone])
@@ -329,7 +337,7 @@ class MainClass(BaseClassPython):
 		content += "```md"
 		content += "\n= • - Recap - • =\n=================\n\n 0. Défausse : " + sendZone(game["zones"]["discard"])
 		content += "\n\n 1. " + "Centre".ljust(maxLength, ' ') + " : " + sendZone(game["zones"]["center"])
-		content += "\n" + '\n'.join([str(list(game["zones"].keys()).index(k) - 1).rjust(2, ' ') + ". " + str(self.client.get_user(int(k))).ljust(maxLength, ' ') + " : " + sendZone(v) for k, v in game["zones"].items() if k not in ["center", "deck", "discard"]])
+		content += "\n" + '\n'.join([str(list(game["zones"].keys()).index(k) - 1).rjust(2, ' ') + ". " + userstr(self.client.get_user(int(k))).ljust(maxLength, ' ') + " : " + sendZone(v) for k, v in game["zones"].items() if k not in ["center", "deck", "discard"]])
 		content += "```"
 
 		return content
@@ -373,8 +381,8 @@ class MainClass(BaseClassPython):
 		else:
 			return locations[index]
 
-	def printCard(self, card):
-		return "[" + card["name"] +"] " + card["effect"] + " (Créée par " + str(self.client.get_user(card["author"])) + ")"
+	def printCard(self, card, authored=True):
+		return "[" + card["name"] +"] " + card["effect"] + (" (Créée par " + userstr(self.client.get_user(card["author"])) + ")" if authored else "")
 
 	# def printCardAuthors(self, card):
 	# 	return "(Créée par " + card["author"] + ")"
