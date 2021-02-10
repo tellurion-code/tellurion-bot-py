@@ -30,32 +30,114 @@ class MainClass(BaseClassPython):
 	async def com_draw(self, message, args, kwargs):
 		if str(message.channel.id) in self.games:
 			game = self.games[str(message.channel.id)]
-			index = game["deck"].pop(0)
+
+			if len(game["zones"]["deck"]) <= len(game["list"])/2 and len(game["zones"]["discard"]):
+				game["zones"]["deck"].extend(game["zones"]["discard"])
+				game["zones"]["discard"].clear()
+				random.shuffle(game["zones"]["deck"])
+
+				await message.channel.send("```http\nLe deck est trop petit! La défausse a été mélangée pour reformer un nouveau deck```")
+			elif not len(game["zones"]["discard"]) and not len(game["zones"]["deck"]):
+				await message.channel.send("Le deck et la défausse sont vides!")
+				await self.endGame(message.channel)
+				return
+
+			index = game["zones"]["deck"].pop(0)
 			msg = None
 
 			if not game["list"][index]:
-				msg = await message.channel.send("```md\n" + str(index + 1) + ". [Carte Blanche] Envoyez un message pour définir la carte en tapant \"[Nom de la carte](Type) Effet\"! (Type) accepte Aura, Terrain ou Ephémère.```")
+				msg = await message.channel.send("```ini\n" + str(index + 1) + ". [Carte Blanche] Envoyez un message pour définir la carte en tapant \"[Nom de la carte] Effet\"! (Type) accepte Aura, Terrain ou Ephémère.```")
 				await self.startCardCreation(message.author, message.channel, index)
 				# await message.channel.send("Carte définie")
-				game["list"][index]["author"] = message.author.display_name
 
 			card = game["list"][index]
-			content = "```md\n" + str(index + 1) + ". " + self.printCard(card) + " " + self.printCardAuthors(card) + "```"
+			content = "```ini\n" + str(index + 1) + ". " + self.printCard(card) + "```"
 			if msg:
 				await msg.edit(content=content)
 			else:
 				await message.channel.send(content)
 
-			game["discard"].append(index)
+			if str(message.author.id) not in game["zones"]:
+				game["zones"][str(message.author.id)] = []
 
-			if len(game["deck"]) <= len(game["list"])/4:
-				game["discard"].clear()
-				game["deck"] = [i for i in range(len(game["list"]))]
-				random.shuffle(game["deck"])
+			msg = await message.channel.send(self.getRecap(game, "Envoyez l'index de la zone où vous voulez jouer la carte"))
+			zone = await self.waitForZone(message.author, message.channel)
+			game["zones"][zone].append(index)
 
-				await message.channel.send("```http\nLe deck est trop petit! La défausse a été mélangée pour reformer un nouveau deck```")
+			await msg.edit(content=self.getRecap(game))
 
 			self.objects.save_object("games", self.games)
+		else:
+			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
+
+	async def com_discard(self, message, args, kwargs):
+		if str(message.channel.id) in self.games:
+			game = self.games[str(message.channel.id)]
+			success = False
+
+			args.pop(0)
+			if len(args):
+				for arg in args:
+					try:
+						index = int(arg) - 1
+					except:
+						await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
+						return
+
+					if index < 0 or index >= len(game["list"]):
+						await message.channel.send("Aucune carte n'a l'index " + index)
+					else:
+						location = [x for x in game["zones"] if index in game["zones"][x]][0]
+						if location == "discard":
+							await message.channel.send("Cette carte est déjà dans la défausse")
+						else:
+							self.moveCards(game, [index], "discard")
+							success = True
+
+							# await message.channel.send("La carte `" + this.printCard(game["list"][index]) + "` a été défaussée depuis la " + ("pioche" if location == "deck" else "zone de " + str(self.client.get_user(int(location)))))
+
+				if success: await message.channel.send(self.getRecap(game))
+				self.objects.save_object("games", self.games)
+			else:
+				await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
+		else:
+			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
+
+	async def com_move(self, message, args, kwargs):
+		if str(message.channel.id) in self.games:
+			game = self.games[str(message.channel.id)]
+			print(args)
+
+			args.pop(0)
+			if len(args) > 1:
+				cards = []
+
+				for i, arg in enumerate(args):
+					try:
+						index = int(arg) - 1
+					except:
+						await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
+						return
+
+					if i + 1 == len(args):
+						index += 2
+
+						if index < 1 or index >= len(list(game["zones"].keys())):
+							await message.channel.send("Aucune zone n'a cette index")
+							return
+						else:
+							self.moveCards(game, cards, list(game["zones"].keys())[index])
+					else:
+						if index < 0 or index >= len(game["list"]):
+							await message.channel.send("Aucune carte n'a l'index " + index)
+							return
+						else:
+							cards.append(index)
+
+				await message.channel.send(self.getRecap(game))
+				self.objects.save_object("games", self.games)
+			else:
+				await message.channel.send("Veuillez renseigner l'index des cartes à déplacer et l'index de la zone d'arrivée")
 		else:
 			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
 
@@ -64,7 +146,36 @@ class MainClass(BaseClassPython):
 			game = self.games[str(message.channel.id)]
 			# await message.channel.send("Listes des cartes:")
 			await self.sendCardList(message.channel)
-			await self.sendBigMessage("Défausse\n========\n" + '\n'.join([self.printCard(game["list"][e]) if game["list"][e] else "[En attente de défintion...](?)" for e in game["discard"]]), message.channel)
+			# await self.sendBigMessage("Défausse\n========\n" + '\n'.join([self.printCard(game["list"][e]) if game["list"][e] else "[En attente de défintion...](?)" for e in game["discard"]]), message.channel)
+		else:
+			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
+
+	async def com_show(self, message, args, kwargs):
+		if str(message.channel.id) in self.games:
+			game = self.games[str(message.channel.id)]
+
+			args.pop(0)
+			if len(args):
+				try:
+					index = int(args[0]) + 1
+				except:
+					await message.channel.send("Index de zone invalide")
+					return
+
+				if index < 1 and index >= len(list(game["zones"].keys())):
+					await message.channel.send("Aucune zone n'a cet index")
+					return
+
+				location = list(game["zones"].keys())[index]
+
+				content = "```md"
+				content += "\n= • - Recap - • =\n=================\n"
+				content += str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else str(self.client.get_user(int(location))))) + " :\n" + '\n'.join(["  • " + str(x + 1) + ". " + self.printCard(game["list"][x]) for x in game["zones"][location]])
+				content += "```"
+
+				await message.channel.send(content)
+			else:
+				await message.channel.send(self.getRecap(game))
 		else:
 			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
 
@@ -75,21 +186,26 @@ class MainClass(BaseClassPython):
 			if len(args) > 1:
 				try:
 					amount = int(args[1])
-					game = {
-						"deck": [i for i in range(amount)],
-						"discard": [],
-						"list": [None for i in range(amount)],
-						"admin": message.author.id
-					}
-
-					random.shuffle(game["deck"])
-
-					self.games[str(message.channel.id)] = game
-					await message.channel.send("Partie créée")
-
-					self.objects.save_object("games", self.games)
 				except:
 					await message.channel.send("Veuillez renseigner le nombre de cartes dans le deck")
+					return
+
+				game = {
+					"zones": {
+						"deck": [i for i in range(amount)],
+						"discard": [],
+						"center": []
+					},
+					"list": [None for i in range(amount)],
+					"admin": message.author.id
+				}
+
+				random.shuffle(game["zones"]["deck"])
+
+				self.games[str(message.channel.id)] = game
+				await message.channel.send("Partie créée")
+
+				self.objects.save_object("games", self.games)
 			else:
 				await message.channel.send("Veuillez renseigner le nombre de cartes dans le deck")
 
@@ -99,22 +215,36 @@ class MainClass(BaseClassPython):
 			if len(args) > 1:
 				try:
 					index = int(args[1]) - 1
-
-					if index < 0 or index >= len(game["list"]):
-						await message.channel.send("Aucune carte n'a cet index")
-					else:
-						msg = await message.channel.send("Définissez la carte en tapant \"[Nom de la carte](Type): Effet\". (Type) accepte Aura, Terrain ou Ephémère.")
-						author=game["list"][index]["author"]
-
-						await self.startCardCreation(message.author, message.channel, index)
-						game["list"][index]["editor"] = message.author.display_name
-						game["list"][index]["author"] = author
-						# await message.channel.send("Carte éditée")
-						await msg.edit(content="```md\n" + str(index + 1) + ". " + self.printCard(game["list"][index]) + " " + self.printCardAuthors(game["list"][index]) + "```")
-
-					self.objects.save_object("games", self.games)
 				except:
 					await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
+					return
+
+				if index < 0 or index >= len(game["list"]):
+					await message.channel.send("Aucune carte n'a cet index")
+				else:
+					msg = await message.channel.send("```ini\nDéfinissez la carte en tapant \"[Nom de la carte] Effet\". (Type) accepte Aura, Terrain ou Ephémère.```")
+					card = game["list"][index]
+
+					newCard = await self.startCardCreation(message.author, message.channel, index)
+					newCard["history"].append({
+						"author": card["author"],
+						"name": card["name"],
+						"effect": card["effect"]
+					})
+					newCard["history"].extend(card["history"])
+					# await message.channel.send("Carte éditée")
+					await msg.edit(content="```ini\n" + str(index + 1) + ". " + self.printCard(game["list"][index]) + "```")
+
+					location = [x for x in game["zones"] if index in game["zones"][x]][0]
+					if location not in ["deck", "discard"]:
+						game["zones"][location].remove(index)
+						game["zones"]["discard"].append(index)
+						await message.channel.send("La carte a été défaussée suite à la modification")
+
+					await message.channel.send(self.getRecap(game))
+
+
+				self.objects.save_object("games", self.games)
 			else:
 				await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
 		else:
@@ -123,44 +253,89 @@ class MainClass(BaseClassPython):
 	async def com_end(self, message, args, kwargs):
 		if len(args) > 1:
 			if args[1] == "force":
-				del self.games[str(message.channel.id)]
-				await message.channel.send("Partie finie!")
-
-				self.objects.save_object("games", self.games)
+				await self.endGame(message.channel)
 				return
 
 		if str(message.channel.id) in self.games:
 			game = self.games[str(message.channel.id)]
 			if (game["admin"] == message.author.id):
-				await self.sendCardList(message.channel)
-				del self.games[str(message.channel.id)]
-				await message.channel.send("Partie finie!")
-
-				self.objects.save_object("games", self.games)
+				await self.endGame(message.channel)
 			else:
 				await message.channel.send("Vous n'avez pas le droit d'exécuter cette commande. Seul l'administrateur de la partie peut l'arrêter")
 		else:
 			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
 
-	async def sendBigMessage(self, message, channel):
+	async def com_history(self, message, args, kwargs):
+		if str(message.channel.id) in self.games:
+			game = self.games[str(message.channel.id)]
+			if len(args) > 1:
+				index = None
+				try:
+					index = int(args[1]) - 1
+				except:
+					await message.channel.send("Veuillez renseigner l'index de la carte à voir")
+
+				if index is not None:
+					if index < 0 or index >= len(game["list"]):
+						await message.channel.send("Aucune carte n'a cet index")
+					else:
+						card = game["list"][index]
+						await self.sendBigMessage("Carte actuelle : " + self.printCard(card) + "\n" + '\n'.join(["  ↳ " + self.printCard(e) for e in card["history"]]), message.channel)
+			else:
+				await message.channel.send("Veuillez renseigner l'index de la carte à voir")
+		else:
+			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
+
+	async def endGame(self, channel):
+		await self.sendCardList(channel)
+		await channel.send(self.getRecap(self.games[str(channel.id)]))
+		del self.games[str(channel.id)]
+		await channel.send("Partie finie!")
+
+		self.objects.save_object("games", self.games)
+
+	def moveCards(self, game, cards, zone):
+		for card in cards:
+			location = [x for x in game["zones"] if card in game["zones"][x]][0]
+			game["zones"][location].remove(card)
+			game["zones"][zone].append(card)
+
+	async def sendBigMessage(self, message, channel, language="ini"):
 		sentences = message.split("\n")
 		form = ""
 
 		for sentence in sentences:
-			if (len(form) + len(sentence) > 1990):
-				await channel.send("```md\n" + form + "```")
+			if (len(form) + len(sentence) + len(language) > 1990):
+				await channel.send("```" + language + "\n" + form + "```")
 				form = ""
 
 			form += sentence + "\n"
 
-		await channel.send("```md\n" + form + "```")
+		return await channel.send("```" + language + "\n" + form + "```")
 
 	async def sendCardList(self, channel):
 		game = self.games[str(channel.id)]
-		await self.sendBigMessage("Liste des cartes en jeu\n=======================\n" + '\n'.join([str(i + 1).rjust(3, ' ') + ". " + (self.printCard(e) if e else "[Carte Blanche]") for i, e in enumerate(game["list"])]), channel)
+		await self.sendBigMessage("[Liste des cartes en jeu]\n=========================\n" + '\n'.join([str(i - 1).rjust(3, ' ') + ". " + (self.printCard(e) if e else "[Carte Blanche]") for i, e in enumerate(game["list"])]), channel)
+
+	def getRecap(self, game, message=""):
+		maxLength = len("Centre")
+		for i, k in enumerate(list(game["zones"].keys())):
+			if k not in ["center", "discard", "deck"]: maxLength = max(maxLength, len(str(self.client.get_user(int(k)))))
+
+		def sendZone(zone):
+			return ' '.join(["(" + str(x + 1) + ")" for x in zone])
+
+		content = message
+		content += "```md"
+		content += "\n= • - Recap - • =\n=================\n\n 0. Défausse : " + sendZone(game["zones"]["discard"])
+		content += "\n\n 1. " + "Centre".ljust(maxLength, ' ') + " : " + sendZone(game["zones"]["center"])
+		content += "\n" + '\n'.join([str(list(game["zones"].keys()).index(k) - 1).rjust(2, ' ') + ". " + str(self.client.get_user(int(k))).ljust(maxLength, ' ') + " : " + sendZone(v) for k, v in game["zones"].items() if k not in ["center", "deck", "discard"]])
+		content += "```"
+
+		return content
 
 	async def startCardCreation(self, author, channel, index):
-		regex = r"^\[(.+)\]\((Aura|Terrain|Ephémère)\) (.+)$"
+		regex = r"^\[(.+)\] (.+)$"
 
 		def check(m):
 			return m.author == author and m.channel == channel and re.search(regex, m.content)
@@ -171,14 +346,35 @@ class MainClass(BaseClassPython):
 		match = re.match(regex, msg.content)
 
 		card = {
+			"author": author.id,
 			"name": match.groups()[0],
-			"type": match.groups()[1],
-			"effect": match.groups()[2]
+			"effect": match.groups()[1],
+			"history": []
 		}
 		self.games[str(channel.id)]["list"][index] = card
 
-	def printCard(self, card):
-		return "[" + card["name"] +"](" + card["type"] + ") " + card["effect"]
+		return card
 
-	def printCardAuthors(self, card):
-		return "(Créée par " + card["author"] + (", éditée par " + card["editor"] if "editor" in card else "") + ")"
+	async def waitForZone(self, author, channel):
+		regex = r"^-1|\d+$"
+
+		def check(m):
+			return m.author == author and m.channel == channel and re.search(regex, m.content)
+
+		msg = await self.client.wait_for('message', check=check)
+		await msg.delete()
+
+		index = int(msg.content) + 1
+		locations = list(self.games[str(channel.id)]["zones"].keys())
+
+		if index >= len(locations):
+			await channel.send("Zone invalide")
+			return await self.waitForZone(author, channel)
+		else:
+			return locations[index]
+
+	def printCard(self, card):
+		return "[" + card["name"] +"] " + card["effect"] + " (Créée par " + str(self.client.get_user(card["author"])) + ")"
+
+	# def printCardAuthors(self, card):
+	# 	return "(Créée par " + card["author"] + ")"
