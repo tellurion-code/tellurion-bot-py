@@ -197,7 +197,7 @@ class MainClass(BaseClassPython):
         if message.mentions:
             await self.com_stats(message, args, kwargs)
         since = datetime.datetime.now() - datetime.timedelta(days=7)
-        if args[0]:
+        if len(args):
             try:
                 since = datetime.datetime.now() - datetime.timedelta(days=float(args[0]))
             except ValueError:
