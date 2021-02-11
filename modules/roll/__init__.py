@@ -31,8 +31,7 @@ class MainClass(BaseClassPython):
 		self.config["command_text"] = "roll"
 		self.config["color"] = 0x000000
 
-	async def com(self, message, args, kwargs):
-		await message.channel.send("com")
+	async def command(self, message, args, kwargs):
 		amount = 6
 		if len(args) == 1:
 			try:
