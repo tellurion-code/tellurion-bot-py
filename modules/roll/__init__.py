@@ -37,7 +37,8 @@ class MainClass(BaseClassPython):
             try:
                 amount = int(args[0])
             except:
-                pass
+                await message.channel.send("L'argument n'est pas un nombre valide")
+                return
         result = random.randint(1, amount)
         embed_description = "🎲 Resultat du lancer : **" + str(result) + "**"
         await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
@@ -50,7 +51,7 @@ class MainClass(BaseClassPython):
             try:
                 amount = int(args[1])
             except:
-                await message.channel.send("Un des arguments n'est pas un nombre valide")
+                await message.channel.send("L'argument n'est pas un nombre valide")
                 return
         amount = [100,amount][amount<100]
 
@@ -68,7 +69,7 @@ class MainClass(BaseClassPython):
             try:
                 amount = int(args[1])
             except:
-                await message.channel.send("Un des arguments n'est pas un nombre valide")
+                await message.channel.send("L'argument n'est pas un nombre valide")
                 return
         amount = [100,amount][amount<100]
 
@@ -86,7 +87,7 @@ class MainClass(BaseClassPython):
             try:
                 amount = int(args[1])
             except:
-                await message.channel.send("Un des arguments n'est pas un nombre valide")
+                await message.channel.send("L'argument n'est pas un nombre valide")
                 return
         amount = [100,amount][amount<100]
 
