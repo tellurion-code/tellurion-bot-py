@@ -9,8 +9,13 @@ class MainClass(BaseClassPython):
 		"description": "Gère une partie de 1KBWC",
 		"commands": {
 			"{prefix}{command} draw": "Tire une carte",
-			"{prefix}{command} list": "Envoie la liste de toutes les cartes, et des cartes défaussées",
-			"{prefix}{command} edit <index>": "Modifie la carte à cet index"
+			"{prefix}{command} list": "Envoie la liste de toutes les cartes",
+			"{prefix}{command} show <index de zone>": "Envoie le récap, ou la liste des cartes dans la zone à l'index précisé",
+			"{prefix}{command} edit <index>": "Modifie la carte à cet index",
+			"{prefix}{command} burn <index>": "Brûle la carte à cet index",
+			"{prefix}{command} discard <un ou plus index>": "Défausse la ou les carte(s) avec ces index",
+			"{prefix}{command} move <un ou plus index> <index de zone>": "Déplace la ou les carte(s) avec ces index vers la zone indiquée",
+			"{prefix}{command} shuffle <un ou plus index>": "Renvoie la ou les carte(s) avec ces index dans le paquet et le mélange." # \nSi `top` est utilisé, les cartes seront placées d'autant de cartes depuis le haut du paquet, et ce dernier ne sera pas mélangé"
 		}
 	}
 	games = {}
@@ -89,7 +94,7 @@ class MainClass(BaseClassPython):
 					try:
 						index = int(arg) - 1
 					except:
-						await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
+						await message.channel.send("Index invalide : " + arg)
 						return
 
 					if index < 0 or index >= len(game["list"]):
@@ -124,7 +129,7 @@ class MainClass(BaseClassPython):
 					try:
 						index = int(arg) - 1
 					except:
-						await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
+						await message.channel.send("Index invalide : " + arg)
 						return
 
 					if i + 1 == len(args):
@@ -162,16 +167,26 @@ class MainClass(BaseClassPython):
 					try:
 						index = int(arg) - 1
 					except:
-						await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
+						await message.channel.send("Index invalide : " + arg)
 						return
+
 					if index < 0 or index >= len(game["list"]):
 						await message.channel.send("Aucune carte n'a l'index " + index)
 						return
 					else:
 						cards.append(index)
 
+				# position = 0
+				# if "top" in kwargs:
+				# 	try:
+				# 		position = min(len(game["zones"]["deck"], int(top)))
+				# 	except:
+				# 		await message.channel.send("Nombre de cartes pour l'argument `top` invalide")
+				# 		return
+
 				self.moveCards(game, cards, "deck")
 				random.shuffle(game["zones"]["deck"])
+
 				await message.channel.send(await self.getRecap(game))
 				self.objects.save_object("games", self.games)
 			else:
@@ -349,11 +364,13 @@ class MainClass(BaseClassPython):
 
 		self.objects.save_object("games", self.games)
 
-	def moveCards(self, game, cards, zone):
+	def moveCards(self, game, cards, zone, position=None):
+		if not position: position = len(game["zones"][zone])
+
 		for card in cards:
 			location = [x for x in game["zones"] if card in game["zones"][x]][0]
 			game["zones"][location].remove(card)
-			game["zones"][zone].append(card)
+			game["zones"][zone].insert(position, card)
 
 	async def editCard(self, game, index, card, channel):
 		newCard = game["list"][index]
@@ -458,7 +475,7 @@ class MainClass(BaseClassPython):
 	async def userstr(self, id):
 		try:
 			user = await self.client.fetch_user(int(id))
-			print(user)
+			# print(user)
 			return user.name
 		except Exception as e:
 			print(e)
