@@ -3,12 +3,6 @@ import discord
 import re
 from modules.base import BaseClassPython
 
-def userstr(user):
-	if user:
-		return user.name
-	else:
-		return "???"
-
 class MainClass(BaseClassPython):
 	name = "1KBWC"
 	help = {
@@ -37,7 +31,7 @@ class MainClass(BaseClassPython):
 		if str(message.channel.id) in self.games:
 			game = self.games[str(message.channel.id)]
 
-			if len(game["zones"]["deck"]) <= len(game["list"])/2 and len(game["zones"]["discard"]):
+			if len(game["zones"]["deck"]) <= len(game["zones"]["discard"]) and len(game["zones"]["discard"]):
 				game["zones"]["deck"].extend(game["zones"]["discard"])
 				game["zones"]["discard"].clear()
 				random.shuffle(game["zones"]["deck"])
@@ -100,7 +94,7 @@ class MainClass(BaseClassPython):
 							self.moveCards(game, [index], "discard")
 							success = True
 
-							# await message.channel.send("La carte `" + this.printCard(game["list"][index]) + "` a été défaussée depuis la " + ("pioche" if location == "deck" else "zone de " + userstr(self.client.get_user(int(location)))))
+							# await message.channel.send("La carte `" + this.printCard(game["list"][index]) + "` a été défaussée depuis la " + ("pioche" if location == "deck" else "zone de " + self.userstr(location)))
 
 				if success: await message.channel.send(self.getRecap(game))
 				self.objects.save_object("games", self.games)
@@ -176,7 +170,7 @@ class MainClass(BaseClassPython):
 
 				content = "```md"
 				content += "\n= • - Recap - • =\n=================\n"
-				content += str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else userstr(self.client.get_user(int(location))))) + " :\n" + '\n'.join(["  • " + str(x + 1) + ". " + self.printCard(game["list"][x], False) for x in game["zones"][location]])
+				content += str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else self.userstr(location))) + " :\n" + '\n'.join(["  • " + str(x + 1) + ". " + self.printCard(game["list"][x], False) for x in game["zones"][location]])
 				content += "```"
 
 				await message.channel.send(content)
@@ -247,7 +241,7 @@ class MainClass(BaseClassPython):
 						game["zones"]["discard"].append(index)
 						await message.channel.send("La carte a été défaussée suite à la modification")
 
-					await message.channel.send(self.getRecap(game))
+						await message.channel.send(self.getRecap(game))
 
 
 				self.objects.save_object("games", self.games)
@@ -328,7 +322,7 @@ class MainClass(BaseClassPython):
 	def getRecap(self, game, message=""):
 		maxLength = len("Centre")
 		for i, k in enumerate(list(game["zones"].keys())):
-			if k not in ["center", "discard", "deck"]: maxLength = max(maxLength, len(userstr(self.client.get_user(int(k)))))
+			if k not in ["center", "discard", "deck"]: maxLength = max(maxLength, len(self.userstr(k)))
 
 		def sendZone(zone):
 			return ' '.join(["(" + str(x + 1) + ")" for x in zone])
@@ -337,7 +331,7 @@ class MainClass(BaseClassPython):
 		content += "```md"
 		content += "\n= • - Recap - • =\n=================\n\n 0. Défausse : " + sendZone(game["zones"]["discard"])
 		content += "\n\n 1. " + "Centre".ljust(maxLength, ' ') + " : " + sendZone(game["zones"]["center"])
-		content += "\n" + '\n'.join([str(list(game["zones"].keys()).index(k) - 1).rjust(2, ' ') + ". " + userstr(self.client.get_user(int(k))).ljust(maxLength, ' ') + " : " + sendZone(v) for k, v in game["zones"].items() if k not in ["center", "deck", "discard"]])
+		content += "\n" + '\n'.join([str(list(game["zones"].keys()).index(k) - 1).rjust(2, ' ') + ". " + self.userstr(k).ljust(maxLength, ' ') + " : " + sendZone(v) for k, v in game["zones"].items() if k not in ["center", "deck", "discard"]])
 		content += "```"
 
 		return content
@@ -382,7 +376,15 @@ class MainClass(BaseClassPython):
 			return locations[index]
 
 	def printCard(self, card, authored=True):
-		return "[" + card["name"] +"] " + card["effect"] + (" (Créée par " + userstr(self.client.get_user(card["author"])) + ")" if authored else "")
+		return "[" + card["name"] +"] " + card["effect"] + (" (Créée par " + self.userstr(card["author"]) + ")" if authored else "")
+
+	def userstr(self, id):
+		user = self.client.get_user(int(id))
+
+		if user:
+			return user.name
+		else:
+			return id
 
 	# def printCardAuthors(self, card):
 	# 	return "(Créée par " + card["author"] + ")"
