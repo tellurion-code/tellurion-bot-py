@@ -226,27 +226,41 @@ class MainClass(BaseClassPython):
 					card = game["list"][index]
 
 					newCard = await self.startCardCreation(message.author, message.channel, index)
-					newCard["history"].append({
-						"author": card["author"],
-						"name": card["name"],
-						"effect": card["effect"]
-					})
-					newCard["history"].extend(card["history"])
-					# await message.channel.send("Carte éditée")
-					await msg.edit(content="```ini\n" + str(index + 1) + ". " + self.printCard(game["list"][index]) + "```")
-
-					location = [x for x in game["zones"] if index in game["zones"][x]][0]
-					if location not in ["deck", "discard"]:
-						game["zones"][location].remove(index)
-						game["zones"]["discard"].append(index)
-						await message.channel.send("La carte a été défaussée suite à la modification")
-
-						await message.channel.send(self.getRecap(game))
-
+					await self.editCard(game, card, newCard, channel)
 
 				self.objects.save_object("games", self.games)
 			else:
 				await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
+		else:
+			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
+
+	async def com_burn(self, message, args, kwargs):
+		if str(message.channel.id) in self.games:
+			game = self.games[str(message.channel.id)]
+			if len(args) > 1:
+				try:
+					index = int(args[1]) - 1
+				except:
+					await message.channel.send("Veuillez renseigner l'index de la carte à brûler")
+					return
+
+				if index < 0 or index >= len(game["list"]):
+					await message.channel.send("Aucune carte n'a cet index")
+				else:
+					card = game["list"][index]
+
+					game["list"][index] =  {
+						"author": message.channel.id,
+						"name": "(Carte Blanche)",
+						"effect": "",
+						"history": []
+					}
+
+					await self.editCard(game, card, game["list"][index], channel)
+
+				self.objects.save_object("games", self.games)
+			else:
+				await message.channel.send("Veuillez renseigner l'index de la carte à brûler")
 		else:
 			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
 
@@ -302,6 +316,24 @@ class MainClass(BaseClassPython):
 			game["zones"][location].remove(card)
 			game["zones"][zone].append(card)
 
+	async def editCard(self, game, card, newCard, channel):
+		newCard["history"].append({
+			"author": card["author"],
+			"name": card["name"],
+			"effect": card["effect"]
+		})
+		newCard["history"].extend(card["history"])
+		# await message.channel.send("Carte éditée")
+		await channel.send("```Carte (" + str(index + 1) + ") brûlée```")
+
+		location = [x for x in game["zones"] if index in game["zones"][x]][0]
+		if location not in ["deck", "discard"]:
+			game["zones"][location].remove(index)
+			game["zones"]["discard"].append(index)
+			await channel.send("La carte a été défaussée suite à la modification")
+
+			await channel.send(self.getRecap(game))
+
 	async def sendBigMessage(self, message, channel, language="ini"):
 		sentences = message.split("\n")
 		form = ""
@@ -317,7 +349,7 @@ class MainClass(BaseClassPython):
 
 	async def sendCardList(self, channel):
 		game = self.games[str(channel.id)]
-		await self.sendBigMessage("[Liste des cartes en jeu]\n=========================\n" + '\n'.join([str(i + 1).rjust(3, ' ') + ". " + (self.printCard(e, False) if e else "[Carte Blanche]") for i, e in enumerate(game["list"])]), channel)
+		await self.sendBigMessage("[Liste des cartes en jeu]\n=========================\n" + '\n'.join([str(i + 1).rjust(3, ' ') + ". " + (self.printCard(e, False) if e else "(Carte Blanche)") for i, e in enumerate(game["list"])]), channel)
 
 	def getRecap(self, game, message=""):
 		maxLength = len("Centre")
@@ -330,8 +362,8 @@ class MainClass(BaseClassPython):
 		content = message
 		content += "```md"
 		content += "\n= • - Recap - • =\n=================\n\n 0. Défausse : " + sendZone(game["zones"]["discard"])
-		content += "\n\n 1. " + "Centre".ljust(maxLength, ' ') + " : " + sendZone(game["zones"]["center"])
-		content += "\n" + '\n'.join([str(list(game["zones"].keys()).index(k) - 1).rjust(2, ' ') + ". " + self.userstr(k).ljust(maxLength, ' ') + " : " + sendZone(v) for k, v in game["zones"].items() if k not in ["center", "deck", "discard"]])
+		content += "\n\n 1. Centre : " + sendZone(game["zones"]["center"])
+		content += "\n\n" + '\n'.join([str(list(game["zones"].keys()).index(k) - 1).rjust(2, ' ') + ". " + self.userstr(k).ljust(maxLength, ' ') + " : " + sendZone(v) for k, v in game["zones"].items() if k not in ["center", "deck", "discard"]])
 		content += "```"
 
 		return content
