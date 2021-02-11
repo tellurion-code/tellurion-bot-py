@@ -59,7 +59,7 @@ class MainClass(BaseClassPython):
 			index = game["zones"]["deck"].pop(0)
 			msg = None
 
-			if not game["list"][index]:
+			if not game["list"][index] or not game["list"][index]["name"]:
 				msg = await message.channel.send("```ini\n" + str(index + 1) + ". (Carte Blanche) Envoyez un message pour définir cette carte en tapant \"[Nom de la carte] Effet\"!```")
 				await self.startCardCreation(message.author, message.channel, index)
 				# await message.channel.send("Carte définie")
@@ -418,7 +418,7 @@ class MainClass(BaseClassPython):
 			if k not in ["center", "discard", "deck"]: maxLength = max(maxLength, len(await self.userstr(k)))
 
 		def sendZone(zone):
-			return ' '.join([str(x + 1) for x in zone])
+			return ' '.join(["[" + str(x + 1) + " " + (game["list"][x]["name"] if game["list"][x]["name"] else "Carte Blanche") + "]" for x in zone])
 
 		content = message
 		content += "```md"
@@ -432,7 +432,7 @@ class MainClass(BaseClassPython):
 		return content
 
 	async def startCardCreation(self, author, channel, index):
-		regex = r"^\[(.+)\] (.+)$"
+		regex = r"^\[(.{1,30})\] (.+)$"
 
 		def check(m):
 			return m.author == author and m.channel == channel and re.search(regex, m.content)
