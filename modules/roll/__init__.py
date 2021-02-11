@@ -35,11 +35,9 @@ class MainClass(BaseClassPython):
 		amount = 6
 		if len(args) == 1:
 			try:
-				await message.channel.send(str(args))
-				amount = int(args[0]) if args[0] else 6
+				amount = int(args[0])
 			except:
-				await message.channel.send("Un des arguments n'est pas un nombre valide")
-				return
+				pass
 		result = random.randint(1, amount)
 		embed_description = "🎲 Resultat du lancer : **" + str(result) + "**"
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
