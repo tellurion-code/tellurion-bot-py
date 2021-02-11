@@ -216,7 +216,7 @@ class MainClass(BaseClassPython):
 					await message.channel.send("Index de zone invalide")
 					return
 
-				if index < 1 or index > len(list(game["zones"].keys())):
+				if index < 1 or index >= len(list(game["zones"].keys())):
 					await message.channel.send("Aucune zone n'a cet index")
 					return
 
@@ -418,7 +418,7 @@ class MainClass(BaseClassPython):
 			if k not in ["center", "discard", "deck"]: maxLength = max(maxLength, len(await self.userstr(k)))
 
 		def sendZone(zone):
-			return ' '.join(["[" + str(x + 1) + " " + (game["list"][x]["name"] if game["list"][x]["name"] else "Carte Blanche") + "]" for x in zone])
+			return ' '.join([("[" + str(x + 1) + " " + (game["list"][x]["name"] if game["list"][x]["name"] else "Carte Blanche") + "]" if game["list"][x] else "(Carte Blanche)") for x in zone])
 
 		content = message
 		content += "```md"
