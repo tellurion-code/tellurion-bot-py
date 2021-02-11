@@ -32,6 +32,7 @@ class MainClass(BaseClassPython):
 		self.config["color"] = 0x000000
 
 	async def com(self, message, args, kwargs):
+		await message.channel.send("com")
 		amount = 6
 		if len(args) == 1:
 			try:
@@ -40,7 +41,7 @@ class MainClass(BaseClassPython):
 				await message.channel.send("Un des arguments n'est pas un nombre valide")
 				return
 		result = random.randint(1, amount)
-		embed_description = "🎲 Resultat du lancer : " + result
+		embed_description = "🎲 Resultat du lancer : " + str(result)
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
 	async def com_vowel(self, message, args, kwargs):
@@ -58,7 +59,7 @@ class MainClass(BaseClassPython):
 		for i in range(amount):
 			result.append(random.choice(vowels))
 
-		embed_description = "🔠 Resultat du lancer : " + result.join(", ")
+		embed_description = "🔠 Resultat du lancer : " + ", ".join(result)
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
 	async def com_consonant(self, message, args, kwargs):
@@ -76,7 +77,7 @@ class MainClass(BaseClassPython):
 		for i in range(amount):
 			result.append(random.choice(consonants))
 
-		embed_description = "🔠 Resultat du lancer : " + result.join(", ")
+		embed_description = "🔠 Resultat du lancer : " + ", ".join(result)
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
 	async def com_letter(self, message, args, kwargs):
@@ -94,7 +95,7 @@ class MainClass(BaseClassPython):
 		for i in range(amount):
 			result.append(random.choice(letters))
 
-		embed_description = "🔠 Resultat du lancer : " + result.join(", ")
+		embed_description = "🔠 Resultat du lancer : " + ", ".join(result)
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
 	async def com_rps(self, message, args, kwargs):
