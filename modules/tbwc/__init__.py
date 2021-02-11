@@ -7,7 +7,7 @@ def userstr(user):
 	if user:
 		return user.name
 	else:
-		return "None"
+		return "???"
 
 class MainClass(BaseClassPython):
 	name = "1KBWC"
@@ -52,7 +52,7 @@ class MainClass(BaseClassPython):
 			msg = None
 
 			if not game["list"][index]:
-				msg = await message.channel.send("```ini\n" + str(index + 1) + ". [Carte Blanche] Envoyez un message pour définir la carte en tapant \"[Nom de la carte] Effet\"! (Type) accepte Aura, Terrain ou Ephémère.```")
+				msg = await message.channel.send("```ini\n" + str(index + 1) + ". [Carte Blanche] Envoyez un message pour définir cette carte en tapant \"[Nom de la carte] Effet\"!```")
 				await self.startCardCreation(message.author, message.channel, index)
 				# await message.channel.send("Carte définie")
 
@@ -66,7 +66,7 @@ class MainClass(BaseClassPython):
 			if str(message.author.id) not in game["zones"]:
 				game["zones"][str(message.author.id)] = []
 
-			msg = await message.channel.send(self.getRecap(game, "Envoyez l'index de la zone où vous voulez jouer la carte"))
+			msg = await message.channel.send(self.getRecap(game, "**Envoyez l'index de la zone où vous voulez jouer la carte**"))
 			zone = await self.waitForZone(message.author, message.channel)
 			game["zones"][zone].append(index)
 
@@ -228,7 +228,7 @@ class MainClass(BaseClassPython):
 				if index < 0 or index >= len(game["list"]):
 					await message.channel.send("Aucune carte n'a cet index")
 				else:
-					msg = await message.channel.send("```ini\nDéfinissez la carte en tapant \"[Nom de la carte] Effet\". (Type) accepte Aura, Terrain ou Ephémère.```")
+					msg = await message.channel.send("```ini\nRedéfinissez cette carte en tapant \"[Nom de la carte] Effet\".```")
 					card = game["list"][index]
 
 					newCard = await self.startCardCreation(message.author, message.channel, index)
@@ -241,13 +241,13 @@ class MainClass(BaseClassPython):
 					# await message.channel.send("Carte éditée")
 					await msg.edit(content="```ini\n" + str(index + 1) + ". " + self.printCard(game["list"][index]) + "```")
 
-					location = [x for x in game["zones"] if index in game["zones"][x]][0]
-					if location not in ["deck", "discard"]:
-						game["zones"][location].remove(index)
-						game["zones"]["discard"].append(index)
-						await message.channel.send("La carte a été défaussée suite à la modification")
+					# location = [x for x in game["zones"] if index in game["zones"][x]][0]
+					# if location not in ["deck", "discard"]:
+					# 	game["zones"][location].remove(index)
+					# 	game["zones"]["discard"].append(index)
+					# 	await message.channel.send("La carte a été défaussée suite à la modification")
 
-					await message.channel.send(self.getRecap(game))
+					# await message.channel.send(self.getRecap(game))
 
 
 				self.objects.save_object("games", self.games)
@@ -364,7 +364,7 @@ class MainClass(BaseClassPython):
 		return card
 
 	async def waitForZone(self, author, channel):
-		regex = r"^-1|\d+$"
+		regex = r"^-1$|^\d+$"
 
 		def check(m):
 			return m.author == author and m.channel == channel and re.search(regex, m.content)
