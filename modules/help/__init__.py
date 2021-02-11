@@ -28,6 +28,8 @@ class MainClass(BaseClassPython):
     #         await module["initialized_class"].send_help(message.channel)
 
     async def command(self, message, args, kwargs):
+        await message.channel.send(args)
+        await message.channel.send(self.client.modules.keys())
         if len(args) and args[0] in self.client.modules.keys() and self.client.modules[args[0]][
             "initialized_class"].config.help_active:
             await self.client.modules[args[0]]["initialized_class"].send_help(message.channel)
