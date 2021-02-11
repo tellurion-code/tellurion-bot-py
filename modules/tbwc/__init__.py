@@ -10,6 +10,7 @@ class MainClass(BaseClassPython):
 		"commands": {
 			"{prefix}{command} draw": "Tire une carte",
 			"{prefix}{command} list": "Envoie la liste de toutes les cartes",
+			"{prefix}{command} history <index>": "Envoie l'historique des versions de la carte à cet index",
 			"{prefix}{command} show <index de zone>": "Envoie le récap, ou la liste des cartes dans la zone à l'index précisé",
 			"{prefix}{command} edit <index>": "Modifie la carte à cet index",
 			"{prefix}{command} burn <index>": "Brûle la carte à cet index",
