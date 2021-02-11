@@ -73,7 +73,7 @@ class MainClass(BaseClassPython):
 			if str(message.author.id) not in game["zones"]:
 				game["zones"][str(message.author.id)] = []
 
-			msg = await message.channel.send(await self.getRecap(game, "**Envoyez l'index de la zone où vous voulez jouer la carte**"))
+			msg = await message.channel.send(await self.getRecap(game, "⚠ **Envoyez l'index de la zone où vous voulez jouer la carte** ⚠️"))
 			zone = await self.waitForZone(message.author, message.channel)
 			game["zones"][zone].append(index)
 
