@@ -279,7 +279,7 @@ class MainClass(BaseClassPython):
 					newCard = await self.startCardCreation(message.author, message.channel, index)
 					await self.editCard(game, index, card, message.channel)
 
-					await msg.edit(content="```ini" + (await self.printCard(newCard)) + "```")
+					await msg.edit(content="```ini\n" + (await self.printCard(newCard)) + "```")
 
 				self.objects.save_object("games", self.games)
 			else:
