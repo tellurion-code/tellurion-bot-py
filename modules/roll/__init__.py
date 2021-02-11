@@ -18,7 +18,7 @@ class MainClass(BaseClassPython):
             "{prefix}{command} vowel [amount]": "Sends a random vowel",
             "{prefix}{command} consonant [amount]": "Sends a random consonant",
             "{prefix}{command} letter [amount]": "Sends a random letter",
-            "{prefix}{command} pfc|rps|shifumi": "Throws a random Rock-Paper-Scissors symbol"
+            "{prefix}{command} pfc": "Throws a random Rock-Paper-Scissors symbol"
         }
     }
     games = {}
@@ -101,9 +101,3 @@ class MainClass(BaseClassPython):
         choices = [":rock: Pierre", "📄 Feuille", "✂️ Ciseaux"]
         embed_description = "✊ Resultat du lancer : " + random.choice(choices)
         await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
-
-    async def com_rps(self, message, args, kwargs):
-        self.com_pfc(message, args, kwargs)
-
-    async def com_shifumi(self, message, args, kwargs):
-        self.com_pfc(message, args, kwargs)
