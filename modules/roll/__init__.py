@@ -35,7 +35,7 @@ class MainClass(BaseClassPython):
 		amount = 6
 		if len(args) == 1:
 			try:
-				amount = int(args)
+				amount = int(args[0])
 			except:
 				await message.channel.send("Un des arguments n'est pas un nombre valide")
 				return
