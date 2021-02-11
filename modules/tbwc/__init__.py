@@ -216,7 +216,7 @@ class MainClass(BaseClassPython):
 					await message.channel.send("Index de zone invalide")
 					return
 
-				if index < 1 and index >= len(list(game["zones"].keys())):
+				if index < 1 or index > len(list(game["zones"].keys())):
 					await message.channel.send("Aucune zone n'a cet index")
 					return
 
