@@ -18,7 +18,7 @@ class MainClass(BaseClassPython):
 			"{prefix}{command} vowel [amount]": "Sends a random vowel",
 			"{prefix}{command} consonant [amount]": "Sends a random consonant",
 			"{prefix}{command} letter [amount]": "Sends a random letter",
-			"{prefix}{command} rps|shifumi": "Throws a random Rock-Paper-Scissors symbol"
+			"{prefix}{command} pfc|rps|shifumi": "Throws a random Rock-Paper-Scissors symbol"
 		}
 	}
 	games = {}
@@ -32,6 +32,7 @@ class MainClass(BaseClassPython):
 		self.config["color"] = 0x000000
 
 	async def command(self, message, args, kwargs):
+        await message.channel.send(" - ".join(args))
 		amount = 6
 		if len(args) == 1:
 			try:
@@ -101,5 +102,8 @@ class MainClass(BaseClassPython):
 		embed_description = "✊ Resultat du lancer : " + random.choice(choices)
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
+	async def com_rps(self, message, args, kwargs):
+		self.com_pfc(message, args, kwargs)
+
 	async def com_shifumi(self, message, args, kwargs):
-		self.com_rps(message, args, kwargs)
+		self.com_pfc(message, args, kwargs)
