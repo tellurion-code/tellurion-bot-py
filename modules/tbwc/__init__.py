@@ -241,13 +241,13 @@ class MainClass(BaseClassPython):
 					# await message.channel.send("Carte éditée")
 					await msg.edit(content="```ini\n" + str(index + 1) + ". " + self.printCard(game["list"][index]) + "```")
 
-					# location = [x for x in game["zones"] if index in game["zones"][x]][0]
-					# if location not in ["deck", "discard"]:
-					# 	game["zones"][location].remove(index)
-					# 	game["zones"]["discard"].append(index)
-					# 	await message.channel.send("La carte a été défaussée suite à la modification")
+					location = [x for x in game["zones"] if index in game["zones"][x]][0]
+					if location not in ["deck", "discard"]:
+						game["zones"][location].remove(index)
+						game["zones"]["discard"].append(index)
+						await message.channel.send("La carte a été défaussée suite à la modification")
 
-					# await message.channel.send(self.getRecap(game))
+					await message.channel.send(self.getRecap(game))
 
 
 				self.objects.save_object("games", self.games)
