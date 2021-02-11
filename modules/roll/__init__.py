@@ -35,12 +35,12 @@ class MainClass(BaseClassPython):
 		amount = 6
 		if len(args) == 1:
 			try:
-				amount = int(args[0])
+				amount = int(args[0]) if args[0] else 6
 			except:
 				await message.channel.send("Un des arguments n'est pas un nombre valide")
 				return
 		result = random.randint(1, amount)
-		embed_description = "🎲 Resultat du lancer : " + str(result)
+		embed_description = "🎲 Resultat du lancer : **" + str(result) + "**"
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
 	async def com_vowel(self, message, args, kwargs):
@@ -97,8 +97,8 @@ class MainClass(BaseClassPython):
 		embed_description = "🔠 Resultat du lancer : " + ", ".join(result)
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
-	async def com_rps(self, message, args, kwargs):
-		choices = [":rock: Rock", "📄 Paper", "✂️ Scissors"]
+	async def com_pfc(self, message, args, kwargs):
+		choices = [":rock: Pierre", "📄 Feuille", "✂️ Ciseaux"]
 		embed_description = "✊ Resultat du lancer : " + random.choice(choices)
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
