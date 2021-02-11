@@ -10,7 +10,7 @@ class MainClass(BaseClassPython):
     }
 
     async def command(self, message, args, kwargs):
-        await message.channel.send(" - ".join(args))
+        await message.channel.send(args)
         message_id = None
         try: 
             message_id = int(args[0])

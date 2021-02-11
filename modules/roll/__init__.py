@@ -32,7 +32,7 @@ class MainClass(BaseClassPython):
 		self.config["color"] = 0x000000
 
 	async def command(self, message, args, kwargs):
-        await message.channel.send(" - ".join(args))
+        await message.channel.send(args)
 		amount = 6
 		if len(args) == 1:
 			try:
