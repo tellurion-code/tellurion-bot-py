@@ -206,7 +206,7 @@ class MainClass(BaseClassPython):
 
 				location = list(game["zones"].keys())[index]
 
-				content += "\n= • - Recap - • =\n=================\n"
+				content = "\n= • - Recap - • =\n=================\n"
 				content += str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else (await self.userstr(location)))) + " :\n" + '\n'.join(["  • " + str(x + 1) + ". " + (await self.printCard(game["list"][x], False)) for x in game["zones"][location]])
 
 				await self.sendBigMessage(content, message.channel, "md")
