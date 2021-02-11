@@ -55,7 +55,7 @@ class MainClass(BaseClassPython):
 				return
 		amount = [100,amount][amount<100]
 
-		result.append(random.choices(vowels, amount))
+		result.append(random.choices(vowels, None, None, amount))
 
 		embed_description = "🔠 Resultat du lancer : " + result.join(", ")
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
@@ -72,7 +72,7 @@ class MainClass(BaseClassPython):
 				return
 		amount = [100,amount][amount<100]
 
-		result.append(random.choices(consonants, amount))
+		result.append(random.choices(consonants, None, None, amount))
 
 		embed_description = "🔠 Resultat du lancer : " + result.join(", ")
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
@@ -89,7 +89,7 @@ class MainClass(BaseClassPython):
 				return
 		amount = [100,amount][amount<100]
 
-		result.append(random.choices(letters, amount))
+		result.append(random.choices(letters, None, None, amount))
 
 		embed_description = "🔠 Resultat du lancer : " + result.join(", ")
 		await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
