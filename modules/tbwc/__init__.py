@@ -54,7 +54,7 @@ class MainClass(BaseClassPython):
 			msg = None
 
 			if not game["list"][index]:
-				msg = await message.channel.send("```ini\n" + str(index + 1) + ". [Carte Blanche] Envoyez un message pour définir cette carte en tapant \"[Nom de la carte] Effet\"!```")
+				msg = await message.channel.send("```ini\n" + str(index + 1) + ". (Carte Blanche) Envoyez un message pour définir cette carte en tapant \"[Nom de la carte] Effet\"!```")
 				await self.startCardCreation(message.author, message.channel, index)
 				# await message.channel.send("Carte définie")
 
@@ -206,12 +206,10 @@ class MainClass(BaseClassPython):
 
 				location = list(game["zones"].keys())[index]
 
-				content = "```md"
 				content += "\n= • - Recap - • =\n=================\n"
 				content += str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else (await self.userstr(location)))) + " :\n" + '\n'.join(["  • " + str(x + 1) + ". " + (await self.printCard(game["list"][x], False)) for x in game["zones"][location]])
-				content += "```"
 
-				await message.channel.send(content)
+				await self.sendBigMessage(content, message.channel, "md")
 			else:
 				await message.channel.send(await self.getRecap(game))
 		else:
