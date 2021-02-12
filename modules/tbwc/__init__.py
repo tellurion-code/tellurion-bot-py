@@ -74,6 +74,10 @@ class MainClass(BaseClassPython):
 
 			if str(message.author.id) not in game["zones"]:
 				game["zones"][str(message.author.id)] = []
+				try:
+					self.members[str(message.author.id)] = await self.client.fetch_user(message.author.id)
+				except:
+					pass
 
 			msg = await message.channel.send(await self.getRecap(game, "⚠ **Envoyez l'index de la zone où vous voulez jouer la carte** ⚠️"))
 			zone = await self.waitForZone(message.author, message.channel)
