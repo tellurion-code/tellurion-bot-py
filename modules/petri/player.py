@@ -64,12 +64,12 @@ class Attacker(Player):
 
 class Architect(Player):
     name = "🧱 Architecte"
-    description = "Les murs comptent comme des unités pour lui en défense"
+    description = "Les murs comptent comme des unités pour lui"
 
     def get_power(self, game, x, y, dx, dy):
         power = 0
         tdx, tdy = 0, 0
-        while game.map[y + tdy][x + tdx] == self.index or game.map[y + tdy][x + tdx] == -2 and self.index != game.turn:
+        while game.map[y + tdy][x + tdx] == self.index or game.map[y + tdy][x + tdx] == -2:
             power += 1
             tdx += dx
             tdy += dy
@@ -120,7 +120,7 @@ class Racer(Player):
 
 class Demolisher(Player):
     name = "🧨 Démolisseur"
-    description = "Détruit tous les murs qu'il encercle à la fin de son tour (diagonales non nécessaires)"
+    description = "Capture tous les murs qu'il encercle à la fin de son tour (diagonales non nécessaires)"
 
     def on_turn_end(self, game):
         def check_circling(x, y):
@@ -135,7 +135,7 @@ class Demolisher(Player):
             for x in range(game.ranges[0]):
                 if game.map[y][x] == -2:
                     if check_circling(x, y):
-                        game.map[y][x] = -1
+                        game.map[y][x] = self.index
 
 
 class Pacifist(Player):
@@ -171,36 +171,36 @@ class Isolated(Player):
         return (-math.inf if defense == 1 else 0)
 
 
-class Border(Player):
-    name = "🗺️ Frontalier"
-    description = "Peut détruire __toutes__ les unités (y compris les siennes) qui touchent ses frontières avec un autre joueur, une fois dans la partie"
-    power_active = True
-
-    def active_power(self, game):
-        self.power_active = False
-        amount = 0
-
-        new_map = copy.deepcopy(game.map)
-        for y in range(1, game.ranges[1] - 1):
-            for x in range(1, game.ranges[0] - 1):
-                if new_map[y][x] == game.turn:
-                    self_destruct = False
-                    for dy in range(-1, 2):
-                        for dx in range(-1, 2):
-                            if new_map[y + dy][x + dx] != game.turn and new_map[y + dy][x + dx] > -1 and dy != dx:
-                                new_map[y + dy][x + dx] = -1
-                                amount += 1
-                                self_destruct = True
-                    if self_destruct:
-                        new_map[y][x] = -1
-                        amount += 1
-
-        game.map = new_map
-
-        return {
-            "name": "️🗺️ Pouvoir du Frontalier",
-            "value": str(amount) + " unités détruites"
-        }
+# class Border(Player):
+#     name = "🗺️ Frontalier"
+#     description = "Peut détruire __toutes__ les unités (y compris les siennes) qui touchent ses frontières avec un autre joueur, une fois dans la partie"
+#     power_active = True
+#
+#     def active_power(self, game):
+#         self.power_active = False
+#         amount = 0
+#
+#         new_map = copy.deepcopy(game.map)
+#         for y in range(1, game.ranges[1] - 1):
+#             for x in range(1, game.ranges[0] - 1):
+#                 if new_map[y][x] == game.turn:
+#                     self_destruct = False
+#                     for dy in range(-1, 2):
+#                         for dx in range(-1, 2):
+#                             if new_map[y + dy][x + dx] != game.turn and new_map[y + dy][x + dx] > -1 and dy != dx:
+#                                 new_map[y + dy][x + dx] = -1
+#                                 amount += 1
+#                                 self_destruct = True
+#                     if self_destruct:
+#                         new_map[y][x] = -1
+#                         amount += 1
+#
+#         game.map = new_map
+#
+#         return {
+#             "name": "️🗺️ Pouvoir du Frontalier",
+#             "value": str(amount) + " unités détruites"
+#         }
 
 
 # class Delayed(Player):
