@@ -418,16 +418,16 @@ class MainClass(BaseClassPython):
 			if k not in ["center", "discard", "deck"]: maxLength = max(maxLength, len(await self.userstr(k)))
 
 		def sendZone(zone):
-			return ' '.join([("[" + str(x + 1) + " " + (game["list"][x]["name"] if game["list"][x]["name"] else "Carte Blanche") + "]" if game["list"][x] else "(Carte Blanche)") for x in zone])
+			return ' '.join([("[" + str(x + 1) + " " + (game["list"][x]["name"] if game["list"][x]["name"] else "Carte Blanche") + "]" if game["list"][x] else "(" + str(x + 1) + " " + "Carte Blanche)") for x in zone])
 
-		content = message
-		content += "```md"
+		content = "```md"
 		content += "\n= • - Recap - • =\n================="
 		content += "\n\n••• Paquet : " + str(len(game["zones"]["deck"])) + " carte(s)"
 		content += "\n 0. Défausse : " + sendZone(game["zones"]["discard"])
 		content += "\n\n 1. Centre : " + sendZone(game["zones"]["center"])
 		content += "\n\n" + '\n'.join([str(list(game["zones"].keys()).index(k) - 1).rjust(2, ' ') + ". " + (await self.userstr(k)).ljust(maxLength, ' ') + " : " + sendZone(v) for k, v in game["zones"].items() if k not in ["center", "deck", "discard"]])
 		content += "```"
+		content += message
 
 		return content
 
@@ -471,7 +471,7 @@ class MainClass(BaseClassPython):
 			return locations[index]
 
 	async def printCard(self, card, authored=True):
-		return ("[" + card["name"] + "]" if card["name"] else "(Carte Blanche)") + " " + card["effect"] + (" (Créée par " + (await self.userstr(card["author"])) + ")" if authored else "")
+		return (("[" + card["name"] + "]" if card["name"] else "(Carte Blanche)") + " " + card["effect"] + (" (Créée par " + (await self.userstr(card["author"])) + ")" if authored else "") if card else "(Carte Blanche)")
 
 	async def userstr(self, id):
 		try:
