@@ -20,6 +20,7 @@ class MainClass(BaseClassPython):
 		}
 	}
 	games = {}
+	members = {}
 
 	def __init__(self, client):
 		super().__init__(client)
@@ -33,13 +34,13 @@ class MainClass(BaseClassPython):
 		if self.objects.save_exists("games"):
 			self.games = self.objects.load_object("games")
 
-			# for game in self.games.values():
-			# 	for location in game["zones"]:
-			# 		if location not in ["deck", "discard", "center"]:
-			# 			try:
-			# 				await self.client.fetch_user(int(location))
-			# 			except:
-			# 				pass
+			for game in self.games.values():
+				for location in game["zones"]:
+					if location not in ["deck", "discard", "center"]:
+						try:
+							self.members[location] = await self.client.fetch_user(int(location))
+						except:
+							pass
 
 	async def com_draw(self, message, args, kwargs):
 		if str(message.channel.id) in self.games:
@@ -474,12 +475,9 @@ class MainClass(BaseClassPython):
 		return (("[" + card["name"] + "]" if card["name"] else "(Carte Blanche)") + " " + card["effect"] + (" (Créée par " + (await self.userstr(card["author"])) + ")" if authored else "") if card else "(Carte Blanche)")
 
 	async def userstr(self, id):
-		try:
-			user = await self.client.fetch_user(int(id))
-			# print(user)
-			return user.name
-		except Exception as e:
-			print(e)
+		if str(id) in self.members:
+			return self.members[str(id)].name
+		else:
 			return str(id)
 
 	# def printCardAuthors(self, card):
