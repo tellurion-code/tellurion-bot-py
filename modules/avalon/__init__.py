@@ -51,6 +51,9 @@ class MainClass(BaseClassPython):
         if self.client.get_guild(459442405532499968):
             global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(459442405532499968).fetch_emoji(727282149253971970) #Get the custom emoji
 
+        if self.client.get_guild(576722975584288778):
+            global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(576722975584288778).fetch_emoji(810571716488069120) #Get the custom emoji
+
         if self.objects.save_exists("globals"):
             object = self.objects.load_object("globals")
             globals.debug = object["debug"]
