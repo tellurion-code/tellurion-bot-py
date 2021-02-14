@@ -39,6 +39,10 @@ class MainClass(BaseClassPython):
         #     "command_text": "avalon",
         #     "configured": True
         # })
+        self.config["configured"] = True
+        self.config["color"] = self.color
+        self.config["help_active"] = True
+        self.config["auth_everyone"] = True
 
     async def on_ready(self):
         if self.client.get_guild(297780867286433792):

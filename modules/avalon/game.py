@@ -1,33 +1,37 @@
 import discord
 import random
 
-from modules.avalon.player import Player, Good, Evil, Merlin, Percival, Gawain, Karadoc, Galaad, Uther, Arthur, Vortigern, Assassin, Morgane, Mordred, Oberon, Lancelot, Accolon, Kay, Agravain, Elias, Maleagant
+from modules.avalon.player import Player, Good, Evil
 from modules.reaction_message.reaction_message import ReactionMessage
 
 import modules.avalon.globals as global_values
 
-classes = {
-    "good": Good,
-    "evil": Evil,
-    "merlin": Merlin,
-    "percival": Percival,
-    "karadoc": Karadoc,
-    "gawain": Gawain,
-    "galaad": Galaad,
-    "uther": Uther,
-    "arthur": Arthur,
-    "vortigern": Vortigern,
-    "assassin": Assassin,
-    "morgane": Morgane,
-    "mordred": Mordred,
-    "oberon": Oberon,
-    "lancelot": Lancelot,
-    "accolon": Accolon,
-    "kay": Kay,
-    "agravain": Agravain,
-    "elias": Elias,
-    "maleagant": Maleagant
-}
+# classes = {
+#     "good": Good,
+#     "evil": Evil,
+#     "merlin": Merlin,
+#     "percival": Percival,
+#     "karadoc": Karadoc,
+#     "gawain": Gawain,
+#     "galaad": Galaad,
+#     "uther": Uther,
+#     "arthur": Arthur,
+#     "vortigern": Vortigern,
+#     "assassin": Assassin,
+#     "morgane": Morgane,
+#     "mordred": Mordred,
+#     "oberon": Oberon,
+#     "lancelot": Lancelot,
+#     "accolon": Accolon,
+#     "kay": Kay,
+#     "agravain": Agravain,
+#     "elias": Elias,
+#     "maleagant": Maleagant
+# }
+
+classes = {"good": Good, "evil": Evil}
+classes.update({c.__name__.lower(): c for t in [Good, Evil] for c in t.__subclasses__()})
+# print(classes)
 
 class Game:
     def __init__(self, mainclass, **kwargs):
