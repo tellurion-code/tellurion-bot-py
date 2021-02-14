@@ -30,6 +30,11 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
+		self.config["configured"] = True
+        self.config["color"] = self.color
+        self.config["help_active"] = True
+        self.config["auth_everyone"] = True
+        self.config["command_text"] = self.command_text
 
     async def on_ready(self):
         if self.objects.save_exists("globals"):
