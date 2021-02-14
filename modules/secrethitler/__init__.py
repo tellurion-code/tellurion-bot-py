@@ -30,7 +30,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-		self.config["configured"] = True
+        self.config["configured"] = True
         self.config["color"] = self.color
         self.config["help_active"] = True
         self.config["auth_everyone"] = True
