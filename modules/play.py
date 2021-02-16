@@ -29,7 +29,8 @@ class MainClass(BaseClass):
             'ba-dum-tss',
             'zelda-secret',
             'motus-boule-noire',
-            'run'
+            'run',
+            'tu-peux-rep'
         ]
         self.voice = None
         self.playing = False
