@@ -93,10 +93,10 @@ class Architect(Player):
     description = "Les murs qu'il touche font partie de ses unités"
 
     def test_for_wall(self, game, x, y):
-        for dx2 in range(3):
-            for dy2 in range(3):
-                if game.inside(x + dx2 - 1, y + dy2 - 1):
-                    if game.map[y + dy2 - 1][x + dx2 - 1] == game.turn and abs(dx2 + dy2 - 2) == 1:
+        for dx2 in range(-1, 2):
+            for dy2 in range(-1, 2):
+                if game.inside(x + dx2, y + dy2):
+                    if game.map[y + dy2][x + dx2] == game.turn and abs(dx2 + dy2) == 1:
                         return True
 
         return False
@@ -146,20 +146,27 @@ class Architect(Player):
 
 class Swarm(Player):
     name = "🐝 Essaim"
-    description = "Commence avec deux unités en plus en ligne"
+    description = "Commence avec deux unités en diagonale"
 
     def spawn(self, game, map, x, y):
-        map[y][x] = self.index
+        # map[y][x] = self.index
 
-        d1 = random.randrange(2)
-        d2 = 1 - d1
+        done = False
+        for i in range(0, 3):
+            r = math.pi/2 * i
+            nx1 = int(x + math.cos(r))
+            ny1 = int(y + math.sin(r))
+            nx2 = int(x + math.cos(r + math.pi/2))
+            ny2 = int(y + math.sin(r + math.pi/2))
+            if game.inside(nx1, ny2) and game.inside(nx2, ny2) and map[ny1][nx1] == -1 and map[ny2][nx2] == -1:
+                map[ny1][nx1] = self.index
+                map[ny2][nx2] = self.index
+                done = True
+                break
 
-        if game.inside(x + d1, y + d2) and game.inside(x - d1, y - d2) and map[y + d2][x + d1] == -1 and map[y - d2][x - d1] == -1:
-            map[y + d2][x + d1] = self.index
-            map[y - d2][x - d1] = self.index
-        else:
-            map[y + d1][x + d2] = self.index
-            map[y - d1][x - d2] = self.index
+        if not done:
+            map[y + 1][x] = self.index
+            map[y][x + 1] = self.index
 
 
 class Racer(Player):
@@ -207,7 +214,7 @@ class Racer(Player):
 
 class Pacifist(Player):
     name = "🕊️ Pacifiste"
-    description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué pendant les 20 premiers tours"
+    description = "A un bonus de 2 en défense contre les joueurs qu'il n'a pas attaqué"
 
     def __init__(self, user):
         super().__init__(user)
@@ -221,7 +228,7 @@ class Pacifist(Player):
         self.variables["peace_with"] = [i for i in range(len(game.order))]
 
     def on_defense(self, game, attack, defense):
-        return (-math.inf if game.turn in self.variables["peace_with"] and game.round <= 20 else 0)
+        return (-2 if game.turn in self.variables["peace_with"] else 0)
 
     def on_attack(self, game, attack, defense, defender):
         if defender in self.variables["peace_with"]:
