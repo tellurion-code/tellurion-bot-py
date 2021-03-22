@@ -354,7 +354,7 @@ class Game:
                     winner = player_id
 
             if not tie:
-                await self.end_game(str(self.players[self.order[self.turn]].user), "Usure")
+                await self.end_game(str(self.players[winner].user), "Usure")
                 return
 
         alives = [i for i in range(len(self.order)) if len([0 for row in self.map for tile in row if tile == i])]
