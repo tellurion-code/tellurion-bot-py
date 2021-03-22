@@ -345,17 +345,17 @@ class Game:
 
                 self.save({"type":"quest"})
             else:
-                if self.refused == 4:
+                await self.send_info(
+                    info={
+                        "name": "Equipe refusée",
+                        "value": "Le prochain leader va proposer une nouvelle composition."
+                    })
+                    
+                self.refused += 1
+
+                if self.refused == 5:
                     await self.end_game(False, "5 Equipes refusées")
                 else:
-                    await self.send_info(
-                        info={
-                            "name": "Equipe refusée",
-                            "value": "Le prochain leader va proposer une nouvelle composition."
-                        })
-
-                    self.refused += 1
-
                     await self.next_turn()
 
     async def send_players_quest_choice(self):
