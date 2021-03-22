@@ -21,6 +21,32 @@ class Player:
     def spawn(self, game, map, x, y):
         map[y][x] = self.index
 
+    def move(self, game, new_map, dx, dy, summary):
+        for y in range(game.ranges[1]):
+            for x in range(game.ranges[0]):
+                if game.map[y][x] == game.turn and game.inside(x + dx, y + dy):
+                    new_tile = game.map[y + dy][x + dx]
+                    if new_tile == -1:
+                        new_map[y + dy][x + dx] = game.turn
+                    elif new_tile >= 0 and new_tile != game.turn:
+                        owner = game.players[game.order[new_tile]]
+
+                        attack = self.get_power(game, x, y, -dx, -dy)
+                        defense = owner.get_power(game, x + dx, y + dy, dx, dy)
+
+                        diff = attack - defense
+                        diff += self.on_attack(game, attack, defense, new_tile)
+                        diff += owner.on_defense(game, attack, defense)
+
+                        if diff > 0:
+                            new_map[y + dy][x + dx] = game.turn
+                            summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ 🗡️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
+                        elif diff == 0:
+                            new_map[y + dy][x + dx] = -1
+                            summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
+                        else:
+                            summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "` 🛡️ " + global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️")
+
     def get_power(self, game, x, y, dx, dy):
         power = 0
         tdx, tdy = 0, 0
@@ -64,7 +90,46 @@ class Attacker(Player):
 
 class Architect(Player):
     name = "🧱 Architecte"
-    description = "Les murs comptent comme des unités pour lui"
+    description = "Les murs qu'il touche font partie de ses unités"
+
+    def test_for_wall(self, game, x, y):
+        for dx2 in range(3):
+            for dy2 in range(3):
+                if game.inside(x + dx2 - 1, y + dy2 - 1):
+                    if game.map[y + dy2 - 1][x + dx2 - 1] == game.turn and abs(dx2 + dy2 - 2) == 1:
+                        return True
+
+        return False
+
+    def move(self, game, new_map, dx, dy, summary):
+        for y in range(game.ranges[1]):
+            for x in range(game.ranges[0]):
+                valid = False
+                if game.map[y][x] == -2:
+                    valid = self.test_for_wall(game, x, y)
+
+                if (game.map[y][x] == game.turn or valid) and game.inside(x + dx, y + dy):
+                    new_tile = game.map[y + dy][x + dx]
+                    if new_tile == -1:
+                        new_map[y + dy][x + dx] = game.turn
+                    elif new_tile >= 0 and new_tile != game.turn:
+                        owner = game.players[game.order[new_tile]]
+
+                        attack = self.get_power(game, x, y, -dx, -dy)
+                        defense = owner.get_power(game, x + dx, y + dy, dx, dy)
+
+                        diff = attack - defense
+                        diff += self.on_attack(game, attack, defense, new_tile)
+                        diff += owner.on_defense(game, attack, defense)
+
+                        if diff > 0:
+                            new_map[y + dy][x + dx] = game.turn
+                            summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ 🗡️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
+                        elif diff == 0:
+                            new_map[y + dy][x + dx] = -1
+                            summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
+                        else:
+                            summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "` 🛡️ " + global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️")
 
     def get_power(self, game, x, y, dx, dy):
         power = 0
@@ -118,29 +183,31 @@ class Racer(Player):
             game.turn = (self.index - 1)%len(game.players)
 
 
-class Demolisher(Player):
-    name = "🧨 Démolisseur"
-    description = "Capture tous les murs qu'il encercle à la fin de son tour (diagonales non nécessaires)"
-
-    def on_turn_end(self, game):
-        def check_circling(x, y):
-            for dy in range(-1, 2):
-                for dx in range(-1, 2):
-                    if game.inside(x + dx, y + dy):
-                        if game.map[y + dy][x + dx] != self.index and dx != dy:
-                            return False
-            return True
-
-        for y in range(game.ranges[1]):
-            for x in range(game.ranges[0]):
-                if game.map[y][x] == -2:
-                    if check_circling(x, y):
-                        game.map[y][x] = self.index
+# class Demolisher(Player):
+#     name = "🧨 Démolisseur"
+#     description = "Capture tous les murs qu'il encercle à la fin de son tour (diagonales non nécessaires)"
+#
+#     def on_turn_end(self, game):
+#         def check_circling(x, y):
+#             amount = 0
+#             for dy in range(-1, 2):
+#                 for dx in range(-1, 2):
+#                     if game.inside(x + dx, y + dy):
+#                         if game.map[y + dy][x + dx] != self.index and dx != dy:
+#                             amount += 1
+#
+#             return (amount >= 3)
+#
+#         for y in range(game.ranges[1]):
+#             for x in range(game.ranges[0]):
+#                 if game.map[y][x] == -2:
+#                     if check_circling(x, y):
+#                         game.map[y][x] = self.index
 
 
 class Pacifist(Player):
     name = "🕊️ Pacifiste"
-    description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué"
+    description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué pendant les 20 premiers tours"
 
     def __init__(self, user):
         super().__init__(user)
@@ -154,7 +221,7 @@ class Pacifist(Player):
         self.variables["peace_with"] = [i for i in range(len(game.order))]
 
     def on_defense(self, game, attack, defense):
-        return (-math.inf if game.turn in self.variables["peace_with"] else 0)
+        return (-math.inf if game.turn in self.variables["peace_with"] and game.round <= 20 else 0)
 
     def on_attack(self, game, attack, defense, defender):
         if defender in self.variables["peace_with"]:

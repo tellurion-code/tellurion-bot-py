@@ -315,35 +315,14 @@ class Game:
     def inside(self, x, y):
         return x >= 0 and x < self.ranges[0] and y >= 0 and y < self.ranges[1]
 
-    #Gère les combats et les réplications
+    # Gère les combats et les réplications
     def process_direction(self, choice):
         dx = [-1, 0, 0 , 1][choice]
         dy = [0, -1, 1 , 0][choice]
         new_map = copy.deepcopy(self.map)
         summary = []
 
-        for y in range(self.ranges[1]):
-            for x in range (self.ranges[0]):
-                if self.map[y][x] == self.turn and self.inside(x + dx, y + dy):
-                    new_tile = self.map[y + dy][x + dx]
-                    if new_tile == -1:
-                        new_map[y + dy][x + dx] = self.turn
-                    elif new_tile >= 0 and new_tile != self.turn:
-                        attack = self.players[self.order[self.turn]].get_power(self, x, y, -dx, -dy)
-                        defense = self.players[self.order[new_tile]].get_power(self, x + dx, y + dy, dx, dy)
-
-                        diff = attack - defense
-                        diff += self.players[self.order[self.turn]].on_attack(self, attack, defense, new_tile)
-                        diff += self.players[self.order[new_tile]].on_defense(self, attack, defense)
-
-                        if diff > 0:
-                            new_map[y + dy][x + dx] = self.turn
-                            summary.append(global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️ 🗡️ " + global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "`")
-                        elif diff == 0:
-                            new_map[y + dy][x + dx] = -1
-                            summary.append(global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "`")
-                        else:
-                            summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(self.players[self.order[new_tile]].user) + "` 🛡️ " + global_values.tile_colors[self.turn + 2] + " `" + str(self.players[self.order[self.turn]].user) + "`️")
+        self.players[self.order[self.turn]].move(self, new_map, dx, dy, summary)
 
         self.map = new_map
         summary.sort()

@@ -45,8 +45,9 @@ class MainClass(BaseClassPython):
                 await globals.games[game["channel"]].reload(game, self.client)
 
     async def command(self, message, args, kwargs):
-        if args[0] == "join't":
-            await message.channel.send(message.author.mention + " n'a pas rejoint la partie")
+        if len(args):
+            if args[0] == "join't":
+                await message.channel.send(message.author.mention + " n'a pas rejoint la partie")
 
     async def com_create(self, message, args, kwargs):
         if message.channel.id in global_values.games:
