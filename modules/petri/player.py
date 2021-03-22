@@ -144,29 +144,29 @@ class Architect(Player):
         return power
 
 
-class Swarm(Player):
-    name = "🐝 Essaim"
-    description = "Commence avec deux unités en diagonale"
-
-    def spawn(self, game, map, x, y):
-        # map[y][x] = self.index
-
-        done = False
-        for i in range(0, 3):
-            r = math.pi/2 * i
-            nx1 = int(x + math.cos(r))
-            ny1 = int(y + math.sin(r))
-            nx2 = int(x + math.cos(r + math.pi/2))
-            ny2 = int(y + math.sin(r + math.pi/2))
-            if game.inside(nx1, ny2) and game.inside(nx2, ny2) and map[ny1][nx1] == -1 and map[ny2][nx2] == -1:
-                map[ny1][nx1] = self.index
-                map[ny2][nx2] = self.index
-                done = True
-                break
-
-        if not done:
-            map[y + 1][x] = self.index
-            map[y][x + 1] = self.index
+# class Swarm(Player):
+#     name = "🐝 Essaim"
+#     description = "Commence avec deux unités en diagonale"
+#
+#     def spawn(self, game, map, x, y):
+#         # map[y][x] = self.index
+#
+#         done = False
+#         for i in range(0, 3):
+#             r = math.pi/2 * i
+#             nx1 = int(x + math.cos(r))
+#             ny1 = int(y + math.sin(r))
+#             nx2 = int(x + math.cos(r + math.pi/2))
+#             ny2 = int(y + math.sin(r + math.pi/2))
+#             if game.inside(nx1, ny2) and game.inside(nx2, ny2) and map[ny1][nx1] == -1 and map[ny2][nx2] == -1:
+#                 map[ny1][nx1] = self.index
+#                 map[ny2][nx2] = self.index
+#                 done = True
+#                 break
+#
+#         if not done:
+#             map[y + 1][x] = self.index
+#             map[y][x + 1] = self.index
 
 
 class Racer(Player):
