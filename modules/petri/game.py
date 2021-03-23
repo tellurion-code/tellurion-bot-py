@@ -164,6 +164,9 @@ class Game:
             for my in range(0, self.ranges[1], int(self.ranges[1]/2)):
                 for mx in range(0, self.ranges[0], int(self.ranges[0]/2)):
                     for _ in range(self.ranges[2]):
+                        x = mx
+                        y = my
+
                         while True:
                             x = mx + random.randrange(self.ranges[0]/2)
                             y = my + random.randrange(self.ranges[1]/2)

@@ -249,33 +249,35 @@ class Isolated(Player):
 
 class General(Player):
     name = "🚩 Général"
-    description = "Peut doubler la valeur de ses unités pour une manche"
+    description = "Peut doubler la valeur de ses unités pour deux manches"
     power_active = True
 
     def __init__(self, user):
         super().__init__(user)
         self.variables = {
-            "value": 1
+            "turn": 0
         }
 
     def active_power(self, game):
         self.power_active = False
-        self.variables["value"] = 2
+        self.variables["turn"] = 1
 
         return {
             "name": "🚩 Pouvoir du Général",
-            "value": "Vos unités valent double jusqu'à votre prochain tour"
+            "value": "Vos unités valent double pendant les deux prochaines manches"
         }
 
     def on_turn_start(self, game):
-        self.variables["value"] = 1
+        self.variables["turn"] += 1 if self.variables["turn"] else 0
+        if self.variables["turn"] == 3:
+            self.variables["turn"] = 0
 
     def get_power(self, game, x, y, dx, dy):
-        return self.variables["value"] * super().get_power(game, x, y, dx, dy)
+        return (2 if self.variables["turn"] else 1) * super().get_power(game, x, y, dx, dy)
 
 
 class Topologist(Player):
-    name = "🥯 Topologiste"
+    name = "🍩 Topologiste"
     description = "Considère les bords du terrain comme adjacents"
 
     def move(self, game, new_map, dx, dy, summary):
