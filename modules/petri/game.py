@@ -245,7 +245,7 @@ class Game:
             await self.info_message.message.edit(embed=embed)
         else:
             choices = ["Gauche", "Haut", "Bas", "Droite", "Capituler", "Valider"]
-            if len([0 for x in self.players.values() if x.__class__.__name__ in ["Racer", "Border"]]):
+            if len([0 for x in self.players.values() if x.power_active]):
                 choices.append("Pouvoir")
 
             async def next_turn(reactions):
@@ -336,6 +336,8 @@ class Game:
             self.turn = (self.turn + 1) % len(self.order)
             if self.turn == 0:
                 self.round += 1
+
+            self.players[self.order[self.turn]].on_turn_start(self)
 
             if len([0 for row in self.map for tile in row if tile == self.turn]):
                 break

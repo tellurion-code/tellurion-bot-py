@@ -65,6 +65,9 @@ class Player:
     def on_defense(self, game, attack, defense):
         return 0
 
+    def on_turn_start(self, game):
+        pass
+
     def on_turn_end(self, game):
         pass
 
@@ -243,6 +246,77 @@ class Isolated(Player):
 
     def on_defense(self, game, attack, defense):
         return (-math.inf if defense == 1 else 0)
+
+class General(Player):
+    name = "🚩 Général"
+    description = "Peut doubler la valeur de ses unités pour une manche"
+    power_active = True
+
+    def __init__(self, user):
+        super().__init__(user)
+        self.variables = {
+            "value": 1
+        }
+
+    def active_power(self, game):
+        self.power_active = False
+        self.variables["value"] = 2
+
+        return {
+            "name": "🚩 Pouvoir du Général",
+            "value": "Vos unités valent double jusqu'à votre prochain tour"
+        }
+
+    def on_turn_start(self, game):
+        self.variables["value"] = 1
+
+    def get_power(self, game, x, y, dx, dy):
+        return self.variables["value"] * super().get_power(game, x, y, dx, dy)
+
+
+class Topologist(Player):
+    name = "🥯 Topologiste"
+    description = "Considère les bords du terrain comme adjacents"
+
+    def move(self, game, new_map, dx, dy, summary):
+        for y in range(game.ranges[1]):
+            for x in range(game.ranges[0]):
+                nx = (x + dx) % game.ranges[0]
+                ny = (y + dy) % game.ranges[1]
+                if game.map[y][x] == game.turn:
+                    new_tile = game.map[ny][nx]
+                    if new_tile == -1:
+                        new_map[ny][nx] = game.turn
+                    elif new_tile >= 0 and new_tile != game.turn:
+                        owner = game.players[game.order[new_tile]]
+
+                        attack = self.get_power(game, x, y, -dx, -dy)
+                        defense = owner.get_power(game, nx, ny, dx, dy)
+
+                        diff = attack - defense
+                        diff += self.on_attack(game, attack, defense, new_tile)
+                        diff += owner.on_defense(game, attack, defense)
+
+                        if diff > 0:
+                            new_map[ny][nx] = game.turn
+                            summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ 🗡️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
+                        elif diff == 0:
+                            new_map[ny][nx] = -1
+                            summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
+                        else:
+                            summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "` 🛡️ " + global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️")
+
+    def get_power(self, game, x, y, dx, dy):
+        power = 0
+        tx, ty = x, y
+        while game.map[ty][tx] == self.index:
+            power += 1
+            tx = (tx + dx) % game.ranges[0]
+            ty = (ty + dy) % game.ranges[1]
+            if power > max(game.ranges[0], game.ranges[1]):
+                break
+
+        return power
 
 
 # class Border(Player):
