@@ -459,8 +459,8 @@ class ClientById:
         return channel.send(*args, **kwargs)
 
 
-client = NikolaTesla(max_messages=500000)
 intents = discord.Intents.default()
 intents.members = True
 intents.presences = True
-client.run(os.environ['DISCORD_TOKEN'],  intents=intents)
+client = NikolaTesla(max_messages=500000, intents=intents)
+client.run(os.environ['DISCORD_TOKEN'])
