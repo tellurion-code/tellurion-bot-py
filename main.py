@@ -460,4 +460,7 @@ class ClientById:
 
 
 client = NikolaTesla(max_messages=500000)
-client.run(os.environ['DISCORD_TOKEN'])
+intents = discord.Intents.default()
+intents.members = True
+intents.presences = True
+client.run(os.environ['DISCORD_TOKEN'],  intents=intents)
