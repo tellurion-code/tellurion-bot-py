@@ -38,7 +38,7 @@ class MainClass(BaseClass):
         while self.lock:
             await asyncio.sleep(1)
         if (not self.save['message_dict']) or \
-                (time.mktime(today.timetuple()) - time.mktime(self.save['last_occurence'].timetuple())) / 60 > 15:
+                (time.mktime(today.timetuple()) - time.mktime(self.save['last_occurence'].timetuple())) / 60 > 90:
             try:
                 self.lock = True
                 async for message in self.client.get_channel(self.channel).history(limit=None):
