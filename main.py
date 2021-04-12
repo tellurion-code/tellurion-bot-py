@@ -433,7 +433,10 @@ class ClientById:
         return None
 
 
-client1 = LBI(max_messages=500000)
+intents = discord.Intents.default()
+intents.members = True
+intents.presences = True
+client1 = LBI(max_messages=500000, intents=intents)
 
 
 class Communication(asyncio.Protocol):
