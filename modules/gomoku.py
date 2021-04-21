@@ -164,7 +164,7 @@ class MainClass(BaseClass):
                             self.save['games'][game_id]['lock'] = False
                             res = self.gen_grid_from_hist(self.save['games'][game_id]['hist'], fin=True)
                             if any(res):
-                                message_text = "%s a gagné, bravo à cette personne !" % self.client.get_user(
+                                message_text = "%s a gagné!" % self.client.get_user(
                                     self.save['games'][game_id][['Black', 'White'][res.index(True)]]).mention
                             else:
                                 message_text = "C'est au tour de %s !" % (self.client.get_user(
