@@ -63,10 +63,9 @@ class Player:
 		for pos in self.recruitment:
 			game.map[pos[1]][pos[0]] = game.turn
 
-		for y in range(2):
-			for x in range(2):
-				if game.map[y + int(game.ranges[1]/2) - 1][x + int(game.ranges[0]/2) - 1] == game.turn:
-					self.score += 1
+		for pos in game.hill:
+			if game.map[pos[1]][pos[0]] == game.turn:
+				self.score += 1
 
 		self.recruitment.clear()
 

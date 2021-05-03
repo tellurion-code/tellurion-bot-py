@@ -29,6 +29,7 @@ class Game:
 		self.turn = -1  # Le tour (index du joueur en cours) en cours, -1 = pas commencé
 		self.round = 1  # Le nombre de tours de table complets
 		self.map = []  # Carte où la partie se déroule
+		self.hill = []  # Zones à contrôler
 		self.ranges = [10, 10, 2]  # Taille horizontale, taille verticale, nombre de murs par quartiers
 		self.info_message = None
 		self.game_creation_message = None
@@ -69,7 +70,7 @@ class Game:
 			await self.game_creation_message.message.edit(embed=embed)
 
 		async def cond(reactions):
-			return len([0 for x in reactions.values() if 1 in x]) in range(2, 7)
+			return len([0 for x in reactions.values() if 1 in x]) in range(2, 5)
 
 		self.game_creation_message = ReactionMessage(
 			cond,
@@ -136,7 +137,7 @@ class Game:
 		for y in range(self.ranges[1]):
 			self.map.append([])
 			for _ in range(self.ranges[0]):
-				self.map[y].append(-1)  # -1 = vide, -2 = mur
+				self.map[y].append(-1)  # -1 = vide, -2 = point de contrôle, -3 = mur
 
 		for player_id, player in self.players.items():
 			self.order.append(player_id)
@@ -194,6 +195,13 @@ class Game:
 		for i, player_id in enumerate(self.players.keys()):
 			self.players[player_id].spawn(self, [0, self.ranges[0] - 1, self.ranges[0] - 1, 0][i], [0, self.ranges[1] - 1, 0, self.ranges[1] - 1][i], [0, math.pi, math.pi/2, 3*math.pi/2][i])
 
+		self.hill = [
+			[int(self.ranges[0]/2) - 1, int(self.ranges[1]/2) - 1],
+			[int(self.ranges[0]/2) - 1, int(self.ranges[1]/2)],
+			[int(self.ranges[0]/2), int(self.ranges[1]/2) - 1],
+			[int(self.ranges[0]/2), int(self.ranges[1]/2)]
+		]
+
 		await self.send_info()
 		self.save()
 
@@ -206,7 +214,7 @@ class Game:
 		for y in range(self.ranges[1]):
 			row_strings.append("")
 			for x in range(self.ranges[0]):
-				row_strings[-1] += global_values.tile_colors[self.map[y][x] + 2]
+				row_strings[-1] += "🟪" if [x, y] in self.hill and self.map[y][x] == -1 else global_values.tile_colors[self.map[y][x] + 2]
 
 		map_string = '\n'.join(row_strings)
 

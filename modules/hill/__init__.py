@@ -158,10 +158,9 @@ class MainClass(BaseClassPython):
 		# 		await message.channel.send("Sous-section inconnue")
 		# else:
 		await message.channel.send(embed=discord.Embed(
-			title=":small_orange_diamond: Règles de Petri :small_orange_diamond:",
+			title=":small_orange_diamond: Règles de Hill :small_orange_diamond:",
 			description="""
-**:small_orange_diamond: Règles de Hill :small_orange_diamond:**
-**:small_blue_diamond: But du jeu : :small_blue_diamond:***
+**:small_blue_diamond: But du jeu : :small_blue_diamond:**
 Atteindre 15 points.
 A la fin de son tour, un joueur reçoit 1 point pour chaque unité qu'il a dans les 4 cases centrales de plateau.
 
