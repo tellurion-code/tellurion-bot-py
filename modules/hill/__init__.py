@@ -162,9 +162,9 @@ class MainClass(BaseClassPython):
 			description="""
 **:small_blue_diamond: But du jeu : :small_blue_diamond:**
 Atteindre 20 points.
-A la fin de son tour, un joueur reçoit 1 point pour chaque unité qu'il a sur les cases à contrôler (:purple_square:)
+A la fin de son tour, un joueur reçoit 1 point pour chaque unité qu'il a sur les cases à contrôler (:purple_square:), qui sont au centre par défaut
 
-**:small_blue_diamond: Début de partie: :small_blue_diamond:**
+**:small_blue_diamond: Début de partie : :small_blue_diamond:**
 Chaque joueur commence avec 6 unités dans un coin selon ce pattern:
 :red_square::red_square::red_square:
 :red_square::red_square:
@@ -172,7 +172,7 @@ Chaque joueur commence avec 6 unités dans un coin selon ce pattern:
 
 **:small_blue_diamond: Déroulement d’un tour : :small_blue_diamond:**
 - Le joueur choisit une direction
-- Toutes ses unités, sauf celles au centre du plateau, avancent dans cette direction d'une case
+- Toutes ses unités, sauf celles sur l'objectif, avancent dans cette direction d'une case
 - Si une unité adverse est sur le chemin, elle est transportée sur la case vide laissée derrière par les unités
 - Si une unité tente de se déplacer hors du plateau, et que la case derrière l'unité est vide, elle crée une nouvelle unité sur cette case
 			""",
