@@ -46,9 +46,10 @@ class Player:
 			while True:
 				if game.map[y][x] == game.turn:
 					if game.inside(x + dx, y + dy):
-						new_tile = game.map[y + dy][x + dx]
-						game.map[y][x] = new_tile
-						game.map[y + dy][x + dx] = game.turn
+						if game.map[y + dy][x + dx] >= -1:
+							new_tile = game.map[y + dy][x + dx]
+							game.map[y][x] = new_tile
+							game.map[y + dy][x + dx] = game.turn
 					elif game.map[y - dy][x - dx] == -1:
 						self.recruitment.append([x - dx, y - dy])
 
@@ -61,7 +62,8 @@ class Player:
 
 	def on_turn_end(self, game):
 		for pos in self.recruitment:
-			game.map[pos[1]][pos[0]] = game.turn
+			if game.map[pos[1]][pos[0]] == -1:
+				game.map[pos[1]][pos[0]] = game.turn
 
 		for pos in game.hill:
 			if game.map[pos[1]][pos[0]] == game.turn:

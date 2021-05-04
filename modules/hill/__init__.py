@@ -123,29 +123,29 @@ class MainClass(BaseClassPython):
 			save["debug"] = global_values.debug
 			self.objects.save_object("globals", save)
 
-	# async def com_config(self, message, args, kwargs):
-	#	 if message.channel.id in global_values.games:
-	#		 game = global_values.games[message.channel.id]
-	#		 if message.author.id in game.players:
-	#			 if len(args) == 4:
-	#				 args.pop(0)
-	#				 try:
-	#					 args = [int(x) for x in args]
-	#				 except:
-	#					 await message.channel.send("Un des arguments n'est pas un nombre valide")
-	#					 return
-	#
-	#				 if args[0] % 2 == 0 and args[1] % 2 == 0:
-	#					 game.ranges = args
-	#					 await message.channel.send("La carte a été changée pour être " + str(game.ranges[0]) + "x" + str(game.ranges[1]) + " avec " + str(game.ranges[2]) + (" murs" if game.ranges[2] > 1 else " mur") + " par quartier")
-	#				 else:
-	#					 await message.channel.send("La carte doit avoir des dimensions paires")
-	#			 else:
-	#				 await message.channel.send("Il faut préciser la hauteur, la largeur, et le nombre de murs par quartier")
-	#		 else:
-	#			 await message.channel.send("Vous n'êtes pas dans la partie")
-	#	 else:
-	#		 await message.channel.send("Il n'y a pas de partie en cours")
+	async def com_config(self, message, args, kwargs):
+		 if message.channel.id in global_values.games:
+			 game = global_values.games[message.channel.id]
+			 if message.author.id in game.players:
+				 if len(args) == 4:
+					 args.pop(0)
+					 try:
+						 args = [int(x) for x in args]
+					 except:
+						 await message.channel.send("Un des arguments n'est pas un nombre valide")
+						 return
+
+					 if args[0] % 2 == 0 and args[1] % 2 == 0:
+						 game.ranges = args
+						 await message.channel.send("La carte a été changée pour être " + str(game.ranges[0]) + "x" + str(game.ranges[1]) + " avec " + str(game.ranges[2]) + (" murs" if game.ranges[2] > 1 else " mur") + " par quartier")
+					 else:
+						 await message.channel.send("La carte doit avoir des dimensions paires")
+				 else:
+					 await message.channel.send("Il faut préciser la hauteur, la largeur, et le nombre de murs par quartier")
+			 else:
+				 await message.channel.send("Vous n'êtes pas dans la partie")
+		 else:
+			 await message.channel.send("Il n'y a pas de partie en cours")
 
 	async def com_rules(self, message, args, kwargs):
 		# if len(args) > 1:
@@ -161,8 +161,8 @@ class MainClass(BaseClassPython):
 			title=":small_orange_diamond: Règles de Hill :small_orange_diamond:",
 			description="""
 **:small_blue_diamond: But du jeu : :small_blue_diamond:**
-Atteindre 15 points.
-A la fin de son tour, un joueur reçoit 1 point pour chaque unité qu'il a dans les 4 cases centrales de plateau.
+Atteindre 20 points.
+A la fin de son tour, un joueur reçoit 1 point pour chaque unité qu'il a sur les cases à contrôler (:purple_square:)
 
 **:small_blue_diamond: Début de partie: :small_blue_diamond:**
 Chaque joueur commence avec 6 unités dans un coin selon ce pattern:

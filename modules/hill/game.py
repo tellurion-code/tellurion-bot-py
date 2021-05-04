@@ -30,7 +30,7 @@ class Game:
 		self.round = 1  # Le nombre de tours de table complets
 		self.map = []  # Carte où la partie se déroule
 		self.hill = []  # Zones à contrôler
-		self.ranges = [10, 10, 2]  # Taille horizontale, taille verticale, nombre de murs par quartiers
+		self.ranges = [8, 8, 1]  # Taille horizontale, taille verticale, nombre de murs par quartiers
 		self.info_message = None
 		self.game_creation_message = None
 		self.power_selection_message = None
@@ -147,53 +147,46 @@ class Game:
 		for i, player_id in enumerate(self.order):
 			self.players[player_id].index = i
 
-		# def check_bloating(map):
-		# 	for y in range(1, self.ranges[1]-1):
-		# 		for x in range(1, self.ranges[0]-1):
-		# 			count = 0
-		# 			for dx in range(-1, 2):
-		# 				for dy in range(-1, 2):
-		# 					if map[y + dy][x + dx] == -2:
-		# 						count += 1
-		# 			if count >= 2:
-		# 				return False
-		# 	return True
-		#
-		# new_map = None
-		# while True:
-		# 	new_map = copy.deepcopy(self.map)
-		# 	for my in range(0, self.ranges[1], int(self.ranges[1]/2)):
-		# 		for mx in range(0, self.ranges[0], int(self.ranges[0]/2)):
-		# 			for _ in range(self.ranges[2]):
-		# 				x = mx
-		# 				y = my
-		#
-		# 				while True:
-		# 					x = mx + random.randrange(self.ranges[0]/2)
-		# 					y = my + random.randrange(self.ranges[1]/2)
-		# 					if new_map[y][x] == -1:
-		# 						break
-		#
-		# 				new_map[y][x] = -2
-		#
-		# 	r, a = round(min(self.ranges[0], self.ranges[1])/3), random.uniform(0, math.pi*2)
-		#
-		# 	for i, player_id in enumerate(self.players.keys()):
-		# 		while new_map[int(self.ranges[1]/2 + .5 + r * math.sin(a))][int(self.ranges[0]/2 + .5 + r * math.cos(a))] != -1:
-		# 			a += math.pi/20
-		#
-		# 		self.players[player_id].spawn(self, new_map, int(self.ranges[1]/2 + .5 + r * math.sin(a)), int(self.ranges[0]/2 + .5 + r * math.cos(a)))
-		# 		a += math.pi/len(self.players) * 2
-		#
-		# 	valid = check_bloating(new_map)
-		#
-		# 	if valid:
-		# 		break
-		#
-		# self.map = new_map
-
 		for i, player_id in enumerate(self.players.keys()):
 			self.players[player_id].spawn(self, [0, self.ranges[0] - 1, self.ranges[0] - 1, 0][i], [0, self.ranges[1] - 1, 0, self.ranges[1] - 1][i], [0, math.pi, math.pi/2, 3*math.pi/2][i])
+
+		def check_bloating(map):
+			for y in range(1, self.ranges[1]-1):
+				for x in range(1, self.ranges[0]-1):
+					count = 0
+					for dx in range(-1, 2):
+						for dy in range(-1, 2):
+							if map[y + dy][x + dx] == -2:
+								count += 1
+					if count >= 2:
+						return False
+			return True
+
+		new_map = None
+		while True:
+			new_map = copy.deepcopy(self.map)
+			for my in range(0, self.ranges[1], int(self.ranges[1]/2)):
+				for mx in range(0, self.ranges[0], int(self.ranges[0]/2)):
+					for _ in range(self.ranges[2]):
+						x = mx
+						y = my
+
+						while True:
+							x = mx + random.randrange(self.ranges[0]/2)
+							y = my + random.randrange(self.ranges[1]/2)
+							if new_map[y][x] == -1:
+								break
+
+						new_map[y][x] = -2
+
+			r, a = round(min(self.ranges[0], self.ranges[1])/3), random.uniform(0, math.pi*2)
+
+			valid = check_bloating(new_map)
+
+			if valid:
+				break
+
+		self.map = new_map
 
 		self.hill = [
 			[int(self.ranges[0]/2) - 1, int(self.ranges[1]/2) - 1],
@@ -319,7 +312,7 @@ class Game:
 	async def next_turn(self, message=None):
 		self.players[self.order[self.turn]].on_turn_end(self)
 
-		if self.players[self.order[self.turn]].score >= 15:
+		if self.players[self.order[self.turn]].score >= 20:
 			await self.end_game(str(self.players[self.order[self.turn]].user), "Contrôle")
 			return
 
@@ -354,6 +347,7 @@ class Game:
 			"order": self.order,
 			"turn": self.turn,
 			"map": self.map,
+			"hill": self.hill,
 			"ranges": self.ranges,
 			"last_choice": self.last_choice,
 			"round": self.round,
@@ -378,6 +372,7 @@ class Game:
 		self.turn = int(object["turn"])
 		self.round = int(object["round"])
 		self.map = list(object["map"])
+		self.hill = list(object["hill"])
 		self.ranges = object["ranges"]
 		self.last_choice = object["last_choice"]
 		self.players = {}
