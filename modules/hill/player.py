@@ -29,7 +29,7 @@ class Player:
 		game.map[y + int(math.sin(r)) + int(math.sin(r + math.pi/2))][x + int(math.cos(r)) + int(math.cos(r + math.pi/2))] = self.index
 
 	def move(self, game, dx, dy, summary):
-		y = game.ranges[1] if dy == 1 else -1
+		y = game.ranges[1] - 1 if dy == 1 else 0
 
 		dir = [
 			1 if dx == 0 else -dx,
@@ -37,14 +37,13 @@ class Player:
 		]
 
 		while True:
-			y += dir[1]
 			x = game.ranges[0] - 1 if dx == 1 else 0
 
 			if not game.inside(x, y):
 				break
 
 			while True:
-				if game.map[y][x] == game.turn and [y, x] not in game.hill:
+				if game.map[y][x] == game.turn:
 					if game.inside(x + dx, y + dy):
 						if game.map[y + dy][x + dx] >= -1:
 							new_tile = game.map[y + dy][x + dx]
@@ -56,6 +55,8 @@ class Player:
 				x += dir[0]
 				if not game.inside(x, y):
 					break
+
+			y += dir[1]
 
 	def on_turn_start(self, game):
 		pass
