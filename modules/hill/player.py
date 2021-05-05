@@ -43,7 +43,7 @@ class Player:
 				break
 
 			while True:
-				if game.map[y][x] == game.turn:
+				if game.map[y][x] == game.turn and [x, y] not in game.hill:
 					if game.inside(x + dx, y + dy):
 						if game.map[y + dy][x + dx] >= -1:
 							new_tile = game.map[y + dy][x + dx]

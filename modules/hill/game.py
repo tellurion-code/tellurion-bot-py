@@ -174,7 +174,7 @@ class Game:
 						while True:
 							x = mx + random.randrange(self.ranges[0]/2)
 							y = my + random.randrange(self.ranges[1]/2)
-							if new_map[y][x] == -1:
+							if new_map[y][x] == -1 and [x, y] not in self.hill:
 								break
 
 						new_map[y][x] = -2

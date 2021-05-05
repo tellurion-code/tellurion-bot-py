@@ -172,7 +172,7 @@ Chaque joueur commence avec 6 unités dans un coin selon ce pattern:
 
 **:small_blue_diamond: Déroulement d’un tour : :small_blue_diamond:**
 - Le joueur choisit une direction
-- Toutes ses unités avancent dans cette direction d'une case
+- Toutes ses unités, sauf celles sur l'objectif, avancent dans cette direction d'une case
 - Si une unité adverse est sur le chemin, elle est transportée sur la case vide laissée derrière par les unités
 - Si une unité tente de se déplacer hors du plateau, et que la case derrière l'unité est vide, elle crée une nouvelle unité sur cette case
 			""",
