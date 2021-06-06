@@ -11,8 +11,8 @@ class MainClass(BaseClassPython):
 		"commands": {
 			"{prefix}{command}": "Envoie la liste",
 			"{prefix}{command} add": "S'ajouter à la liste",
-			"{preifx}{command} remove": "S'enlever de la liste",
-			"{preifx}{command} nest": "Ping le suivant dans la liste",
+			"{prefix}{command} remove": "S'enlever de la liste",
+			"{prefix}{command} nest": "Ping le suivant dans la liste",
 		}
 	}
 
