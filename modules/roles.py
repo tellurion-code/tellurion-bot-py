@@ -21,7 +21,8 @@ class MainClass(BaseClass):
     def __init__(self, client):
         super().__init__(client)
         self.RoleList = {
-            "joueur": [435559220860157952, "Permet d'être notifié pour les mini-jeux/jeux"]
+            "joueur": [435559220860157952, "Permet d'être notifié pour les mini-jeux/jeux"],
+            "rework": [851761080040685568, "Permet d'être notifié pour les évènements liés au rework"]
         }
 
     async def com_list(self, message, args, kwargs):
