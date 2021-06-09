@@ -13,6 +13,7 @@ toml = "*"
 "discord.py" = {version = "*",extras = ["voice",]}
 matplotlib = "*"
 humanize = "*"
+discord-components = "*"
 
 [dev-packages]
 
