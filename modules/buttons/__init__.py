@@ -70,16 +70,18 @@ class MainClass(BaseClassPython):
             temporary=False
         ).send(
             message.channel,
-            "Message de Test",
-            "Ce message a pour but de tester les messages avec des réactions interactives",
-            global_values.color
+            discord.Embed(
+                title="Message de Test",
+                descirption="Ce message a pour but de tester les messages avec des réactions interactives",
+                color=global_values.color
+            )
         )
 
     async def on_button_click(self, interaction):
         if interaction.component.id in global_values.components:
             button = global_values.components[interaction.component.id]
 
-            if button.cond(interaction):
+            if button.cond(interaction) and not button.disabled:
                 await button.effect(button, interaction)
             else:
                 await interaction.respond(type=6)
