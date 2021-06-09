@@ -28,6 +28,7 @@ class Game:
         self.hint = "" # Dernier indice donné
         self.affected = 0 # Nombre de nombres affectés par l'indice
         self.game_message = None
+        self.spymaster_message = None
 
         self.board.extend([Word(x, 2) for x in random.sample(global_values.words, 25)])
 
@@ -355,7 +356,11 @@ class Game:
 
             await interaction.respond(content="Vraies couleurs des cartes", components=comps)
 
-        await ComponentMessage(
+        async def pass_turn(button, interaction):
+            self.turn = 1 - self.turn
+            await self.send_info(interaction)
+
+        self.spymaster_message = ComponentMessage(
             [
                 [
                     {
@@ -363,13 +368,21 @@ class Game:
                         "cond": lambda i: i.user.id in self.spy_masters,
                         "label": "Voir les vraies couleurs",
                         "style": 3
+                    },
+                    {
+                        "effect": pass_turn,
+                        "cond": lambda i: lambda i: i.user.id == self.spy_masters[self.turn],
+                        "label": "Passer le tour",
+                        "style": 3
                     }
                 ]
             ]
-        ).send(
+        )
+
+        await self.spymaster_message.send(
             self.channel,
             discord.Embed(
-                title="Informations pour les Spymasters",
+                title="Contrôles pour les Spymasters",
                 color=global_values.color
             )
         )
@@ -381,7 +394,8 @@ class Game:
             color=0x4444ff if self.turn == 0 else 0xff4444
         )
 
-        await interaction.respond(type=7, embed=embed, components=self.game_message.components)
+        await interaction.respond(type=6)
+        await self.game_message.message.edit(embed=embed, components=self.game_message.components)
 
     async def check_if_win(self):
         card_count = 0
@@ -408,6 +422,7 @@ class Game:
         await self.channel.send(embed=embed)
 
         await self.game_message.delete(False, True)
+        await self.spymaster_message.delete()
 
         global_values.games.pop(self.channel.id)
 
