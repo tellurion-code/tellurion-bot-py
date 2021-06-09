@@ -1,353 +1,414 @@
 import discord
+from discord_components import Button
 import random
 import math
 
 from modules.codenames.player import Player
-from modules.codenames.reaction_message import ReactionMessage
+from modules.buttons.button import ComponentMessage
 from modules.base import BaseClassPython
 
-import modules.codenames.globals as globals
+import modules.codenames.globals as global_values
+
+class Word:
+    def __init__(self, word, color):
+        self.word = word
+        self.color = color
+        self.revealed = False
+
 
 class Game:
     def __init__(self, message):
         self.channel = message.channel
         self.players = {
             message.author.id: Player(message.author)
-        } #Dict pour rapidement accéder aux infos
-        self.spy_masters = [] #Les Spy Masters, id
-        self.turn = "none" #Le tour en cours. "bleu" = bleu, "rouge" = rouge, "none" = pas commencé
-        self.board = [] #Liste des mots utilisés pour la partie
-        self.colors = [] #Liste des couleurs des mots, correspond aux mots dans board
-        self.revealed = [] #Liste des couleurs révélées
-        self.hint = "" #Dernier indice donné
-        self.affected = 0 #Nombre de nombres affectés par l'indice
+        } # Dict pour rapidement accéder aux infos
+        self.spy_masters = [0, 0] # Les Spy Masters, id
+        self.turn = -1 # Le tour en cours. 0 = bleu, 1 = rouge, -1 = pas commencé (et 2 = "gris" vert en vrai, 3 = "noir", gris en vrai)
+        self.board = [] # Liste des mots utilisés pour la partie et leurs couleurs (vraies et révélées)
+        self.hint = "" # Dernier indice donné
+        self.affected = 0 # Nombre de nombres affectés par l'indice
+        self.game_message = None
 
-        self.board.extend(random.sample(globals.words, 25))
+        self.board.extend([Word(x, 2) for x in random.sample(global_values.words, 25)])
 
-        for i in range(len(self.board)):
-            self.colors.append("yellow")
-
-        for i in range(len(self.board)):
-            self.revealed.append("white")
-
-        self.colors[random.randrange(len(self.colors))] = "black"
+        self.board[random.randrange(len(self.board))].color = 3 # Mise en place de l'Assassin
 
         for i in range(9):
             while True:
-                index = random.randrange(len(self.colors))
-                color = self.colors[index]
-                if color == "yellow":
+                index = random.randrange(len(self.board))
+                color = self.board[index].color
+                if color == 2:
                     break
 
-            self.colors[index] = "blue"
+            self.board[index].color = 0
 
         for i in range(8):
             while True:
-                index = random.randrange(len(self.colors))
-                color = self.colors[index]
-                if color == "yellow":
+                index = random.randrange(len(self.board))
+                color = self.board[index].color
+                if color == 2:
                     break
 
-            self.colors[index] = "red"
+            self.board[index].color = 1
 
-    async def start_game(self):
-        self.turn = "blue"
+    async def create_game(self, message):
+        async def join_or_leave(button, interaction):
+            if interaction.user.id not in self.players:
+                self.players[interaction.user.id] = Player(interaction.user)
+            else:
+                del self.players[interaction.user.id]
 
-        async def cond_masters(reactions):
-            ok = True
+            await update_join_message(interaction)
 
-            for id in self.players:
-                if id in reactions:
-                    if len(reactions[id]) != 1:
-                        ok = False
-                        break
-                else:
-                    ok = False
-                    break
+        async def start(button, interaction):
+            await interaction.respond(type=6)
+            await join_message.delete()
+            await self.choose_teams(message)
 
-            return ok
-
-        async def set_teams(reactions):
-            choices = []
-            for id, indexes in reactions.items():
-                self.players[id].team = "red" if indexes[0] == 1 else "blue"
-                choices.append(id)
-
-            choices.sort(key = lambda e: self.players[e].team)
-
-            await self.message.message.clear_reactions()
-
-            embed = self.message.message.embeds[0]
-            embed.title = "Equipes choisies ✅"
-            embed.description = ""
-            await self.message.message.edit(embed = embed)
-
-            async def set_spy_masters(reactions):
-                embed = self.message.message.embeds[0]
-                embed.title = "Spy Masters choisis ✅"
-                embed.description = ""
-
-                votes = []
-                for i, id in enumerate(choices):
-                    votes.append([id, 0])
-                    for indexes in reactions.values():
-                        if indexes[0] == i:
-                            votes[-1][1] += 1
-
-                random.shuffle(votes)
-                votes.sort(key = lambda e: e[1], reverse = True)
-
-                self.spy_masters = [0, 0]
-                for vote in votes:
-                    for i in range(2):
-                        if self.players[vote[0]].team == ("red" if i == 1 else "blue") and self.spy_masters[i] == 0:
-                            self.spy_masters[i] = vote[0]
-
-                value = ""
-                for id in self.spy_masters:
-                    await self.players[id].user.send("||\n\n\n\n\n\n\n\n||Tu es le Spy Master de ton équipe. Utilise %codenames send pour envoyer un indice quand c'est ton tour")
-                    value += globals.color_emojis[self.players[id].team] + " `" + str(self.players[id].user) + "`\n"
-
-                embed.set_field_at(0,
-                    name = "Résultats :",
-                    value = value
-                )
-
-                await self.message.message.clear_reactions()
-                await self.message.message.edit(embed = embed)
-
-                self.message = None
-
-                await self.send_info()
-
-            def check_masters(reaction, user):
-                if reaction.emoji == "✅":
-                    return True
-
-                if user.id in self.players:
-                    return self.players[choices[globals.number_emojis.index(reaction.emoji)]].team == self.players[user.id].team
-                else:
-                    return False
-
-            async def update_master_votes(reactions2):
-                votes = {}
-                for i, id in enumerate(choices):
-                    votes[id] = 0
-                    for indexes in reactions2.values():
-                        if indexes[0] == i:
-                            votes[id] += 1
-
-                embed = self.message.message.embeds[0]
-                embed.set_field_at(0,
-                    name = "Votes",
-                    value = '\n'.join([globals.color_emojis[self.players[x].team] + " `" + str(self.players[x].user) + "` : " + str(votes[x]) for i, x in enumerate(choices)])
-                )
-                await self.message.message.edit(embed = embed)
-
-            self.message = ReactionMessage(cond_masters,
-                set_spy_masters,
-                check = check_masters,
-                update = update_master_votes,
-                temporary = False
-            )
-
-            await self.message.send(self.channel,
-                "Votez pour votre Spy Master",
-                "Les égalités seront résolues au hasard\n\n",
-                0x880088,
-                ["`" + str(self.players[x].user) + "`" for x in choices],
-                fields = [
+        join_message = ComponentMessage(
+            [
+                [
                     {
-                        "name": "Votes",
-                        "value": '\n'.join([globals.color_emojis[self.players[x].team] + " `" + str(self.players[x].user) + "` : 0" for i, x in enumerate(choices)])
+                        "effect": join_or_leave,
+                        "cond": lambda i: True,
+                        "label": "Rejoindre ou partir",
+                        "style": 1
+                    },
+                    {
+                        "effect": start,
+                        "cond": lambda i: i.user.id == message.author.id and (len(self.players) >= 4 or global_values.debug),
+                        "label": "Pas assez de joueurs",
+                        "style": 2,
+                        "disabled": True
                     }
                 ]
-            )
-
-        async def cond_teams(reactions):
-            teams = [0, 0]
-            for id, indexes in reactions.items():
-                teams[indexes[0]] += 1
-
-            ok = teams[0] > 1 and teams[1] > 1 or globals.debug
-            if not ok:
-                return False
-
-            for id in self.players:
-                if id in reactions:
-                    if len(reactions[id]) != 1:
-                        ok = False
-                        break
-                else:
-                    ok = False
-                    break
-
-            return ok
-
-        async def update_comp(reactions):
-            teams = [[],[]]
-            for id, indexes in reactions.items():
-                if len(indexes) == 1:
-                    teams[indexes[0]].append(id)
-
-            embed = self.message.message.embeds[0]
-
-            embed.set_field_at(0, name = "**Equipe Bleue**",
-                value = "Joueurs : " + ', '.join([str(self.players[x].user) for x in teams[0]]),
-                inline = False
-            )
-            embed.set_field_at(1, name = "**Equipe Rouge**",
-                value = "Joueurs : " + ', '.join([str(self.players[x].user) for x in teams[1]]),
-                inline = False
-            )
-
-            await self.message.message.edit(embed = embed)
-
-        self.message = ReactionMessage(cond_teams,
-            set_teams,
-            check = lambda r, u: u.id in self.players,
-            update = update_comp,
-            temporary = False
-        )
-
-        await self.message.send(self.channel,
-            "Chosissez votre équipe",
-            "",
-            0x880088,
-            ["🟦 Bleue", "🟥 Rouge"],
-            fields = [
-                {
-                    "name":"**Equipe Bleue**",
-                    "value": "Joueurs :",
-                    "inline": False
-                },
-                {
-                    "name": "**Equipe Rouge**",
-                    "value": "Joueurs :",
-                    "inline": False
-                },
             ]
         )
 
-    async def send_info(self):
-        board = "```"
-        word_length = 16
-        for i, card in enumerate(self.board):
-            board += " " * math.floor((word_length - len(card))/2) + card + " " * math.ceil((word_length - len(card))/2) + ("|\n" if (i + 1) % 5 == 0 else "|")
-        board += "```"
+        embed = discord.Embed(
+            title="Partie de Codenames | Joueurs (1) :",
+            description='\n'.join(["`" + str(x.user) + "`" for x in self.players.values()]),
+            color=global_values.color
+        )
 
-        colors = "" #⬛🇦🇧🇨🇩🇪
-        card_count = 0
-        for card in self.colors:
-            if card == self.turn:
-                card_count += 1
+        await join_message.send(
+            message.channel,
+            embed
+        )
 
-        for i, card in enumerate(self.revealed):
-            colors += globals.color_emojis[card] + ("\n" if (i + 1) % 5 == 0 else "")
-            if card == self.turn:
-                card_count -= 1
+        async def update_join_message(interaction):
+            join_message.components[0][1].style = 3 if (len(self.players) >= 4 or global_values.debug) else 2
+            join_message.components[0][1].label = "Démarrer" if (len(self.players) >= 4 or global_values.debug) else "Pas assez de joueurs"
+            join_message.components[0][1].disabled = False if (len(self.players) >= 4 or global_values.debug) else True
 
-        embed = discord.Embed(title = "Tour de l'équipe " + ("bleue" if self.turn == "blue" else "rouge") + " (" + str(card_count) + (" carte restante)" if card_count == 1 else " cartes restantes)"),
-            description = ("Indice : " + self.hint + " (" + str(self.affected) + ")") if self.hint != "" else "",
-            color = 0x0000ff if self.turn == "blue" else 0xff0000)
+            embed.title = "Partie de Codenames | Joueurs (" + str(len(self.players)) + ") :"
+            embed.description = '\n'.join(["`" + str(x.user) + "`" for x in self.players.values()])
 
-        embed.add_field(name = "Couleurs révélées des cartes",
-            value = colors)
+            await interaction.respond(
+                type=7,
+                embed=embed,
+                components=join_message.components
+            )
 
-        if self.message:
-            await self.message.edit(content = board, embed = embed)
-        else:
-            self.message = await self.channel.send(board, embed =  embed)
+    async def choose_teams(self, message):
+        self.turn = 0
 
-        for id in self.spy_masters:
-            await self.send_spy_master_infos(self.players[id])
+        async def join_team(button, interaction):
+            self.players[interaction.user.id].team = button.index
 
-    async def send_spy_master_infos(self, target):
-        board = "```"
-        word_length = 16
-        for i, card in enumerate(self.board):
-            board += " " * math.floor((word_length - len(card))/2) + card + " " * math.ceil((word_length - len(card))/2) + ("|\n" if (i + 1) % 5 == 0 else "|")
-        board += "```"
+            await update_team_message(interaction)
 
-        colors = ""
-        revealed = ""
-        card_count = 0
-        for i, card in enumerate(self.colors):
-            colors += globals.color_emojis[card] + ("\n" if (i + 1) % 5 == 0 else "")
-            if card == self.turn:
-                card_count += 1
+        async def confirm_teams(buton, interaction):
+            await interaction.respond(type=6)
+            await team_message.delete()
+            await self.choose_spymasters(message)
 
-        for i, card in enumerate(self.revealed):
-            revealed += globals.color_emojis[card] + ("\n" if (i + 1) % 5 == 0 else "")
-            if card == self.turn:
-                card_count -= 1
+        def balanced_teams():
+            return abs(sum([2 * x.team - 1 for x in self.players.values()])) <= 1
 
-        embed = discord.Embed(title = "Tour de l'équipe " + ("bleue" if self.turn == "blue" else "rouge") + " (" + str(card_count) + (" carte restante)" if card_count == 1 else " cartes restantes)"),
-            description = ("Indice : " + self.hint + " (" + str(self.affected) + ")") if self.hint != "" else "",
-            color = 0x0000ff if self.turn == "blue" else 0xff0000)
+        def missing_players():
+            return len([0 for x in self.players.values() if x.team == -1])
 
-        embed.add_field(name = "Couleurs des cartes",
-            value = colors)
+        team_message = ComponentMessage(
+            [
+                [
+                    {
+                        "effect": join_team,
+                        "cond": lambda i: i.user.id in self.players,
+                        "label": "Rejoindre l'équipe bleue",
+                        "style": 1
+                    },
+                    {
+                        "effect": join_team,
+                        "cond": lambda i: i.user.id in self.players,
+                        "label": "Rejoindre l'équipe rouge",
+                        "style": 4
+                    }
+                ],
+                [
+                    {
+                        "effect": confirm_teams,
+                        "cond": lambda i: i.user.id == message.author.id and balanced_teams() and not missing_players(),
+                        "label": "Joueurs sans équipe restants",
+                        "style": 2,
+                        "disabled": True
+                    }
+                ]
+            ]
+        )
 
-        embed.add_field(name = "Couleurs révélées des cartes",
-            value = revealed)
+        embed = discord.Embed(
+            title="Partie de Codenames | Choix des équipes",
+            color=global_values.color
+        )
 
-        if target.message:
-            await target.message.edit(content = board, embed =  embed)
-        else:
-            target.message = await target.user.send(board, embed =  embed)
+        embed.add_field(
+            name="🟦 Equipe Bleue",
+            value="Personne"
+        )
+
+        embed.add_field(
+            name="🟥 Equipe Rouge",
+            value="Personne"
+        )
+
+        await team_message.send(
+            message.channel,
+            embed
+        )
+
+        async def update_team_message(interaction):
+            style = 2
+            label = "Continuer"
+            disabled = True
+
+            if missing_players():
+                label = "Joueurs sans équipe restants"
+            elif not balanced_teams():
+                label = "Equipes déséquilibrées"
+            else:
+                style = 3
+                disabled = False
+
+            team_message.components[1][0].style = style
+            team_message.components[1][0].label = label
+            team_message.components[1][0].disabled = disabled
+
+            for i in range(2):
+                members = ["`" + str(x.user) + "`" for x in self.players.values() if x.team == i]
+
+                embed.set_field_at(
+                    i,
+                    name=embed.fields[i].name,
+                    value='\n'.join(members) if len(members) else "Personne"
+                )
+
+            await interaction.respond(
+                type=7,
+                embed=embed,
+                components=team_message.components
+            )
+
+    async def choose_spymasters(self, message):
+        async def become_spymaster(button, interaction):
+            self.spy_masters[button.index] = interaction.user.id
+
+            await update_spymaster_message(interaction)
+
+        async def confirm_spymasters(buton, interaction):
+            await interaction.respond(type=6)
+            await spymaster_message.delete()
+            await self.start_game()
+
+        def missing_spymasters():
+            return len([0 for x in self.spy_masters if x == 0])
+
+        spymaster_message = ComponentMessage(
+            [
+                [
+                    {
+                        "effect": become_spymaster,
+                        "cond": lambda i: i.user.id in self.players and self.players[i.user.id].team == 0,
+                        "label": "Devenir Spymaster bleu",
+                        "style": 1
+                    },
+                    {
+                        "effect": become_spymaster,
+                        "cond": lambda i: i.user.id in self.players and self.players[i.user.id].team == 1,
+                        "label": "Devenir Spymaster rouge",
+                        "style": 4
+                    }
+                ],
+                [
+                    {
+                        "effect": confirm_spymasters,
+                        "cond": lambda i: i.user.id == message.author.id and not missing_spymasters(),
+                        "label": "Joueurs sans équipe restants",
+                        "style": 2,
+                        "disabled": True
+                    }
+                ]
+            ]
+        )
+
+        embed = discord.Embed(
+            title="Partie de Codenames | Choix des Spymasters",
+            color=global_values.color
+        )
+
+        embed.add_field(
+            name="🟦 Spymaster Bleu",
+            value="Personne"
+        )
+
+        embed.add_field(
+            name="🟥 Spymaster Rouge",
+            value="Personne"
+        )
+
+        await spymaster_message.send(
+            message.channel,
+            embed
+        )
+
+        async def update_spymaster_message(interaction):
+            style = 2
+            label = "Continuer"
+            disabled = True
+
+            if missing_spymasters():
+                label = "Spymaster manquant"
+            else:
+                style = 3
+                disabled = False
+
+            spymaster_message.components[1][0].style = style
+            spymaster_message.components[1][0].label = label
+            spymaster_message.components[1][0].disabled = disabled
+
+            for i in range(2):
+                embed.set_field_at(
+                    i,
+                    name=embed.fields[i].name,
+                    value="`" + str(self.players[self.spy_masters[i]].user) + "`" if self.spy_masters[i] else "Personne"
+                )
+
+            await interaction.respond(
+                type=7,
+                embed=embed,
+                components=spymaster_message.components
+            )
+
+    async def start_game(self):
+        async def reveal_word(button, interaction):
+            word = self.board[button.index]
+            word.revealed = True
+            button.disabled = True
+            button.style = [1, 4, 3, 2][word.color]
+
+            if word.color == 3:
+                await self.end_game(False)
+            else:
+                await self.check_if_win()
+
+            if word.color != self.turn:
+                self.turn = 1 - self.turn
+
+            await self.send_info(interaction)
+
+
+        components = []
+        for y in range(5):
+            components.append([])
+            for x in range(5):
+                components[len(components) - 1].append({
+                    "effect": reveal_word,
+                    "cond": lambda i: i.user.id == self.spy_masters[self.turn],
+                    "label": self.board[5 * y + x].word,
+                    "style": 2
+                })
+
+        self.game_message = ComponentMessage(components, temporary=False)
+
+        await self.game_message.send(
+            self.channel,
+            discord.Embed(
+                title="Partie de Codenames",
+                description="Tour du Spymaster `" + str(self.players[self.spy_masters[0]].user) + "`",
+                color=0x4444ff
+            )
+        )
+
+        async def send_spymaster_info(button, interaction):
+            comps = []
+            for y in range(5):
+                comps.append([])
+                for x in range(5):
+                    word = self.board[5 * y + x]
+                    comps[len(comps) - 1].append(
+                        Button(
+                            label=word.word,
+                            style=[1, 4, 3, 2][word.color],
+                            disabled=True
+                        )
+                    )
+
+            await interaction.respond(content="Vraies couleurs des cartes", components=comps)
+
+        await ComponentMessage(
+            [
+                [
+                    {
+                        "effect": send_spymaster_info,
+                        "cond": lambda i: i.user.id in self.spy_masters,
+                        "label": "Voir les vraies couleurs",
+                        "style": 3
+                    }
+                ]
+            ]
+        ).send(
+            self.channel,
+            discord.Embed(
+                title="Informations pour les Spymasters",
+                color=global_values.color
+            )
+        )
+
+    async def send_info(self, interaction):
+        embed = discord.Embed(
+            title="Partie de Codenames",
+            description="Tour du Spymaster `" + str(self.players[self.spy_masters[self.turn]].user) + "`",
+            color=0x4444ff if self.turn == 0 else 0xff4444
+        )
+
+        await interaction.respond(type=7, embed=embed, components=self.game_message.components)
 
     async def check_if_win(self):
         card_count = 0
-        for card in self.colors:
-            if card == self.turn:
+        for word in self.board:
+            if word.color == self.turn and not word.revealed:
                 card_count += 1
-
-        for card in self.revealed:
-            if card == self.turn:
-                card_count -= 1
 
         if card_count == 0:
             await self.end_game(True)
-        else:
-            await self.send_info()
 
     async def end_game(self, current_win):
         if not current_win:
-            self.turn = "blue" if self.turn == "red" else "red"
+            self.turn = 1 - self.turn
 
-        board = "```"
-        word_length = 16
-        for i, card in enumerate(self.board):
-            board += " " * math.floor((word_length - len(card))/2) + card + " " * math.ceil((word_length - len(card))/2) + ("|\n" if (i + 1) % 5 == 0 else "|")
-        board += "```"
+        embed = discord.Embed(
+            title = "Victoire de l'équipe " + ("bleue !" if self.turn == 0 else "rouge !"),
+            color = 0x4444ff if self.turn == 0 else 0xff4444
+        )
 
-        colors = ""
-        revealed = ""
-        card_count = 0
-        for i, card in enumerate(self.colors):
-            colors += globals.color_emojis[card] + ("\n" if (i + 1) % 5 == 0 else "")
-            if card == self.turn:
-                card_count += 1
+        for row in self.game_message.components:
+            for button in row:
+                button.style = [1, 4, 3, 2][self.board[button.index].color]
 
-        for i, card in enumerate(self.revealed):
-            revealed += globals.color_emojis[card] + ("\n" if (i + 1) % 5 == 0 else "")
-            if card == self.turn:
-                card_count -= 1
+        await self.channel.send(embed=embed)
 
-        embed = discord.Embed(title = "Victoire de l'équipe " + ("bleue !" if self.turn == "blue" else "rouge !"),
-            color = 0x0000ff if self.turn == "blue" else 0xff0000 )
+        await self.game_message.delete(False, True)
 
-        embed.add_field(name = "Couleurs des cartes",
-            value = colors)
-
-        embed.add_field(name = "Couleurs révélées des cartes",
-            value = revealed)
-
-        await self.message.edit(content = board, embed =  embed)
-        for id in self.spy_masters:
-            await self.players[id].message.edit(content = board, embed =  embed)
-
-        globals.games.pop(self.channel.id)
+        global_values.games.pop(self.channel.id)
 
  #  Module créé par Le Codex#9836
