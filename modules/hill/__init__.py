@@ -2,7 +2,6 @@ import discord
 
 from modules.hill.player import Player
 from modules.hill.game import Game
-from modules.hill.player import Player
 from modules.reaction_message.reaction_message import ReactionMessage
 from modules.base import BaseClassPython
 
