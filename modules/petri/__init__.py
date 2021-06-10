@@ -2,7 +2,6 @@ import discord
 
 from modules.petri.player import Player
 from modules.petri.game import Game
-from modules.petri.player import Player
 from modules.reaction_message.reaction_message import ReactionMessage
 from modules.base import BaseClassPython
 
