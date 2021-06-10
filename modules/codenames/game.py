@@ -116,7 +116,6 @@ class Game:
 
         async def join_team(button, interaction):
             self.players[interaction.user.id].team = button.index
-
             await update_team_message(interaction)
 
         async def confirm_teams(buton, interaction):
@@ -213,7 +212,6 @@ class Game:
     async def choose_spymasters(self, message):
         async def become_spymaster(button, interaction):
             self.spy_masters[button.index] = interaction.user.id
-
             await update_spymaster_message(interaction)
 
         async def confirm_spymasters(buton, interaction):
@@ -244,7 +242,7 @@ class Game:
                     {
                         "effect": confirm_spymasters,
                         "cond": lambda i: i.user.id == message.author.id and not missing_spymasters(),
-                        "label": "Joueurs sans équipe restants",
+                        "label": "Spymaster manquant",
                         "style": 2,
                         "disabled": True
                     }
@@ -371,7 +369,7 @@ class Game:
                     },
                     {
                         "effect": pass_turn,
-                        "cond": lambda i: lambda i: i.user.id == self.spy_masters[self.turn],
+                        "cond": lambda i: i.user.id == self.spy_masters[self.turn],
                         "label": "Passer le tour",
                         "style": 3
                     }
