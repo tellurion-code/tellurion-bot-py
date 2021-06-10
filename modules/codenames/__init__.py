@@ -36,14 +36,28 @@ class MainClass(BaseClassPython):
             global_values.games[message.channel.id] = Game(message)
             await global_values.games[message.channel.id].create_game(message)
 
+    async def com_show(self, message, args, kwargs):
+        if message.channel.id not in global_values.games:
+            await message.channel.send("Il n'y a pas de partie en cours dans le salon")
+        else:
+            game = global_values.games[message.channel.id]
+            if game.turn == 0:
+                await game.game_message.delete(True)
+                await game.spymaster_message.delete()
+                await game.send_game_messages()
+
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in global_values.games:
             game = global_values.games[message.channel.id]
-            if game.turn == "none":
-                await message.channel.send("La partie a été réinitialisée")
-                global_values.games.pop(message.channel.id)
-            else:
-                await message.author.send("La partie a déjà commencé")
+            await message.channel.send("La partie a été réinitialisée")
+
+            if (game.game_message):
+                await game.game_message.delete(False, True)
+
+            if (game.spymaster_message):
+                await game.spymaster_message.delete()
+
+            global_values.games.pop(message.channel.id)
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 

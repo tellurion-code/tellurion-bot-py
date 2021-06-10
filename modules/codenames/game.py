@@ -63,10 +63,10 @@ class Game:
 
         async def start(button, interaction):
             await interaction.respond(type=6)
-            await join_message.delete()
+            await self.game_message.delete()
             await self.choose_teams(message)
 
-        join_message = ComponentMessage(
+        self.game_message = ComponentMessage(
             [
                 [
                     {
@@ -92,15 +92,15 @@ class Game:
             color=global_values.color
         )
 
-        await join_message.send(
+        await self.game_message.send(
             message.channel,
             embed
         )
 
         async def update_join_message(interaction):
-            join_message.components[0][1].style = 3 if (len(self.players) >= 4 or global_values.debug) else 2
-            join_message.components[0][1].label = "Démarrer" if (len(self.players) >= 4 or global_values.debug) else "Pas assez de joueurs"
-            join_message.components[0][1].disabled = False if (len(self.players) >= 4 or global_values.debug) else True
+            self.game_message.components[0][1].style = 3 if (len(self.players) >= 4 or global_values.debug) else 2
+            self.game_message.components[0][1].label = "Démarrer" if (len(self.players) >= 4 or global_values.debug) else "Pas assez de joueurs"
+            self.game_message.components[0][1].disabled = False if (len(self.players) >= 4 or global_values.debug) else True
 
             embed.title = "Partie de Codenames | Joueurs (" + str(len(self.players)) + ") :"
             embed.description = '\n'.join(["`" + str(x.user) + "`" for x in self.players.values()])
@@ -108,19 +108,17 @@ class Game:
             await interaction.respond(
                 type=7,
                 embed=embed,
-                components=join_message.components
+                components=self.game_message.components
             )
 
     async def choose_teams(self, message):
-        self.turn = 0
-
         async def join_team(button, interaction):
             self.players[interaction.user.id].team = button.index
             await update_team_message(interaction)
 
         async def confirm_teams(buton, interaction):
             await interaction.respond(type=6)
-            await team_message.delete()
+            await self.game_message.delete()
             await self.choose_spymasters(message)
 
         def balanced_teams():
@@ -129,7 +127,7 @@ class Game:
         def missing_players():
             return len([0 for x in self.players.values() if x.team == -1])
 
-        team_message = ComponentMessage(
+        self.game_message = ComponentMessage(
             [
                 [
                     {
@@ -172,7 +170,7 @@ class Game:
             value="Personne"
         )
 
-        await team_message.send(
+        await self.game_message.send(
             message.channel,
             embed
         )
@@ -190,9 +188,9 @@ class Game:
                 style = 3
                 disabled = False
 
-            team_message.components[1][0].style = style
-            team_message.components[1][0].label = label
-            team_message.components[1][0].disabled = disabled
+            self.game_message.components[1][0].style = style
+            self.game_message.components[1][0].label = label
+            self.game_message.components[1][0].disabled = disabled
 
             for i in range(2):
                 members = ["`" + str(x.user) + "`" for x in self.players.values() if x.team == i]
@@ -206,7 +204,7 @@ class Game:
             await interaction.respond(
                 type=7,
                 embed=embed,
-                components=team_message.components
+                components=self.game_message.components
             )
 
     async def choose_spymasters(self, message):
@@ -216,13 +214,13 @@ class Game:
 
         async def confirm_spymasters(buton, interaction):
             await interaction.respond(type=6)
-            await spymaster_message.delete()
-            await self.start_game()
+            await self.game_message.delete()
+            await self.send_game_messages()
 
         def missing_spymasters():
             return len([0 for x in self.spy_masters if x == 0])
 
-        spymaster_message = ComponentMessage(
+        self.game_message = ComponentMessage(
             [
                 [
                     {
@@ -265,7 +263,7 @@ class Game:
             value="Personne"
         )
 
-        await spymaster_message.send(
+        await self.game_message.send(
             message.channel,
             embed
         )
@@ -281,9 +279,9 @@ class Game:
                 style = 3
                 disabled = False
 
-            spymaster_message.components[1][0].style = style
-            spymaster_message.components[1][0].label = label
-            spymaster_message.components[1][0].disabled = disabled
+            self.game_message.components[1][0].style = style
+            self.game_message.components[1][0].label = label
+            self.game_message.components[1][0].disabled = disabled
 
             for i in range(2):
                 embed.set_field_at(
@@ -295,10 +293,26 @@ class Game:
             await interaction.respond(
                 type=7,
                 embed=embed,
-                components=spymaster_message.components
+                components=self.game_message.components
             )
 
-    async def start_game(self):
+    def get_info_embed(self):
+        embed = discord.Embed(
+            title="Partie de Codenames | Tour de l'équipe " + ["Bleue", "Rouge"][self.turn],
+            color=0x4444ff if self.turn == 0 else 0xff4444
+        )
+
+        for i in range(2):
+            embed.add_field(
+                name=["🟦", "🟥"][i] + " Equipe " + ["Bleue", "Rouge"][i],
+                value="__Spymaster:__ `" + str(self.players[self.spy_masters[i]].user) + "`\n\n" + '\n'.join(["`" + str(x.user) + "`" for x in self.players.values() if x.team == i])
+            )
+
+        return embed
+
+    async def send_game_messages(self):
+        self.turn = 0
+
         async def reveal_word(button, interaction):
             word = self.board[button.index]
             word.revealed = True
@@ -315,27 +329,27 @@ class Game:
 
             await self.send_info(interaction)
 
-
         components = []
         for y in range(5):
             components.append([])
             for x in range(5):
+                word = self.board[5 * y + x]
+
                 components[len(components) - 1].append({
                     "effect": reveal_word,
                     "cond": lambda i: i.user.id == self.spy_masters[self.turn],
-                    "label": self.board[5 * y + x].word,
-                    "style": 2
+                    "label": word.word,
+                    "style": 2 if not word.revealed else [1, 4, 3, 2][word.color],
+                    "disabled": word.revealed
                 })
 
         self.game_message = ComponentMessage(components, temporary=False)
 
+        embed = self.get_info_embed()
+
         await self.game_message.send(
             self.channel,
-            discord.Embed(
-                title="Partie de Codenames",
-                description="Tour du Spymaster `" + str(self.players[self.spy_masters[0]].user) + "`",
-                color=0x4444ff
-            )
+            embed
         )
 
         async def send_spymaster_info(button, interaction):
@@ -386,11 +400,7 @@ class Game:
         )
 
     async def send_info(self, interaction):
-        embed = discord.Embed(
-            title="Partie de Codenames",
-            description="Tour du Spymaster `" + str(self.players[self.spy_masters[self.turn]].user) + "`",
-            color=0x4444ff if self.turn == 0 else 0xff4444
-        )
+        embed = self.get_info_embed()
 
         await interaction.respond(type=6)
         await self.game_message.message.edit(embed=embed, components=self.game_message.components)
