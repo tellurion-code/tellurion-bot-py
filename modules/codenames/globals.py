@@ -29,22 +29,21 @@ def init():
 
     :one: **Phase du Spymaster**
 
-    Lors de cette phase, le Spymaster peut donner un indice qui est nécessairement de la forme `<mot> <chiffre>`, 
-    le chiffre désignant le nombre de cartes liées au `<mot>`. 
-    :warning: Tout indice ayant une proximité (homonymique, phonétique, sémantique) avec l'une des cartes est considéré comme invalide, 
+    Lors de cette phase, le Spymaster peut donner un indice qui est nécessairement de la forme `<mot> <chiffre>`,
+    le chiffre désignant le nombre de cartes liées au `<mot>`.
+    :warning: Tout indice ayant une proximité (homonymique, phonétique, sémantique) avec l'une des cartes est considéré comme invalide,
     tout comme ceux se rapportant à la position ou au nombre de lettes d'une carte.
     :no_entry_sign: En cas d'invalidité, le tour est terminé et l'équipe adverse peut marquer un de ses mots.
 
     :two: **Phase de l'équipe**
 
     L'équipe doit, à partir de l'indice du Spymaster, choisir un mot sur la grille.
-    Si celui-ci correspond bien, il est marqué et le tour continue : l'équipe peut 
+    Si celui-ci correspond bien, il est marqué et le tour continue : l'équipe peut
     deviner un autre mot, à partir du même indice.
-    :stop_sign: Toute erreur met fin au tour. 
+    :stop_sign: Toute erreur met fin au tour.
     :dagger: Si le mot de l'Assassin est trouvé, l'équipe a immédiatement perdu.
     """
 
     gamerules = discord.Embed(title="Codenames - Règles du jeu", color=color)
     gamerules.add_field(name='Objectifs', value=objectives, inline=False)
     gamerules.add_field(name='Déroulement de la partie', value=gameprocess, inline=False)
-
