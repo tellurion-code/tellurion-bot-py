@@ -1,3 +1,5 @@
+import discord
+
 def init():
     global words
     global games
