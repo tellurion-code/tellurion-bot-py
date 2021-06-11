@@ -42,10 +42,8 @@ class MainClass(BaseClassPython):
 
     :one: **Phase du Spymaster**
 
-    Lors de cette phase, le Spymaster peut donner un indice qui est nécessairement de la forme `<mot> <chiffre>`,
-    le chiffre désignant le nombre de cartes liées au `<mot>`.
-    :warning: Tout indice ayant une proximité (homonymique, phonétique, sémantique) avec l'une des cartes est considéré comme invalide,
-    tout comme ceux se rapportant à la position ou au nombre de lettes d'une carte.
+    Lors de cette phase, le Spymaster peut donner un indice qui est nécessairement de la forme `<mot> <chiffre>`, le chiffre désignant le nombre de cartes liées au `<mot>`.
+    :warning: Tout indice ayant une proximité (homonymique, phonétique, sémantique) avec l'une des cartes est considéré comme invalide, tout comme ceux se rapportant à la position ou au nombre de lettes d'une carte.
     :no_entry_sign: En cas d'invalidité, le tour est terminé et l'équipe adverse peut marquer un de ses mots.
 
     :two: **Phase de l'équipe**
@@ -57,7 +55,7 @@ class MainClass(BaseClassPython):
     :dagger: Si le mot de l'Assassin est trouvé, l'équipe a immédiatement perdu.
     """
 
-        gamerules = discord.Embed(title="Codenames - Règles du jeu", color=color)
+        gamerules = discord.Embed(title="Codenames - Règles du jeu", color=global_values.color)
         gamerules.add_field(name='Objectifs', value=objectives, inline=False)
         gamerules.add_field(name='Déroulement de la partie', value=gameprocess, inline=False)
         await message.channel.send(embed=gamerules)
