@@ -35,10 +35,10 @@ class MainClass(BaseClassPython):
 
         embed.add_field(
             name="Charge moyenne",
-            value=f"{self.client.name} est en moyenne, utilisé à :\n sur une minute : %s\n sur cinq minutes : %s\n sur quinze minutes : %s" % tuple(
+            value=f"{self.client.user.name} est en moyenne, utilisé à :\n sur une minute : %s\n sur cinq minutes : %s\n sur quinze minutes : %s" % tuple(
                 load_average))
 
         embed.add_field(
             name="Temps d'éveil",
-            value=f"{self.client.name} est éveillé depuis {uptime}".format(uptime=uptime))
+            value=f"{self.client.user.name} est éveillé depuis {uptime}".format(uptime=uptime))
         await message.channel.send(embed=embed)
