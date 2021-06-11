@@ -16,6 +16,7 @@ class MainClass(BaseClassPython):
         "description": "Module du jeu Codenames",
         "commands": {
             "`{prefix}{command} create`": "Rejoint la partie de Codenames. S'il n'y en a pas dans le salon, en crée une nouvelle."
+            "`{prefix}{command} rules`": "Affiche les règles du jeu."
         }
     }
 
@@ -28,6 +29,9 @@ class MainClass(BaseClassPython):
         self.config["help_active"] = True
         self.config["configured"] = True
         self.config["command_text"] = "codenames"
+
+    async def com_rules(self, message, args, kwargs):
+        await message.channel.send(embed=gamerules)
 
     async def com_create(self, message, args, kwargs):
         if message.channel.id in global_values.games:
