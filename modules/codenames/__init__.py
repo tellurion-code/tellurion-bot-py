@@ -15,7 +15,7 @@ class MainClass(BaseClassPython):
     help = {
         "description": "Module du jeu Codenames",
         "commands": {
-            "`{prefix}{command} create`": "Rejoint la partie de Codenames. S'il n'y en a pas dans le salon, en crée une nouvelle.",
+            "`{prefix}{command} create`": "Rejoint la partie de Codenames. S'il n'y en a pas dans le salon, en crée une nouvelle."
             "`{prefix}{command} rules`": "Affiche les règles du jeu."
         }
     }
