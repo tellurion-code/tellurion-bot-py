@@ -5,7 +5,6 @@ def init():
     global color
     global reaction_messages
     global number_emojis
-    global gamerules
 
     words = []
     with open("modules/codenames/words.txt", "r", encoding='utf-8') as f:
