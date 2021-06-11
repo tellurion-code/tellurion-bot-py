@@ -50,7 +50,7 @@ class MainClass(BaseClassPython):
 
     L'équipe doit, à partir de l'indice du Spymaster, choisir un mot sur la grille.
     Si celui-ci correspond bien, il est marqué et le tour continue : l'équipe peut
-    deviner un autre mot, à partir du même indice.
+    deviner un autre mot, à partir du même indice. L'équipe peut deviner jusqu'à autant de mots que chiffre donné en indice, plus 1.
     :stop_sign: Toute erreur met fin au tour.
     :dagger: Si le mot de l'Assassin est trouvé, l'équipe a immédiatement perdu.
     """
