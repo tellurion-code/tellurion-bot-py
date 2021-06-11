@@ -8,7 +8,7 @@ def init():
     global gamerules
 
     words = []
-    with open("modules/codenames/words.txt", "r") as f:
+    with open("modules/codenames/words.txt", "r", encoding='utf-8') as f:
         for line in f:
             words.extend(line.split())
 
