@@ -173,6 +173,8 @@ class Game:
 			if unit.owner == self.turn:
 				# current.bank -= self.costs["creation"][unit.level]
 				unit.level += 1
+				if unit.level == 1:
+					unit.used = True
 			else:
 				unit2 = None
 				level = unit.level
@@ -210,10 +212,7 @@ class Game:
 				return not (self.map[y][x].owner == self.turn and self.map[y][x].level)
 			else:
 				if self.map[y][x].owner == self.turn:
-					return self.map[y][x].level == 3 or self.players[self.order[self.turn]].bank < self.costs["upkeep"][self.map[y][x].level + 1] - self.costs["upkeep"][self.map[y][x].level]
-
-				if self.round == 1:
-					return True
+					return self.map[y][x].level == 3 # or self.players[self.order[self.turn]].bank < self.costs["upkeep"][self.map[y][x].level + 1] - self.costs["upkeep"][self.map[y][x].level]
 
 				for r in range(4):
 					dx = int(math.cos(r * math.pi/2))
@@ -262,7 +261,7 @@ class Game:
 					{
 						"effect": pass_turn,
 						"cond": lambda i: i.user.id == self.order[self.turn],
-						"label": "Passer le tour",
+						"label": "Finir le tour",
 						"style": 3
 					}
 				]
