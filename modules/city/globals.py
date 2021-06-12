@@ -11,6 +11,6 @@ def init():
 	debug = False
 	color = 0xcc00ff
 	tile_colors = ["🟥", "🟦", "🟩", "⬛"]
-	tile_decorations = ["🌲", "🌳", "🌴", ":rock:"]
+	tile_decorations = ["🌲", "🌳"]
 	player_colors = [0xff3333, 0x3388ff, 0x33ff33, 0x333333]
-	unit_emojis = ["🧍", "🤺", "🏇"]
+	unit_emojis = ["🙎", "🧑‍🌾", "🧙"]

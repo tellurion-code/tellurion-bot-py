@@ -117,8 +117,8 @@ Le jeu se déroule sur un plateau de 25 cases en 5x5. Chaque joueur commence à 
 
 		embed.add_field(name=":small_blue_diamond: Déroulement d’un tour :small_blue_diamond:", inline=False, value="""
 Le joueur clique sur une case soit qui lui appartient, soit adjacente à une case qui lui appartient (les diagonales ne comptent pas):
-- S'il choisit une case qui lui appartient, il crée une unité (🧍) sur cette case. S'il y a déjà une unité, il l'améliore si possible (🧍 devient 🤺, 🤺 devient 🏇).
-- S'il choisit une case adverse et a une unité adjacente, et qu'il n'y a pas d'unité de force égale ou supérieure sur la case, elle se déplace sur la case et la capture. La capture n'est pas autorisée durant le premier tour.
+- S'il choisit une case qui lui appartient, il crée une unité (🧍) sur cette case. Cette unité ne peut pas se déplacer avant le prochain tour. S'il y a déjà une unité, il l'améliore si possible (🧍 devient 🤺, 🤺 devient 🏇).
+- S'il choisit une case adverse et a une unité adjacente, et qu'il n'y a pas d'unité de force égale ou supérieure sur la case, elle se déplace sur la case et la capture. Chaque unité ne peut se déplacer qu'une fois par tour.
 		""")
 
 		embed.add_field(name=":small_blue_diamond: Coûts :small_blue_diamond:", inline=False, value="""
