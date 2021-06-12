@@ -94,7 +94,7 @@ class Game:
 
         await self.game_message.send(
             message.channel,
-            embed
+            embed=embed
         )
 
         async def update_join_message(interaction):
@@ -172,7 +172,7 @@ class Game:
 
         await self.game_message.send(
             message.channel,
-            embed
+            embed=embed
         )
 
         async def update_team_message(interaction):
@@ -265,7 +265,7 @@ class Game:
 
         await self.game_message.send(
             message.channel,
-            embed
+            embed=embed
         )
 
         async def update_spymaster_message(interaction):
@@ -349,7 +349,7 @@ class Game:
 
         await self.game_message.send(
             self.channel,
-            embed
+            embed=embed
         )
 
         async def send_spymaster_info(button, interaction):
@@ -393,7 +393,7 @@ class Game:
 
         await self.spymaster_message.send(
             self.channel,
-            discord.Embed(
+            embed=discord.Embed(
                 title="Contrôles pour les Spymasters",
                 color=global_values.color
             )
