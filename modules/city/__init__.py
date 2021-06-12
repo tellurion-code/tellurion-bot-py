@@ -123,9 +123,9 @@ Le joueur clique sur une case soit qui lui appartient, soit adjacente à une cas
 
 		embed.add_field(name=":small_blue_diamond: Coûts :small_blue_diamond:", inline=False, value="""
 Chaque unité a un coût:
-- **🧍 Paysan:** 2 cases
-- **🤺 Chevalier:** 4 cases
-- **🏇 Cavalier:** 6 cases
+- **🙎 Citoyen:** 2 cases
+- **🧑‍🌾 Paysan:** 4 cases
+- **🧙 Mage:** 6 cases
 Le coût total des unités est retiré au nombre de cases qui appartienne au joueur au début du tour. Si le résultat est négatif, il devra choisir des unités à tuer pour leur coût de maintien jusqu'à ce qu'il soit positif.
 		""")
 
