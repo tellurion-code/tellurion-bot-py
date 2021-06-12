@@ -12,7 +12,7 @@ class MainClass(BaseClassPython):
 			"{prefix}{command}": "Envoie la liste",
 			"{prefix}{command} add": "S'ajouter à la liste",
 			"{prefix}{command} remove": "S'enlever de la liste",
-			"{prefix}{command} nest": "Ping le suivant dans la liste",
+			"{prefix}{command} next": "Ping le suivant dans la liste",
 		}
 	}
 
