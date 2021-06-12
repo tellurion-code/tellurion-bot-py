@@ -76,7 +76,21 @@ class Game:
 			await self.send_info()
 
 		def enough_players():
-			return len(self.players) >= 2 or global_values.debug
+			if len(self.players) < 2:
+				return {
+					"bool": False,
+					"reason": "Pas assez de joueurs"
+				}
+			elif len(self.players) <= 4:
+				return {
+					"bool": True,
+					"reason": "Démarrer"
+				}
+			else:
+				return {
+					"bool": False,
+					"reason": "Trop de joueurs"
+				}
 
 		self.game_message = ComponentMessage(
 			[
@@ -89,7 +103,7 @@ class Game:
 					},
 					{
 						"effect": start,
-						"cond": lambda i: i.user.id == message.author.id and enough_players(),
+						"cond": lambda i: i.user.id == message.author.id and enough_players()["bool"],
 						"label": "Pas assez de joueurs",
 						"style": 2,
 						"disabled": True
@@ -110,9 +124,9 @@ class Game:
 		)
 
 		async def update_join_message(interaction):
-			self.game_message.components[0][1].style = 3 if enough_players() else 2
-			self.game_message.components[0][1].label = "Démarrer" if enough_players() else "Pas assez de joueurs"
-			self.game_message.components[0][1].disabled = False if enough_players() else True
+			self.game_message.components[0][1].style = 3 if enough_players()["bool"] else 2
+			self.game_message.components[0][1].label = enough_players()["reason"]
+			self.game_message.components[0][1].disabled = not enough_players()["bool"]
 
 			embed.title = "Partie de City | Joueurs (" + str(len(self.players)) + ") :"
 			embed.description = '\n'.join(["`" + str(x.user) + "`" for x in self.players.values()])
@@ -179,13 +193,24 @@ class Game:
 		current.update_revenue(True)
 		await self.respond_to_interaction(interaction)
 
+		def check_for_win():
+			for y in range(5):
+				for x in range(5):
+					if self.map[y][x].owner != self.turn:
+						return False
+
+			return True
+
+		if check_for_win():
+			await self.end_game()
+
 	def generate_components(self):
 		def check_disabled(x, y):
 			if self.players[self.order[self.turn]].bank < 0:
 				return not (self.map[y][x].owner == self.turn and self.map[y][x].level)
 			else:
 				if self.map[y][x].owner == self.turn:
-					return self.map[y][x].level == 3 # or self.players[self.order[self.turn]].bank < self.costs["creation"][self.map[y][x].level]
+					return self.map[y][x].level == 3 or self.players[self.order[self.turn]].bank < self.costs["upkeep"][self.map[y][x].level + 1] - self.costs["upkeep"][self.map[y][x].level]
 
 				if self.round == 1:
 					return True
@@ -255,6 +280,23 @@ class Game:
 			self.round += 1
 
 		self.players[self.order[self.turn]].on_turn_start()
+
+	async def end_game(self):
+		embed = discord.Embed(
+			title = "Victoire de `" + str(self.players[self.order[self.turn]].user) + "`!",
+			color = global_values.color
+		)
+
+		for row in self.game_message.components:
+			for button in row:
+				button.disabled = True
+
+		await self.channel.send(embed=embed)
+
+		await self.game_message.delete(False, True)
+		await self.controls_message.delete()
+
+		global_values.games.pop(self.channel.id)
 
 	async def deserialize(self, object, client):
 		self.channel = client.get_channel(object["channel"])

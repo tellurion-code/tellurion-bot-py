@@ -126,7 +126,7 @@ Chaque unité a un coût:
 - **🧍 Paysan:** 3 cases
 - **🤺 Chevalier:** 6 cases
 - **🏇 Cavalier:** 9 cases
-Le coût total des unités est retiré au nombre de cases qui appartienne au joueur au début du tour. Si le résultat est négatif, il devra choisir des unités à tuer pour leur coût de maintien jusqu'à ce que ce soit positif.
+Le coût total des unités est retiré au nombre de cases qui appartienne au joueur au début du tour. Si le résultat est négatif, il devra choisir des unités à tuer pour leur coût de maintien jusqu'à ce qu'il soit positif.
 		""")
 
 		embed.add_field(name=":small_blue_diamond: But du jeu :small_blue_diamond:", inline=False, value="""
