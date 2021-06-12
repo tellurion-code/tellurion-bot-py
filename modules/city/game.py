@@ -33,7 +33,7 @@ class Game:
 		self.controls_message = None
 		self.costs = {
 			"creation": [4, 4, 4],
-			"upkeep": [0, 3, 6, 9],
+			"upkeep": [0, 2, 4, 6],
 			"destruction": [2, 4, 6]
 		}
 
@@ -233,7 +233,7 @@ class Game:
 				components[len(components) - 1].append({
 					"effect": self.click_tile,
 					"cond": lambda i: i.user.id == self.order[self.turn],
-					"emoji": global_values.unit_emojis[unit.level - 1] if unit.level else global_values.tile_colors[unit.owner],
+					"emoji": global_values.unit_emojis[unit.level - 1] if unit.level else unit.decoration,
 					"style": [4, 1, 3, 2][unit.owner],
 					"disabled": check_disabled(x, y)
 				})

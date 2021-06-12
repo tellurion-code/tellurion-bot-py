@@ -10,6 +10,7 @@ class Unit:
 		self.owner = owner
 		self.level = 0 # 0: None, 1: Peasant, 2: Knight, 3: Lancer
 		self.used = False
+		self.decoration = random.choice(global_values.tile_decorations)
 
 class Player:
 	name = "🚫 Sans-Pouvoir"
