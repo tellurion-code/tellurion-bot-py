@@ -60,7 +60,7 @@ class MainClass(BaseClassPython):
         gamerules = discord.Embed(title="Codenames - Règles du jeu", color=global_values.color)
         gamerules.add_field(name='Objectifs', value=objectives, inline=False)
         gamerules.add_field(name='Déroulement de la partie', value=gameprocess1, inline=False)
-        gamerules.add_field(name='', value=gameprocess2, inline=False)
+        gamerules.add_field(name='~', value=gameprocess2, inline=False)
         await message.channel.send(embed=gamerules)
 
     async def com_create(self, message, args, kwargs):
