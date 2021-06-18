@@ -436,7 +436,7 @@ class ClientById:
 intents = discord.Intents.default()
 intents.members = True
 intents.presences = True
-client1 = LBI(max_messages=500000, intents=intents)
+client1 = LBI(max_messages=500000, activity=discord.Game(name='être en ligne'), intents=intents)
 
 
 class Communication(asyncio.Protocol):
