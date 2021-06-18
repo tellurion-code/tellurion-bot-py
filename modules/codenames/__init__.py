@@ -47,7 +47,7 @@ class MainClass(BaseClassPython):
     :no_entry_sign: En cas d'invalidité, le tour est terminé et l'équipe adverse peut marquer un de ses mots.
     """
 
-    gameprocess2 = """
+        gameprocess2 = """
     :two: **Phase de l'équipe**
 
     L'équipe doit, à partir de l'indice du Spymaster, choisir un mot sur la grille.
