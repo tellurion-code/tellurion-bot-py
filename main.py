@@ -8,6 +8,7 @@ import logging.config
 import os
 import sys
 from typing import Dict
+from time import localtime
 
 import discord
 import humanize
@@ -432,11 +433,14 @@ class ClientById:
                 return role
         return None
 
+bot_launch = localtime()
+bot_launch_times = [str(t) for t in bot_launch[:4]] + ['{}'.format(bot_launch[4]).zfill(2)] + ['{}'.format(bot_launch[5]).zfill(2)]
+bot_launch_text = "Online since : {}-{}-{} {}:{}:{}".format(*bot_launch_times)
 
 intents = discord.Intents.default()
 intents.members = True
 intents.presences = True
-client1 = LBI(max_messages=500000, activity=discord.Game(name='être en ligne'), intents=intents)
+client1 = LBI(max_messages=500000, activity=discord.Game(name=bot_launch_text), intents=intents)
 
 
 class Communication(asyncio.Protocol):
