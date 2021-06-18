@@ -37,7 +37,7 @@ class MainClass(BaseClassPython):
         La partie s'achève lorsqu'une équipe a deviné tous les mots ou si elle tombe sur le mot de l'Assassin.
         """
 
-        gameprocess = """
+        gameprocess1 = """
     Le jeu se déroule au tour par tour, par équipe. Chaque tour se décompose en deux phases :
 
     :one: **Phase du Spymaster**
@@ -45,7 +45,9 @@ class MainClass(BaseClassPython):
     Lors de cette phase, le Spymaster peut donner un indice qui est nécessairement de la forme `<mot> <chiffre>`, le chiffre désignant le nombre de cartes liées au `<mot>`.
     :warning: Tout indice ayant une proximité (homonymique, phonétique, sémantique) avec l'une des cartes est considéré comme invalide, tout comme ceux se rapportant à la position ou au nombre de lettes d'une carte.
     :no_entry_sign: En cas d'invalidité, le tour est terminé et l'équipe adverse peut marquer un de ses mots.
+    """
 
+    gameprocess2 = """
     :two: **Phase de l'équipe**
 
     L'équipe doit, à partir de l'indice du Spymaster, choisir un mot sur la grille.
@@ -57,7 +59,8 @@ class MainClass(BaseClassPython):
 
         gamerules = discord.Embed(title="Codenames - Règles du jeu", color=global_values.color)
         gamerules.add_field(name='Objectifs', value=objectives, inline=False)
-        gamerules.add_field(name='Déroulement de la partie', value=gameprocess, inline=False)
+        gamerules.add_field(name='Déroulement de la partie', value=gameprocess1, inline=False)
+        gamerules.add_field(name='', value=gameprocess2, inline=False)
         await message.channel.send(embed=gamerules)
 
     async def com_create(self, message, args, kwargs):
