@@ -32,9 +32,12 @@ class Game:
 		self.game_message = None
 		self.controls_message = None
 		self.costs = {
-			"creation": [4, 4, 4],
-			"upkeep": [0, 2, 4, 6],
-			"destruction": [2, 4, 6]
+			"creation": 8,
+			"destruction": 4
+		}
+		self.selection = {
+			"coords": None,
+			"clickable": []
 		}
 
 	async def reload(self, object, client):
@@ -140,15 +143,13 @@ class Game:
 	def get_embed(self):
 		embed = discord.Embed(
 			title="[CITY] Tour de `" + str(self.players[self.order[self.turn]].user) + "`",
-			description='\n'.join([global_values.tile_colors[i] + " `" + str(self.players[x].user) + "`: " + str(self.players[x].bank) + (" :coin:" if self.players[x].bank >= 0 else " ❌") + " (**+" + str(self.players[x].revenue) + " -" + str(self.players[x].cost) + "**)" for i, x in enumerate(self.order)]),
+			description='\n'.join([global_values.tile_colors[i] + " `" + str(self.players[x].user) + "`: " + str(self.players[x].bank) + (" :coin:" if self.players[x].bank >= 0 else " ❌") + " (**+" + str(self.players[x].revenue) + "**)" for i, x in enumerate(self.order)]),
 			color=global_values.player_colors[self.turn]
 		)
 
 		return embed
 
 	async def respond_to_interaction(self, interaction):
-		await interaction.respond(type=7)
-
 		self.game_message.embed = self.get_embed()
 		components = self.generate_components()
 		for y, row in enumerate(components):
@@ -160,6 +161,7 @@ class Game:
 				button.disabled = component["disabled"]
 
 		await self.game_message.update()
+		await interaction.respond(type=7)
 
 	async def click_tile(self, button, interaction):
 		x = button.index % 5
@@ -167,32 +169,71 @@ class Game:
 		unit = self.map[y][x]
 		current = self.players[self.order[self.turn]]
 
-		if current.bank < 0:
+		def upgrade_unit(unit):
+			current.bank -= self.costs["creation"]
+			unit.level += 1
+			unit.used = (self.round == 1)
+
+		def move_unit(unit, new_unit, use_movement=True):
+			if unit.level > new_unit.level:
+				new_unit.owner = self.turn
+
+			new_unit.level = max(new_unit.level, unit.level) - min(new_unit.level, unit.level)
+			new_unit.used = use_movement
+
 			unit.level = 0
+
+		if self.selection["coords"]:
+			selected_tile = self.map[self.selection["coords"][1]][self.selection["coords"][0]]
+
+			if selected_tile.owner == self.turn:
+				if [x, y] == self.selection["coords"]:
+					upgrade_unit(selected_tile)
+				else:
+					move_unit(unit, selected_tile, False)
+			else:
+				move_unit(unit, selected_tile)
+
+			self.selection["coords"] = None
+			self.selection["clickable"] = []
 		else:
 			if unit.owner == self.turn:
-				# current.bank -= self.costs["creation"][unit.level]
-				unit.level += 1
-				if unit.level == 1:
-					unit.used = True
+				if unit.level > 0:
+					upgrade_unit(unit)
+				else:
+					for r in range(4):
+						dx = int(math.cos(r * math.pi/2))
+						dy = int(math.sin(r * math.pi/2))
+
+						if x + dx >= 0 and x + dx < 5 and y + dy >= 0 and y + dy < 5:
+							if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level > 0 and not self.map[y + dy][x + dx].used:
+								self.selection["clickable"].append([x + dx, y + dy])
+
+					if len(self.selection["clickable"]):
+						self.selection["clickable"].append([x, y])
+						self.selection["coords"] = [x, y]
+					else:
+						upgrade_unit(unit)
 			else:
-				unit2 = None
-				level = unit.level
 				for r in range(4):
 					dx = int(math.cos(r * math.pi/2))
 					dy = int(math.sin(r * math.pi/2))
 
 					if x + dx >= 0 and x + dx < 5 and y + dy >= 0 and y + dy < 5:
-						if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level > level and not self.map[y + dy][x + dx].used:
-							unit2 = self.map[y + dy][x + dx]
-							level = unit2.level
+						if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level > 0 and not self.map[y + dy][x + dx].used:
+							self.selection["clickable"].append([x + dx, y + dy])
 
-				unit.level = unit2.level
-				unit.owner = self.turn
-				unit.used = True
-				unit2.level = 0
+				if len(self.selection["clickable"]) > 1:
+					self.selection["coords"] = [x, y]
+				else:
+					if len(self.selection["clickable"]):
+						other_tile = self.map[self.selection["clickable"][0][1]][self.selection["clickable"][0][0]]
 
-		current.update_revenue(True)
+						move_unit(other_tile, unit)
+
+					self.selection["clickable"] = []
+
+		current.update_revenue()
 		await self.respond_to_interaction(interaction)
 
 		def check_for_win():
@@ -208,18 +249,18 @@ class Game:
 
 	def generate_components(self):
 		def check_disabled(x, y):
-			if self.players[self.order[self.turn]].bank < 0:
-				return not (self.map[y][x].owner == self.turn and self.map[y][x].level)
+			if self.selection["coords"]:
+				return [x, y] not in self.selection["clickable"]
 			else:
 				if self.map[y][x].owner == self.turn:
-					return self.map[y][x].level == 3 # or self.players[self.order[self.turn]].bank < self.costs["upkeep"][self.map[y][x].level + 1] - self.costs["upkeep"][self.map[y][x].level]
+					return self.map[y][x].level == 5 or self.players[self.order[self.turn]].bank < self.costs["creation"]
 
 				for r in range(4):
 					dx = int(math.cos(r * math.pi/2))
 					dy = int(math.sin(r * math.pi/2))
 
 					if x + dx >= 0 and x + dx < 5 and y + dy >= 0 and y + dy < 5:
-						if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level > self.map[y][x].level and not self.map[y + dy][x + dx].used:
+						if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level and not self.map[y + dy][x + dx].used:
 							return False
 
 				return True
