@@ -35,8 +35,9 @@ class ComponentMessage:
 			return
 
 		if actionrows:
-			for component in self.components:
-				component.delete()
+			for row in self.components:
+				for component in row:
+					component.delete()
 
 			self.components = []
 
