@@ -413,6 +413,7 @@ class Game:
 				"effect": cast_choice,
 				"cond": lambda i: i.user.id in self.team.values(),
 				"label": global_values.quest_choices["names"][choice],
+				"emoji": global_values.quest_choices["emojis"][choice],
 				"style": global_values.quest_choices["styles"][choice]
 			})
 
@@ -460,11 +461,6 @@ class Game:
 					success = not success
 
 				self.quests[self.round] = -1 if success else 0
-
-				if len([x for x in self.players.values() if x.role == "maleagant"]):
-					for maleagant in [x for x in self.players.values() if x.role == "maleagant"]:
-						if maleagant.guess != success:
-							maleagant.can_guess = False
 
 				await self.send_info(
 					info={
@@ -567,7 +563,7 @@ class Game:
 
 		await self.info_message.delete()
 
-		await self.channel.send(embed)
+		await self.channel.send(embed=embed)
 		self.delete_save()
 		del global_values.games[self.channel.id]
 
