@@ -215,7 +215,7 @@ class Game:
 
 		embed.add_field(
 			name="Chevaliers :",
-			value='\n'.join([(str(global_values.vote_choices["emojis"][self.players[x].last_vote]) if len(self.players[x].last_vote) else "") + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") + ("🌊" if self.lady_of_the_lake == i and self.game_rules["lady_of_the_lake"] else "") for i, x in enumerate(self.order)]),
+			value='\n'.join([(("📩" if self.phase == "team_selection" else (str(global_values.vote_choices["emojis"][self.players[x].last_vote]))) if len(self.players[x].last_vote) else "✉️") + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") + ("🌊" if self.lady_of_the_lake == i and self.game_rules["lady_of_the_lake"] else "") for i, x in enumerate(self.order)]),
 			inline=False
 		)
 
@@ -340,6 +340,7 @@ class Game:
 			self.players[interaction.user.id].last_vote = last_vote
 
 			await interaction.respond(type=4, content="Vous avez voté " + str(global_values.vote_choices["emojis"][last_vote]) + " " + global_values.vote_choices["names"][last_vote])
+			await self.info_message.message.edit(embed=self.get_info_embed())
 			await self.check_vote_end()
 
 		components = [[]]
