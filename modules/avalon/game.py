@@ -67,7 +67,7 @@ class Game:
 
 		async def start(button, interaction):
 			await interaction.respond(type=6)
-			await self.game_message.delete()
+			await self.info_message.delete()
 
 			await self.start_game()
 
@@ -94,7 +94,7 @@ class Game:
 					"reason": "Trop de joueurs"
 				}
 
-		self.game_message = ComponentMessage(
+		self.info_message = ComponentMessage(
 			[
 				[
 					{
@@ -120,15 +120,15 @@ class Game:
 			color=global_values.color
 		)
 
-		await self.game_message.send(
+		await self.info_message.send(
 			message.channel,
 			embed=embed
 		)
 
 		async def update_join_message(interaction):
-			self.game_message.components[0][1].style = 3 if enough_players()["bool"] else 2
-			self.game_message.components[0][1].label = enough_players()["reason"]
-			self.game_message.components[0][1].disabled = not enough_players()["bool"]
+			self.info_message.components[0][1].style = 3 if enough_players()["bool"] else 2
+			self.info_message.components[0][1].label = enough_players()["reason"]
+			self.info_message.components[0][1].disabled = not enough_players()["bool"]
 
 			embed.title = "Partie d'Avalon | Joueurs (" + str(len(self.players)) + ") :"
 			embed.description = '\n'.join(["`" + str(x.user) + "`" for x in self.players.values()])
@@ -136,7 +136,7 @@ class Game:
 			await interaction.respond(
 				type=7,
 				embed=embed,
-				components=self.game_message.components
+				components=self.info_message.components
 			)
 
 	async def start_game(self):
@@ -246,7 +246,7 @@ class Game:
 			components = kwargs["components"]
 			components.append([{
 				"effect": lambda b, i: self.players[i.user.id].send_role_info(i),
-				"cond": lambda i: True,
+				"cond": lambda i: i.user.id in self.players,
 				"label": "Voir son rôle",
 				"style": 2
 			}])
@@ -347,7 +347,7 @@ class Game:
 		for choice in choices:
 			components[0].append({
 				"effect": cast_vote,
-				"cond": lambda i: True,
+				"cond": lambda i: i.user.id in self.players,
 				"label": global_values.vote_choices["names"][choice],
 				"style": global_values.vote_choices["styles"][choice]
 			})

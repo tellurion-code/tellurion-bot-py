@@ -83,6 +83,10 @@ class MainClass(BaseClassPython):
 			async def confirm(reactions):
 				if reactions[message.author.id][0] == 0:
 					await message.channel.send("La partie a été réinitialisée")
+
+					if globals.games[message.channel.id.info_message:
+						globals.games[message.channel.id].info_message.delete()
+
 					globals.games[message.channel.id].delete_save()
 					del global_values.games[message.channel.id]
 
@@ -217,9 +221,7 @@ class MainClass(BaseClassPython):
 								"kay": "kay",
 								"sir_kay": "kay",
 								"agravain": "agravain",
-								"elias": "elias",
-								"meleagant": "maleagant",
-								"méléagant": "maleagant"
+								"elias": "elias"
 							}
 
 							for i, role in enumerate(roles):
