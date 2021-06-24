@@ -67,7 +67,6 @@ class Game:
 
 		async def start(button, interaction):
 			await interaction.respond(type=6)
-			await self.info_message.delete()
 
 			await self.start_game()
 
