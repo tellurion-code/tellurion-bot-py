@@ -419,7 +419,7 @@ class Game:
 		await self.send_info(
 			info={
 				"name": "Equipe acceptée",
-				"value": "Les membres vont partir en quête et décider de la faire réussire ou échouer."
+				"value": "Les membres vont partir en quête et décider de la faire réussir ou échouer."
 			},
 			components=components,
 			color=0x2e64fe
@@ -488,7 +488,7 @@ class Game:
 							)
 						)
 
-						await ([x for x in self.players.values() if x.role == "assassin"][0]).send_assassin_choice(self)
+						await ([x for x in self.players.values() if x.role == "assassin"][0]).send_assassin_choice()
 					else:
 						await self.end_game(True, "3 Quêtes réussies")
 				else:

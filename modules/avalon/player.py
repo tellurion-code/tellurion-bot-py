@@ -157,7 +157,7 @@ class Uther(Good):
 
 	async def post_game_start(self):
 		valid_candidates = [x for x in self.game.order if x != self.user.id]
-		emojis = [global_values.number_emojis[game.order.index(x)] for x in valid_candidates]
+		emojis = [global_values.number_emojis[self.game.order.index(x)] for x in valid_candidates]
 		choices = ["`" + str(self.game.players[x].user) + "`" for x in valid_candidates]
 
 		async def inspect_role(reactions):
@@ -212,7 +212,7 @@ class Vortigern(Good):
 
 	async def post_game_start(self):
 		valid_candidates = [x for x in self.game.order if x != self.user.id]
-		emojis = [global_values.number_emojis[game.order.index(x)] for x in valid_candidates]
+		emojis = [global_values.number_emojis[self.game.order.index(x)] for x in valid_candidates]
 		choices = ["`" + str(self.game.players[x].user) + "`" for x in valid_candidates]
 
 		async def reveal_self(reactions):
@@ -299,7 +299,7 @@ class Assassin(Evil):
 
 	async def send_assassin_choice(self):
 		valid_candidates = [x for x in self.game.order if self.game.players[x].allegiance != "evil"]
-		emojis = [global_values.number_emojis[game.order.index(x)] for x in valid_candidates]
+		emojis = [global_values.number_emojis[self.game.order.index(x)] for x in valid_candidates]
 		choices = ["`" + str(self.game.players[x].user) + "`" for x in valid_candidates]
 
 		async def kill(reactions):
@@ -324,7 +324,8 @@ class Assassin(Evil):
 			"",
 			global_values.color,
 			choices,
-			emojis=emojis)
+			emojis=emojis
+		)
 
 
 class Morgane(Evil):
@@ -413,7 +414,7 @@ class Agravain(Evil):
 
 		self.embed.add_field(
 			name="Rôles",
-			value='\n'.join([global_values.number_emojis[i] + " `" + str(self.game.players[x].user) + "` : " + global_values.visual_roles[game.players[x].role] for i, x in enumerate(self.game.order) if self.game.players[x].allegiance == "evil" and (not self.game.players[x].role == "oberon" or self.game.game_rules["agravain_know_oberon"])]))
+			value='\n'.join([global_values.number_emojis[i] + " `" + str(self.game.players[x].user) + "` : " + global_values.visual_roles[self.game.players[x].role] for i, x in enumerate(self.game.order) if self.game.players[x].allegiance == "evil" and (not self.game.players[x].role == "oberon" or self.game.game_rules["agravain_know_oberon"])]))
 
 
 class Solo(Player):
