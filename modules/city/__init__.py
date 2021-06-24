@@ -129,7 +129,9 @@ Le jeu se déroule sur un plateau de 25 cases en 5x5. Chaque joueur commence à 
 Le joueur gagne 1 :coin: pour chaque case qui lui appartient. Il peut ensuite cliquer sur une des cases disponibles pour réaliser une des actions suivantes (seuls les cases avec des actions possibles sont disponibles):
 - Créer une nouvelle armée pour 12 :coin:,
 - Améliorer une armée existante pour le même prix,
-- Déplacer une armée adjacente sur cette case. Si la case est occupée par une armée adverse, la force de l'armée la plus forte est retirée à celle de l'armée la plus faible et l'armée la plus faible est détruite.
+- Déplacer une armée adjacente sur cette case. Si la case est occupée par une armée adverse, l'attaquant doit être de force égale ou supérieure:
+--- S'ils sont de force égale, le défenseur et l'attaquant se détruise sans capture de la case,
+--- Si l'attaquant est plus fort, il détruit le défenseur et caputre la case sans perdre de force.
 
 Si plusieurs actions sont possibles sur la même case, le joueur choisira (même case pour la création/amélioration et l'armée à déplacer sinon).
 

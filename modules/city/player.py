@@ -18,7 +18,7 @@ class Player:
 	index = -1
 	power_active = False
 	revenue = 0
-	bank = 20
+	bank = 0
 
 	def __init__(self, game, user):
 		self.game = game
@@ -41,6 +41,8 @@ class Player:
 				for x in range(5):
 					if self.game.map[y][x] == None:
 						self.game.map[y][x] = Unit(self.index)
+
+		self.bank = amount * 2
 
 	def update_revenue(self, update_bank=False):
 		self.revenue = 0

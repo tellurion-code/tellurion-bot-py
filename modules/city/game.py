@@ -177,8 +177,10 @@ class Game:
 		def move_unit(unit, new_unit, use_movement=True):
 			if unit.level > new_unit.level:
 				new_unit.owner = self.turn
+				new_unit.level = unit.level
+			else:
+				new_unit.level = 0
 
-			new_unit.level = max(new_unit.level, unit.level) - min(new_unit.level, unit.level)
 			new_unit.used = use_movement | unit.used
 
 			unit.level = 0
@@ -267,7 +269,7 @@ class Game:
 					dy = int(math.sin(r * math.pi/2))
 
 					if x + dx >= 0 and x + dx < 5 and y + dy >= 0 and y + dy < 5:
-						if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level and (self.map[y][x].owner == self.turn and not self.map[y][x].level or self.map[y][x].owner != self.turn and not self.map[y + dy][x + dx].used):
+						if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level and self.map[y + dy][x + dx].level >= self.map[y][x].level and (self.map[y][x].owner == self.turn and not self.map[y][x].level or self.map[y][x].owner != self.turn and not self.map[y + dy][x + dx].used):
 							return False
 
 				if self.map[y][x].owner == self.turn:
