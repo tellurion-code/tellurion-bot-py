@@ -42,8 +42,9 @@ class MainClass(BaseClassPython):
 
 	async def on_ready(self):
 		if self.client.get_guild(297780867286433792):
-			global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782)
-			global_values.vote_choices["emojis"]["against"] = await self.client.get_guild(297780867286433792).fetch_emoji(727263550644551782)
+			global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(857736495577563147)
+			global_values.quest_choices["emojis"]["success"] = await self.client.get_guild(297780867286433792).fetch_emoji(857736591535505438)
+			global_values.vote_choices["emojis"]["against"] = await self.client.get_guild(297780867286433792).fetch_emoji(857736495577563147)
 
 		if self.client.get_guild(459442405532499968):
 			global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(459442405532499968).fetch_emoji(727282149253971970)
