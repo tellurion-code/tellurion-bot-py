@@ -32,7 +32,7 @@ class Game:
 		self.game_message = None
 		self.controls_message = None
 		self.costs = {
-			"creation": 8,
+			"creation": 12,
 			"destruction": 4
 		}
 		self.selection = {
@@ -179,7 +179,7 @@ class Game:
 				new_unit.owner = self.turn
 
 			new_unit.level = max(new_unit.level, unit.level) - min(new_unit.level, unit.level)
-			new_unit.used = use_movement
+			new_unit.used = use_movement | unit.used
 
 			unit.level = 0
 
@@ -206,12 +206,19 @@ class Game:
 						dy = int(math.sin(r * math.pi/2))
 
 						if x + dx >= 0 and x + dx < 5 and y + dy >= 0 and y + dy < 5:
-							if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level > 0 and not self.map[y + dy][x + dx].used:
+							if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level > 0 and not (self.map[y][x].owner != self.turn and self.map[y + dy][x + dx].used):
 								self.selection["clickable"].append([x + dx, y + dy])
 
 					if len(self.selection["clickable"]):
-						self.selection["clickable"].append([x, y])
-						self.selection["coords"] = [x, y]
+						if len(self.selection["clickable"]) == 1 and current.bank < self.costs["creation"]:
+							move_unit(self.map[self.selection["clickable"][0][1]][self.selection["clickable"][0][0]], unit, False)
+
+							self.selection["clickable"] = []
+						else:
+							if current.bank >= self.costs["creation"]:
+								self.selection["clickable"].append([x, y])
+
+							self.selection["coords"] = [x, y]
 					else:
 						upgrade_unit(unit)
 			else:
@@ -252,16 +259,19 @@ class Game:
 			if self.selection["coords"]:
 				return [x, y] not in self.selection["clickable"]
 			else:
-				if self.map[y][x].owner == self.turn:
-					return self.map[y][x].level == 5 or self.players[self.order[self.turn]].bank < self.costs["creation"]
+				if self.map[y][x].owner == self.turn and self.map[y][x].level == 5:
+					return True
 
 				for r in range(4):
 					dx = int(math.cos(r * math.pi/2))
 					dy = int(math.sin(r * math.pi/2))
 
 					if x + dx >= 0 and x + dx < 5 and y + dy >= 0 and y + dy < 5:
-						if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level and not self.map[y + dy][x + dx].used:
+						if self.map[y + dy][x + dx].owner == self.turn and self.map[y + dy][x + dx].level and (self.map[y][x].owner == self.turn and not self.map[y][x].level or self.map[y][x].owner != self.turn and not self.map[y + dy][x + dx].used):
 							return False
+
+				if self.map[y][x].owner == self.turn:
+					return self.players[self.order[self.turn]].bank < self.costs["creation"]
 
 				return True
 
@@ -315,9 +325,13 @@ class Game:
 		)
 
 	async def next_turn(self):
-		self.turn = (self.turn + 1) % len(self.order)
-		if (self.turn == 0):
-			self.round += 1
+		while True:
+			self.turn = (self.turn + 1) % len(self.order)
+			if (self.turn == 0):
+				self.round += 1
+
+			if len([0 for row in self.map for tile in row if tile.owner == self.turn]):
+				break
 
 		self.players[self.order[self.turn]].on_turn_start()
 

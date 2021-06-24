@@ -122,18 +122,18 @@ class MainClass(BaseClassPython):
 		)
 
 		embed.add_field(name=":small_blue_diamond: Début de partie :small_blue_diamond:", inline=False, value="""
-Le jeu se déroule sur un plateau de 25 cases en 5x5. Chaque joueur commence à un nombre égal de cases en sa possession,réparties aléatoirement sur le terrain (le surplus va au dernier joueur).
+Le jeu se déroule sur un plateau de 25 cases en 5x5. Chaque joueur commence à un nombre égal de cases en sa possession, réparties aléatoirement sur le terrain (le surplus va au dernier joueur), et avec 20 :coin:.
 		""")
 
 		embed.add_field(name=":small_blue_diamond: Déroulement d’un tour :small_blue_diamond:", inline=False, value="""
 Le joueur gagne 1 :coin: pour chaque case qui lui appartient. Il peut ensuite cliquer sur une des cases disponibles pour réaliser une des actions suivantes (seuls les cases avec des actions possibles sont disponibles):
-- Créer une nouvelle armée pour 8 :coin:,
+- Créer une nouvelle armée pour 12 :coin:,
 - Améliorer une armée existante pour le même prix,
 - Déplacer une armée adjacente sur cette case. Si la case est occupée par une armée adverse, la force de l'armée la plus forte est retirée à celle de l'armée la plus faible et l'armée la plus faible est détruite.
 
 Si plusieurs actions sont possibles sur la même case, le joueur choisira (même case pour la création/amélioration et l'armée à déplacer sinon).
 
-Les armées ne peuvent pas se déplacer le premier tour et ont une force maximale de 5.
+Les armées ne peuvent pas se déplacer le premier tour et ont une force maximale de 5. Chacune ne peut se déplacer qu'une seule fois sur une case ennemie.
 		""")
 
 # 		embed.add_field(name=":small_blue_diamond: Coûts :small_blue_diamond:", inline=False, value="""

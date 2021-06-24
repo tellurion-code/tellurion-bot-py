@@ -18,7 +18,7 @@ class Player:
 	index = -1
 	power_active = False
 	revenue = 0
-	bank = 0
+	bank = 20
 
 	def __init__(self, game, user):
 		self.game = game
