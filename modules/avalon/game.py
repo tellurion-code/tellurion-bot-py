@@ -481,7 +481,7 @@ class Game:
 				elif len([x for x in self.quests if x == -1]) == 3:
 					if len([x for x in self.players.values() if x.role == "assassin"]):
 						await self.channel.send(
-							discord.Embed(
+							embed=discord.Embed(
 								title="Assassinat",
 								description="3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
 								color=global_values.color
@@ -502,7 +502,8 @@ class Game:
 					info={
 						"name": str(global_values.quest_choices["emojis"]["cancel"]) + " Quête annulée " + str(global_values.quest_choices["emojis"]["cancel"]),
 						"value": "**Arthur a décidé d'annuler la quête.** Le prochain leader va proposer une nouvelle composition."
-					})
+					}
+				)
 
 				self.refused += 1
 
