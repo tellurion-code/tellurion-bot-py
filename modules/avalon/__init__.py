@@ -84,10 +84,10 @@ class MainClass(BaseClassPython):
 				if reactions[message.author.id][0] == 0:
 					await message.channel.send("La partie a été réinitialisée")
 
-					if globals.games[message.channel.id.info_message:
-						globals.games[message.channel.id].info_message.delete()
+					if global_values.games[message.channel.id].info_message:
+						global_values.games[message.channel.id].info_message.delete()
 
-					globals.games[message.channel.id].delete_save()
+					global_values.games[message.channel.id].delete_save()
 					del global_values.games[message.channel.id]
 
 			async def cond(reactions):

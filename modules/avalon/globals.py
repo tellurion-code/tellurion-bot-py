@@ -32,6 +32,7 @@ def init():
 		"uther": "👨‍🦳 Uther",
 		"arthur": "👑 Arthur",
 		"vortigern": "👴 Vortigern",
+
 		"evil": "🟥 Méchant",
 		"assassin": "🗡️ Assassin",
 		"morgane": "🧙‍♀️ Morgane",
@@ -41,6 +42,6 @@ def init():
 		"accolon": "🤘 Accolon",
 		"kay": "🧐 Sir Kay",
 		"agravain": "🔮 Agravain",
-		"elias": "🧙 Elias",
-		"maleagant": "🧿 Méléagant"
+
+		"elias": "🧙 Elias"
 	}
