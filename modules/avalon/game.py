@@ -505,7 +505,7 @@ class Game:
 
 								components[len(components) - 1].append({
 									"effect": kill,
-									"cond": lambda i: self.players[i.user.id].role == "assassin",
+									"cond": lambda i: i.user.id in self.players and self.players[i.user.id].role == "assassin",
 									"label": str(self.players[valid_candidates[5 * y + x]].user),
 									"style": 2
 								})
