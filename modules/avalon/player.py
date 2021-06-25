@@ -297,36 +297,6 @@ class Assassin(Evil):
 			description="Vous êtes l'Assassin. Vous devez faire échouer 3 Quêtes ou trouver Merlin et l'assassiner.",
 			color=self.color)
 
-	async def send_assassin_choice(self):
-		valid_candidates = [x for x in self.game.order if self.game.players[x].allegiance != "evil"]
-		emojis = [global_values.number_emojis[self.game.order.index(x)] for x in valid_candidates]
-		choices = ["`" + str(self.game.players[x].user) + "`" for x in valid_candidates]
-
-		async def kill(reactions):
-			killed = self.game.players[valid_candidates[reactions[self.user.id][0]]]
-
-			if killed.role == "merlin":
-				await self.game.end_game(False, "assassinat de Merlin (`" + str(killed.user) + "`)")
-			elif killed.role == "elias":
-				await self.game.end_game(global_values.visual_roles[killed.role], "usurpation (`" + str(killed.user) + "`)")
-			else:
-				await self.game.end_game(True, "3 Quêtes réussies (Assassinat de `" + str(killed.user) + "` qui était " + global_values.visual_roles[killed.role] + ")")
-
-		async def cond(reactions):
-			return len(reactions[self.user.id]) == 1
-
-		await ReactionMessage(
-			cond,
-			kill
-		).send(
-			self.user,
-			"Choisissez qui vous souhaitez tuer",
-			"",
-			global_values.color,
-			choices,
-			emojis=emojis
-		)
-
 
 class Morgane(Evil):
 	role = "morgane"

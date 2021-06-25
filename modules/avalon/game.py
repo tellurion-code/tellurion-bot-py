@@ -82,15 +82,20 @@ class Game:
 					"bool": False,
 					"reason": "Pas assez de joueurs"
 				}
-			elif len(self.players) <= 10:
-				return {
-					"bool": True,
-					"reason": "Démarrer"
-				}
-			else:
+			elif len(self.players) > 10:
 				return {
 					"bool": False,
 					"reason": "Trop de joueurs"
+				}
+			elif len(self.roles) and len(self.players) != len(self.roles):
+				return {
+					"bool": False,
+					"reason": "Nombre de joueurs différent du nombre de rôles (" + str(len(self.roles)) + ")"
+				}
+			else:
+				return {
+					"bool": True,
+					"reason": "Démarrer"
 				}
 
 		self.info_message = ComponentMessage(
@@ -477,15 +482,44 @@ class Game:
 					await self.end_game(False, "3 Quêtes échouées")
 				elif len([x for x in self.quests if x == -1]) == 3:
 					if len([x for x in self.players.values() if x.role == "assassin"]):
-						await self.channel.send(
+						valid_candidates = [x for x in self.order if self.players[x].allegiance != "evil"]
+						num_player_rows = math.ceil(len(valid_candidates)/5)
+
+						async def kill(button, interaction):
+							killed = self.players[valid_candidates[button.index]]
+
+							if killed.role == "merlin":
+								await self.end_game(False, "assassinat de Merlin (`" + str(killed.user) + "`)")
+							elif killed.role == "elias":
+								await self.end_game(global_values.visual_roles[killed.role], "usurpation (`" + str(killed.user) + "`)")
+							else:
+								await self.end_game(True, "3 Quêtes réussies (Assassinat de `" + str(killed.user) + "` qui était " + global_values.visual_roles[killed.role] + ")")
+
+						await self.info_message.delete()
+						components = []
+						for y in range(num_player_rows):
+							components.append([])
+							for x in range(5):
+								if 5 * y + x == len(valid_candidates):
+									break
+
+								components[len(components) - 1].append({
+									"effect": kill,
+									"cond": lambda i: self.players[i.user.id].role == "assassin",
+									"label": str(self.players[valid_candidates[5 * y + x]].user),
+									"style": 2
+								})
+
+						self.info_message = ComponentMessage(components)
+
+						await self.info_message.send(
+							self.channel,
 							embed=discord.Embed(
 								title="Assassinat",
 								description="3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
 								color=global_values.color
 							)
 						)
-
-						await ([x for x in self.players.values() if x.role == "assassin"][0]).send_assassin_choice()
 					else:
 						await self.end_game(True, "3 Quêtes réussies")
 				else:

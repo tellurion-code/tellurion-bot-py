@@ -86,7 +86,7 @@ class MainClass(BaseClassPython):
 					await message.channel.send("La partie a été réinitialisée")
 
 					if global_values.games[message.channel.id].info_message:
-						global_values.games[message.channel.id].info_message.delete()
+						await global_values.games[message.channel.id].info_message.delete()
 
 					global_values.games[message.channel.id].delete_save()
 					del global_values.games[message.channel.id]
