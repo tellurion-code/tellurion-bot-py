@@ -41,6 +41,7 @@ class Player:
 				for x in range(5):
 					if self.game.map[y][x] == None:
 						self.game.map[y][x] = Unit(self.index)
+						amount += 1
 
 		self.bank = amount * 2
 
