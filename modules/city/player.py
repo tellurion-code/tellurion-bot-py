@@ -25,7 +25,7 @@ class Player:
 		self.user = user
 		self.variables = {}
 
-	def spawn(self, amount):
+	def spawn(self, amount, index):
 		if amount:
 			for i in range(amount):
 				while True:
@@ -43,7 +43,8 @@ class Player:
 						self.game.map[y][x] = Unit(self.index)
 						amount += 1
 
-		self.bank = amount * 2
+		self.index = index
+		self.bank = amount * 2 + self.game.costs["creation"] * (.5 + index*.5 if index else 0)
 
 	def update_revenue(self, update_bank=False):
 		self.revenue = 0

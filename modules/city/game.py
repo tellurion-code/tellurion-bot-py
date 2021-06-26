@@ -71,7 +71,7 @@ class Game:
 
 			amount = math.floor(25 / len(self.order))
 			for i, id in enumerate(self.order):
-				self.players[id].spawn(amount if i < len(self.order) - 1 else 0)
+				self.players[id].spawn(amount if i < len(self.order) - 1 else 0, i)
 
 			self.turn = 0
 			self.players[self.order[self.turn]].on_turn_start()
