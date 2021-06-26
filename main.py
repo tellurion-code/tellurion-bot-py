@@ -440,7 +440,7 @@ bot_launch_text = "Online since : {}-{}-{} {}:{}:{}".format(*bot_launch_times)
 intents = discord.Intents.default()
 intents.members = True
 intents.presences = True
-client1 = LBI(max_messages=500000, activity=discord.Game(name=bot_launch_text), intents=intents)
+client1 = LBI(max_messages=500000, status=discord.Status.online, activity=discord.Game(name=bot_launch_text), intents=intents)
 
 
 class Communication(asyncio.Protocol):
