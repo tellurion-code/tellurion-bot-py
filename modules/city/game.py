@@ -172,10 +172,13 @@ class Game:
 		def upgrade_unit(unit):
 			current.bank -= self.costs["creation"]
 			unit.level += 1
-			unit.used = (self.round == 1)
+			unit.used = True
 
 		def move_unit(unit, new_unit, use_movement=True):
 			if unit.level > new_unit.level:
+				if (new_unit.owner != self.turn):
+					current.bank += 1
+
 				new_unit.owner = self.turn
 				new_unit.level = unit.level
 			else:

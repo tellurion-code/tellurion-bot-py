@@ -44,7 +44,7 @@ class Player:
 						amount += 1
 
 		self.index = index
-		self.bank = amount * 2 + self.game.costs["creation"] * (.5 + index*.5 if index else 0)
+		self.bank = amount * 2 + self.game.costs["creation"] * int(.5 + index*.5 if index else 0)
 
 	def update_revenue(self, update_bank=False):
 		self.revenue = 0
