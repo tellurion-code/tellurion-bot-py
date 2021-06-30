@@ -77,23 +77,23 @@ class Player:
 
 class Defender(Player):
 	name = "🛡️ Défenseur"
-	description = "Ne perd pas d'unités lors d'une égalité en défense"
+	description = "A un bonus de +1 en défense"
 
 	def on_defense(self, game, attack, defense):
-		return (-1 if attack == defense else 0)
+		return -1
 
 
 class Attacker(Player):
 	name = "🗡️ Attaquant"
-	description = "Capture l'unité au lieu de la détruire lors d'une égalité en attaque"
+	description = "A un bonus de +1 en attaque"
 
 	def on_attack(self, game, attack, defense, defender):
-		return (1 if attack == defense else 0)
+		return 1
 
 
 class Architect(Player):
 	name = "🧱 Architecte"
-	description = "Les murs qu'il touche font partie de ses unités"
+	description = "Les murs qu'il touche font partie de ses unités sauf pour les combats"
 
 	def test_for_wall(self, game, x, y):
 		for dx2 in range(-1, 2):
@@ -147,29 +147,22 @@ class Architect(Player):
 	#	 return power
 
 
-# class Swarm(Player):
-#	 name = "🐝 Essaim"
-#	 description = "Commence avec deux unités en diagonale"
-#
-#	 def spawn(self, game, map, x, y):
-#		 # map[y][x] = self.index
-#
-#		 done = False
-#		 for i in range(0, 3):
-#			 r = math.pi/2 * i
-#			 nx1 = int(x + math.cos(r))
-#			 ny1 = int(y + math.sin(r))
-#			 nx2 = int(x + math.cos(r + math.pi/2))
-#			 ny2 = int(y + math.sin(r + math.pi/2))
-#			 if game.inside(nx1, ny2) and game.inside(nx2, ny2) and map[ny1][nx1] == -1 and map[ny2][nx2] == -1:
-#				 map[ny1][nx1] = self.index
-#				 map[ny2][nx2] = self.index
-#				 done = True
-#				 break
-#
-#		 if not done:
-#			 map[y + 1][x] = self.index
-#			 map[y][x + 1] = self.index
+class Swarm(Player):
+	name = "🐝 Essaim"
+	description = "Commence avec deux unités en plus en ligne"
+
+	def spawn(self, game, map, x, y):
+		map[y][x] = self.index
+
+		d1 = random.randrange(2)
+		d2 = 1 - d1
+
+		if game.inside(x + d1, y + d2) and game.inside(x - d1, y - d2) and map[y + d2][x + d1] == -1 and map[y - d2][x - d1] == -1:
+			map[y + d2][x + d1] = self.index
+			map[y - d2][x - d1] = self.index
+		else:
+			map[y + d1][x + d2] = self.index
+			map[y - d1][x - d2] = self.index
 
 
 class Racer(Player):
@@ -217,7 +210,7 @@ class Racer(Player):
 
 class Pacifist(Player):
 	name = "🕊️ Pacifiste"
-	description = "A un bonus de 2 en défense contre les joueurs qu'il n'a pas attaqué"
+	description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué"
 
 	def __init__(self, user):
 		super().__init__(user)
@@ -231,7 +224,7 @@ class Pacifist(Player):
 		self.variables["peace_with"] = [i for i in range(len(game.order))]
 
 	def on_defense(self, game, attack, defense):
-		return (-2 if game.turn in self.variables["peace_with"] else 0)
+		return (-math.inf if game.turn in self.variables["peace_with"] else 0)
 
 	def on_attack(self, game, attack, defense, defender):
 		if defender in self.variables["peace_with"]:
@@ -242,14 +235,14 @@ class Pacifist(Player):
 
 class Isolated(Player):
 	name = "🏚️ Isolé"
-	description = "Ne perd pas les combats où il a une seule unité en défense"
+	description = "Ne perd pas les combats où il a une ou deux unité en défense"
 
 	def on_defense(self, game, attack, defense):
-		return (-math.inf if defense == 1 else 0)
+		return (-math.inf if defense <= 2 else 0)
 
 class General(Player):
 	name = "🚩 Général"
-	description = "Peut doubler la valeur de ses unités pour deux manches"
+	description = "Peut doubler la valeur de ses unités pour trois manches"
 	power_active = True
 
 	def __init__(self, user):
@@ -264,12 +257,12 @@ class General(Player):
 
 		return {
 			"name": "🚩 Pouvoir du Général",
-			"value": "Vos unités valent double pendant les deux prochaines manches"
+			"value": "Vos unités valent double pendant les trois prochaines manches"
 		}
 
 	def on_turn_start(self, game):
 		self.variables["turn"] += 1 if self.variables["turn"] else 0
-		if self.variables["turn"] == 3:
+		if self.variables["turn"] == 4:
 			self.variables["turn"] = 0
 
 	def get_power(self, game, x, y, dx, dy):
