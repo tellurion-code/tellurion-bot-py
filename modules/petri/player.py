@@ -242,7 +242,7 @@ class Isolated(Player):
 
 class General(Player):
 	name = "🚩 Général"
-	description = "Peut doubler la valeur de ses unités pour trois manches"
+	description = "Peut doubler la valeur de ses unités pour deux manches"
 	power_active = True
 
 	def __init__(self, user):
@@ -257,12 +257,12 @@ class General(Player):
 
 		return {
 			"name": "🚩 Pouvoir du Général",
-			"value": "Vos unités valent double pendant les trois prochaines manches"
+			"value": "Vos unités valent double pendant les deux prochaines manches"
 		}
 
 	def on_turn_start(self, game):
 		self.variables["turn"] += 1 if self.variables["turn"] else 0
-		if self.variables["turn"] == 4:
+		if self.variables["turn"] == 3:
 			self.variables["turn"] = 0
 
 	def get_power(self, game, x, y, dx, dy):
