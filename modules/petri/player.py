@@ -93,7 +93,7 @@ class Attacker(Player):
 
 class Architect(Player):
 	name = "🧱 Architecte"
-	description = "Les murs qu'il touche font partie de ses unités sauf pour les combats"
+	description = "Les murs qu'il touche font partie de ses unités pour les combats"
 
 	def test_for_wall(self, game, x, y):
 		for dx2 in range(-1, 2):
@@ -104,47 +104,47 @@ class Architect(Player):
 
 		return False
 
-	def move(self, game, new_map, dx, dy, summary):
-		for y in range(game.ranges[1]):
-			for x in range(game.ranges[0]):
-				valid = False
-				if game.map[y][x] == -2:
-					valid = self.test_for_wall(game, x, y)
-
-				if (game.map[y][x] == game.turn or valid) and game.inside(x + dx, y + dy):
-					new_tile = game.map[y + dy][x + dx]
-					if new_tile == -1:
-						new_map[y + dy][x + dx] = game.turn
-					elif new_tile >= 0 and new_tile != game.turn:
-						owner = game.players[game.order[new_tile]]
-
-						attack = self.get_power(game, x, y, -dx, -dy)
-						defense = owner.get_power(game, x + dx, y + dy, dx, dy)
-
-						diff = attack - defense
-						diff += self.on_attack(game, attack, defense, new_tile)
-						diff += owner.on_defense(game, attack, defense)
-
-						if diff > 0:
-							new_map[y + dy][x + dx] = game.turn
-							summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ 🗡️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
-						elif diff == 0:
-							new_map[y + dy][x + dx] = -1
-							summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
-						else:
-							summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "` 🛡️ " + global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️")
-
-	# def get_power(self, game, x, y, dx, dy):
-	#	 power = 0
-	#	 tdx, tdy = 0, 0
-	#	 while game.map[y + tdy][x + tdx] == self.index or game.map[y + tdy][x + tdx] == -2:
-	#		 power += 1
-	#		 tdx += dx
-	#		 tdy += dy
-	#		 if not game.inside(x + tdx, y + tdy):
-	#			 break
+	# def move(self, game, new_map, dx, dy, summary):
+	# 	for y in range(game.ranges[1]):
+	# 		for x in range(game.ranges[0]):
+	# 			valid = False
+	# 			if game.map[y][x] == -2:
+	# 				valid = self.test_for_wall(game, x, y)
 	#
-	#	 return power
+	# 			if (game.map[y][x] == game.turn or valid) and game.inside(x + dx, y + dy):
+	# 				new_tile = game.map[y + dy][x + dx]
+	# 				if new_tile == -1:
+	# 					new_map[y + dy][x + dx] = game.turn
+	# 				elif new_tile >= 0 and new_tile != game.turn:
+	# 					owner = game.players[game.order[new_tile]]
+	#
+	# 					attack = self.get_power(game, x, y, -dx, -dy)
+	# 					defense = owner.get_power(game, x + dx, y + dy, dx, dy)
+	#
+	# 					diff = attack - defense
+	# 					diff += self.on_attack(game, attack, defense, new_tile)
+	# 					diff += owner.on_defense(game, attack, defense)
+	#
+	# 					if diff > 0:
+	# 						new_map[y + dy][x + dx] = game.turn
+	# 						summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ 🗡️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
+	# 					elif diff == 0:
+	# 						new_map[y + dy][x + dx] = -1
+	# 						summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
+	# 					else:
+	# 						summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "` 🛡️ " + global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️")
+
+	def get_power(self, game, x, y, dx, dy):
+		 power = 0
+		 tdx, tdy = 0, 0
+		 while game.map[y + tdy][x + tdx] == self.index or game.map[y + tdy][x + tdx] == -2:
+			 power += 1
+			 tdx += dx
+			 tdy += dy
+			 if not game.inside(x + tdx, y + tdy):
+				 break
+
+		 return power
 
 
 class Swarm(Player):
