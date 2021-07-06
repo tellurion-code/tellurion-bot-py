@@ -22,6 +22,7 @@ class MainClass(BaseClass):
         super().__init__(client)
         self.RoleList = {
             "joueur": [435559220860157952, "Permet d'être notifié pour les mini-jeux/jeux"],
+            "animation": [861706123254038559, "Permet d'être notifié pour les annonces et rappels d'animations"],
             "rework": [851761080040685568, "Permet d'être notifié pour les évènements liés au rework"]
         }
 
