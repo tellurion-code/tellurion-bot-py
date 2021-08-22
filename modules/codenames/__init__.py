@@ -75,7 +75,7 @@ class MainClass(BaseClassPython):
             await message.channel.send("Il n'y a pas de partie en cours dans le salon")
         else:
             game = global_values.games[message.channel.id]
-            if game.turn == 0:
+            if game.turn != -1:
                 await game.game_message.delete(True)
                 await game.spymaster_message.delete()
                 await game.send_game_messages()
