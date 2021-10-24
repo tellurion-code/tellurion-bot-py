@@ -33,6 +33,7 @@ class MainClass(BaseClassPython):
         await self.fill_history()
 
     async def on_message(self, message: discord.Message):
+        asyncio.ensure_future(self.parse_command(message))
         # Fill history
         if message.author.bot:
             return
@@ -48,7 +49,6 @@ class MainClass(BaseClassPython):
                     delta = message.created_at - self.history[message.author.id][-1][0]
                     if delta.total_seconds() >= self.config.min_delta:
                         self.history[message.author.id].append((message.created_at, delta))
-        await self.parse_command(message)
 
     async def fill_history(self):
         async with self.lock:
