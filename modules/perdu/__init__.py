@@ -4,6 +4,7 @@ import time
 import discord
 import humanize
 import matplotlib.pyplot as np
+import asyncio
 
 import utils.emojis
 from modules.base import BaseClassPython
@@ -26,6 +27,7 @@ class MainClass(BaseClassPython):
         super().__init__(client)
         self.config.init({"channel": 0, "lost_role": 0, "min_delta": datetime.timedelta(minutes=26).total_seconds()})
         self.history = {}
+        self.lock = asyncio.Lock()
 
     async def on_ready(self):
         await self.fill_history()
@@ -35,31 +37,33 @@ class MainClass(BaseClassPython):
         if message.author.bot:
             return
         if message.channel.id == self.config.channel:
-            if message.author.id not in self.history.keys():
-                # Add new user if not found
-                self.history.update(
-                    {message.author.id: ([(message.created_at, datetime.timedelta(seconds=0)), ])}
-                )
-            else:
-                # Update user and precompute timedelta
-                delta = message.created_at - self.history[message.author.id][-1][0]
-                if delta.total_seconds() >= self.config.min_delta:
-                    self.history[message.author.id].append((message.created_at, delta))
+            async with self.lock:
+                if message.author.id not in self.history.keys():
+                    # Add new user if not found
+                    self.history.update(
+                        {message.author.id: ([(message.created_at, datetime.timedelta(seconds=0)), ])}
+                    )
+                else:
+                    # Update user and precompute timedelta
+                    delta = message.created_at - self.history[message.author.id][-1][0]
+                    if delta.total_seconds() >= self.config.min_delta:
+                        self.history[message.author.id].append((message.created_at, delta))
         await self.parse_command(message)
 
     async def fill_history(self):
-        self.history = {}
-        async for message in self.client.get_channel(self.config.channel).history(limit=None):
-            if message.author.id not in self.history.keys():
-                # Add new user if not found
-                self.history.update({message.author.id: ([(message.created_at, datetime.timedelta(seconds=0)), ])})
-            else:
-                # Update user and precompute timedelta
-                delta = self.history[message.author.id][-1][0] - message.created_at
-                if delta.total_seconds() >= self.config.min_delta:
-                    self.history[message.author.id].append((message.created_at, delta))
-        for user in self.history.keys():
-            self.history[user].sort(key=lambda x: x[0])
+        async with self.lock:
+            self.history = {}
+            async for message in self.client.get_channel(self.config.channel).history(limit=None):
+                if message.author.id not in self.history.keys():
+                    # Add new user if not found
+                    self.history.update({message.author.id: ([(message.created_at, datetime.timedelta(seconds=0)), ])})
+                else:
+                    # Update user and precompute timedelta
+                    delta = self.history[message.author.id][-1][0] - message.created_at
+                    if delta.total_seconds() >= self.config.min_delta:
+                        self.history[message.author.id].append((message.created_at, delta))
+            for user in self.history.keys():
+                self.history[user].sort(key=lambda x: x[0])
 
     def get_top(self, top=10, since=datetime.datetime(year=1, month=1, day=1), with_user=None, only_users=None):
         """Return [(userid, [(date, delta), (date,delta), ...]), ... ]"""
