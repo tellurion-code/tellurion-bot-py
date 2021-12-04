@@ -29,10 +29,12 @@ class MainClass(BaseClass):
             for member in self.client.get_all_members():
                 if discord.utils.get(member.guild.roles, id=self.eviewer) in member.guild.roles:
                     if discord.utils.get(member.guild.roles, id=self.eviewer) in member.roles:
-                        #await member.remove_roles(
-                            #discord.utils.get(member.guild.roles, id=self.eviewer))
                         await message.channel.send(
                             member.mention + ", Toi tu meurs.")
+                        try:
+                            await member.kick()
+                        except:
+                            pass
                     else:
                         await message.channel.send(
                             member.mention + ", Toi tu vis.")
