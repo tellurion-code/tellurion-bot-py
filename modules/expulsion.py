@@ -32,7 +32,7 @@ class MainClass(BaseClass):
                         #await member.remove_roles(
                             #discord.utils.get(member.guild.roles, id=self.eviewer))
                         await message.channel.send(
-                            message.author.mention + ", Toi tu meurs.")
+                            member.mention + ", Toi tu meurs.")
                     else:
                         await message.channel.send(
-                            message.author.mention + ", Toi tu vis.")
+                            member.mention + ", Toi tu vis.")
