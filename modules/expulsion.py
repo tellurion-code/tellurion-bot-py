@@ -18,6 +18,7 @@ class MainClass(BaseClass):
             "`{prefix}{command} purge`": "Expulse les e-viewers", 
         }
     }
+    command_text = "expulsion"
 
     def __init__(self, client):
         super().__init__(client)
