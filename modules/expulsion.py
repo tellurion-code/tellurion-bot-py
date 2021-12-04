@@ -27,9 +27,7 @@ class MainClass(BaseClass):
     async def com_purge(self, message, args, kwargs):
         async with self.lock:
             for member in self.client.get_all_members():
-                if member.id == message.author.id and \
-                        discord.utils.get(member.guild.roles, id=self.eviewer) \
-                        in member.guild.roles:
+                if discord.utils.get(member.guild.roles, id=self.eviewer) in member.guild.roles:
                     if discord.utils.get(member.guild.roles, id=self.eviewer) in member.roles:
                         #await member.remove_roles(
                             #discord.utils.get(member.guild.roles, id=self.eviewer))
