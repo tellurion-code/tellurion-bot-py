@@ -242,6 +242,8 @@ class Game:
 		if info:
 			embed.add_field(name=info["name"], value=info["value"])
 
+		embed.set_footer(text="Mettez une réaction pour changer votre icône!")
+
 		return embed
 
 	async def send_info(self, **kwargs):
