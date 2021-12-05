@@ -185,9 +185,14 @@ class Game:
 		random.shuffle(self.order)
 		random.shuffle(self.roles)
 
+		if self.mainclass.objects.save_exists("icons"):
+			icons = self.mainclass.objects.load_object("icons")
+		else:
+			icons = {}
+
 		for i in range(len(self.order)):
 			self.players[self.order[i]] = classes[self.roles[i]](self, self.players[self.order[i]].user)
-			self.players[self.order[i]].index_emoji = global_values.number_emojis[i]
+			self.players[self.order[i]].index_emoji = icons[str(self.order[i])] if str(self.order[i]) in icons else global_values.number_emojis[i]
 
 		for i in range(len(self.order)):
 			await self.players[self.order[i]].game_start()

@@ -339,4 +339,13 @@ Attention S’il y a 7 participants ou plus, la Quête n°4 doit avoir 2 échecs
 					if game.turn != -1:
 						if user.id in game.players:
 							game.players[user.id].index_emoji = str(reaction.emoji)
+
+							if self.objects.save_exists("icons"):
+								save = self.objects.load_object("icons")
+							else:
+								save = {}
+
+							save[str(user.id)] = str(reaction.emoji)
+							self.objects.save_object("icons", save)
+
 							await game.send_info()
