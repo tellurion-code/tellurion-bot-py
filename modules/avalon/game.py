@@ -147,33 +147,33 @@ class Game:
 		self.turn = -1
 
 		quests = [
-			[],  # 0
-			[],  # 1
-			[1, 1, 2, 2, 2],  # 2, Debug
-			[1, 2, 2, 2, 2],  # 3
-			[2, 2, 2, 2, 2],  # 4
-			[2, 3, 2, 3, 3],  # 5
-			[2, 3, 4, 3, 4],  # 6
-			[2, 3, 3, 4, 4],  # 7
-			[3, 4, 4, 5, 5],  # 8
-			[3, 4, 4, 5, 5],  # 9
-			[3, 4, 4, 5, 5]  # 10
+			[],  				# 0
+			[],  				# 1
+			[1, 1, 2, 2, 2],  	# 2, Debug
+			[1, 2, 2, 2, 2],  	# 3
+			[2, 2, 2, 3, 3],  	# 4
+			[2, 3, 2, 3, 3],  	# 5
+			[2, 3, 4, 3, 4],  	# 6
+			[2, 3, 3, 4, 4],  	# 7
+			[3, 4, 4, 5, 5],  	# 8
+			[3, 4, 4, 5, 5],  	# 9
+			[3, 4, 4, 5, 5]  	# 10
 		]
 
 		self.quests = quests[len(self.players)]
 
 		roles = [
-			[],  # 0?
-			["good"],  # 1
-			["good", "evil"],  # 2, Debug
-			["good", "good", "evil"],  # 3
-			["good", "good", "good", "evil"],  # 4
-			["merlin", "percival", "good", "morgane", "assassin"],  # 5
-			["merlin", "percival", "good", "good", "morgane", "assassin"],  # 6
-			["merlin", "percival", "good", "good", "evil", "morgane", "assassin"],  # 7
-			["merlin", "percival", "good", "good", "good", "evil", "morgane", "assassin"],  # 8
-			["merlin", "percival", "good", "good", "good", "good", "evil", "morgane", "assassin"],  # 9
-			["merlin", "percival", "good", "good", "good", "good", "evil", "evil", "morgane", "assassin"],  # 10
+			[],  																							# 0?
+			["good"],  																						# 1
+			["good", "evil"],  																				# 2, Debug
+			["merlin", "good", "assassin"],  																# 3
+			["merlin", "good", "good", "assassin"],  														# 4
+			["merlin", "percival", "good", "morgane", "assassin"],  										# 5
+			["merlin", "percival", "good", "good", "morgane", "assassin"],  								# 6
+			["merlin", "percival", "good", "good", "evil", "morgane", "assassin"],  						# 7
+			["merlin", "percival", "good", "good", "good", "evil", "morgane", "assassin"], 					# 8
+			["merlin", "percival", "good", "good", "good", "good", "evil", "morgane", "assassin"],			# 9
+			["merlin", "percival", "good", "good", "good", "good", "evil", "evil", "morgane", "assassin"]	# 10
 		]
 
 		if len(self.roles) == 0:
@@ -602,7 +602,7 @@ class Game:
 		else:
 			embed = discord.Embed(title="[AVALON] Victoire " + ("d'" if good_wins[:1] in ["E", "A", "I", "O", "U", "Y"] else "de ") + good_wins + " par " + cause  + " !", color=0x76ee00)
 
-		embed.description = "**Joueurs :**\n" + '\n'.join([global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` : " + global_values.visual_roles[self.players[x].role] for i, x in enumerate(self.order)])
+		embed.description = "**Joueurs :**\n" + '\n'.join([self.players[x].index_emoji + " `" + str(self.players[x].user) + "` : " + global_values.visual_roles[self.players[x].role] for i, x in enumerate(self.order)])
 
 		await self.info_message.delete()
 
