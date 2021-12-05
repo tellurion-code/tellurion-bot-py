@@ -10,6 +10,7 @@ class Player:
 	role = ""
 	last_vote = ""
 	last_choice = ""
+	index_emoji = ""
 	inspected = False
 	vote_message = None
 	info_message = None

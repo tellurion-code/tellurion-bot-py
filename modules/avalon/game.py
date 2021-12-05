@@ -187,6 +187,7 @@ class Game:
 
 		for i in range(len(self.order)):
 			self.players[self.order[i]] = classes[self.roles[i]](self, self.players[self.order[i]].user)
+			self.players[self.order[i]].index_emoji = global_values.number_emojis[i]
 
 		for i in range(len(self.order)):
 			await self.players[self.order[i]].game_start()
@@ -220,14 +221,14 @@ class Game:
 
 		embed.add_field(
 			name="Chevaliers :",
-			value='\n'.join([(("📩" if self.phase == "team_selection" else (str(global_values.vote_choices["emojis"][self.players[x].last_vote]))) if len(self.players[x].last_vote) else "✉️") + global_values.number_emojis[i] + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") + ("🌊" if self.lady_of_the_lake == i and self.game_rules["lady_of_the_lake"] else "") for i, x in enumerate(self.order)]),
+			value='\n'.join([(("📩" if self.phase == "team_selection" else (str(global_values.vote_choices["emojis"][self.players[x].last_vote]))) if len(self.players[x].last_vote) else "✉️") + self.players[x].index_emoji + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") + ("🌊" if self.lady_of_the_lake == i and self.game_rules["lady_of_the_lake"] else "") for i, x in enumerate(self.order)]),
 			inline=False
 		)
 
 		if len(self.team):
 			embed.add_field(
 				name="Participants à la Quête :",
-				value='\n'.join([(global_values.number_emojis[i] + ' `' + str(self.players[x].user) + '`') for i, x in self.team.items()]),
+				value='\n'.join([(self.players[x].index_emoji + ' `' + str(self.players[x].user) + '`') for i, x in self.team.items()]),
 				inline=False
 			)
 

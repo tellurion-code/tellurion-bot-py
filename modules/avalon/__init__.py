@@ -45,6 +45,7 @@ class MainClass(BaseClassPython):
 			global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(297780867286433792).fetch_emoji(857736495577563147)
 			global_values.quest_choices["emojis"]["success"] = await self.client.get_guild(297780867286433792).fetch_emoji(857736591535505438)
 			global_values.vote_choices["emojis"]["against"] = await self.client.get_guild(297780867286433792).fetch_emoji(857736495577563147)
+			global_values.vote_choices["emojis"]["for"] = await self.client.get_guild(297780867286433792).fetch_emoji(857736591535505438)
 
 		if self.client.get_guild(459442405532499968):
 			global_values.quest_choices["emojis"]["failure"] = await self.client.get_guild(459442405532499968).fetch_emoji(727282149253971970)
@@ -114,24 +115,29 @@ class MainClass(BaseClassPython):
 			await message.channel.send("Il n'y a pas de partie en cours")
 
 	# Lance la partie
-	async def com_start(self, message, args, kwargs):
-		if message.channel.id in global_values.games:
-			game = global_values.games[message.channel.id]
-			if game.turn == -1:
-				if message.author.id in game.players:
-					if len(game.players) >= 5 or global_values.debug:
-						if len(game.roles) in [0, len(game.players)]:
-							await game.start_game()
-						else:
-							await message.channel.send("Le nombre de rôles ne correspond pas au nombre de joueurs")
-					else:
-						await message.channel.send("Il faut au minimum 5 joueurs")
-				else:
-					await message.channel.send("Vous n'êtes pas dans la partie")
-			else:
-				await message.author.send("La partie a déjà commencé")
-		else:
-			await message.channel.send("Il n'y a pas de partie en cours")
+	# async def com_start(self, message, args, kwargs):
+	# 	if message.channel.id in global_values.games:
+	# 		game = global_values.games[message.channel.id]
+	# 		if game.turn == -1:
+	# 			if message.author.id in game.players:
+	# 				if len(game.players) >= 5 or global_values.debug:
+	# 					if len(game.roles) in [0, len(game.players)]:
+	# 						await game.start_game()
+	# 					else:
+	# 						await message.channel.send("Le nombre de rôles ne correspond pas au nombre de joueurs")
+	# 				else:
+	# 					await message.channel.send("Il faut au minimum 5 joueurs")
+	# 			else:
+	# 				await message.channel.send("Vous n'êtes pas dans la partie")
+	# 		else:
+	# 			await message.author.send("La partie a déjà commencé")
+	# 	else:
+	# 		await message.channel.send("Il n'y a pas de partie en cours")
+
+	# Idem
+	# async def com_SUTARUTO(self, message, args, kwargs):
+	# 	if message.author.id == 118399702667493380:
+	# 		await self.com_start(message, args, kwargs)
 
 	async def com_gamerules(self, message, args, kwargs):
 		if message.channel.id in global_values.games:
@@ -166,11 +172,6 @@ class MainClass(BaseClassPython):
 				await message.author.send("La partie a déjà commencé")
 		else:
 			await message.channel.send("Il n'y a pas de partie en cours")
-
-	# Idem
-	async def com_SUTARUTO(self, message, args, kwargs):
-		if message.author.id == 118399702667493380:
-			await self.com_start(message, args, kwargs)
 
 	# Active le debug: enlève la limitation de terme, et le nombre minimal de joueurs
 	async def com_debug(self, message, args, kwargs):
@@ -328,3 +329,14 @@ Attention S’il y a 7 participants ou plus, la Quête n°4 doit avoir 2 échecs
 *Note : Tous les votes se font par le biais des réactions ( :white_check_mark: et :negative_squared_cross_mark: )
 				""",
 				color=global_values.color))
+
+	async def on_reaction_add(self, reaction, user):
+		if not user.bot:
+			if reaction.message.channel.id in global_values.games:
+				game = global_values.games[reaction.message.channel.id]
+				if game.info_message.message.id == reaction.message.id:
+					await reaction.message.remove_reaction(reaction.emoji, user)
+					if game.turn != -1:
+						if user.id in game.players:
+							game.players[user.id].index_emoji = str(reaction.emoji)
+							await game.send_info()
