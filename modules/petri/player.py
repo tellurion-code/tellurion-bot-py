@@ -25,7 +25,7 @@ class Player:
 		moves = []
 		for i in range(4):
 			move = self.move(game, i, [])
-			if move: moves.append(move)
+			if move != game.map: moves.append(move)
 
 		return moves
 
@@ -34,12 +34,12 @@ class Player:
 		summary = []
 		new_map = self.move(game, index, summary)
 
-		if new_map:
-			game.map = new_map
-			summary.sort()
-			return '\n'.join(summary)
-		else:
-			return None
+		# if game.map != new_map:
+		game.map = new_map
+		summary.sort()
+		return '\n'.join(summary)
+		# else:
+		# 	return None
 
 	def move(self, game, index, summary):
 		dx = [-1, 0, 0 , 1][index]
@@ -71,7 +71,7 @@ class Player:
 						else:
 							summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "` 🛡️ " + global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️")
 
-		return new_map if game.map != new_map else None
+		return new_map
 
 	def get_power(self, game, x, y, dx, dy):
 		power = 0
