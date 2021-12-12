@@ -232,14 +232,14 @@ class Pacifist(Player):
 
 class Isolated(Player):
 	name = "🏚️ Isolé"
-	description = "En combat, prend le max entre les unités derrière et le min des unités de chaque côté"
+	description = "En combat, prend le max entre les unités derrière et la moyenne des unités de chaque côté"
 
 	def get_power(self, game, x, y, dx, dy):
 		behind = self.get_power_sub(game, x, y, dx, dy);
 		left = self.get_power_sub(game, x, y, dy, dx);
 		right = self.get_power_sub(game, x, y, -dy, -dx);
 
-		return max(behind, left, right);
+		return max(behind, (left + right) / 2);
 
 	def get_power_sub(self, game, x, y, dx, dy):
 		power = 0
