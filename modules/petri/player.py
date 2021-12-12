@@ -23,9 +23,11 @@ class Player:
 
 	def check_for_moves(self, game):
 		moves = []
+		variables = copy.deepcopy(self.variables)
 		for i in range(4):
 			move = self.move(game, i, [])
 			if move != game.map: moves.append(move)
+			self.variables = copy.deepcopy(variables)
 
 		return moves
 
@@ -33,12 +35,14 @@ class Player:
 		# Gère les combats et les réplications
 		summary = []
 		new_map = self.move(game, index, summary)
+		# variables = copy.deepcopy(self.variables)
 
 		# if game.map != new_map:
 		game.map = new_map
 		summary.sort()
 		return '\n'.join(summary)
 		# else:
+		#	self.variables = variables
 		# 	return None
 
 	def move(self, game, index, summary):
@@ -210,21 +214,18 @@ class Pacifist(Player):
 
 	def __init__(self, user):
 		super().__init__(user)
-		self.variables = {
-			"peace_with": []
-		}
+		self.variables = { "war_with": [] }
 
 	def spawn(self, game, map, x, y):
 		map[y][x] = self.index
-
-		self.variables["peace_with"] = [i for i in range(len(game.order))]
+		self.variables["war_with"] = []
 
 	def on_defense(self, game, attack, defense):
-		return (-math.inf if game.turn in self.variables["peace_with"] and game.round <= 20 else 0)
+		return (-math.inf if (game.turn not in self.variables["war_with"] and game.round <= 20) else 0)
 
 	def on_attack(self, game, attack, defense, defender):
-		if defender in self.variables["peace_with"]:
-			self.variables["peace_with"].remove(defender)
+		if defender not in self.variables["war_with"]:
+			self.variables["war_with"].append(defender)
 
 		return 0
 
