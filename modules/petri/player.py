@@ -239,7 +239,7 @@ class Isolated(Player):
 		left = self.get_power_sub(game, x, y, dy, dx);
 		right = self.get_power_sub(game, x, y, -dy, -dx);
 
-		return max(behind, min(left, right));
+		return max(behind, left, right);
 
 	def get_power_sub(self, game, x, y, dx, dy):
 		power = 0
