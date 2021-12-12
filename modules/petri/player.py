@@ -21,7 +21,31 @@ class Player:
 	def spawn(self, game, map, x, y):
 		map[y][x] = self.index
 
-	def move(self, game, new_map, dx, dy, summary):
+	def check_for_moves(self, game):
+		moves = []
+		for i in range(4):
+			move = self.move(game, i, [])
+			if move: moves.append(move)
+
+		return moves
+
+	def play(self, game, index):
+		# Gère les combats et les réplications
+		summary = []
+		new_map = self.move(game, index, summary)
+
+		if new_map:
+			game.map = new_map
+			summary.sort()
+			return '\n'.join(summary)
+		else:
+			return None
+
+	def move(self, game, index, summary):
+		dx = [-1, 0, 0 , 1][index]
+		dy = [0, -1, 1 , 0][index]
+		new_map = copy.deepcopy(game.map)
+
 		for y in range(game.ranges[1]):
 			for x in range(game.ranges[0]):
 				if game.map[y][x] == game.turn and game.inside(x + dx, y + dy):
@@ -46,6 +70,8 @@ class Player:
 							summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
 						else:
 							summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "` 🛡️ " + global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️")
+
+		return new_map if game.map != new_map else None
 
 	def get_power(self, game, x, y, dx, dy):
 		power = 0
@@ -103,36 +129,6 @@ class Architect(Player):
 						return True
 
 		return False
-
-	# def move(self, game, new_map, dx, dy, summary):
-	# 	for y in range(game.ranges[1]):
-	# 		for x in range(game.ranges[0]):
-	# 			valid = False
-	# 			if game.map[y][x] == -2:
-	# 				valid = self.test_for_wall(game, x, y)
-	#
-	# 			if (game.map[y][x] == game.turn or valid) and game.inside(x + dx, y + dy):
-	# 				new_tile = game.map[y + dy][x + dx]
-	# 				if new_tile == -1:
-	# 					new_map[y + dy][x + dx] = game.turn
-	# 				elif new_tile >= 0 and new_tile != game.turn:
-	# 					owner = game.players[game.order[new_tile]]
-	#
-	# 					attack = self.get_power(game, x, y, -dx, -dy)
-	# 					defense = owner.get_power(game, x + dx, y + dy, dx, dy)
-	#
-	# 					diff = attack - defense
-	# 					diff += self.on_attack(game, attack, defense, new_tile)
-	# 					diff += owner.on_defense(game, attack, defense)
-	#
-	# 					if diff > 0:
-	# 						new_map[y + dy][x + dx] = game.turn
-	# 						summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ 🗡️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
-	# 					elif diff == 0:
-	# 						new_map[y + dy][x + dx] = -1
-	# 						summary.append(global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️ ⚔️️ " + global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "`")
-	# 					else:
-	# 						summary.append(global_values.tile_colors[new_tile + 2] + " `" + str(owner.user) + "` 🛡️ " + global_values.tile_colors[game.turn + 2] + " `" + str(self.user) + "`️")
 
 	def get_power(self, game, x, y, dx, dy):
 		 power = 0
@@ -210,7 +206,7 @@ class Racer(Player):
 
 class Pacifist(Player):
 	name = "🕊️ Pacifiste"
-	description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué"
+	description = "Jusqu'au 21e tour, ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué"
 
 	def __init__(self, user):
 		super().__init__(user)
@@ -224,7 +220,7 @@ class Pacifist(Player):
 		self.variables["peace_with"] = [i for i in range(len(game.order))]
 
 	def on_defense(self, game, attack, defense):
-		return (-math.inf if game.turn in self.variables["peace_with"] else 0)
+		return (-math.inf if game.turn in self.variables["peace_with"] and game.round <= 20 else 0)
 
 	def on_attack(self, game, attack, defense, defender):
 		if defender in self.variables["peace_with"]:
@@ -235,10 +231,26 @@ class Pacifist(Player):
 
 class Isolated(Player):
 	name = "🏚️ Isolé"
-	description = "Ne perd pas les combats où il a une ou deux unité en défense"
+	description = "En combat, prend le max entre les unités derrière et le min des unités de chaque côté"
 
-	def on_defense(self, game, attack, defense):
-		return (-math.inf if defense <= 2 else 0)
+	def get_power(self, game, x, y, dx, dy):
+		behind = self.get_power_sub(game, x, y, dx, dy);
+		left = self.get_power_sub(game, x, y, dy, dx);
+		right = self.get_power_sub(game, x, y, -dy, -dx);
+
+		return max(behind, min(left, right));
+
+	def get_power_sub(self, game, x, y, dx, dy):
+		power = 0
+		tdx, tdy = 0, 0
+		while game.map[y + tdy][x + tdx] == self.index:
+			power += 1
+			tdx += dx
+			tdy += dy
+			if not game.inside(x + tdx, y + tdy):
+				break
+
+		return power
 
 class General(Player):
 	name = "🚩 Général"

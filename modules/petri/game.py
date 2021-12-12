@@ -282,16 +282,17 @@ class Game:
 						elif reactions[self.order[self.turn]][0] < 4:
 							self.last_choice = reactions[self.order[self.turn]][0] if len(reactions[self.order[self.turn]]) else self.last_choice
 
-							summary = self.process_direction(reactions[self.order[self.turn]][0])
+							summary = self.players[self.order[self.turn]].play(self, reactions[self.order[self.turn]][0])
 
 							for i in reactions[self.order[self.turn]]:
 								await self.info_message.message.remove_reaction(global_values.choice_emojis[i], self.players[self.order[self.turn]].user)
 							self.info_message.reactions = {}
 
-							await self.next_turn({
-								"name": "Combats",
-								"value": summary
-							} if len(summary) else None)
+							if (summary is not None):
+								await self.next_turn({
+									"name": "Combats",
+									"value": summary
+								} if len(summary) else None)
 
 			async def cond(reactions):
 				return False
@@ -318,19 +319,6 @@ class Game:
 	def inside(self, x, y):
 		return x >= 0 and x < self.ranges[0] and y >= 0 and y < self.ranges[1]
 
-	# Gère les combats et les réplications
-	def process_direction(self, choice):
-		dx = [-1, 0, 0 , 1][choice]
-		dy = [0, -1, 1 , 0][choice]
-		new_map = copy.deepcopy(self.map)
-		summary = []
-
-		self.players[self.order[self.turn]].move(self, new_map, dx, dy, summary)
-
-		self.map = new_map
-		summary.sort()
-		return '\n'.join(summary)
-
 	# Passe au prochain tour
 	async def next_turn(self, message=None):
 		while True:
@@ -342,12 +330,12 @@ class Game:
 
 			self.players[self.order[self.turn]].on_turn_start(self)
 
-			if len([0 for row in self.map for tile in row if tile == self.turn]):
+			if len([0 for row in self.map for tile in row if tile == self.turn]) and len(self.players[self.order[self.turn]].check_for_moves(self)):
 				break
 
 		await self.send_info(info=message)
 
-		if self.round > 40:
+		if self.round > 30:
 			max_score, winner, tie = 0, 0, False
 			for i, player_id in enumerate(self.order):
 				score = len([0 for row in self.map for tile in row if tile == i])
