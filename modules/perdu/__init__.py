@@ -47,7 +47,7 @@ class MainClass(BaseClassPython):
                         except discord.Forbidden:
                             pass
                 else:
-                    if member.id == fist:
+                    if member.id == first:
                         try:
                             await member.add_roles(discord.utils.get(member.guild.roles, id=self.config.lost_role))
                         except discord.Forbidden:
