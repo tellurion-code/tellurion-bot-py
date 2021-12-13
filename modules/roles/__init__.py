@@ -39,7 +39,7 @@ class MainClass(BaseClassPython):
     async def com_list(self, message, args, kwargs):
         response = discord.Embed(title="Roles disponibles", color=self.config.color)
         for id_ in self.config.roles.keys():
-            role = message.guild.get_role(id_=int(id_))
+            role = message.guild.get_role(role_id=int(id_))
             if role is not None:
                 response.add_field(name=role.name, value=f"-> `{self.config.roles[id_]}`", inline=True)
         await message.channel.send(embed=response)
