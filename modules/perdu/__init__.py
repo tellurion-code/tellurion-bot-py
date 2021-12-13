@@ -31,6 +31,28 @@ class MainClass(BaseClassPython):
 
     async def on_ready(self):
         await self.fill_history()
+        await self.update_role()
+
+    async def update_role(self):
+        since = datetime.datetime.now() - datetime.timedelta(days=7)
+        top = self.get_top(10, since)
+        first = top[0][0]
+        #remove role to everyone
+        for member in self.client.get_all_members():
+            if discord.utils.get(member.guild.roles, id=self.config.lost_role) in member.guild.roles:
+                if discord.utils.get(member.guild.roles, id=self.config.lost_role) in member.roles:
+                    if member.id != first:
+                        try:
+                            await member.remove_roles(discord.utils.get(member.guild.roles, id=self.config.lost_role))
+                        except discord.Forbidden:
+                            pass
+                else:
+                    if member.id == fist:
+                        try:
+                            await member.add_roles(discord.utils.get(member.guild.roles, id=self.config.lost_role))
+                        except discord.Forbidden:
+                            pass
+
 
     async def on_message(self, message: discord.Message):
         asyncio.ensure_future(self.parse_command(message))
@@ -49,6 +71,8 @@ class MainClass(BaseClassPython):
                     delta = message.created_at - self.history[message.author.id][-1][0]
                     if delta.total_seconds() >= self.config.min_delta:
                         self.history[message.author.id].append((message.created_at, delta))
+
+                await self.update_role()
 
     async def fill_history(self):
         async with self.lock:
