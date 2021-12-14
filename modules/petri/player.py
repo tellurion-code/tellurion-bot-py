@@ -327,11 +327,13 @@ class Liquid(Player):
 		new_map = copy.deepcopy(game.map)
 		for y in range(game.ranges[1]):
 			for x in range(game.ranges[0]):
-				nx = x - dx
-				ny = y - dy
-				if game.inside(nx, ny):
-					if game.map[ny][nx] != self.index and game.map[y][x] == self.index:
-						new_map[y][x] = -1;
+				if game.map[y][x] == self.index:
+					nx = x - dx
+					ny = y - dy
+					if game.inside(nx, ny):
+						if game.map[ny][nx] != self.index:
+							new_map[y][x] = -1
+
 
 		return new_map
 
