@@ -306,7 +306,7 @@ class Topologist(Player):
 
 class Liquid(Player):
 	name = "💧 Liquide"
-	description = "Se déplace dans la direction choisie avant de se répliquer"
+	description = "Se déplace dans la direction choisie avant de se répliquer. Ne perd pas d'unités s'il se déplace depuis un bord"
 
 	def play(self, game, index):
 		# Gère les combats et les réplications
