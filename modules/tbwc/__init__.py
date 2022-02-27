@@ -58,18 +58,12 @@ class MainClass(BaseClassPython):
 				return
 
 			index = game["zones"]["deck"].pop(0)
-			msg = None
 
-			if not game["list"][index] or not game["list"][index]["name"]:
-				msg = await message.channel.send("```ini\n" + str(index + 1) + ". (Carte Blanche) Envoyez un message pour définir cette carte en tapant \"[Nom de la carte] Effet\"!```")
-				await self.startCardCreation(message.author, message.channel, index)
-				# await message.channel.send("Carte définie")
-
+			res = await self.checkForBlankCard(game, message.author, message.channel, index)
 			card = game["list"][index]
-			content = "```ini\n" + str(index + 1) + ". " + (await self.printCard(card)) + "```"
-			if msg:
-				await msg.edit(content=content)
-			else:
+
+			if not res:
+				content = "```ini\n" + str(index + 1) + ". " + (await self.printCard(card)) + "```"
 				await message.channel.send(content)
 
 			if str(message.author.id) not in game["zones"]:
@@ -138,14 +132,60 @@ class MainClass(BaseClassPython):
 						await message.channel.send("Index invalide : " + arg)
 						return
 
-					if i + 1 == len(args):
+					if i == len(args) - 1:
 						index += 2
 
 						if index < 1 or index >= len(list(game["zones"].keys())):
 							await message.channel.send("Aucune zone n'a cette index")
 							return
 						else:
+							if index > 1:
+								for j in args[:-1]:
+									await self.checkForBlankCard(game, message.author, message.channel, int(j) - 1)
+
 							self.moveCards(game, cards, list(game["zones"].keys())[index])
+					else:
+						if index < 0 or index >= len(game["list"]):
+							await message.channel.send("Aucune carte n'a l'index " + index)
+							return
+						else:
+							cards.append(index)
+
+				await message.channel.send(await self.getRecap(game))
+				self.objects.save_object("games", self.games)
+			else:
+				await message.channel.send("Veuillez renseigner l'index des cartes à déplacer et l'index de la zone d'arrivée")
+		else:
+			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
+
+	async def com_add(self, message, args, kwargs):
+		if str(message.author.id) != "240947137750237185":
+			return
+
+		if str(message.channel.id) in self.games:
+			game = self.games[str(message.channel.id)]
+			print(args)
+
+			args.pop(0)
+			if len(args) > 1:
+				cards = []
+
+				for i, arg in enumerate(args):
+					try:
+						index = int(arg) - 1
+					except:
+						await message.channel.send("Index invalide : " + arg)
+						return
+
+					if i == len(args) - 1:
+						index += 2
+
+						if index < 1 or index >= len(list(game["zones"].keys())):
+							await message.channel.send("Aucune zone n'a cette index")
+							return
+						else:
+							for card in cards:
+								game["zones"][list(game["zones"].keys())[index]].append(card)
 					else:
 						if index < 0 or index >= len(game["list"]):
 							await message.channel.send("Aucune carte n'a l'index " + index)
@@ -435,6 +475,16 @@ class MainClass(BaseClassPython):
 		content += message
 
 		return content
+
+	async def checkForBlankCard(self, game, author, channel, index):
+		if not game["list"][index] or not game["list"][index]["name"]:
+			msg = await channel.send("```ini\n" + str(index + 1) + ". (Carte Blanche) Envoyez un message pour définir cette carte en tapant \"[Nom de la carte] Effet\"!```")
+			await self.startCardCreation(author, channel, index)
+			content = "```ini\n" + str(index + 1) + ". " + (await self.printCard(game["list"][index])) + "```"
+			await msg.edit(content=content)
+			return msg
+
+		return None
 
 	async def startCardCreation(self, author, channel, index):
 		regex = r"^\[(.{1,30})\] (.+)$"
