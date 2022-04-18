@@ -304,6 +304,39 @@ class Topologist(Player):
 
 		return power
 
+class Liquid(Player):
+	name = "💧 Liquide"
+	description = "Se déplace dans la direction choisie avant de se répliquer. Ne perd pas d'unités s'il se déplace depuis un bord"
+
+	def play(self, game, index):
+		# Gère les combats et les réplications
+		summary = []
+		game.map = self.move(game, index, summary)
+		game.map = self.destroy(game, index)
+		new_map = self.move(game, index, summary)
+		# variables = copy.deepcopy(self.variables)
+
+		game.map = new_map
+		summary.sort()
+		return '\n'.join(summary)
+
+	def destroy(self, game, index):
+		dx = [-1, 0, 0 , 1][index]
+		dy = [0, -1, 1 , 0][index]
+
+		new_map = copy.deepcopy(game.map)
+		for y in range(game.ranges[1]):
+			for x in range(game.ranges[0]):
+				if game.map[y][x] == self.index:
+					nx = x - dx
+					ny = y - dy
+					if game.inside(nx, ny):
+						if game.map[ny][nx] != self.index:
+							new_map[y][x] = -1
+
+
+		return new_map
+
 
 # class Border(Player):
 #	 name = "🗺️ Frontalier"
