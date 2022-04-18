@@ -10,7 +10,7 @@ aiofiles = "*"
 lupa = "*"
 aiofile = "*"
 toml = "*"
-"discord.py" = {version = "*",extras = ["voice",]}
+py-cord = {version = "*",extras = ["voice",]}
 matplotlib = "*"
 humanize = "*"
 discord-components = "*"
@@ -18,4 +18,4 @@ discord-components = "*"
 [dev-packages]
 
 [requires]
-python_version = "3.7"
+python_version = "3.9"
