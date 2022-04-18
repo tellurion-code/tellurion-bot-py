@@ -68,21 +68,21 @@ class MainClass(BaseClassPython):
     async def on_raw_reaction_add(self, payload):
         channel_id, message_id, user_id = payload.channel_id, payload.message_id, payload.user_id
         message = await self.get_message(channel_id, message_id)
-        if (message.author.id == user_id) and (payload.emoji.name == "📌"):
+        if (message.author.id == user_id) and (payload.emoji.name == "📌") and self.auth(message.author):
             await self.try_pin(message, message.author)
 
     async def on_raw_reaction_remove(self, payload):
         channel_id, message_id, user_id = payload.channel_id, payload.message_id, payload.user_id
         message = await self.get_message(channel_id, message_id)
-        if (message.author.id == user_id) and (payload.emoji.name == "📌"):
+        if (message.author.id == user_id) and (payload.emoji.name == "📌") and self.auth(message.author):
             await self.try_unpin(message, message.author)
 
     #async def on_reaction_add(self, reaction, user):
-        #if (reaction.message.author.id == user.id) and (reaction.emoji == "📌"):
+        #if (reaction.message.author.id == user.id) and (reaction.emoji == "📌") and self.auth(message.author):
             #await self.try_pin(reaction.message, user)
 
     #async def on_reaction_remove(self, reaction, user):
-        #if (reaction.message.author.id == user.id) and (reaction.emoji == "📌"):
+        #if (reaction.message.author.id == user.id) and (reaction.emoji == "📌") and self.auth(message.author):
             #await self.try_unpin(reaction.message, user)
 
     async def get_message(self, channel_id, message_id):
