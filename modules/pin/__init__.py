@@ -17,7 +17,7 @@ class MainClass(BaseClassPython):
             "`{prefix}{command} unpin`": "retire l'épingle du message auquel vous répondez",
             "`{prefix}{command} unpin <id>`": "retire l'épingle du message dont l'id est spécifié",
             "`{prefix}{command} toggle`": "Épingle ou retire l'épingle auquel vous répondez",
-            "`{prefix}{command} toggle <id>`": "Épingle ou retire l'épingle du message"
+            "`{prefix}{command} toggle <id>`": "Épingle ou retire l'épingle du message dont l'id est spécifié"
         }
     }
 
