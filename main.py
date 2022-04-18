@@ -437,9 +437,7 @@ bot_launch = localtime()
 bot_launch_times = [str(t) for t in bot_launch[:4]] + ['{}'.format(bot_launch[4]).zfill(2)] + ['{}'.format(bot_launch[5]).zfill(2)]
 bot_launch_text = "Online since : {}-{}-{} {}:{}:{}".format(*bot_launch_times)
 
-intents = discord.Intents.default()
-intents.members = True
-intents.presences = True
+intents = discord.Intents.all()
 client1 = LBI(max_messages=500000, status=discord.Status.online, activity=discord.Game(name=bot_launch_text), intents=intents)
 
 
