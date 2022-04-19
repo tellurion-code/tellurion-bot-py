@@ -114,7 +114,7 @@ class BaseClass:
             return "", [], []
         # Sub_command
         sub_command = "" if content.split()[0].startswith("-") else content.split()[0]
-        args_ = [sub_command]
+        args_ = [sub_command] if sub_command else []
         kwargs = []
         if len(content.split()) > 1:
             # Remove subcommand
@@ -155,6 +155,8 @@ class BaseClass:
                 else:
                     args_.append(args[i])
                 i += 1
+        else:
+            kwargs = [(content.split()[0].lstrip("-"), None)] if content.split()[0].startswith("-") else []
         return sub_command, args_, kwargs
 
     async def on_message(self, message: discord.Message):
