@@ -113,7 +113,7 @@ class BaseClass:
         if not len(content.split()):
             return "", [], []
         # Sub_command
-        sub_command = content.split()[0]
+        sub_command = "" if content.split()[0].startswith("-") else content.split()[0]
         args_ = [sub_command]
         kwargs = []
         if len(content.split()) > 1:
