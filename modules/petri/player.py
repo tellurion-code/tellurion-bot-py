@@ -370,7 +370,7 @@ class Navigator(Player):
 
 		self.move_diagonally = True
 		self.variables["uses_remaining"] -= 1
-		if (self.variables["uses_remaining"] == 0):
+		if not (self.variables["uses_remaining"]):
 			self.power_active = False
 
 		return {

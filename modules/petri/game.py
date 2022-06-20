@@ -178,10 +178,10 @@ class Game:
 			r, a = round(min(self.ranges[0], self.ranges[1])/3), random.uniform(0, math.pi*2)
 
 			for i, player_id in enumerate(self.players.keys()):
-				while new_map[int(self.ranges[1]/2 - .5 + r * math.sin(a))][int(self.ranges[0]/2 - .5 + r * math.cos(a))] != -1:
+				while new_map[int(self.ranges[1]/2 + .5 + r * math.sin(a))][int(self.ranges[0]/2 + .5 + r * math.cos(a))] != -1:
 					a += math.pi/20
 
-				self.players[player_id].spawn(self, new_map, int(self.ranges[1]/2 - .5 + r * math.cos(a)), int(self.ranges[0]/2 - .5 + r * math.sin(a)))
+				self.players[player_id].spawn(self, new_map, int(self.ranges[0]/2 + .5 + r * math.cos(a)), int(self.ranges[1]/2 + .5 + r * math.sin(a)))
 				a += math.pi/len(self.players) * 2
 
 			valid = check_bloating(new_map)
@@ -259,7 +259,8 @@ class Game:
 							await self.send_info(info=field)
 
 							await self.info_message.message.remove_reaction(global_values.choice_emojis[6], self.players[self.order[self.turn]].user)
-							# self.info_message.reactions[self.order[self.turn]].pop(0)
+							if not (self.players[self.order[self.turn]].power_active):
+								self.info_message.reactions[self.order[self.turn]].pop(0)
 						elif reactions[self.order[self.turn]][0] == 4:
 							if 5 in reactions[self.order[self.turn]]:
 								self.last_choice = 4
