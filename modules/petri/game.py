@@ -178,10 +178,16 @@ class Game:
 			r, a = round(min(self.ranges[0], self.ranges[1])/3), random.uniform(0, math.pi*2)
 
 			for i, player_id in enumerate(self.players.keys()):
-				while new_map[int(self.ranges[1]/2 + .5 + r * math.sin(a))][int(self.ranges[0]/2 + .5 + r * math.cos(a))] != -1:
+				sx, sy = 0, 0
+				while True:
+					sx, sy = int(round(self.ranges[0]/2 - .5 + r * math.cos(a))), int(round(self.ranges[1]/2 - .5 + r * math.sin(a)))
+
+					if new_map[sy][sx] == -1:
+						break
+
 					a += math.pi/20
 
-				self.players[player_id].spawn(self, new_map, int(self.ranges[0]/2 + .5 + r * math.cos(a)), int(self.ranges[1]/2 + .5 + r * math.sin(a)))
+				self.players[player_id].spawn(self, new_map, sx, sy)
 				a += math.pi/len(self.players) * 2
 
 			valid = check_bloating(new_map)
