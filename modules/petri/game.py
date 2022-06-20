@@ -259,7 +259,7 @@ class Game:
 							await self.send_info(info=field)
 
 							await self.info_message.message.remove_reaction(global_values.choice_emojis[6], self.players[self.order[self.turn]].user)
-							self.info_message.reactions[self.order[self.turn]].pop(0)
+							# self.info_message.reactions[self.order[self.turn]].pop(0)
 						elif reactions[self.order[self.turn]][0] == 4:
 							if 5 in reactions[self.order[self.turn]]:
 								self.last_choice = 4

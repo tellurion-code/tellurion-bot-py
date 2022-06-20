@@ -166,7 +166,7 @@ class Swarm(Player):
 
 class Racer(Player):
 	name = "👾 Glitcheur"
-	description = "Peut prendre une fois dans la partie un second tour juste après le sien"
+	description = "Une fois par partie, peut prendre un second tour juste après le sien"
 	power_active = True
 	steal_turn = False
 
@@ -254,7 +254,7 @@ class Isolated(Player):
 
 class General(Player):
 	name = "🚩 Général"
-	description = "Peut doubler la valeur de ses unités pour deux manches"
+	description = "Une fois par partie, peut doubler la valeur de ses unités pour deux manches"
 	power_active = True
 
 	def __init__(self, user):
@@ -336,6 +336,47 @@ class Liquid(Player):
 
 
 		return new_map
+
+class Navigator(Player):
+	name = "🧭 Navigateur"
+	description = "Trois fois par partie, peut se déplacer en diagonale"
+	power_active = True
+	move_diagonally = False
+
+	def __init__(self, user):
+		super().__init__(user)
+		self.variables = {
+			"uses_remaining": 3
+		}
+
+	def move(self, game, index, summary):
+		if (self.move_diagonally):
+			dx = [-1, 1, -1, 1][index]
+			dy = [-1, -1, 1, 1][index]
+		else:
+			dx = [-1, 0, 0, 1][index]
+			dy = [0, -1, 1, 0][index]
+
+		self.move_diagonally = False
+		new_map = copy.deepcopy(game.map)
+
+		self.move_tiles(game, new_map, dx, dy, summary)
+
+		return new_map
+
+	def active_power(self, game):
+		if (self.move_diagonally):
+			return
+
+		self.move_diagonally = True
+		self.variables["uses_remaining"] -= 1
+		if (self.variables["uses_remaining"] == 0):
+			self.power_active = False
+
+		return {
+			"name": "🧭 Pouvoir du Navigatuer",
+			"value": "Votre direction choisie sera tournée de 45° dans le sens horaire ce tour (" + str(self.variables["uses_remaining"]) + " restants)"
+		}
 
 
 # class Border(Player):
