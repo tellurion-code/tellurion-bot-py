@@ -217,7 +217,7 @@ class Game:
 
 		fields.append({
 			"name": "Joueurs (Score de Domination : " + str(int((self.ranges[0] * self.ranges[1])/2)) +  ")" + (" / Dernière direction choisie : " + global_values.choice_emojis[self.last_choice] if self.last_choice != -1 else ""),
-			"value":'\n'.join([(self.players[x].name.split()[0] + " " if self.players[x].__class__.__name__ != "Player" else "") + global_values.tile_colors[i + 2] + " `" + str(self.players[x].user) + "` : " + str(len([0 for row in self.map for tile in row if tile == i])) for i, x in enumerate(self.order)])
+			"value":'\n'.join([self.players[x].show_player(self) for i, x in enumerate(self.order)])
 		})
 
 		if self.round > 40:
