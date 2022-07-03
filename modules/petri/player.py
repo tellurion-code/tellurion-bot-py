@@ -288,11 +288,11 @@ class General(Player):
 		return (2 if self.variables["turn"] else 1) * super().get_power(game, x, y, dx, dy)
 
 	def show_player(self, game):
-		return super().show_player(game) + (" (🚩 [" + str(self.variables["turn"]) + "])" if self.variables["turn"] else ("(🚩)" if self.power_active else ""))
+		return super().show_player(game) + (" (🚩 [" + str(self.variables["turn"]) + "])" if self.variables["turn"] else (" (🚩)" if self.power_active else ""))
 
 class Topologist(Player):
 	name = "🍩 Topologiste"
-	description = "Considère les bords du terrain comme adjacents. Gagne +1 en combat s'il en passe à travers un"
+	description = "Considère les bords comme adjacents. Gagne +1 en combat s'il passe à travers un"
 
 	def move_tiles(self, game, new_map, dx, dy, summary):
 		for y in range(game.ranges[1]):
@@ -303,16 +303,18 @@ class Topologist(Player):
 
 	def get_power(self, game, x, y, dx, dy):
 		power = 0
+		passed_through = False
 		tx, ty = x, y
 		while game.map[ty][tx] == self.index:
-			power += 1
+			power += 1 + (1 if passed_through else 0)
+			passed_through = False
 
 			tx += dx
 			ty += dy
 			if not game.inside(tx, ty):
 				tx = tx % game.ranges[0]
 				ty = ty % game.ranges[1]
-				power += 1
+				passed_through = True
 
 			if power > max(game.ranges[0], game.ranges[1]):
 				break
