@@ -29,3 +29,5 @@ class MainClass(BaseClassPython):
                     await message.reply(f"Regarde, c'est un nombre premier <@{self.config.user}> !")
             except ValueError:
                 pass
+            except TypeError:
+                pass
