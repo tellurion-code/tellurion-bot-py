@@ -219,7 +219,7 @@ class AssassinView(PlayView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        valid_candidates = [x for x in self.game.order if self.game.players[x].allegiance != "evil"]
+        valid_candidates = [x for x in self.game.players.values() if x.allegiance != "evil"]
         options = []
         for i, player in enumerate(valid_candidates):
             options.append(discord.SelectOption(
