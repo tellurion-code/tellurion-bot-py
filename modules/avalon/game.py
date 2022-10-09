@@ -104,7 +104,7 @@ class Game:
         if len(self.roles) == 0:
             self.roles = roles[len(self.players)]
 
-        self.roles = []
+        self.order = []
         for player_id in self.players:
             self.order.append(player_id)
 
