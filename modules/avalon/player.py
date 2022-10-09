@@ -71,7 +71,7 @@ class Good(Player):
 	async def team_game_start(self):
 		await self._game_start()
 
-		galaad = [global_values.number_emojis[i] + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].role in ["galaad", "accolon"]]
+		galaad = [self.game.players[x].index_emoji + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].role in ["galaad", "accolon"]]
 		if len(galaad):
 			self.embed.add_field(
 				name="🙋 Galaad",
@@ -93,7 +93,7 @@ class Merlin(Good):
 			description="Vous êtes Merlin. Vous devez faire réussir 3 Quêtes et ne pas vous révéler. Vous connaissez les méchants.",
 			color=self.color)
 
-		evils = [global_values.number_emojis[i] + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].allegiance == "evil" and self.game.players[x].role != "mordred" or self.game.players[x].role == "karadoc"]
+		evils = [self.game.players[x].index_emoji + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].allegiance == "evil" and self.game.players[x].role != "mordred" or self.game.players[x].role == "karadoc"]
 		if len(evils):
 			self.embed.add_field(
 				name="Vos ennemis :",
@@ -109,7 +109,7 @@ class Percival(Good):
 			description="Vous êtes Perceval. Vous devez faire réussir 3 Quêtes et protéger Merlin. Vous connaissez Merlin et Morgane.",
 			color=self.color)
 
-		mages = [global_values.number_emojis[i] + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].role in ["merlin", "morgane"]]
+		mages = [self.game.players[x].index_emoji + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].role in ["merlin", "morgane"]]
 		if len(mages):
 			self.embed.add_field(
 				name="Les mages :",
@@ -269,14 +269,14 @@ class Evil(Player):
 	async def team_game_start(self):
 		await self._game_start()
 
-		evils = [global_values.number_emojis[i] + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].allegiance == "evil" and self.game.players[x].role != "oberon"]
+		evils = [self.game.players[x].index_emoji + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].allegiance == "evil" and self.game.players[x].role != "oberon"]
 		if len(evils):
 			self.embed.add_field(
 				name="Vos co-équipiers :",
 				value='\n'.join(evils))
 
 		if self.game.game_rules["evil_know_lancelot"]:
-			lancelot = [global_values.number_emojis[i] + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].role == "lancelot"]
+			lancelot = [self.game.players[x].index_emoji + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].role == "lancelot"]
 			if len(lancelot):
 				self.embed.add_field(
 					name="Lancelot ⚔️️",
@@ -340,7 +340,7 @@ class Lancelot(Evil):
 		await self._game_start()
 
 		if self.game.game_rules["lancelot_know_evil"]:
-			evils = [global_values.number_emojis[i] + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].allegiance == "evil" and self.game.players[x].role != "oberon" and self.game.players[x].user.id != self.user.id]
+			evils = [self.game.players[x].index_emoji + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].allegiance == "evil" and self.game.players[x].role != "oberon" and self.game.players[x].user.id != self.user.id]
 			if len(evils):
 				self.embed.add_field(
 					name="Un de vos co-équipiers :",
@@ -385,7 +385,7 @@ class Agravain(Evil):
 
 		self.embed.add_field(
 			name="Rôles",
-			value='\n'.join([global_values.number_emojis[i] + " `" + str(self.game.players[x].user) + "` : " + global_values.visual_roles[self.game.players[x].role] for i, x in enumerate(self.game.order) if self.game.players[x].allegiance == "evil" and (not self.game.players[x].role == "oberon" or self.game.game_rules["agravain_know_oberon"])]))
+			value='\n'.join([self.game.players[x].index_emoji + " `" + str(self.game.players[x].user) + "` : " + global_values.visual_roles[self.game.players[x].role] for i, x in enumerate(self.game.order) if self.game.players[x].allegiance == "evil" and (not self.game.players[x].role == "oberon" or self.game.game_rules["agravain_know_oberon"])]))
 
 
 class Solo(Player):
@@ -406,7 +406,7 @@ class Elias(Solo):
 			color=self.color
 		)
 
-		merlin = [global_values.number_emojis[i] + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].role == "merlin"]
+		merlin = [self.game.players[x].index_emoji + " `" + str(self.game.players[x].user) + "`" for i, x in enumerate(self.game.order) if self.game.players[x].role == "merlin"]
 		if len(merlin):
 			self.embed.add_field(
 				name="Merlin :",

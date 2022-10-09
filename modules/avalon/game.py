@@ -156,7 +156,7 @@ class Game:
 
         embed.add_field(
             name="Chevaliers :",
-            value='\n'.join([(("📩" if self.phase == "team_selection" else (str(global_values.vote_choices["emojis"][self.players[x].last_vote]))) if len(self.players[x].last_vote) else "✉️") + self.players[x].index_emoji + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") + ("🌊" if self.lady_of_the_lake == i and self.game_rules["lady_of_the_lake"] else "") for i, x in enumerate(self.order)]),
+            value='\n'.join([(("📩" if self.phase == "team_selection" else (str(global_values.vote_choices["emojis"][self.players[x].last_vote]))) if len(self.players[x].last_vote) else "✉️") + " " + self.players[x].index_emoji + " `" + str(self.players[x].user) + "` " + ("👑" if self.turn == i else "") + ("🌊" if self.lady_of_the_lake == i and self.game_rules["lady_of_the_lake"] else "") for i, x in enumerate(self.order)]),
             inline=False
         )
 
