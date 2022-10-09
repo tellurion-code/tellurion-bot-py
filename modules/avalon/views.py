@@ -246,3 +246,6 @@ class AssassinView(PlayView):
             await self.game.end_game(global_values.visual_roles[killed.role], "usurpation (`" + str(killed.user) + "`)")
         else:
             await self.game.end_game(True, "3 Quêtes réussies (Assassinat de `" + str(killed.user) + "` qui était " + global_values.visual_roles[killed.role] + ")")
+
+        await interaction.response.defer()
+        await self.delete()
