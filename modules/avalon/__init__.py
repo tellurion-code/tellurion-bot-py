@@ -309,7 +309,7 @@ Attention S’il y a 7 participants ou plus, la Quête n°4 doit avoir 2 échecs
 		if not user.bot:
 			if reaction.message.channel.id in global_values.games:
 				game = global_values.games[reaction.message.channel.id]
-				if game.info_view.message.id == reaction.message.id:
+				if game.info_view and game.info_view.message.id == reaction.message.id:
 					await reaction.message.remove_reaction(reaction.emoji, user)
 					if game.turn != -1:
 						if user.id in game.players:
