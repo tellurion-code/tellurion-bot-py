@@ -68,7 +68,7 @@ class MainClass(BaseClassPython):
             await message.channel.send("Il y a déjà une partie en cours dans le salon")
         else:
             global_values.games[message.channel.id] = Game(message)
-            await global_values.games[message.channel.id].create_game(message)
+            await global_values.games[message.channel.id].create_game()
 
     async def com_show(self, message, args, kwargs):
         if message.channel.id not in global_values.games:

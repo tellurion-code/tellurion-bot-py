@@ -31,7 +31,7 @@ class Player:
 		#	 self.embed.add_field(name = "Père Blaise",
 		#	   value = "`" + str(blaise[0].user) + "``")
 
-		await interaction.respond(type=4, embed=self.embed)
+		await interaction.response.send_message(embed=self.embed, ephemeral=True)
 
 	async def post_game_start(self):
 		pass
