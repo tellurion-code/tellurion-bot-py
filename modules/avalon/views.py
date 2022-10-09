@@ -235,7 +235,7 @@ class AssassinView(PlayView):
         ))
 
     async def interaction_check(self, interaction):
-        return self.game.players[interaction.user.id].role == "assassin":
+        return self.game.players[interaction.user.id].role == "assassin"
 
     async def kill(self, select, interaction):
         killed = self.game.players[int(select.values[0])]
