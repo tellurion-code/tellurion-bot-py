@@ -90,7 +90,7 @@ class Game:
         roles = [
             [],  # 0?
             ["good"],  # 1
-            ["good", "evil"],  # 2, Debug
+            ["assassin", "evil"],  # 2, Debug
             ["merlin", "good", "assassin"],  # 3
             ["merlin", "good", "good", "assassin"],  # 4
             ["merlin", "percival", "good", "morgane", "assassin"],  # 5
@@ -104,6 +104,7 @@ class Game:
         if len(self.roles) == 0:
             self.roles = roles[len(self.players)]
 
+        self.roles = []
         for player_id in self.players:
             self.order.append(player_id)
 
@@ -326,7 +327,7 @@ class Game:
                                 description="3 Quêtes ont été réussies. Les méchants vont maintenant délibérer sur quelle personne l'Assassin va tuer.\n**Que les gentils coupent leurs micros.**",
                                 color=global_values.color
                             ),
-                            view=AssassinView()
+                            view=AssassinView(self)
                         )
                     else:
                         await self.end_game(True, "3 Quêtes réussies")

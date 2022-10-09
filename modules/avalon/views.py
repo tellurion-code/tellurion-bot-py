@@ -1,4 +1,5 @@
 import discord
+import traceback
 
 from modules.avalon.player import Player
 from modules.avalon.components import TeamSelect, ConfirmButton, VoteButton, QuestButton, AssassinSelect
@@ -28,6 +29,15 @@ class GameView(discord.ui.View):
 
     async def on_check_failure(self, interaction):
         await interaction.response.defer()
+
+    async def on_error(self, error, item, interaction):
+        embed = discord.Embed(
+            title="[Erreur] Aïe :/",
+            description="```python\n{0}```".format(traceback.format_exc())
+        )
+
+        # Send message to dev channels
+        await self.game.mainclass.client.get_channel("456142390726623243").send(embed=embed.set_footer(text="Ce message ne s'autodétruira pas.",))
 
 
 class JoinView(GameView):
