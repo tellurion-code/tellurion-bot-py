@@ -37,7 +37,7 @@ class GameView(discord.ui.View):
         )
 
         # Send message to dev channels
-        await self.game.mainclass.client.get_channel("456142390726623243").send(embed=embed.set_footer(text="Ce message ne s'autodétruira pas.",))
+        await self.game.mainclass.client.get_channel(456142390726623243).send(embed=embed.set_footer(text="Ce message ne s'autodétruira pas.",))
 
 
 class JoinView(GameView):
@@ -219,7 +219,7 @@ class AssassinView(PlayView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-        valid_candidates = [x for x in self.order if self.players[x].allegiance != "evil"]
+        valid_candidates = [x for x in self.game.order if self.players[x].allegiance != "evil"]
         options = []
         for i, player in enumerate(valid_candidates):
             options.append(discord.SelectOption(
