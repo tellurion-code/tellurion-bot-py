@@ -1,5 +1,4 @@
-import discord
-import random
+"""Player class."""
 
 from modules.mascarade.utils import display_money
 
@@ -17,6 +16,10 @@ class Player:
         self.coins = 6
         self.revealed = False
         self.target = None
+
+    @property
+    def must_exchange(self):
+        return self.revealed or self.game.round < 4
 
     async def send_role_info(self, interaction):
         await interaction.response.send_message(

@@ -1,9 +1,9 @@
-import discord
-import random
-import modules.mascarade.globals as global_values
+"""Role classes."""
 
 from modules.mascarade.utils import display_money
 
+import modules.mascarade.globals as global_values
+import modules.mascarade.views as views
 
 class Role:
     icon = "❌"
@@ -37,7 +37,7 @@ class Role:
         })
 
     def __str__(self):
-        return f"{self.icon} {self.name}"
+        return f"{self.icon} **{self.name}**"
 
 
 class Judge(Role):
@@ -72,9 +72,9 @@ class Patron(Role):
     async def power(self):
         self.player.gain_coins(3)
 
-        previous, next = self.game.get_neighbours(self.player)
-        previous.gain_coins(1)
-        next.gain_coins(1)
+        left, right = self.game.get_neighbours(self.player)
+        left.gain_coins(1)
+        right.gain_coins(1)
 
         await self.end_turn()
 
@@ -109,18 +109,17 @@ class Princess(Role):
 
         view = views.ConfirmView(
             self.game,
-            (x.user.id for x in self.game.players if x.user.id != selection[0].user.id),
+            (x.user.id for x in self.game.players.values() if x.user.id != selection[0].user.id),
             self.end
         )
 
-        async def new_confirm(self, button, interaction):
-            await self.check_if_all_confirmed(interaction)
+        async def new_respond(interaction):
             await interaction.response.send_message(
-                content=f"Le rôle de `{selection[0]}` est `{selection[0].role}`",
+                content=f"Le rôle de `{selection[0].user}` est {selection[0].role}",
                 ephemeral=True
             )
 
-        view.confirm = new_confirm
+        view.respond = new_respond
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
@@ -151,10 +150,10 @@ class Thief(Role):
     action_name = "Vol"
 
     async def power(self):
-        previous, next = self.game.get_neighbours(interaction, self.player)
-        self.player.steal_coins(1, previous)
-        self.player.steal_coins(1, next)
-        await self.next_turn()
+        left, right = self.game.get_neighbours(self.player)
+        self.player.steal_coins(1, left)
+        self.player.steal_coins(1, right)
+        await self.end_turn()
 
 
 class Crook(Role):
@@ -192,15 +191,15 @@ class Beggar(Role):
 
     async def power(self):
         origin = self.game.order.index(self.player.user.id)
-        index = (origin + 1) % len(self.order)
+        index = (origin + 1) % len(self.game.order)
         while index != origin:
             other = self.game.players[self.game.order[index]]
-            if other.coins > player.coins:
+            if other.coins > self.player.coins:
                 self.player.steal_coins(1, other)
             else:
                 self.game.stack.append(f"`{other.user}` avait moins de pièces que `{self.player.user}`")
 
-            index = (index + 1) % len(self.order)
+            index = (index + 1) % len(self.game.order)
 
         await self.end_turn()
 
@@ -230,7 +229,6 @@ class Fool(Role):
 
     async def do_exchange(self, selection, interaction):
         await interaction.response.defer()
-
         self.game.stack.append(f"`{self.player.user}` a échangé (ou pas) les cartes de `{selection[0].user}` et `{selection[1].user}`")
         await self.game.send_info(
             info={
@@ -265,6 +263,7 @@ class Witch(Role):
         )
 
     async def exchange_coins(self, selection, interaction):
+        await interaction.response.defer()
         selection[0].coins, self.player.coins = self.player.coins, selection[0].coins
         self.game.stack.append(f"`{self.player.user}` a échangé sa fortune avec `{selection[0].user}`")
         await self.end_turn()
@@ -334,6 +333,7 @@ class Spy(Role):
             ephemeral=True
         )
 
+        self.game.stack.append(f"`{self.player.user}` a échangé (ou pas) avec `{selection[0].user}`")
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
@@ -357,7 +357,7 @@ class Widow(Role):
             diff = 10 - self.player.coins
             self.player.gain_coins(diff)
         else:
-            stack.append(f"{self.player.user} avait déjà {display_money(10)} ou plus")
+            self.game.stack.append(f"{self.player.user} avait déjà {display_money(10)} ou plus")
 
         await self.end_turn()
 
@@ -388,6 +388,7 @@ class Guru(Role):
         )
 
     async def ask_for_role(self, selection, interaction):
+        await interaction.response.defer()
         self.target = selection[0]
         await self.game.send_info(
             info={
@@ -402,9 +403,11 @@ class Guru(Role):
         )
 
     async def check_if_correct(self, selection, interaction):
-        correct = selection[0].role.name == self.target.role.name
+        await interaction.response.defer()
         self.target.revealed = True
-        stack.append(f"`{self.target.user}` a annoncé {selection[0]} et avait {'raison' if correct else 'tort'}")
+
+        correct = (selection[0].name == self.target.role.name)
+        self.game.stack.append(f"`{self.target.user}` a annoncé {selection[0]} et avait {'raison' if correct else 'tort'}")
         if not correct:
             self.player.steal_coins(4, self.target)
 
@@ -420,7 +423,7 @@ class Puppeteer(Role):
     def restriction(cls, game):
         return len(game.players.keys()) >= 8
 
-    async def power(self, player):
+    async def power(self):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",

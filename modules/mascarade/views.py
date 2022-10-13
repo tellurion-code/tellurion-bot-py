@@ -1,3 +1,5 @@
+"""Views."""
+
 import discord
 import random
 
@@ -6,17 +8,17 @@ from modules.mascarade.components import GeneralSelect, ConfirmButton
 
 import modules.mascarade.roles as roles
 import modules.mascarade.globals as global_values
-import modules.mascarade.player as player
+import modules.mascarade.player as player_class
 
 
 classes = {c.__name__.lower(): c for c in roles.Role.__subclasses__()}
 
-
+# pylint: disable=unused-argument
 class JoinView(GameView):
     @discord.ui.button(label="Rejoindre ou quiter", style=discord.ButtonStyle.blurple)
     async def join_or_leave(self, button, interaction):
         if interaction.user.id not in self.game.players:
-            self.game.players[interaction.user.id] = player.Player(self.game, interaction.user)
+            self.game.players[interaction.user.id] = player_class.Player(self.game, interaction.user)
         else:
             del self.game.players[interaction.user.id]
 
@@ -136,11 +138,13 @@ class RoleView(PlayView):
 
 
 class ConfirmView(PlayView):
-    def __init__(self, game, to_confirm, next, next_args = [], *args, **kwargs):
+    def __init__(self, game, to_confirm, next, next_args=None, *args, **kwargs):
+        self.temporary = kwargs.pop("temporary") if "temporary" in kwargs else False
+
         super().__init__(game, *args, **kwargs)
         self.unconfirmed = [*to_confirm]  # Liste d'id de joueurs qui doivent confirmer
         self.next = next  # Fonction async appelée une fois que tout le monde a confirmé
-        self.next_args = next_args
+        self.next_args = next_args or []
 
     async def interaction_check(self, interaction):
         return interaction.user.id in self.unconfirmed
@@ -148,6 +152,9 @@ class ConfirmView(PlayView):
     @discord.ui.button(label="Confirmer", style=discord.ButtonStyle.blurple)
     async def confirm(self, button, interaction):
         await self.check_if_all_confirmed(interaction)
+        await self.respond(interaction)
+
+    async def respond(self, interaction):
         await interaction.response.send_message(
             content="Vous avez confirmé",
             ephemeral=True
@@ -158,10 +165,29 @@ class ConfirmView(PlayView):
             self.unconfirmed.remove(interaction.user.id)
             if len(self.unconfirmed) == 0:
                 await self.next(*self.next_args)
-                await self.delete()
+
+                if self.temporary:
+                    await self.delete()
+                else:
+                    self.stop()
 
 
 class TurnView(PlayView):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        look_button = discord.ui.Button(label="Regarder", style=discord.ButtonStyle.gray, disabled=self.game.current_player.must_exchange)
+        look_button.callback = self.look_at_role
+        self.add_item(look_button)
+
+        exchange_button = discord.ui.Button(label="Echanger", style=discord.ButtonStyle.gray)
+        exchange_button.callback = self.exchange
+        self.add_item(exchange_button)
+
+        claim_button = discord.ui.Button(label="Annoncer", style=discord.ButtonStyle.gray, disabled=self.game.current_player.must_exchange)
+        claim_button.callback = self.claim
+        self.add_item(claim_button)
+
     async def interaction_check(self, interaction):
         return interaction.user.id == self.game.order[self.game.turn]
 
@@ -171,8 +197,7 @@ class TurnView(PlayView):
 
         self.stop()
 
-    @discord.ui.button(label="Regarder", style=discord.ButtonStyle.gray)
-    async def look_at_role(self, button, interaction):
+    async def look_at_role(self, interaction):
         self.end()
         await self.game.current_player.send_role_info(interaction)
         await self.game.next_turn({
@@ -180,13 +205,11 @@ class TurnView(PlayView):
             "value": f"`{self.game.current_player.user}` a regardé son rôle"
         })
 
-    @discord.ui.button(label="Echanger", style=discord.ButtonStyle.gray)
-    async def exchange(self, button, interaction):
+    async def exchange(self, interaction):
         self.end()
         await self.game.current_player.start_exchange(interaction)
 
-    @discord.ui.button(label="Annoncer", style=discord.ButtonStyle.gray)
-    async def claim(self, button, interaction):
+    async def claim(self, interaction):
         self.end()
         await self.game.current_player.claim_role(interaction)
 

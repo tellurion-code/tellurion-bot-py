@@ -1,3 +1,5 @@
+"""Game class."""
+
 import discord
 import random
 import math
@@ -5,9 +7,6 @@ import math
 from modules.mascarade.player import Player
 from modules.mascarade.utils import display_money
 from modules.mascarade.views import JoinView, RoleView, ConfirmView, TurnView
-
-class ComponentMessage:
-    pass
 
 import modules.mascarade.globals as global_values
 
@@ -27,6 +26,7 @@ class Game:
 
         self.order = []  # Ordre des id des joueurs
         self.turn = -1  # Le tour (index du leader) en cours, -1 = pas commencé
+        self.round = 0
         self.tribunal = 0  # Pièces au tribunal
         self.info_view = None
         self.roles = {}  # Rôles (dictionnaire avec comme clés les noms)
@@ -46,7 +46,7 @@ class Game:
         pass
 
     def get_neighbours(self, player):
-        index = self.game.order.index(player.user.id)
+        index = self.order.index(player.user.id)
 
         p = (index + 1) % len(self.order)
         n = (index - 1 + len(self.order)) % len(self.order)
@@ -115,7 +115,7 @@ class Game:
 
         await self.channel.send(
             embed=embed,
-            view=ConfirmView(self, self.order, self.start_turn, [None])
+            view=ConfirmView(self, self.order, self.start_turn, [None], temporary=True)
         )
 
     def get_info_embed(self, **kwargs):
@@ -136,12 +136,15 @@ class Game:
 
         embed.add_field(
             name="Invités :",
-            value='\n'.join([f'{self.players[x].role.icon if self.players[x].revealed else "❓"} {self.players[x].index_emoji} `{self.players[x].user}`: {display_money(self.players[x].coins)} {"🍷" if self.turn == i else ""}' for i, x in enumerate(self.order)]),
+            value='\n'.join([f'{self.players[x].index_emoji} {"🍷 " if self.turn == i else ""}`{self.players[x].user}` {f"({self.players[x].role})" if self.players[x].revealed else ""}: {display_money(self.players[x].coins)}' for i, x in enumerate(self.order)]),
             inline=False
         )
 
         if info:
-            embed.add_field(name=info["name"], value=info["value"])
+            embed.add_field(name=info["name"], value=info["value"], inline=False)
+
+        if self.current_player.must_exchange:
+            embed.add_field(name="Echange obligatoire", value="Le joueur actuel doit échanger", inline=False)
 
         embed.set_footer(text="Mettez une réaction pour changer votre icône!")
 
@@ -182,6 +185,7 @@ class Game:
 
     async def start_turn(self, message):
         self.turn = (self.turn + 1) % len(self.order)
+        self.round += 1
         await self.send_info(view=TurnView(self), info=message)
 
     async def check_vote_end(self, role):
@@ -205,7 +209,7 @@ class Game:
                 if player.role.name == role.name:
                     successes.append(player)
                 else:
-                    self.stack.append(f"`{player.user}` a tort et a payé {display_money(1)} au Tribunal")
+                    self.stack.append(f"`{player.user}` a eu tort et a payé {display_money(1)} au Tribunal")
                     player.coins -= 1
                     self.tribunal += 1
 
@@ -294,7 +298,7 @@ class Game:
             self.team[int(i)] = int(id)
 
         for id, info in object["players"].items():
-            player = self.players[int(id)] = classes[info["role"]](client.get_user(info["user"]))
+            player = self.players[int(id)] = self.roles[info["role"]](client.get_user(info["user"]))
             player.last_vote = info["last_vote"]
             player.inspected = info["inspected"]
             player.quest_choices = info["quest_choices"]
