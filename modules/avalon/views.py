@@ -1,43 +1,11 @@
 import discord
 import traceback
 
+from modules.game.views import GameView, PlayView
 from modules.avalon.player import Player
 from modules.avalon.components import TeamSelect, ConfirmButton, VoteButton, QuestButton, AssassinSelect
 
 import modules.avalon.globals as global_values
-
-
-class GameView(discord.ui.View):
-    def __init__(self, game, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.game = game
-        self.timeout = None
-
-    async def clear(self):
-        self.clear_items()
-        await self.message.edit(view=self)
-        self.stop()
-
-    async def freeze(self):
-        self.disable_all_items()
-        await self.message.edit(view=self)
-        self.stop()
-
-    async def delete(self):
-        await self.message.delete()
-        self.stop()
-
-    async def on_check_failure(self, interaction):
-        await interaction.response.defer()
-
-    async def on_error(self, error, item, interaction):
-        embed = discord.Embed(
-            title="[Erreur] Aïe :/",
-            description="```python\n{0}```".format(traceback.format_exc())
-        )
-
-        # Send message to dev channels
-        await self.game.mainclass.client.get_channel(456142390726623243).send(embed=embed.set_footer(text="Ce message ne s'autodétruira pas.",))
 
 
 class JoinView(GameView):
@@ -104,10 +72,6 @@ class JoinView(GameView):
             view=self
         )
 
-
-class PlayView(GameView):
-    async def interaction_check(self, interaction):
-        return interaction.user.id in self.game.players
 
 class TeamView(PlayView):
     def __init__(self, *args, **kwargs):
@@ -234,11 +198,25 @@ class AssassinView(PlayView):
             options=options
         ))
 
-    async def interaction_check(self, interaction):
-        return self.game.players[interaction.user.id].role == "assassin"
+        self.add_item(KillButton())
 
-    async def kill(self, select, interaction):
-        killed = self.game.players[int(select.values[0])]
+    async def interaction_check(self, interaction):
+        return super().interaction_check(interaction) and self.game.players[interaction.user.id].role == "assassin"
+
+    async def update_selection(self, select, interaction):
+        if len(select.values):
+            confirm_button.disabled = False
+            confirm_button.label = "Assassiner la cible"
+            confirm_button.style = discord.ButtonStyle.green
+        else:
+            confirm_button.disabled = True
+            confirm_button.label = "Pas de cible choisie"
+            confirm_button.style = discord.ButtonStyle.gray
+
+        await interaction.response.edit_message(view=self)
+
+    async def kill(self, button, interaction):
+        killed = self.game.players[int(self.children[1].values[0])]
 
         if killed.role == "merlin":
             await self.game.end_game(False, "assassinat de Merlin (`" + str(killed.user) + "`)")
