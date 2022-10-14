@@ -240,7 +240,7 @@ class Game:
         embed = discord.Embed(
             title=f"[MASCARADE] Victoire {article}{winner} !",
             color=global_values.color,
-            description="**Joueurs :**\n" + '\n'.join(f"{self.players[x].index_emoji} {self.players[x]} : {self.players[x].role}" for i, x in enumerate(self.order))
+            description="**Joueurs :**\n" + '\n'.join(f"{self.players[x]} : {self.players[x].role}" for i, x in enumerate(self.order))
         )
         await self.info_view.message.edit(embed=self.get_info_embed())
         await self.info_view.clear()

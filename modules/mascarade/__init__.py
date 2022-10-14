@@ -185,7 +185,7 @@ Si la carte d'un joueur a été révélée durant son tour ou le tour précéden
         if not user.bot:
             if reaction.message.channel.id in global_values.games:
                 game = global_values.games[reaction.message.channel.id]
-                if game.info_message.message.id == reaction.message.id:
+                if game.info_view.message.id == reaction.message.id:
                     await reaction.message.remove_reaction(reaction.emoji, user)
                     if game.turn != -1:
                         if user.id in game.players:
