@@ -416,7 +416,7 @@ class Guru(Role):
         await self.end_turn()
 
 class Puppeteer(Role):
-    icon = "♟"
+    icon = "🎎"
     name = "Marionnettiste"
     description = f"Prenez {display_money(1)} à deux autres joueurs qui échangent leurs places, rôles, et fortunes"
     action_name = "Manipulation"

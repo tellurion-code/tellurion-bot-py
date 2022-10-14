@@ -194,6 +194,8 @@ class TurnView(PlayView):
     def end(self):
         for player in self.game.players.values():
             player.revealed = False
+            player.last_vote = None
+            player.last_vote_emoji = "✉"
 
         self.stop()
 
@@ -207,10 +209,12 @@ class TurnView(PlayView):
 
     async def exchange(self, interaction):
         self.end()
+        self.game.phase = "exchange"
         await self.game.current_player.start_exchange(interaction)
 
     async def claim(self, interaction):
         self.end()
+        self.game.phase = "contest"
         await self.game.current_player.claim_role(interaction)
 
 
@@ -332,7 +336,7 @@ class ExchangeView(PlayView):
         await self.end()
 
 
-class ContestView(GameView):
+class ContestView(PlayView):
     def __init__(self, player, role, *args, **kwargs):
         super().__init__(player.game, *args, **kwargs)
         self.player = player
@@ -348,7 +352,7 @@ class ContestView(GameView):
             content=f"Vous avez décider de {'contester' if contesting else 'ne pas contester'}",
             ephemeral=True
         )
-        # await self.message.edit(embed=self.get_info_embed())
+        await self.message.edit(embed=self.game.get_info_embed())
 
         done = await self.game.check_vote_end(self.role)
         if done:

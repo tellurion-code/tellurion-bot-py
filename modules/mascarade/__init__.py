@@ -61,6 +61,15 @@ class MainClass(BaseClassPython):
             global_values.games[message.channel.id] = Game(self, message=message)
             await global_values.games[message.channel.id].on_creation(message)
 
+    async def com_show(self, message, args, kwargs):
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
+            await game.info_view.message.delete()
+            await game.send_info(mode="set")
+        else:
+            global_values.games[message.channel.id] = Game(self, message=message)
+            await global_values.games[message.channel.id].on_creation(message)
+
     # Réitinitialise et supprime la partie
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in global_values.games:
@@ -68,8 +77,8 @@ class MainClass(BaseClassPython):
                 if reactions[message.author.id][0] == 0:
                     await message.channel.send("La partie a été réinitialisée")
 
-                    if global_values.games[message.channel.id].info_message:
-                        await global_values.games[message.channel.id].info_message.delete()
+                    if global_values.games[message.channel.id].info_view:
+                        await global_values.games[message.channel.id].info_view.delete()
 
                     global_values.games[message.channel.id].delete_save()
                     del global_values.games[message.channel.id]
@@ -170,7 +179,7 @@ Chaque tour, vous pouvez réaliser une des trois actions suivantes:
 
 🔹 **Les pouvoirs** : 🔹
 Lorsqu'un joueur annonce avoir un rôle, les autres joueurs peuvent contester. Si au moins un le fait, le joueur ayant fait l'annonce et tous les contestants révèlent leur rôle.
-Tous ceux qui n'ont pas le rôle annoncé paye 1 {display_money(1)} au tribunal. Si un joueur a effectivement le rôle annoncé, il peut effectuer son pouvoir, même si ce n'est pas son tour.
+Tous ceux qui n'ont pas le rôle annoncé paye {display_money(1)} au tribunal. Si un joueur a effectivement le rôle annoncé, il peut effectuer son pouvoir, même si ce n'est pas son tour.
 Si un joueur n'a plus de {display_money(1)}, il est éliminé.
 
 🔹 **Précisions** : 🔹

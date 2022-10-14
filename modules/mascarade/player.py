@@ -13,13 +13,14 @@ class Player:
         self.role = None
         self.index_emoji = ""
         self.last_vote = None
+        self.last_vote = ""
         self.coins = 6
         self.revealed = False
         self.target = None
 
     @property
     def must_exchange(self):
-        return self.revealed or self.game.round < 5
+        return self.revealed or (self.game.round < 5 and not global_values.debug)
 
     def __str__(self):
         return f"{self.index_emoji} `{self.user}`"
@@ -69,9 +70,10 @@ class Player:
 
     async def claim_role(self, interaction):
         await interaction.response.defer()
+        self.last_vote_emoji = "📯"
         await self.game.send_info(
             info={
-                "name": "❗ Annonce",
+                "name": "📯 Annonce",
                 "value": f"{self} va annoncer un rôle"
             },
             view=views.RoleSelectView(self.game, self.start_contest)
