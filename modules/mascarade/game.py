@@ -61,7 +61,7 @@ class Game:
 
     @property
     def role_count(self):
-        return sum(role.number for role in self.game.roles.values())
+        return sum(role.number for role in self.roles.values())
 
     async def on_creation(self, message):
         embed = discord.Embed(

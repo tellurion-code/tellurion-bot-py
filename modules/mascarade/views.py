@@ -15,7 +15,7 @@ classes = {c.__name__.lower(): c for c in roles.Role.__subclasses__()}
 
 # pylint: disable=unused-argument
 class JoinView(GameView):
-    @discord.ui.button(label="Rejoindre ou quiter", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Rejoindre ou quitter", style=discord.ButtonStyle.blurple)
     async def join_or_leave(self, button, interaction):
         if interaction.user.id not in self.game.players:
             self.game.players[interaction.user.id] = player_class.Player(self.game, interaction.user)
