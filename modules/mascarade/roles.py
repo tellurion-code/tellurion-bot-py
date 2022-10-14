@@ -68,7 +68,7 @@ class Empress(Role):
 class Patron(Role):
     icon = "💎"
     name = "Mécène"
-    description = f"Gagnez {display_money(3)} puis vos deux voisins gagnent {display_money(1)}"
+    description = f"Gagnez {display_money(3)}, puis vos deux voisins gagnent {display_money(1)}"
     action_name = "Mécénat"
 
     async def power(self):
@@ -83,7 +83,7 @@ class Patron(Role):
 class Princess(Role):
     icon = "💍"
     name = "Princesse"
-    description = f"Gagnez {display_money(2)} puis forcez un joueur à montrer son rôle sans le voir"
+    description = f"Gagnez {display_money(2)}, puis forcez un joueur à montrer son rôle sans le regarder"
     action_name = "Divulgation"
 
     @classmethod
@@ -107,7 +107,7 @@ class Princess(Role):
 
     async def divulgate(self, selection, interaction):
         await interaction.response.defer()
-        self.game.stack.append(f"Le rôle de `{selection[0].user}` a été révélé aux autres joueurs")
+        self.game.stack.append(f"Le rôle de {selection[0]} a été révélé aux autres joueurs")
 
         view = views.ConfirmView(
             self.game,
@@ -117,7 +117,7 @@ class Princess(Role):
 
         async def new_respond(interaction):
             await interaction.response.send_message(
-                content=f"Le rôle de `{selection[0].user}` est {selection[0].role}",
+                content=f"Le rôle de {selection[0]} est {selection[0].role}",
                 ephemeral=True
             )
 
@@ -125,7 +125,7 @@ class Princess(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"{self.player} a divulgué le rôle de `{selection[0].user}`. Confirmez pour voir le rôle"
+                "value": f"{self.player} a divulgué le rôle de {selection[0]}. Confirmez pour voir le rôle"
             },
             view=view
         )
@@ -161,7 +161,7 @@ class Thief(Role):
 class Crook(Role):
     icon = "🎩"
     name = "Escroc"
-    description = f"Prenez {display_money(1)} au joueur qui en a le plus"
+    description = f"Prenez {display_money(2)} au joueur qui en a le plus"
     action_name = "Escroquerie"
 
     async def power(self):
@@ -231,11 +231,11 @@ class Fool(Role):
 
     async def do_exchange(self, selection, interaction):
         await interaction.response.defer()
-        self.game.stack.append(f"{self.player} a échangé (ou pas) les cartes de `{selection[0].user}` et `{selection[1].user}`")
+        self.game.stack.append(f"{self.player} a échangé (ou pas) les cartes de {selection[0]} et {selection[1]}")
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"{self.player} va échanger (ou pas) les cartes de `{selection[0].user}` et `{selection[1].user}`"
+                "value": f"{self.player} va échanger (ou pas) les cartes de {selection[0]} et {selection[1]}"
             },
             view=views.ExchangeView(self.player, selection[0], selection[1], self.end)
         )
@@ -267,7 +267,7 @@ class Witch(Role):
     async def exchange_coins(self, selection, interaction):
         await interaction.response.defer()
         selection[0].coins, self.player.coins = self.player.coins, selection[0].coins
-        self.game.stack.append(f"{self.player} a échangé sa fortune avec `{selection[0].user}`")
+        self.game.stack.append(f"{self.player} a échangé sa fortune avec {selection[0]}")
         await self.end_turn()
 
 
@@ -312,7 +312,7 @@ class Cheat(Role):
 class Spy(Role):
     icon = "🎭"
     name = "Espionne"
-    description = "Regardez votre rôle et celui d'un autre joueur, puis échangez les (ou pas)"
+    description = "Regardez votre rôle et celui d'un autre joueur, puis échangez-les (ou pas)"
     action_name = "Echange"
 
     async def power(self):
@@ -335,11 +335,11 @@ class Spy(Role):
             ephemeral=True
         )
 
-        self.game.stack.append(f"{self.player} a échangé (ou pas) avec `{selection[0].user}`")
+        self.game.stack.append(f"{self.player} a échangé (ou pas) avec {selection[0]}")
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"{self.player} va échanger (ou pas) avec `{selection[0].user}`"
+                "value": f"{self.player} va échanger (ou pas) avec {selection[0]}"
             },
             view=views.ExchangeView(self.player, self.player, selection[0], self.end)
         )
@@ -367,7 +367,7 @@ class Widow(Role):
 class Guru(Role):
     icon = "📿"
     name = "Gourou"
-    description = f"Forcez un joueur à annoncer et révéler son rôle. S'il a tort, prenez lui {display_money(4)}"
+    description = f"Forcez un joueur à annoncer et à révéler son rôle. S'il a tort, prenez lui {display_money(4)}"
     action_name = "Inquisition"
     target = None
 

@@ -19,7 +19,7 @@ class Player:
 
     @property
     def must_exchange(self):
-        return self.revealed or self.game.round < 4
+        return self.revealed or self.game.round < 5
 
     def __str__(self):
         return f"{self.index_emoji} `{self.user}`"

@@ -148,7 +148,7 @@ class MainClass(BaseClassPython):
         if len(args) > 1:
             if args[1] == "roles":
                 await message.channel.send(embed=discord.Embed(
-                    title=":small_orange_diamond: Rôles de Mascarade :small_orange_diamond:",
+                    title="🔸 Rôles de Mascarade 🔸",
                     description='\n'.join([e.icon + " **" + e.name + "**: " + e.description for e in Role.__subclasses__()]),
                     color=global_values.color
                 ))
@@ -156,22 +156,27 @@ class MainClass(BaseClassPython):
                 await message.channel.send("Sous-section inconnue")
         else:
             await message.channel.send(embed=discord.Embed(
-                title=":small_orange_diamond: Règles de Mascarade :small_orange_diamond:",
+                title="🔸 Règles de Mascarade 🔸",
                 description=f"""
-:small_blue_diamond: **But du jeu** : :small_blue_diamond:
+🔹 **But du jeu** : 🔹
 Obtenir 13 pièces {display_money(1)}, ou avoir le plus de {display_money(1)} lorsqu'un joueur est éliminé. 
 Au début de la partie, vous recevrez un rôle parmi ceux disponibles et 6 {display_money(1)} ({display_money(6)}).
 
-:small_blue_diamond: **Déroulement d’un tour** : :small_blue_diamond:
+🔹 **Déroulement d’un tour** : 🔹
 Chaque tour, vous pouvez réaliser une des trois actions suivantes:
 - Regarder votre rôle
 - Echanger (ou faire semblant d'échanger) de rôle avec quelqu'un d'autre
 - Utiliser le pouvoir de votre rôle (ou bluffer avoir un autre rôle)
 
-:small_blue_diamond: **Les pouvoirs** : :small_blue_diamond:
+🔹 **Les pouvoirs** : 🔹
 Lorsqu'un joueur annonce avoir un rôle, les autres joueurs peuvent contester. Si au moins un le fait, le joueur ayant fait l'annonce et tous les contestants révèlent leur rôle.
 Tous ceux qui n'ont pas le rôle annoncé paye 1 {display_money(1)} au tribunal. Si un joueur a effectivement le rôle annoncé, il peut effectuer son pouvoir, même si ce n'est pas son tour.
 Si un joueur n'a plus de {display_money(1)}, il est éliminé.
+
+🔹 **Précisions** : 🔹
+Lorsque que le jeu commence, tous les joueurs révèlent leur rôle avant de commencer à jouer.
+Les 4 premiers joueurs sont obligés de faire l'action d'échanger (ou pas) durant leur tour.
+Si la carte d'un joueur a été révélée durant son tour ou le tour précédent, il doit aussi échanger durant son tour.
                 """,
                 color=global_values.color
             ))
