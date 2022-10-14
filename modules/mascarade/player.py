@@ -21,6 +21,9 @@ class Player:
     def must_exchange(self):
         return self.revealed or self.game.round < 4
 
+    def __str__(self):
+        return f"{self.index_emoji} `{self.user}`"
+
     async def send_role_info(self, interaction):
         await interaction.response.send_message(
             content=f"Votre rôle est {self.role}",
@@ -28,12 +31,12 @@ class Player:
         )
 
     def gain_coins(self, amount, extra=""):
-        self.game.stack.append(f"`{self.user}` a gagné {display_money(amount)}{extra}")
+        self.game.stack.append(f"{self} a gagné {display_money(amount)}{extra}")
         self.coins += amount
 
     def steal_coins(self, amount, player, extra=""):
         total = min(player.coins, amount)
-        self.game.stack.append(f"`{self.user}` a volé {display_money(total)} à `{player.user}`{extra}")
+        self.game.stack.append(f"{self} a volé {display_money(total)} à {player}{extra}")
         self.coins += total
         player.coins -= total
 
@@ -42,7 +45,7 @@ class Player:
         await self.game.send_info(
             info={
                 "name": "🔄 Echange",
-                "value": f"`{self.user}` va choisir un joueur avec qui échanger"
+                "value": f"{self} va choisir un joueur avec qui échanger"
             },
             view=views.PlayerSelectView(self.game, self.do_exchange, condition=lambda e: e.user.id != self.user.id)
         )
@@ -53,7 +56,7 @@ class Player:
         await self.game.send_info(
             info={
                 "name": "🔄 Echange",
-                "value": f"`{self.user}` va échanger (ou pas) avec `{self.target.user}`"
+                "value": f"{self} va échanger (ou pas) avec {self.target}"
             },
             view=views.ExchangeView(self, self, self.target, self.end_exchange)
         )
@@ -61,7 +64,7 @@ class Player:
     async def end_exchange(self):
         await self.game.next_turn({
             "name": "🔄 Echange",
-            "value": f"`{self.user}` a échangé (ou pas) avec `{self.target.user}`"
+            "value": f"{self} a échangé (ou pas) avec {self.target}"
         })
 
     async def claim_role(self, interaction):
@@ -69,7 +72,7 @@ class Player:
         await self.game.send_info(
             info={
                 "name": "❗ Annonce",
-                "value": f"`{self.user}` va annoncer un rôle"
+                "value": f"{self} va annoncer un rôle"
             },
             view=views.RoleSelectView(self.game, self.start_contest)
         )
@@ -81,7 +84,7 @@ class Player:
         await self.game.send_info(
             info={
                 "name": f"{role.icon} Annonce",
-                "value": f"`{self.user}` a annoncé que son rôle est {role}"
+                "value": f"{self} a annoncé que son rôle est {role}"
             },
             view=views.ContestView(self, role)
         )

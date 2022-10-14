@@ -1,5 +1,7 @@
 """Role classes."""
 
+import discord
+
 from modules.mascarade.utils import display_money
 
 import modules.mascarade.globals as global_values
@@ -93,7 +95,7 @@ class Princess(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` va choisir un joueur à divulguer"
+                "value": f"{self.player} va choisir un joueur à divulguer"
             },
             view=views.PlayerSelectView(
                 self.game,
@@ -123,7 +125,7 @@ class Princess(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` a divulgué le rôle de `{selection[0].user}`. Confirmez pour voir le rôle"
+                "value": f"{self.player} a divulgué le rôle de `{selection[0].user}`. Confirmez pour voir le rôle"
             },
             view=view
         )
@@ -157,17 +159,17 @@ class Thief(Role):
 
 
 class Crook(Role):
-    icon = "🤞"
+    icon = "🎩"
     name = "Escroc"
     description = f"Prenez {display_money(1)} au joueur qui en a le plus"
-    action_name = "Vol"
+    action_name = "Escroquerie"
 
     async def power(self):
         most_coins = max(player.coins for player in self.game.players.values())
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` va choisir un joueur à voler"
+                "value": f"{self.player} va choisir un joueur à voler"
             },
             view=views.PlayerSelectView(
                 self.game,
@@ -197,7 +199,7 @@ class Beggar(Role):
             if other.coins > self.player.coins:
                 self.player.steal_coins(1, other)
             else:
-                self.game.stack.append(f"`{other.user}` avait moins de pièces que `{self.player.user}`")
+                self.game.stack.append(f"`{other.user}` avait moins de pièces que {self.player}")
 
             index = (index + 1) % len(self.game.order)
 
@@ -215,7 +217,7 @@ class Fool(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` va choisir deux joueurs avec lesquels échanger"
+                "value": f"{self.player} va choisir deux joueurs avec lesquels échanger"
             },
             view=views.PlayerSelectView(
                 self.game,
@@ -229,11 +231,11 @@ class Fool(Role):
 
     async def do_exchange(self, selection, interaction):
         await interaction.response.defer()
-        self.game.stack.append(f"`{self.player.user}` a échangé (ou pas) les cartes de `{selection[0].user}` et `{selection[1].user}`")
+        self.game.stack.append(f"{self.player} a échangé (ou pas) les cartes de `{selection[0].user}` et `{selection[1].user}`")
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` va échanger (ou pas) les cartes de `{selection[0].user}` et `{selection[1].user}`"
+                "value": f"{self.player} va échanger (ou pas) les cartes de `{selection[0].user}` et `{selection[1].user}`"
             },
             view=views.ExchangeView(self.player, selection[0], selection[1], self.end)
         )
@@ -252,7 +254,7 @@ class Witch(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` va choisir un joueur avec qui échanger sa fortume"
+                "value": f"{self.player} va choisir un joueur avec qui échanger sa fortume"
             },
             view=views.PlayerSelectView(
                 self.game,
@@ -265,7 +267,7 @@ class Witch(Role):
     async def exchange_coins(self, selection, interaction):
         await interaction.response.defer()
         selection[0].coins, self.player.coins = self.player.coins, selection[0].coins
-        self.game.stack.append(f"`{self.player.user}` a échangé sa fortune avec `{selection[0].user}`")
+        self.game.stack.append(f"{self.player} a échangé sa fortune avec `{selection[0].user}`")
         await self.end_turn()
 
 
@@ -282,7 +284,7 @@ class Peasant(Role):
         return len(game.players.keys()) >= 8
 
     async def power(self):
-        if sum([1 for x in self.game.contestors if self.game.players[x].role.name == self.name]) == 2:
+        if sum([1 for x in self.game.contestors if x.role.name == self.name]) == 2:
             self.player.gain_coins(2, " grâce au second Paysan")
 
             self.first_peasant_trigger = not self.first_peasant_trigger
@@ -303,7 +305,7 @@ class Cheat(Role):
         if self.player.coins >= 10:
             await self.game.end_game(str(self.player.user))
         else:
-            self.game.stack.append(f"`{self.player.user}` n'avait pas assez de :coin:")
+            self.game.stack.append(f"{self.player} n'avait pas assez de :coin:")
             await self.end_turn()
 
 
@@ -317,7 +319,7 @@ class Spy(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` va choisir un joueur avec qui échanger"
+                "value": f"{self.player} va choisir un joueur avec qui échanger"
             },
             view=views.PlayerSelectView(
                 self.game,
@@ -333,11 +335,11 @@ class Spy(Role):
             ephemeral=True
         )
 
-        self.game.stack.append(f"`{self.player.user}` a échangé (ou pas) avec `{selection[0].user}`")
+        self.game.stack.append(f"{self.player} a échangé (ou pas) avec `{selection[0].user}`")
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` va échanger (ou pas) avec `{selection[0].user}`"
+                "value": f"{self.player} va échanger (ou pas) avec `{selection[0].user}`"
             },
             view=views.ExchangeView(self.player, self.player, selection[0], self.end)
         )
@@ -377,7 +379,7 @@ class Guru(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` va choisir qui va devoir annoncer son rôle"
+                "value": f"{self.player} va choisir qui va devoir annoncer son rôle"
             },
             view=views.PlayerSelectView(
                 self.game,
@@ -393,7 +395,7 @@ class Guru(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` a demandé à `{self.target.user}` d'annoncer son rôle"
+                "value": f"{self.player} a demandé à {self.target} d'annoncer son rôle"
             },
             view=views.RoleSelectView(
                 self.game,
@@ -407,7 +409,7 @@ class Guru(Role):
         self.target.revealed = True
 
         correct = (selection[0].name == self.target.role.name)
-        self.game.stack.append(f"`{self.target.user}` a annoncé {selection[0]} et avait {'raison' if correct else 'tort'}")
+        self.game.stack.append(f"{self.target} a annoncé {selection[0]} et avait {'raison' if correct else 'tort'}")
         if not correct:
             self.player.steal_coins(4, self.target)
 
@@ -416,7 +418,7 @@ class Guru(Role):
 class Puppeteer(Role):
     icon = "♟"
     name = "Marionnettiste"
-    description = f"Prenez {display_money(1)} à deux autre joueurs qui échangent de place, rôle, et fortune"
+    description = f"Prenez {display_money(1)} à deux autres joueurs qui échangent leurs places, rôles, et fortunes"
     action_name = "Manipulation"
 
     @classmethod
@@ -427,7 +429,7 @@ class Puppeteer(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"`{self.player.user}` va choisir deux joueurs à échanger"
+                "value": f"{self.player} va choisir deux joueurs à échanger"
             },
             view=views.PlayerSelectView(
                 self.game,
@@ -464,3 +466,73 @@ class Gambler(Role):
     name = "Joueur"
     description = f"Prenez 1-3 {display_money(1)} et désignez un joueur. S'il devine le nombre, il les gagne, sinon vous les gagnez"
     action_name = "Pari"
+
+    bet = 0
+    target = None
+    choices = {
+        1: {"value": 1, "label": "1 pièce", "emoji": display_money(1)},
+        2: {"value": 2, "label": "2 pièces", "emoji": display_money(1)},
+        3: {"value": 3, "label": "3 pièces", "emoji": display_money(1)},
+    }
+
+    async def power(self):
+        await self.game.send_info(
+            info={
+                "name": f"{self.icon} {self.action_name}",
+                "value": f"{self.player} va choisir entre 1 et 3 {display_money(1)}"
+            },
+            view=views.GeneralSelectView(
+                self.game,
+                self.choices,
+                "nombre",
+                self.pick_number,
+                player=self.player
+            )
+        )
+
+    async def pick_number(self, selection, interaction):
+        await interaction.response.defer()
+        self.bet = selection[0]
+        await self.game.send_info(
+            info={
+                "name": f"{self.icon} {self.action_name}",
+                "value": f"{self.player} va choisir un joueur contre qui parier"
+            },
+            view=views.PlayerSelectView(
+                self.game,
+                self.ask_for_bet,
+                player=self.player,
+                condition=lambda e: e.user.id != self.player.user.id
+            )
+        )
+    
+    async def ask_for_bet(self, selection, interaction):
+        await interaction.response.defer()
+        self.target = selection[0]
+        await self.game.send_info(
+            info={
+                "name": f"{self.icon} {self.action_name}",
+                "value": f"{self.target} va tenter de deviner ce que {self.player} a choisi"
+            },
+            view=views.GeneralSelectView(
+                self.game,
+                self.choices,
+                "nombre",
+                self.check_bet,
+                player=self.target
+            )
+        )
+
+    async def check_bet(self, selection, interaction):
+        await interaction.response.defer()
+        correct = (selection[0] == self.bet)
+        self.game.stack.append(f"{self.target} a annoncé \"{display_money(selection[0])}\" et a eu {'raison' if correct else 'tort'}")
+
+        if correct:
+            self.target.gain_coins(self.bet)
+        else:
+            self.player.gain_coins(self.bet)
+
+        await self.end_turn()
+
+

@@ -7,4 +7,4 @@ def display_money(money):
         bags += 1
         coins -= 5
 
-    return "💰" * bags + "🏵️" * coins
+    return "💰" * bags + "🟡" * coins

@@ -202,7 +202,7 @@ class TurnView(PlayView):
         await self.game.current_player.send_role_info(interaction)
         await self.game.next_turn({
             "name": "👁 Consultation",
-            "value": f"`{self.game.current_player.user}` a regardé son rôle"
+            "value": f"{self.game.current_player} a regardé son rôle"
         })
 
     async def exchange(self, interaction):
@@ -214,9 +214,8 @@ class TurnView(PlayView):
         await self.game.current_player.claim_role(interaction)
 
 
-class PlayerSelectView(PlayView):
-    def __init__(self, game, next, *args, **kwargs):
-        condition = kwargs.pop("condition") if "condition" in kwargs else lambda e: True
+class GeneralSelectView(PlayView):
+    def __init__(self, game, choices, name, next, *args, **kwargs):
         self.player = kwargs.pop("player") if "player" in kwargs else None
         min_values = kwargs.pop("min_values") if "min_values" in kwargs else 1
         max_values = kwargs.pop("max_values") if "max_values" in kwargs else 1
@@ -226,62 +225,17 @@ class PlayerSelectView(PlayView):
         self.player = self.player or self.game.current_player
         self.next = next  # Fonction async appelée une fois le choix fait
 
-        self.valid_players = [x for x in self.game.players.values() if condition(x)]
+        self.choices = {str(key): value for key, value in choices.items()}
         options = []
-        for player in self.valid_players:
+        for key, choice in self.choices.items():
             options.append(discord.SelectOption(
-                label=str(player.user),
-                value=str(player.user.id),
-                emoji=player.index_emoji
-            ))
-
-        self.add_item(GeneralSelect(
-            "joueur",
-            min_values=min_values,
-            max_values=max_values,
-            options=options
-        ))
-
-        # self.add_item(ConfirmButton("Nombre de joueurs invalide"))
-
-    async def interaction_check(self, interaction):
-        return interaction.user.id == self.player.user.id
-
-    async def update_selection(self, select, interaction):
-        self.selection = [self.game.players[int(x)] for x in select.values]
-        # for option in select.options:
-        #     option.default = option.value in select.values
-        #
-        # self.children[1].update(True, "Confirmer")
-        # await interaction.response.edit_message(view=self)
-        await self.next(self.selection, interaction)
-        self.stop()
-
-
-class RoleSelectView(PlayView):
-    def __init__(self, game, next, *args, **kwargs):
-        condition = kwargs.pop("condition") if "condition" in kwargs else lambda e: True
-        self.player = kwargs.pop("player") if "player" in kwargs else None
-        min_values = kwargs.pop("min_values") if "min_values" in kwargs else 1
-        max_values = kwargs.pop("max_values") if "max_values" in kwargs else 1
-
-        super().__init__(game, *args, **kwargs)
-
-        self.player = self.player or self.game.current_player
-        self.next = next  # Fonction async appelée une fois le choix fait
-
-        self.valid_roles = {k: x for k, x in self.game.roles.items() if condition(x)}
-        options = []
-        for key, role in self.valid_roles.items():
-            options.append(discord.SelectOption(
-                label=role.name,
+                label=choice["label"],
                 value=key,
-                emoji=role.icon,
-                description=role.description
+                emoji=choice["emoji"]
             ))
 
         self.add_item(GeneralSelect(
-            "rôle",
+            name,
             min_values=min_values,
             max_values=max_values,
             options=options
@@ -293,7 +247,7 @@ class RoleSelectView(PlayView):
         return interaction.user.id == self.player.user.id
 
     async def update_selection(self, select, interaction):
-        self.selection = [self.game.roles[x] for x in select.values]
+        self.selection = [self.choices[x]["value"] for x in select.values]
         # for option in select.options:
         #     option.default = option.value in select.values
         #
@@ -301,6 +255,36 @@ class RoleSelectView(PlayView):
         # await interaction.response.edit_message(view=self)
         await self.next(self.selection, interaction)
         self.stop()
+
+
+class PlayerSelectView(GeneralSelectView):
+    def __init__(self, game, next, *args, **kwargs):
+        condition = kwargs.pop("condition") if "condition" in kwargs else lambda e: True
+        self.valid_players = [x for x in game.players.values() if condition(x)]
+        choices = {}
+        for player in self.valid_players:
+            choices[player.user.id] = {
+                "value": player,
+                "label": str(player.user),
+                "emoji": player.index_emoji
+            }
+            
+        super().__init__(game, choices, "joueur", next, *args, **kwargs)
+        
+
+class RoleSelectView(GeneralSelectView):
+    def __init__(self, game, next, *args, **kwargs):
+        condition = kwargs.pop("condition") if "condition" in kwargs else lambda e: True
+        self.valid_roles = {k: x for k, x in game.roles.items() if condition(x)}
+        choices = {}
+        for key, role in self.valid_roles.items():
+            choices[key] = {
+                "value": role,
+                "label": role.name,
+                "emoji": role.icon
+            }
+
+        super().__init__(game, choices, "rôle", next, *args, **kwargs)
 
 
 class ExchangeView(PlayView):

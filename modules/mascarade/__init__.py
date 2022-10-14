@@ -2,6 +2,7 @@ import discord
 
 from modules.mascarade.game import Game
 from modules.mascarade.roles import Role
+from modules.mascarade.utils import display_money
 from modules.reaction_message.reaction_message import ReactionMessage
 from modules.base import BaseClassPython
 
@@ -156,9 +157,10 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send(embed=discord.Embed(
                 title=":small_orange_diamond: Règles de Mascarade :small_orange_diamond:",
-                description="""
+                description=f"""
 :small_blue_diamond: **But du jeu** : :small_blue_diamond:
-Obtenir 13 pièces :coin:, ou avoir le plus de :coin: lorsqu'un joueur est éliminé. Au début de la partie, vous recevrez un rôle parmi ceux disponibles.
+Obtenir 13 pièces {display_money(1)}, ou avoir le plus de {display_money(1)} lorsqu'un joueur est éliminé. 
+Au début de la partie, vous recevrez un rôle parmi ceux disponibles et 6 {display_money(1)} ({display_money(6)}).
 
 :small_blue_diamond: **Déroulement d’un tour** : :small_blue_diamond:
 Chaque tour, vous pouvez réaliser une des trois actions suivantes:
@@ -168,8 +170,8 @@ Chaque tour, vous pouvez réaliser une des trois actions suivantes:
 
 :small_blue_diamond: **Les pouvoirs** : :small_blue_diamond:
 Lorsqu'un joueur annonce avoir un rôle, les autres joueurs peuvent contester. Si au moins un le fait, le joueur ayant fait l'annonce et tous les contestants révèlent leur rôle.
-Tous ceux qui n'ont pas le rôle annoncé paye 1 :coin: au tribunal. Si un joueur a effectivement le rôle annoncé, il peut effectuer son pouvoir, même si ce n'est pas son tour.
-Si un joueur n'a plus de :coin:, il est éliminé.
+Tous ceux qui n'ont pas le rôle annoncé paye 1 {display_money(1)} au tribunal. Si un joueur a effectivement le rôle annoncé, il peut effectuer son pouvoir, même si ce n'est pas son tour.
+Si un joueur n'a plus de {display_money(1)}, il est éliminé.
                 """,
                 color=global_values.color
             ))

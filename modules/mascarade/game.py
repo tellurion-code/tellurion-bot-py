@@ -109,7 +109,7 @@ class Game:
     async def send_all_roles(self):
         embed = discord.Embed(
             title="[MASCARADE] Rôles de tous les joueurs",
-            description='\n'.join([f"`{x.user}`: {x.role}" for x in self.players.values()]),
+            description='\n'.join([f"{x}: {x.role}" for x in self.players.values()]),
             color=global_values.color
         )
 
@@ -144,7 +144,7 @@ class Game:
             embed.add_field(name=info["name"], value=info["value"], inline=False)
 
         if self.current_player.must_exchange:
-            embed.add_field(name="Echange obligatoire", value="Le joueur actuel doit échanger", inline=False)
+            embed.add_field(name="Echange obligatoire", value=f"{self.current_player} doit échanger", inline=False)
 
         embed.set_footer(text="Mettez une réaction pour changer votre icône!")
 
@@ -195,13 +195,14 @@ class Game:
                 return False
 
         self.contestors = [x for x in self.players.values() if x.last_vote]
-        if len(self.contestors):
-            self.contestors.append(self.current_player)
 
         self.stack = []
         if len(self.contestors) == 0:
+            self.stack.append("🚫 Personne n'a contesté")
             await role.use_power(self.current_player)
         else:
+            self.stack.append(f"{','.join(str(x) for x in self.contestors)} {'a' if len(self.contestors) == 1 else 'ont'} contesté")
+            self.contestors.append(self.current_player)
             successes = []
             for player in self.contestors:
                 player.revealed = True
@@ -209,7 +210,8 @@ class Game:
                 if player.role.name == role.name:
                     successes.append(player)
                 else:
-                    self.stack.append(f"`{player.user}` a eu tort et a payé {display_money(1)} au Tribunal")
+                    verb = 'annoncé' if player.user.id == self.current_player.user.id else 'contesté'
+                    self.stack.append(f"{player} a {verb} à tort et a payé {display_money(1)} au Tribunal")
                     player.coins -= 1
                     self.tribunal += 1
 
@@ -217,7 +219,7 @@ class Game:
                 await role.use_power(player)
 
             if len(successes) == 0:
-                self.stack.append("Aucun des contestants n'avait le rôle annoncé!")
+                self.stack.append("🚫 Aucun des contestants n'avait le rôle annoncé!")
                 await role.end_turn()
 
         return True
@@ -238,7 +240,7 @@ class Game:
         embed = discord.Embed(
             title=f"[MASCARADE] Victoire {article}{winner} !",
             color=global_values.color,
-            description="**Joueurs :**\n" + '\n'.join(f"{self.players[x].index_emoji} `{self.players[x].user}` : {self.players[x].role}" for i, x in enumerate(self.order))
+            description="**Joueurs :**\n" + '\n'.join(f"{self.players[x].index_emoji} {self.players[x]} : {self.players[x].role}" for i, x in enumerate(self.order))
         )
         await self.info_view.message.edit(embed=self.get_info_embed())
         await self.info_view.clear()

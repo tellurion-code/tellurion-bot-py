@@ -11,7 +11,7 @@ def get_quantity_qualifier(min_value, max_value, name):
 class GeneralSelect(discord.ui.Select):
     def __init__(self, name, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.placeholder = f"Choississez {get_quantity_qualifier(self.min_values, self.max_values, name)}"
+        self.placeholder = f"Choisissez {get_quantity_qualifier(self.min_values, self.max_values, name)}"
 
     async def callback(self, interaction):
         await self.view.update_selection(self, interaction)
