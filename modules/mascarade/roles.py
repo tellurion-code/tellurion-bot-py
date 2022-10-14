@@ -46,7 +46,7 @@ class Judge(Role):
     icon = "⚖"
     name = "Juge"
     description = f"Gagnez les {display_money(1)} du Tribunal"
-    action_name = "Taxes"
+    action_name = "Détournement"
 
     async def power(self):
         self.player.gain_coins(self.game.tribunal, " du Tribunal")
@@ -188,7 +188,7 @@ class Crook(Role):
 class Beggar(Role):
     icon = "🪔"
     name = "Mendiant"
-    description = f"Prenez dans le sens horaire {display_money(1)} à chaque joueur avec plus de {display_money(1)} que vous"
+    description = f"Dans le sens horaire, prenez {display_money(1)} à chaque joueur avec plus de {display_money(1)} que vous"
     action_name = "Mendicité"
 
     async def power(self):
@@ -199,7 +199,7 @@ class Beggar(Role):
             if other.coins > self.player.coins:
                 self.player.steal_coins(1, other)
             else:
-                self.game.stack.append(f"`{other.user}` avait moins de pièces que {self.player}")
+                self.game.stack.append(f"{other} avait autant ou moins de pièces que {self.player}")
 
             index = (index + 1) % len(self.game.order)
 
