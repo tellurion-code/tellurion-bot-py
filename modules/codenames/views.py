@@ -23,7 +23,7 @@ class GameView(discord.ui.View):
 
 
 class JoinView(GameView):
-    @discord.ui.button(label="Rejoindre ou quiter", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Rejoindre ou quitter", style=discord.ButtonStyle.blurple)
     async def join_or_leave(self, button, interaction):
         if interaction.user.id not in self.game.players:
             self.game.players[interaction.user.id] = Player(interaction.user)
@@ -241,8 +241,8 @@ class WordButton(discord.ui.Button):
         self.update_style(revealed)
 
     def update_style(self, revealed):
-        self.label = word.word
-        self.style = discord.ButtonStyle.gray if not revealed else global_values.button_styles[word.color]
+        self.label = self.word.word
+        self.style = discord.ButtonStyle.gray if not revealed else global_values.button_styles[self.word.color]
         self.disabled = revealed
 
     async def callback(self, interaction):
