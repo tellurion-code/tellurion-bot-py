@@ -90,11 +90,12 @@ class RoleView(PlayView):
         self.add_item(GeneralSelect(
             "rôle",
             min_values=1,
-            max_values=len(self.game.players),
+            max_values=len(self.valid_roles),
             options=options
         ))
 
-        self.add_item(ConfirmButton("Nombre de rôles invalide"))
+        condition = self.enough_roles()
+        self.add_item(ConfirmButton(condition["bool"], condition["reason"]))
 
     def enough_roles(self):
         if global_values.debug:
@@ -103,10 +104,10 @@ class RoleView(PlayView):
                 "reason": "Confirmer les rôles"
             }
 
-        if self.game.role_count != len(self.game.players):
+        if self.game.role_count < len(self.game.players):
             return {
                 "bool": False,
-                "reason": "Nombre de rôles invalide"
+                "reason": "Pas assez de rôles"
             }
 
         if "judge" not in self.game.roles:
@@ -197,6 +198,9 @@ class TurnView(PlayView):
             player.last_vote = None
             player.last_vote_emoji = "✉"
 
+        for holder in self.game.center:
+            holder.revealed = False
+
         self.stop()
 
     async def look_at_role(self, interaction):
@@ -264,6 +268,8 @@ class GeneralSelectView(PlayView):
 class PlayerSelectView(GeneralSelectView):
     def __init__(self, game, next, *args, **kwargs):
         condition = kwargs.pop("condition") if "condition" in kwargs else lambda e: True
+        include_center = kwargs.pop("include_center") if "include_center" in kwargs else False
+
         self.valid_players = [x for x in game.players.values() if condition(x)]
         choices = {}
         for player in self.valid_players:
@@ -272,6 +278,14 @@ class PlayerSelectView(GeneralSelectView):
                 "label": str(player.user),
                 "emoji": player.index_emoji
             }
+
+        if include_center:
+            for i, holder in enumerate(game.center):
+                choices[-i] = {
+                    "value": holder,
+                    "label": holder.name,
+                    "emoji": holder.index_emoji
+                }
             
         super().__init__(game, choices, "joueur", next, *args, **kwargs)
         

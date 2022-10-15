@@ -3,6 +3,7 @@
 import discord
 import random
 import math
+from modules.mascarade.holder import Holder
 
 from modules.mascarade.player import Player
 from modules.mascarade.utils import display_money
@@ -30,7 +31,7 @@ class Game:
         self.tribunal = 0  # Pièces au tribunal
         self.info_view = None
         self.roles = {}  # Rôles (dictionnaire avec comme clés les noms)
-        self.center_pile = []  # Cartes au centre
+        self.center = []  # Cartes au centre
         self.contestors = []
         self.stack = []  # Liste des résumés d'effets à afficher à la fin du tour
         self.info = None  # Dict d'info à afficher sur l'embed
@@ -58,6 +59,10 @@ class Game:
         return previous, next
 
     @property
+    def player_list(self):
+        return '\n'.join("`" + str(x.user) + "`" for x in self.players.values())
+
+    @property
     def current_player(self):
         return self.players[self.order[self.turn]]
 
@@ -68,7 +73,7 @@ class Game:
     async def on_creation(self, message):
         embed = discord.Embed(
             title="Partie de Mascarade | Joueurs (1) :",
-            description='\n'.join(["`" + str(x.user) + "`" for x in self.players.values()]),
+            description=self.player_list,
             color=global_values.color
         )
 
@@ -80,7 +85,8 @@ class Game:
     async def pick_roles(self):
         await self.channel.send(
             embed=discord.Embed(
-                title="[MASCARADE] Choix des rôles",
+                title=f"[MASCARADE] Choix des rôles | Joueurs ({len(self.players)})",
+                description=self.player_list + '\n\nLes rôles en excès seront placés au centre',
                 color=global_values.color
             ),
             view=RoleView(self)
@@ -104,15 +110,25 @@ class Game:
 
         for i, id in enumerate(self.order):
             self.players[id].index_emoji = icons[str(id)] if str(id) in icons else global_values.number_emojis[i]
-            self.players[id].role = self.roles[role_keys[i]]
+            self.players[id].role = self.roles[role_keys.pop()]
             self.players[id].last_vote_emoji = "✉"
+
+        # Mettre les rôles restants au centre avec des faux joueurs
+        for i, key in enumerate(role_keys):
+            fake_player = Holder(self, f"{i+1}e carte au centre")
+            fake_player.role = self.roles[key]
+            fake_player.index_emoji = "❔"
+
+            self.center.append(fake_player)
 
         await self.send_all_roles()
 
     async def send_all_roles(self):
+        center_roles = '\n'.join(f'{x}: {x.role}' for x in self.center)
+        center_display = f"\n\nRôles au centre:\n{center_roles}" if len(self.center) else ""
         embed = discord.Embed(
             title="[MASCARADE] Rôles de tous les joueurs",
-            description='\n'.join([f"{x}: {x.role}" for x in self.players.values()]),
+            description='\n'.join([f"{self.players[x]}: {self.players[x].role}" for x in self.order]) + center_display,
             color=global_values.color
         )
 
@@ -156,6 +172,12 @@ class Game:
             value='\n'.join(player_infos),
             inline=False
         )
+
+        if len(self.center):
+            embed.add_field(
+                name="Centre",
+                value='\n'.join(str(x) for x in self.center)
+            )
 
         if self.info:
             embed.add_field(name=self.info["name"], value=self.info["value"], inline=False)
@@ -259,7 +281,7 @@ class Game:
     async def end_game(self, winner):
         article = 'd\'' if winner[:1] in ['E', 'A', 'I', 'O', 'U', 'Y'] else 'de '
         embed = discord.Embed(
-            title=f"[MASCARADE] Victoire {article}{winner} !",
+            title=f"[MASCARADE] Victoire {article}`{winner}` !",
             color=global_values.color,
             description="**Joueurs :**\n" + '\n'.join(f"{self.players[x]} : {self.players[x].role} - {display_money(self.players[x].coins)}" for i, x in enumerate(self.order))
         )

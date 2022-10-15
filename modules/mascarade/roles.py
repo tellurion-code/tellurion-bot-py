@@ -11,8 +11,8 @@ class Role:
     icon = "❌"
     name = "Invalide"
     description = "Ce rôle ne devrait pas être visible"
-    number = 1
     action_name = ""
+    number = 1
 
     def __init__(self, game):
         self.game = game
@@ -225,7 +225,8 @@ class Fool(Role):
                 min_values=2,
                 max_values=2,
                 player=self.player,
-                condition=lambda e: e.user.id != self.player.user.id
+                condition=lambda e: e.user.id != self.player.user.id,
+                include_center=True
             )
         )
 
@@ -277,6 +278,7 @@ class Peasant(Role):
     description = f"Gagnez {display_money(1)}. Si le deuxième Paysan conteste, gagnez chacun {display_money(2)}"
     action_name = "Récolte"
     number = 2
+
     first_peasant_trigger = False
 
     @classmethod
@@ -305,7 +307,7 @@ class Cheat(Role):
         if self.player.coins >= 10:
             await self.game.end_game(str(self.player.user))
         else:
-            self.game.stack.append(f"{self.player} n'avait pas assez de :coin:")
+            self.game.stack.append(f"{self.player} n'avait pas assez de {display_money(1)}")
             await self.end_turn()
 
 
@@ -325,7 +327,8 @@ class Spy(Role):
                 self.game,
                 self.reveal_and_exchange,
                 player=self.player,
-                condition=lambda e: e.user.id != self.player.user.id
+                condition=lambda e: e.user.id != self.player.user.id,
+                include_center=True
             )
         )
 
@@ -369,6 +372,7 @@ class Guru(Role):
     name = "Gourou"
     description = f"Forcez un joueur à annoncer et à révéler son rôle. S'il a tort, prenez lui {display_money(4)}"
     action_name = "Inquisition"
+
     target = None
 
     @classmethod

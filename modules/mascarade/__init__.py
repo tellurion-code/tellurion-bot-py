@@ -51,8 +51,11 @@ class MainClass(BaseClassPython):
                 await globals.games[game["channel"]].reload(game, self.client)
 
     async def command(self, message, args, kwargs):
-        if args[0] == "join't":
-            await message.channel.send(message.author.mention + " n'a pas rejoint la partie")
+        if len(args):
+            if args[0] == "join't":
+                await message.channel.send(message.author.mention + " n'a pas rejoint la partie")
+        else:
+            self.com_create(message, args, kwargs)
 
     async def com_create(self, message, args, kwargs):
         if message.channel.id in global_values.games:
@@ -61,15 +64,27 @@ class MainClass(BaseClassPython):
             global_values.games[message.channel.id] = Game(self, message=message)
             await global_values.games[message.channel.id].on_creation(message)
 
+    async def com_roles(self, message, args, kwargs):
+        if message.channel.id in global_values.games:
+            game = global_values.games[message.channel.id]
+            await game.channel.send(
+                embed=discord.Embed(
+                    title="[MASCARADE]Rôles en jeu",
+                    description='\n'.join(str(x) for x in game.roles),
+                    color=global_values.color
+                )
+            )
+        else:
+            await message.channel.send("Il n'y a pas de partie en cours")
+
     async def com_show(self, message, args, kwargs):
         if message.channel.id in global_values.games:
             game = global_values.games[message.channel.id]
             await game.info_view.message.delete()
             await game.send_info(mode="set")
         else:
-            global_values.games[message.channel.id] = Game(self, message=message)
-            await global_values.games[message.channel.id].on_creation(message)
-
+            await message.channel.send("Il n'y a pas de partie en cours")
+            
     # Réitinitialise et supprime la partie
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in global_values.games:

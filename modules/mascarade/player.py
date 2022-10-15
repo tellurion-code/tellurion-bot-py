@@ -48,7 +48,12 @@ class Player:
                 "name": "🔄 Echange",
                 "value": f"{self} va choisir un joueur avec qui échanger"
             },
-            view=views.PlayerSelectView(self.game, self.do_exchange, condition=lambda e: e.user.id != self.user.id)
+            view=views.PlayerSelectView(
+                self.game, 
+                self.do_exchange, 
+                condition=lambda e: e.user.id != self.user.id,
+                include_center=True
+            )
         )
 
     async def do_exchange(self, selection, interaction):

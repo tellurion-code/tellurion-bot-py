@@ -18,9 +18,9 @@ class GeneralSelect(discord.ui.Select):
 
 
 class ConfirmButton(discord.ui.Button):
-    def __init__(self, label, *args, **kwargs):
+    def __init__(self, enabled, label, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.update(False, label)
+        self.update(enabled, label)
 
     def update(self, enabled, label):
         self.label = label
