@@ -1,15 +1,14 @@
 import discord
-import traceback
 
 from modules.game.views import GameView, PlayView
 from modules.avalon.player import Player
-from modules.avalon.components import TeamSelect, ConfirmButton, VoteButton, QuestButton, AssassinSelect
+from modules.avalon.components import ConfirmButton, TeamSelect, KillButton, VoteButton, QuestButton, AssassinSelect
 
 import modules.avalon.globals as global_values
 
 
 class JoinView(GameView):
-    @discord.ui.button(label="Rejoindre ou quiter", style=discord.ButtonStyle.blurple)
+    @discord.ui.button(label="Rejoindre ou quitter", style=discord.ButtonStyle.blurple)
     async def join_or_leave(self, button, interaction):
         if interaction.user.id not in self.game.players:
             self.game.players[interaction.user.id] = Player(self, interaction.user)
@@ -79,7 +78,7 @@ class TeamView(PlayView):
 
         valid_candidates = [self.game.players[x] for x in self.game.order]
         options = []
-        for i, player in enumerate(valid_candidates):
+        for player in valid_candidates:
             options.append(discord.SelectOption(
                 label=str(player.user),
                 value=str(player.user.id),
@@ -185,7 +184,7 @@ class AssassinView(PlayView):
 
         valid_candidates = [x for x in self.game.players.values() if x.allegiance != "evil"]
         options = []
-        for i, player in enumerate(valid_candidates):
+        for player in valid_candidates:
             options.append(discord.SelectOption(
                 label=str(player.user),
                 value=str(player.user.id),
@@ -201,9 +200,14 @@ class AssassinView(PlayView):
         self.add_item(KillButton())
 
     async def interaction_check(self, interaction):
-        return super().interaction_check(interaction) and self.game.players[interaction.user.id].role == "assassin"
+        return await super().interaction_check(interaction) and self.game.players[interaction.user.id].role == "assassin"
 
     async def update_selection(self, select, interaction):
+        confirm_button = self.children[1]
+
+        for option in select.options:
+            option.default = option.value in select.values
+
         if len(select.values):
             confirm_button.disabled = False
             confirm_button.label = "Assassiner la cible"
@@ -216,7 +220,7 @@ class AssassinView(PlayView):
         await interaction.response.edit_message(view=self)
 
     async def kill(self, button, interaction):
-        killed = self.game.players[int(self.children[1].values[0])]
+        killed = self.game.players[int(self.children[0].values[0])]
 
         if killed.role == "merlin":
             await self.game.end_game(False, "assassinat de Merlin (`" + str(killed.user) + "`)")

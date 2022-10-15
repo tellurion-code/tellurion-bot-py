@@ -4,7 +4,6 @@ import discord
 class RoleButton(discord.ui.Button):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.label = "Voir son rôle"
         self.style = discord.ButtonStyle.blurple
 
@@ -15,7 +14,6 @@ class RoleButton(discord.ui.Button):
 class TeamSelect(discord.ui.Select):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.placeholder = "Choississez votre équipe"
 
     async def callback(self, interaction):
@@ -25,7 +23,6 @@ class TeamSelect(discord.ui.Select):
 class ConfirmButton(discord.ui.Button):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.label = "Nombre de membres invalide"
         self.style = discord.ButtonStyle.gray
         self.disabled = True
@@ -55,7 +52,6 @@ class QuestButton(discord.ui.Button):
 class TeamSelect(discord.ui.Select):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.placeholder = "Choississez votre équipe"
 
     async def callback(self, interaction):
@@ -65,8 +61,18 @@ class TeamSelect(discord.ui.Select):
 class AssassinSelect(discord.ui.Select):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-
         self.placeholder = "Choississez qui assassiner"
+
+    async def callback(self, interaction):
+        await self.view.update_selection(self, interaction)
+
+class KillButton(discord.ui.Button):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+
+        self.label = "Pas de cible choisie"
+        self.style = discord.ButtonStyle.gray
+        self.disabled = True
 
     async def callback(self, interaction):
         await self.view.kill(self, interaction)

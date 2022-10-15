@@ -90,7 +90,7 @@ class Game:
         roles = [
             [],  # 0?
             ["good"],  # 1
-            ["assassin", "evil"],  # 2, Debug
+            ["assassin", "merlin"],  # 2, Debug
             ["merlin", "good", "assassin"],  # 3
             ["merlin", "good", "good", "assassin"],  # 4
             ["merlin", "percival", "good", "morgane", "assassin"],  # 5
@@ -356,43 +356,43 @@ class Game:
     # Passe au prochain tour
     async def next_turn(self, message=None):
         if self.game_rules["lady_of_the_lake"] and self.round >= 2:
-            lady = self.players[self.order[self.lady_of_the_lake]]
+            # lady = self.players[self.order[self.lady_of_the_lake]]
 
-            valid_candidates = [x for i, x in enumerate(self.order) if x != lady.user.id]
-            emojis = [global_values.number_emojis[self.order.index(x)] for x in valid_candidates]
-            choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
+            # valid_candidates = [x for i, x in enumerate(self.order) if x != lady.user.id]
+            # emojis = [global_values.number_emojis[self.order.index(x)] for x in valid_candidates]
+            # choices = ["`" + str(self.players[x].user) + "`" for x in valid_candidates]
 
-            async def inspect(reactions):
-                inspected = self.players[valid_candidates[reactions[lady.user.id][0]]]
+            # async def inspect(reactions):
+            #     inspected = self.players[valid_candidates[reactions[lady.user.id][0]]]
 
-                self.lady_of_the_lake = self.order.index(inspected.user.id)
+            #     self.lady_of_the_lake = self.order.index(inspected.user.id)
 
-                await lady_choice_message.message.edit(embed=discord.Embed(
-                    title="🔎 Inspection 🔎",
-                    description="L'allégeance de `" + str(inspected.user) + "` est " + ("🟦 Gentil" if inspected.allegiance == "good" else "🟥 Méchant" if inspected.allegiance == "evil" else "🟩 Solo"),
-                    color=global_values.color))
+            #     await lady_choice_message.message.edit(embed=discord.Embed(
+            #         title="🔎 Inspection 🔎",
+            #         description="L'allégeance de `" + str(inspected.user) + "` est " + ("🟦 Gentil" if inspected.allegiance == "good" else "🟥 Méchant" if inspected.allegiance == "evil" else "🟩 Solo"),
+            #         color=global_values.color))
 
-                await self.start_turn({
-                    "name": "🔎 Inspection 🔎",
-                    "value": "La Dame du Lac (`" + str(lady.user) + "`) a inspecté l'allégeance de `" + str(inspected.user) + "`"})
+            #     await self.start_turn({
+            #         "name": "🔎 Inspection 🔎",
+            #         "value": "La Dame du Lac (`" + str(lady.user) + "`) a inspecté l'allégeance de `" + str(inspected.user) + "`"})
 
-            async def cond(reactions):
-                return len(reactions[self.order[self.lady_of_the_lake]]) == 1
+            # async def cond(reactions):
+            #     return len(reactions[self.order[self.lady_of_the_lake]]) == 1
 
-            lady_choice_message = ReactionMessage(
-                cond,
-                inspect,
-                temporary=False
-            )
+            # lady_choice_message = ReactionMessage(
+            #     cond,
+            #     inspect,
+            #     temporary=False
+            # )
 
-            await lady_choice_message.send(
-                lady.user,
-                "Choisissez qui vous souhaitez inspecter",
-                "",
-                0x2e64fe,
-                choices,
-                emojis=emojis
-            )
+            # await lady_choice_message.send(
+            #     lady.user,
+            #     "Choisissez qui vous souhaitez inspecter",
+            #     "",
+            #     0x2e64fe,
+            #     choices,
+            #     emojis=emojis
+            # )
 
             self.save({"type":"next_turn"})
         else:
