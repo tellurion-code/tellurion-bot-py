@@ -70,7 +70,7 @@ class MainClass(BaseClassPython):
             await game.channel.send(
                 embed=discord.Embed(
                     title="[MASCARADE]Rôles en jeu",
-                    description='\n'.join(str(x) for x in game.roles),
+                    description='\n'.join(str(x) for x in game.roles.values()),
                     color=global_values.color
                 )
             )
@@ -84,7 +84,7 @@ class MainClass(BaseClassPython):
             await game.send_info(mode="set")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
-            
+
     # Réitinitialise et supprime la partie
     async def com_reset(self, message, args, kwargs):
         if message.channel.id in global_values.games:

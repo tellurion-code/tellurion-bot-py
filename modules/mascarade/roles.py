@@ -286,7 +286,7 @@ class Peasant(Role):
         return len(game.players.keys()) >= 8
 
     async def power(self):
-        if sum([1 for x in self.game.contestors if x.role.name == self.name]) == 2:
+        if sum(1 for x in self.game.contestors if x.role.name == self.name) == 2:
             self.player.gain_coins(2, " grâce au second Paysan")
 
             self.first_peasant_trigger = not self.first_peasant_trigger

@@ -2,7 +2,6 @@
 
 import discord
 import random
-import math
 from modules.mascarade.holder import Holder
 
 from modules.mascarade.player import Player
@@ -16,14 +15,13 @@ class Game:
         message = kwargs["message"] if "message" in kwargs else None
         self.mainclass = mainclass
 
+        self.channel = None
+        self.players = {}  # Dict pour rapidement accéder aux infos
         if message:
             self.channel = message.channel
             self.players = {
                 message.author.id: Player(self, message.author)
-            }  # Dict pour rapidement accéder aux infos
-        else:
-            self.channel = None
-            self.players = {}
+            }
 
         self.order = []  # Ordre des id des joueurs
         self.turn = -1  # Le tour (index du leader) en cours, -1 = pas commencé
@@ -115,7 +113,7 @@ class Game:
 
         # Mettre les rôles restants au centre avec des faux joueurs
         for i, key in enumerate(role_keys):
-            fake_player = Holder(self, f"{i+1}e carte au centre")
+            fake_player = Holder(self, f"{i+1}e carte du centre")
             fake_player.role = self.roles[key]
             fake_player.index_emoji = "❔"
 
@@ -234,6 +232,9 @@ class Game:
             if player.last_vote is None:
                 return False
 
+        if self.phase != "contest":
+            return False
+
         self.phase = "post_contest"
         self.contestors = [x for x in self.players.values() if x.last_vote]
 
@@ -247,7 +248,7 @@ class Game:
             successes = []
             for player in self.contestors:
                 if player.user.id != self.current_player.user.id:
-                    player.last_vote_emoji = "‼"
+                    player.last_vote_emoji = "✋"
                 
                 player.revealed = True
 
@@ -279,7 +280,7 @@ class Game:
 
     # Fin de partie, envoies le message de fin et détruit la partie
     async def end_game(self, winner):
-        article = 'd\'' if winner[:1] in ['E', 'A', 'I', 'O', 'U', 'Y'] else 'de '
+        article = 'd\'' if winner[:1] in ('E', 'A', 'I', 'O', 'U', 'Y') else 'de '
         embed = discord.Embed(
             title=f"[MASCARADE] Victoire {article}`{winner}` !",
             color=global_values.color,
