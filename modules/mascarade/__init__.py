@@ -55,7 +55,7 @@ class MainClass(BaseClassPython):
             if args[0] == "join't":
                 await message.channel.send(message.author.mention + " n'a pas rejoint la partie")
         else:
-            self.com_create(message, args, kwargs)
+            await self.com_create(message, args, kwargs)
 
     async def com_create(self, message, args, kwargs):
         if message.channel.id in global_values.games:
@@ -69,8 +69,8 @@ class MainClass(BaseClassPython):
             game = global_values.games[message.channel.id]
             await game.channel.send(
                 embed=discord.Embed(
-                    title="[MASCARADE]Rôles en jeu",
-                    description='\n'.join(str(x) for x in game.roles.values()),
+                    title="[MASCARADE] Rôles en jeu",
+                    description=', '.join(str(x) for x in game.roles.values()),
                     color=global_values.color
                 )
             )
@@ -80,8 +80,9 @@ class MainClass(BaseClassPython):
     async def com_show(self, message, args, kwargs):
         if message.channel.id in global_values.games:
             game = global_values.games[message.channel.id]
-            await game.info_view.message.delete()
-            await game.send_info(mode="set")
+            if game.info_view:
+                await game.info_view.message.delete()
+                await game.send_info(mode="set")
         else:
             await message.channel.send("Il n'y a pas de partie en cours")
 
@@ -209,7 +210,7 @@ Si la carte d'un joueur a été révélée durant son tour ou le tour précéden
         if not user.bot:
             if reaction.message.channel.id in global_values.games:
                 game = global_values.games[reaction.message.channel.id]
-                if game.info_view.message.id == reaction.message.id:
+                if game.info_view and game.info_view.message.id == reaction.message.id:
                     await reaction.message.remove_reaction(reaction.emoji, user)
                     if game.turn != -1:
                         if user.id in game.players:

@@ -37,7 +37,7 @@ class Player:
 
     def steal_coins(self, amount, player, extra=""):
         total = min(player.coins, amount)
-        self.game.stack.append(f"{self} a volé {display_money(total)} à {player}{extra}")
+        self.game.stack.append(f"{self} a pris {display_money(total)} à {player}{extra}")
         self.coins += total
         player.coins -= total
 
@@ -91,7 +91,7 @@ class Player:
         await self.game.send_info(
             info={
                 "name": f"{role.icon} Annonce",
-                "value": f"{self} a annoncé que son rôle est {role}"
+                "value": f"{self} a annoncé que son rôle est {role}: *{role.description}*"
             },
             view=views.ContestView(self, role)
         )

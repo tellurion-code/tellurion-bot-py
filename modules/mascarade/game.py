@@ -24,7 +24,7 @@ class Game:
             }
 
         self.order = []  # Ordre des id des joueurs
-        self.turn = -1  # Le tour (index du leader) en cours, -1 = pas commencé
+        self.turn = -1  # Le tour (index du joueur) en cours, -1 = pas commencé
         self.round = 0
         self.tribunal = 0  # Pièces au tribunal
         self.info_view = None
@@ -221,7 +221,9 @@ class Game:
         self.info_view = new_view
 
     async def start_turn(self, message):
-        self.phase = "action"
+        if self.phase != "end":
+            self.phase = "action"
+        
         self.turn = (self.turn + 1) % len(self.order)
         self.round += 1
         await self.send_info(view=TurnView(self), info=message)
@@ -271,18 +273,34 @@ class Game:
 
     # Passe au prochain tour
     async def next_turn(self, message=None):
+        winners = {
+            "enough_coins": [],
+            "no_coins": []
+        }
         for player in self.players.values():
-            if (player.coins >= 13):
-                await self.end_game(str(player.user))
-                return
+            if player.coins >= 13:
+                winners["enough_coins"].append(str(player.user))
+
+            if player.coins == 0:
+                most_coins = max(x.coins for x in self.players.values())
+                winners["no_coins"].extend(str(x.user) for x in self.players.values() if x.coins == most_coins)
+
+        if winners["no_coins"]:
+            await self.end_game(winners["no_coins"])
+        elif winners["enough_coins"]:
+            await self.end_game(winners["enough_coins"])
 
         await self.start_turn(message)
 
     # Fin de partie, envoies le message de fin et détruit la partie
-    async def end_game(self, winner):
-        article = 'd\'' if winner[:1] in ('E', 'A', 'I', 'O', 'U', 'Y') else 'de '
+    async def end_game(self, winners: list[str]):
+        if self.phase == "end":
+            return
+        
+        self.phase = "end"
+        winners_display = (('d\'' if winner[:1].upper() in 'EAIOUY' else 'de ') + f"`{winner}`" for winner in winners)
         embed = discord.Embed(
-            title=f"[MASCARADE] Victoire {article}`{winner}` !",
+            title=f"[MASCARADE] Victoire {', '.join(winners_display)} !",
             color=global_values.color,
             description="**Joueurs :**\n" + '\n'.join(f"{self.players[x]} : {self.players[x].role} - {display_money(self.players[x].coins)}" for i, x in enumerate(self.order))
         )
@@ -369,4 +387,4 @@ class Game:
         else:
             print("no save")
 
- #  Module créé par Le Codex#9836
+# Module créé par Le Codex#9836

@@ -372,10 +372,10 @@ class ContestView(PlayView):
         if done:
             self.stop()
 
-    @discord.ui.button(label="Contester", style=discord.ButtonStyle.green)
+    @discord.ui.button(label="Contester", style=discord.ButtonStyle.blurple)
     async def contest(self, button, interaction):
         await self.cast_vote(True, interaction)
 
-    @discord.ui.button(label="Ne pas contester", style=discord.ButtonStyle.red)
+    @discord.ui.button(label="Ne pas contester", style=discord.ButtonStyle.blurple)
     async def dont_contest(self, button, interaction):
         await self.cast_vote(False, interaction)

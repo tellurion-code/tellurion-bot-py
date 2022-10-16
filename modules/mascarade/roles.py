@@ -43,7 +43,7 @@ class Role:
 
 
 class Judge(Role):
-    icon = "⚖"
+    icon = "⚖️"
     name = "Juge"
     description = f"Gagnez les {display_money(1)} du Tribunal"
     action_name = "Détournement"
@@ -135,7 +135,7 @@ class Princess(Role):
 
 
 class King(Role):
-    icon = "⚜"
+    icon = "⚜️"
     name = "Roi"
     description = f"Gagnez {display_money(2)}"
     action_name = "Taxes"
@@ -188,7 +188,7 @@ class Crook(Role):
 class Beggar(Role):
     icon = "🪔"
     name = "Mendiant"
-    description = f"Dans le sens horaire, prenez {display_money(1)} à chaque joueur avec plus de {display_money(1)} que vous"
+    description = f"De haut et bas, prenez {display_money(1)} à chaque joueur avec plus de {display_money(1)} que vous"
     action_name = "Mendicité"
 
     async def power(self):
@@ -305,10 +305,12 @@ class Cheat(Role):
 
     async def power(self):
         if self.player.coins >= 10:
-            await self.game.end_game(str(self.player.user))
+            self.game.stack.append(f"{self.player} a triché et remporte la partie!")
+            await self.game.end_game([str(self.player.user)])
         else:
             self.game.stack.append(f"{self.player} n'avait pas assez de {display_money(1)}")
-            await self.end_turn()
+        
+        await self.end_turn()
 
 
 class Spy(Role):
@@ -352,7 +354,7 @@ class Spy(Role):
 
 
 class Widow(Role):
-    icon = "⚰"
+    icon = "⚰️"
     name = "Veuve"
     description = f"Gagnez des {display_money(1)} jusqu'à en avoir 10 ({display_money(10)})"
     action_name = "Héritage"
@@ -362,7 +364,7 @@ class Widow(Role):
             diff = 10 - self.player.coins
             self.player.gain_coins(diff)
         else:
-            self.game.stack.append(f"{self.player.user} avait déjà {display_money(10)} ou plus")
+            self.game.stack.append(f"{self.player} avait déjà {display_money(10)} ou plus")
 
         await self.end_turn()
 
@@ -538,5 +540,3 @@ class Gambler(Role):
             self.player.gain_coins(self.bet)
 
         await self.end_turn()
-
-
