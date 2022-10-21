@@ -11,8 +11,7 @@ from modules.mascarade.views import JoinView, RoleView, ConfirmView, TurnView
 import modules.mascarade.globals as global_values
 
 class Game:
-    def __init__(self, mainclass, **kwargs):
-        message = kwargs["message"] if "message" in kwargs else None
+    def __init__(self, mainclass, message=None):
         self.mainclass = mainclass
 
         self.channel = None
@@ -49,24 +48,12 @@ class Game:
     def get_neighbours(self, player):
         index = self.order.index(player.user.id)
 
-        p = (index + 1) % len(self.order)
-        n = (index - 1 + len(self.order)) % len(self.order)
-        previous = self.players[self.order[p]]
-        next = self.players[self.order[n]]
+        l = (index + 1) % len(self.order)
+        r = (index - 1 + len(self.order)) % len(self.order)
+        left = self.players[self.order[l]]
+        right = self.players[self.order[r]]
 
-        return previous, next
-
-    @property
-    def player_list(self):
-        return '\n'.join("`" + str(x.user) + "`" for x in self.players.values())
-
-    @property
-    def current_player(self):
-        return self.players[self.order[self.turn]]
-
-    @property
-    def role_count(self):
-        return sum(role.number for role in self.roles.values())
+        return left, right
 
     async def on_creation(self, message):
         embed = discord.Embed(
@@ -79,6 +66,18 @@ class Game:
             embed=embed,
             view=JoinView(self)
         )
+
+    @property
+    def player_list(self):
+        return '\n'.join("`" + str(x.user) + "`" for x in self.players.values())
+
+    @property
+    def current_player(self):
+        return self.players[self.order[self.turn]]
+
+    @property
+    def role_count(self):
+        return sum(role.number for role in self.roles.values())
 
     async def pick_roles(self):
         await self.channel.send(
@@ -135,9 +134,9 @@ class Game:
             view=ConfirmView(self, self.order, self.start_turn, [None], temporary=True)
         )
 
-    def get_info_embed(self, **kwargs):
-        self.info = kwargs["info"] if "info" in kwargs else self.info
-        color = kwargs["color"] if "color" in kwargs else global_values.color
+    def get_info_embed(self, info=None, color=None):
+        self.info = info or self.info
+        color = color or global_values.color
 
         embed = discord.Embed(
             title=f"[MASCARADE] Tour de `{self.current_player.user}` 🍷",
@@ -180,19 +179,19 @@ class Game:
         if self.info:
             embed.add_field(name=self.info["name"], value=self.info["value"], inline=False)
 
-        if self.current_player.must_exchange and self.phase == "action":
-            embed.add_field(name="Echange obligatoire", value=f"{self.current_player} doit échanger", inline=False)
+        if self.phase == "action":
+            if self.current_player.must_exchange:
+                embed.add_field(name="Echange obligatoire", value=f"{self.current_player} doit échanger", inline=False)
+            else:
+                embed.add_field(name="Tour en cours", value=f"{self.current_player} doit choisir quoi faire", inline=False)
 
         embed.set_footer(text="Mettez une réaction pour changer votre icône!")
 
         return embed
 
-    async def send_info(self, **kwargs):
-        mode = kwargs["mode"] if "mode" in kwargs else "replace"
-        view = kwargs["view"] if "view" in kwargs else None
-
+    async def send_info(self, mode="replace", view=None, info=None):
         new_view = view or self.info_view
-        embed = self.get_info_embed(**kwargs)
+        embed = self.get_info_embed(info=info)
         if mode == "replace":
             if self.info_view:
                 if view:
@@ -247,7 +246,8 @@ class Game:
         else:
             self.stack.append(f"{','.join(str(x) for x in self.contestors)} {'a' if len(self.contestors) == 1 else 'ont'} contesté")
             self.contestors.append(self.current_player)
-            successes = []
+            fails = []
+            success = False
             for player in self.contestors:
                 if player.user.id != self.current_player.user.id:
                     player.last_vote_emoji = "✋"
@@ -255,17 +255,18 @@ class Game:
                 player.revealed = True
 
                 if player.role.name == role.name:
-                    successes.append(player)
+                    success = True
+                    await role.use_power(player)
                 else:
-                    verb = 'annoncé' if player.user.id == self.current_player.user.id else 'contesté'
-                    self.stack.append(f"{player} a {verb} à tort et a payé {display_money(1)} au Tribunal")
-                    player.coins -= 1
-                    self.tribunal += 1
+                    fails.append(player)
 
-            for player in successes:
-                await role.use_power(player)
-
-            if len(successes) == 0:
+            for player in fails:
+                verb = 'annoncé' if player.user.id == self.current_player.user.id else 'contesté'
+                self.stack.append(f"{player} a {verb} à tort et a payé {display_money(1)} au Tribunal")
+                player.coins -= 1
+                self.tribunal += 1
+                
+            if not success:
                 self.stack.append("🚫 Aucun des contestants n'avait le rôle annoncé!")
                 await role.end_turn()
 

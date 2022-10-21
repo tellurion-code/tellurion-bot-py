@@ -194,14 +194,16 @@ Chaque tour, vous pouvez réaliser une des trois actions suivantes:
 - Utiliser le pouvoir de votre rôle (ou bluffer avoir un autre rôle)
 
 🔹 **Les pouvoirs** : 🔹
-Lorsqu'un joueur annonce avoir un rôle, les autres joueurs peuvent contester. Si au moins un le fait, le joueur ayant fait l'annonce et tous les contestants révèlent leur rôle.
+Lorsqu'un joueur annonce avoir un rôle, les autres joueurs peuvent contester. 
+Si personne ne le fait, le joueur qui a fait l'annonce effectue l'action du rôle.
+Si au moins un le fait, le joueur ayant fait l'annonce et tous les contestants révèlent leur rôle.
 Tous ceux qui n'ont pas le rôle annoncé paye {display_money(1)} au tribunal. Si un joueur a effectivement le rôle annoncé, il peut effectuer son pouvoir, même si ce n'est pas son tour.
-Si un joueur n'a plus de {display_money(1)}, il est éliminé.
 
 🔹 **Précisions** : 🔹
 Lorsque que le jeu commence, tous les joueurs révèlent leur rôle avant de commencer à jouer.
 Les 4 premiers joueurs sont obligés de faire l'action d'échanger (ou pas) durant leur tour.
 Si la carte d'un joueur a été révélée durant son tour ou le tour précédent, il doit aussi échanger durant son tour.
+Si un joueur n'a plus de {display_money(1)}, il est éliminé.
                 """,
                 color=global_values.color
             ))

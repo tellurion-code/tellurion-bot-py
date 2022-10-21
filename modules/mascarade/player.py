@@ -91,7 +91,7 @@ class Player:
         await self.game.send_info(
             info={
                 "name": f"{role.icon} Annonce",
-                "value": f"{self} a annoncé que son rôle est {role}: *{role.description}*"
+                "value": f"{self} a annoncé que son rôle est {role}:\n*{role.description}*"
             },
             view=views.ContestView(self, role)
         )
