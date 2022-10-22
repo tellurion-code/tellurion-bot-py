@@ -34,7 +34,7 @@ class Role:
 
     async def end_turn(self, extra=None):
         for player in self.game.contestors:
-            if player.role.name != self.name:
+            if player.revealed.name != self.name:
                 verb = 'annoncé' if player.user.id == self.game.current_player.user.id else 'contesté'
                 self.game.stack.append(f"{player} a {verb} à tort et a payé {display_money(1)} au Tribunal")
                 player.coins -= 1
@@ -285,6 +285,8 @@ class Peasant(Role):
     description = f"Gagnez {display_money(1)}. Si le deuxième Paysan conteste, gagnez chacun {display_money(2)}"
     action_name = "Récolte"
     number = 2
+    
+    first_peasant_use = False
 
     @classmethod
     def restriction(cls, game):
@@ -293,10 +295,13 @@ class Peasant(Role):
     async def power(self):
         if sum(1 for x in self.game.contestors if x.role.name == self.name) == 2:
             self.player.gain_coins(2, " grâce au second Paysan")
+
+            self.first_peasant_use = not self.first_peasant_use
+            if not self.first_peasant_use:
+                await self.end_turn()
         else:
             self.player.gain_coins(1)
-        
-        await self.end_turn()
+            await self.end_turn()
 
 
 class Cheat(Role):

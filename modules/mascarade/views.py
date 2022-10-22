@@ -11,8 +11,6 @@ import modules.mascarade.globals as global_values
 import modules.mascarade.player as player_class
 
 
-classes = {c.__name__.lower(): c for c in roles.Role.__subclasses__()}
-
 class JoinView(GameView):
     @discord.ui.button(label="Rejoindre ou quitter", style=discord.ButtonStyle.blurple)
     async def join_or_leave(self, button, interaction):
@@ -76,6 +74,7 @@ class RoleView(PlayView):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
+        classes = {c.__name__.lower(): c for c in roles.Role.__subclasses__()}
         self.valid_roles = {k: x(self.game) for k, x in classes.items() if x.restriction(self.game) or global_values.debug}
         options = []
         for key, role in self.valid_roles.items():
