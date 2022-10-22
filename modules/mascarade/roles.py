@@ -32,10 +32,17 @@ class Role:
         self.game.stack.append("⚠ Pouvoir pas encore implémenté")
         await self.end_turn()
 
-    async def end_turn(self, extra=""):
+    async def end_turn(self, extra=None):
+        for player in self.game.contestors:
+            if player.role.name != self.name:
+                verb = 'annoncé' if player.user.id == self.game.current_player.user.id else 'contesté'
+                self.game.stack.append(f"{player} a {verb} à tort et a payé {display_money(1)} au Tribunal")
+                player.coins -= 1
+                self.game.tribunal += 1
+
         await self.game.next_turn({
             "name": f"{self.icon} {self.action_name}",
-            "value": extra + '\n'.join(self.game.stack)
+            "value": '\n'.join(self.game.stack) + ('\n' + extra if extra else "")
         })
 
     def __str__(self):
@@ -217,7 +224,7 @@ class Fool(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"{self.player} va choisir deux joueurs avec lesquels échanger"
+                "value": f"{self.player} va choisir deux autres cartes qu'il va échanger (ou pas)"
             },
             view=views.PlayerSelectView(
                 self.game,
@@ -279,8 +286,6 @@ class Peasant(Role):
     action_name = "Récolte"
     number = 2
 
-    first_peasant_trigger = False
-
     @classmethod
     def restriction(cls, game):
         return len(game.players.keys()) >= 8
@@ -288,13 +293,10 @@ class Peasant(Role):
     async def power(self):
         if sum(1 for x in self.game.contestors if x.role.name == self.name) == 2:
             self.player.gain_coins(2, " grâce au second Paysan")
-
-            self.first_peasant_trigger = not self.first_peasant_trigger
-            if not self.first_peasant_trigger:
-                await self.end_turn()
         else:
             self.player.gain_coins(1)
-            await self.end_turn()
+        
+        await self.end_turn()
 
 
 class Cheat(Role):
@@ -412,7 +414,7 @@ class Guru(Role):
 
     async def check_if_correct(self, selection, interaction):
         await interaction.response.defer()
-        self.target.revealed = True
+        self.target.reveal()
 
         correct = (selection[0].name == self.target.role.name)
         self.game.stack.append(f"{self.target} a annoncé {selection[0]} et avait {'raison' if correct else 'tort'}")

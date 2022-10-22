@@ -2,6 +2,7 @@
 
 import discord
 import random
+from modules.mascarade.components import RolesButton
 from modules.mascarade.holder import Holder
 
 from modules.mascarade.player import Player
@@ -159,7 +160,7 @@ class Game:
                 vote = "📩" if player.last_vote is not None else "✉"
 
             player_info = f'{player.index_emoji} {"🍷 " if self.turn == i else ""}`{player.user}`'
-            role = f"({player.role})" if player.revealed else ""
+            role = f'({str(player.revealed)})' if player.revealed is not None else ''
             money = display_money(player.coins)
 
             player_infos.append(f'{vote} {player_info} {role}: {money}')
@@ -186,11 +187,12 @@ class Game:
                 embed.add_field(name="Tour en cours", value=f"{self.current_player} doit choisir quoi faire", inline=False)
 
         embed.set_footer(text="Mettez une réaction pour changer votre icône!")
-
         return embed
 
     async def send_info(self, mode="replace", view=None, info=None):
         new_view = view or self.info_view
+        new_view.add_item(RolesButton())
+
         embed = self.get_info_embed(info=info)
         if mode == "replace":
             if self.info_view:
@@ -246,27 +248,19 @@ class Game:
         else:
             self.stack.append(f"{','.join(str(x) for x in self.contestors)} {'a' if len(self.contestors) == 1 else 'ont'} contesté")
             self.contestors.append(self.current_player)
-            fails = []
-            success = False
+            successes = []
             for player in self.contestors:
                 if player.user.id != self.current_player.user.id:
                     player.last_vote_emoji = "✋"
-                
-                player.revealed = True
 
+                player.reveal()
                 if player.role.name == role.name:
-                    success = True
-                    await role.use_power(player)
-                else:
-                    fails.append(player)
+                    successes.append(player)
 
-            for player in fails:
-                verb = 'annoncé' if player.user.id == self.current_player.user.id else 'contesté'
-                self.stack.append(f"{player} a {verb} à tort et a payé {display_money(1)} au Tribunal")
-                player.coins -= 1
-                self.tribunal += 1
-                
-            if not success:
+            for player in successes:
+                await role.use_power(player)
+
+            if len(successes) == 0:
                 self.stack.append("🚫 Aucun des contestants n'avait le rôle annoncé!")
                 await role.end_turn()
 

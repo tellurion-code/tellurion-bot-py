@@ -29,3 +29,16 @@ class ConfirmButton(discord.ui.Button):
 
     async def callback(self, interaction):
         await self.view.confirm(self, interaction)
+
+
+class RolesButton(discord.ui.Button):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label = "Voir les rôles"
+        self.style = discord.ButtonStyle.gray
+
+    async def callback(self, interaction):
+        await interaction.response.send_message(
+            content=', '.join(str(x) for x in self.view.game.roles.values()),
+            ephemeral=True
+        )

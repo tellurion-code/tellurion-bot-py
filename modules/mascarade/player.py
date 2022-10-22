@@ -13,14 +13,14 @@ class Player:
         self.role = None
         self.index_emoji = ""
         self.last_vote = None
-        self.last_vote = ""
+        self.last_vote_emoji = ""
         self.coins = 6
-        self.revealed = False
+        self.revealed = None
         self.target = None
 
     @property
     def must_exchange(self):
-        return self.revealed or (self.game.round < 5 and not global_values.debug)
+        return (self.revealed is not None) or (self.game.round < 5 and not global_values.debug)
 
     def __str__(self):
         return f"{self.index_emoji} `{self.user}`"
@@ -40,6 +40,9 @@ class Player:
         self.game.stack.append(f"{self} a pris {display_money(total)} à {player}{extra}")
         self.coins += total
         player.coins -= total
+
+    def reveal(self):
+        self.revealed = self.role
 
     async def start_exchange(self, interaction):
         await interaction.response.defer()

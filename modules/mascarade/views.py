@@ -13,7 +13,6 @@ import modules.mascarade.player as player_class
 
 classes = {c.__name__.lower(): c for c in roles.Role.__subclasses__()}
 
-# pylint: disable=unused-argument
 class JoinView(GameView):
     @discord.ui.button(label="Rejoindre ou quitter", style=discord.ButtonStyle.blurple)
     async def join_or_leave(self, button, interaction):
@@ -147,11 +146,12 @@ class ConfirmView(PlayView):
         self.next = next  # Fonction async appelée une fois que tout le monde a confirmé
         self.next_args = next_args or []
 
-    async def interaction_check(self, interaction):
-        return interaction.user.id in self.unconfirmed
-
     @discord.ui.button(label="Confirmer", style=discord.ButtonStyle.blurple)
     async def confirm(self, button, interaction):
+        if interaction.user.id not in self.unconfirmed:
+            await interaction.response.defer()
+            return
+        
         await self.check_if_all_confirmed(interaction)
         await self.respond(interaction)
 
@@ -162,15 +162,14 @@ class ConfirmView(PlayView):
         )
 
     async def check_if_all_confirmed(self, interaction):
-        if interaction.user.id in self.unconfirmed:
-            self.unconfirmed.remove(interaction.user.id)
-            if len(self.unconfirmed) == 0:
-                await self.next(*self.next_args)
+        self.unconfirmed.remove(interaction.user.id)
+        if len(self.unconfirmed) == 0:
+            await self.next(*self.next_args)
 
-                if self.temporary:
-                    await self.delete()
-                else:
-                    self.stop()
+            if self.temporary:
+                await self.delete()
+            else:
+                self.stop()
 
 
 class TurnView(PlayView):
@@ -189,12 +188,9 @@ class TurnView(PlayView):
         claim_button.callback = self.claim
         self.add_item(claim_button)
 
-    async def interaction_check(self, interaction):
-        return interaction.user.id == self.game.order[self.game.turn]
-
     def end(self):
         for player in self.game.players.values():
-            player.revealed = False
+            player.revealed = None
             player.last_vote = None
             player.last_vote_emoji = "✉"
 
@@ -204,6 +200,10 @@ class TurnView(PlayView):
         self.stop()
 
     async def look_at_role(self, interaction):
+        if interaction.user.id != self.game.order[self.game.turn]:
+            await interaction.response.defer()
+            return
+        
         self.end()
         await self.game.current_player.send_role_info(interaction)
         await self.game.next_turn({
@@ -212,11 +212,19 @@ class TurnView(PlayView):
         })
 
     async def exchange(self, interaction):
+        if interaction.user.id != self.game.order[self.game.turn]:
+            await interaction.response.defer()
+            return
+
         self.end()
         self.game.phase = "exchange"
         await self.game.current_player.start_exchange(interaction)
 
     async def claim(self, interaction):
+        if interaction.user.id != self.game.order[self.game.turn]:
+            await interaction.response.defer()
+            return
+
         self.end()
         self.game.phase = "contest"
         await self.game.current_player.claim_role(interaction)
@@ -251,10 +259,11 @@ class GeneralSelectView(PlayView):
 
         # self.add_item(ConfirmButton("Nombre de joueurs invalide"))
 
-    async def interaction_check(self, interaction):
-        return interaction.user.id == self.player.user.id
-
     async def update_selection(self, select, interaction):
+        if interaction.user.id != self.player.user.id:
+            await interaction.response.defer()
+            return
+        
         self.selection = [self.choices[x]["value"] for x in select.values]
         # for option in select.options:
         #     option.default = option.value in select.values
@@ -313,15 +322,16 @@ class ExchangeView(PlayView):
         self.second = second
         self.next = next
 
-    async def interaction_check(self, interaction):
-        return interaction.user.id == self.player.user.id
-
     async def end(self):
         await self.next()
         self.stop()
 
     @discord.ui.button(label="Echanger", style=discord.ButtonStyle.green)
     async def exchange(self, button, interaction):
+        if interaction.user.id != self.player.user.id:
+            await interaction.response.defer()
+            return
+
         self.first.role, self.second.role = self.second.role, self.first.role
         await interaction.response.send_message(
             content="Vous avez échangé de rôles",
@@ -331,6 +341,10 @@ class ExchangeView(PlayView):
 
     @discord.ui.button(label="Ne pas échanger", style=discord.ButtonStyle.red)
     async def dont_exchange(self, button, interaction):
+        if interaction.user.id != self.player.user.id:
+            await interaction.response.defer()
+            return
+
         await interaction.response.send_message(
             content="Vous n'avez **pas** échangé de rôles",
             ephemeral=True
@@ -339,6 +353,10 @@ class ExchangeView(PlayView):
 
     @discord.ui.button(label="Au hasard", style=discord.ButtonStyle.blurple)
     async def random_exchange(self, button, interaction):
+        if interaction.user.id != self.player.user.id:
+            await interaction.response.defer()
+            return
+
         await interaction.response.send_message(
             content="Vous avez échangé au hasard. Oups!",
             ephemeral=True
@@ -356,10 +374,11 @@ class ContestView(PlayView):
         self.player = player
         self.role = role
 
-    async def interaction_check(self, interaction):
-        return await super().interaction_check(interaction) and interaction.user.id != self.player.user.id
-
     async def cast_vote(self, contesting, interaction):
+        if interaction.user.id == self.player.user.id:
+            await interaction.response.defer()
+            return
+
         self.game.players[interaction.user.id].last_vote = contesting
 
         await interaction.response.send_message(
