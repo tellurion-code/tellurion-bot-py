@@ -230,6 +230,7 @@ class LBI(discord.Client):
     warning = log_LBI.warning
     error = log_LBI.error
     critical = log_LBI.critical
+    log = info
 
     def __init__(self, config=None, *args, **kwargs):
         super().__init__(*args, **kwargs)
