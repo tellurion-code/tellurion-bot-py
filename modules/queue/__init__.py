@@ -1,8 +1,9 @@
 import discord
 
 from modules.base import BaseClassPython
+from modules.queue import tools
 
-QUEUE = [];
+QUEUE = tools.OrderedSet()
 
 class MainClass(BaseClassPython):
 	name = "queue"
@@ -21,7 +22,6 @@ class MainClass(BaseClassPython):
 		self.config["auth_everyone"] = True
 		self.config["configured"] = True
 
-
 	async def command(self, message, args, kwargs):
 		if len(QUEUE) == 0:
 			await message.channel.send("Queue vide")
@@ -32,14 +32,14 @@ class MainClass(BaseClassPython):
 		))
 
 	async def com_add(self, message, args, kwargs):
-		QUEUE.append(message.author)
+		QUEUE.add(message.author)
 
 		await message.channel.send(embed=discord.Embed(
 			description='\n'.join([str(x) for x in QUEUE])
 		))
 
 	async def com_remove(self, message, args, kwargs):
-		QUEUE.remove(message.author)
+		QUEUE.discard(message.author)
 
 		if len(QUEUE) == 0:
 			await message.channel.send("Queue vide")
@@ -55,6 +55,7 @@ class MainClass(BaseClassPython):
 			return
 
 
-		next = QUEUE.pop(0)
+		next_ = next(iter(QUEUE))
+		QUEUE.discard(next_)
 
-		await message.channel.send(next.mention)
+		await message.channel.send(next_.mention)
