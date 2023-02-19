@@ -1,3 +1,10 @@
+import io
+import os
+import time
+from types import GeneratorType
+
+import discord
+
 from modules.base import BaseClassPython
 
 
