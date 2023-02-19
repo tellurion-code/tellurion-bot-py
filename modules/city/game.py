@@ -3,7 +3,9 @@ import random
 import math
 import copy
 
-from modules.buttons.button import ComponentMessage
+class ComponentMessage:
+	pass
+
 from modules.city.player import Player
 
 import modules.city.globals as global_values

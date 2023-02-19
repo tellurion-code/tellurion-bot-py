@@ -77,7 +77,7 @@ class MainClass(BaseClassPython):
 			await message.channel.send("Il y a déjà une partie en cours")
 		else:
 			global_values.games[message.channel.id] = Game(self, message=message)
-			await global_values.games[message.channel.id].on_creation(message)
+			await global_values.games[message.channel.id].on_creation()
 
 	# Réitinitialise et supprime la partie
 	async def com_reset(self, message, args, kwargs):
@@ -86,8 +86,8 @@ class MainClass(BaseClassPython):
 				if reactions[message.author.id][0] == 0:
 					await message.channel.send("La partie a été réinitialisée")
 
-					if global_values.games[message.channel.id].info_message:
-						await global_values.games[message.channel.id].info_message.delete()
+					if global_values.games[message.channel.id].info_view:
+						await global_values.games[message.channel.id].info_view.clear()
 
 					global_values.games[message.channel.id].delete_save()
 					del global_values.games[message.channel.id]
@@ -113,31 +113,6 @@ class MainClass(BaseClassPython):
 			)
 		else:
 			await message.channel.send("Il n'y a pas de partie en cours")
-
-	# Lance la partie
-	# async def com_start(self, message, args, kwargs):
-	# 	if message.channel.id in global_values.games:
-	# 		game = global_values.games[message.channel.id]
-	# 		if game.turn == -1:
-	# 			if message.author.id in game.players:
-	# 				if len(game.players) >= 5 or global_values.debug:
-	# 					if len(game.roles) in [0, len(game.players)]:
-	# 						await game.start_game()
-	# 					else:
-	# 						await message.channel.send("Le nombre de rôles ne correspond pas au nombre de joueurs")
-	# 				else:
-	# 					await message.channel.send("Il faut au minimum 5 joueurs")
-	# 			else:
-	# 				await message.channel.send("Vous n'êtes pas dans la partie")
-	# 		else:
-	# 			await message.author.send("La partie a déjà commencé")
-	# 	else:
-	# 		await message.channel.send("Il n'y a pas de partie en cours")
-
-	# Idem
-	# async def com_SUTARUTO(self, message, args, kwargs):
-	# 	if message.author.id == 118399702667493380:
-	# 		await self.com_start(message, args, kwargs)
 
 	async def com_gamerules(self, message, args, kwargs):
 		if message.channel.id in global_values.games:
@@ -334,7 +309,7 @@ Attention S’il y a 7 participants ou plus, la Quête n°4 doit avoir 2 échecs
 		if not user.bot:
 			if reaction.message.channel.id in global_values.games:
 				game = global_values.games[reaction.message.channel.id]
-				if game.info_message.message.id == reaction.message.id:
+				if game.info_view and game.info_view.message.id == reaction.message.id:
 					await reaction.message.remove_reaction(reaction.emoji, user)
 					if game.turn != -1:
 						if user.id in game.players:

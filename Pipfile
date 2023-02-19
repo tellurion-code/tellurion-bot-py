@@ -5,15 +5,13 @@ name = "pypi"
 
 [packages]
 packaging = "*"
-aiohttp = "*"
 aiofiles = "*"
 lupa = "*"
 aiofile = "*"
 toml = "*"
-py-cord = {version = "*",extras = ["voice",]}
+py-cord = {version = "*",extras = ["voice"]}
 matplotlib = "*"
 humanize = "*"
-discord-components = "*"
 
 [dev-packages]
 

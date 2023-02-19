@@ -112,6 +112,9 @@ class Player:
 	def active_power(self, game):
 		pass
 
+	def show_player(self, game):
+		return (self.name.split()[0] + " " if self.__class__.__name__ != "Player" else "") + global_values.tile_colors[self.index + 2] + " `" + str(self.user) + "` : " + str(len([0 for row in game.map for tile in row if tile == self.index]))
+
 
 class Defender(Player):
 	name = "🛡️ Défenseur"
@@ -164,25 +167,28 @@ class Swarm(Player):
 			map[y - d1][x - d2] = self.index
 
 
-class Racer(Player):
-	name = "👾 Glitcheur"
-	description = "Peut prendre une fois dans la partie un second tour juste après le sien"
-	power_active = True
-	steal_turn = False
-
-	def active_power(self, game):
-		self.power_active = False
-		self.steal_turn = True
-
-		return {
-			"name": "️👾 Pouvoir du Glitcheur",
-			"value": "Le prochain tour sera le vôtre"
-		}
-
-	def on_turn_end(self, game):
-		if self.steal_turn:
-			self.steal_turn = False
-			game.turn = (self.index - 1)%len(game.players)
+# class Racer(Player):
+# 	name = "👾 Glitcheur"
+# 	description = "Une fois par partie, peut prendre un second tour juste après le sien"
+# 	power_active = True
+# 	steal_turn = False
+#
+# 	def active_power(self, game):
+# 		self.power_active = False
+# 		self.steal_turn = True
+#
+# 		return {
+# 			"name": "️👾 Pouvoir du Glitcheur",
+# 			"value": "Le prochain tour sera le vôtre"
+# 		}
+#
+# 	def on_turn_end(self, game):
+# 		if self.steal_turn:
+# 			self.steal_turn = False
+# 			game.turn = (self.index - 1)%len(game.players)
+#
+# 	def show_player(self, game):
+# 		return super().show_player(game) + (" (🦸)" if self.power_active else "")
 
 
 # class Demolisher(Player):
@@ -228,33 +234,36 @@ class Pacifist(Player):
 
 		return 0
 
+	def show_player(self, game):
+		return super().show_player(game) + " (A attaqué " + (''.join([global_values.tile_colors[x + 2] for x in self.variables["war_with"]]) if len(self.variables["war_with"]) else "personne") + ")"
 
-class Isolated(Player):
-	name = "🏚️ Isolé"
-	description = "En combat, prend le max entre les unités derrière et la moyenne des unités de chaque côté"
 
-	def get_power(self, game, x, y, dx, dy):
-		behind = self.get_power_sub(game, x, y, dx, dy);
-		left = self.get_power_sub(game, x, y, dy, dx);
-		right = self.get_power_sub(game, x, y, -dy, -dx);
-
-		return max(behind, (left + right) / 2);
-
-	def get_power_sub(self, game, x, y, dx, dy):
-		power = 0
-		tdx, tdy = 0, 0
-		while game.map[y + tdy][x + tdx] == self.index:
-			power += 1
-			tdx += dx
-			tdy += dy
-			if not game.inside(x + tdx, y + tdy):
-				break
-
-		return power
+# class Isolated(Player):
+# 	name = "🏚️ Isolé"
+# 	description = "En combat, prend le max entre les unités derrière et la moyenne des unités de chaque côté"
+#
+# 	def get_power(self, game, x, y, dx, dy):
+# 		behind = self.get_power_sub(game, x, y, dx, dy);
+# 		left = self.get_power_sub(game, x, y, dy, dx);
+# 		right = self.get_power_sub(game, x, y, -dy, -dx);
+#
+# 		return max(behind, (left + right) / 2);
+#
+# 	def get_power_sub(self, game, x, y, dx, dy):
+# 		power = 0
+# 		tdx, tdy = 0, 0
+# 		while game.map[y + tdy][x + tdx] == self.index:
+# 			power += 1
+# 			tdx += dx
+# 			tdy += dy
+# 			if not game.inside(x + tdx, y + tdy):
+# 				break
+#
+# 		return power
 
 class General(Player):
 	name = "🚩 Général"
-	description = "Peut doubler la valeur de ses unités pour deux manches"
+	description = "Une fois par partie, peut doubler la valeur de ses unités pour deux manches"
 	power_active = True
 
 	def __init__(self, user):
@@ -265,7 +274,7 @@ class General(Player):
 
 	def active_power(self, game):
 		self.power_active = False
-		self.variables["turn"] = 1
+		self.variables["turn"] = 2
 
 		return {
 			"name": "🚩 Pouvoir du Général",
@@ -273,17 +282,17 @@ class General(Player):
 		}
 
 	def on_turn_start(self, game):
-		self.variables["turn"] += 1 if self.variables["turn"] else 0
-		if self.variables["turn"] == 3:
-			self.variables["turn"] = 0
+		self.variables["turn"] -= 1 if self.variables["turn"] else 0
 
 	def get_power(self, game, x, y, dx, dy):
 		return (2 if self.variables["turn"] else 1) * super().get_power(game, x, y, dx, dy)
 
+	def show_player(self, game):
+		return super().show_player(game) + (" (🚩 [" + str(self.variables["turn"]) + "])" if self.variables["turn"] else (" (🚩)" if self.power_active else ""))
 
 class Topologist(Player):
 	name = "🍩 Topologiste"
-	description = "Considère les bords du terrain comme adjacents"
+	description = "Considère les bords comme adjacents. Gagne +1 en combat s'il passe à travers un"
 
 	def move_tiles(self, game, new_map, dx, dy, summary):
 		for y in range(game.ranges[1]):
@@ -294,11 +303,19 @@ class Topologist(Player):
 
 	def get_power(self, game, x, y, dx, dy):
 		power = 0
+		passed_through = False
 		tx, ty = x, y
 		while game.map[ty][tx] == self.index:
-			power += 1
-			tx = (tx + dx) % game.ranges[0]
-			ty = (ty + dy) % game.ranges[1]
+			power += 1 + (1 if passed_through else 0)
+			passed_through = False
+
+			tx += dx
+			ty += dy
+			if not game.inside(tx, ty):
+				tx = tx % game.ranges[0]
+				ty = ty % game.ranges[1]
+				passed_through = True
+
 			if power > max(game.ranges[0], game.ranges[1]):
 				break
 
@@ -336,6 +353,63 @@ class Liquid(Player):
 
 
 		return new_map
+
+class Navigator(Player):
+	name = "🧭 Navigateur"
+	description = "Deux fois par partie, peut se déplacer en diagonale"
+	power_active = True
+	move_diagonally = False
+
+	def __init__(self, user):
+		super().__init__(user)
+		self.variables = {
+			"uses_remaining": 2
+		}
+
+	def move(self, game, index, summary):
+		if (self.move_diagonally):
+			dx = [-1, 1, -1, 1][index]
+			dy = [-1, -1, 1, 1][index]
+		else:
+			dx = [-1, 0, 0, 1][index]
+			dy = [0, -1, 1, 0][index]
+
+		self.move_diagonally = False
+		new_map = copy.deepcopy(game.map)
+
+		self.move_tiles(game, new_map, dx, dy, summary)
+
+		return new_map
+
+	def active_power(self, game):
+		if (self.move_diagonally):
+			return
+
+		self.move_diagonally = True
+		self.variables["uses_remaining"] -= 1
+		if not (self.variables["uses_remaining"]):
+			self.power_active = False
+
+		return {
+			"name": "🧭 Pouvoir du Navigateur",
+			"value": "Votre direction choisie sera tournée de 45° dans le sens horaire ce tour"
+		}
+
+	def show_player(self, game):
+		return super().show_player(game) + (" (🧭 x" + str(self.variables["uses_remaining"]) + ")" if self.variables["uses_remaining"] else "")
+
+
+class Tortue(Player):
+	name = "🐢 Tortue"
+	description = "En combat, gagne +1 si l'unité attaquante ou attaquée est entourée de deux unités alliées"
+
+	def get_power(self, game, x, y, dx, dy):
+		power = super().get_power(game, x, y, dx, dy)
+
+		if (game.inside(x + dy, y + dx) and game.inside(x - dy, y - dx)):
+			power += 1 if game.map[y + dx][x + dy] == game.map[y - dx][x - dy] and game.map[y + dx][x + dy] == self.index else 0
+
+		return power
 
 
 # class Border(Player):
