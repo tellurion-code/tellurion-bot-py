@@ -55,7 +55,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.storage = Storage(os.path.join("data", self.name.lower(), client))
+        self.storage = Storage(os.path.join("data", self.name.lower()), client)
 
     async def command(self, message, args, kwargs):
         if len(args) and args[0] == "*":
