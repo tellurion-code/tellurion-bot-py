@@ -1,11 +1,42 @@
-import io
 import os
 import time
+import zipfile
 from types import GeneratorType
 
 import discord
 
 from modules.base import BaseClassPython
+
+
+class Storage:
+    def __init__(self, base_path, client):
+        self.client = client
+        self.base_path = base_path
+        try:
+            os.makedirs(base_path)
+        except FileExistsError:
+            self.client.info(f"Le dossier {self.base_path} a déjà été créé")
+
+    def mkdir(self, directory):
+        try:
+            os.makedirs(self.path(directory))
+        except FileExistsError:
+            self.client.info(f"Le dossier {directory} a déjà été créé")
+
+    def mkzip(self, files, name):
+        with zipfile.ZipFile(self.path(name), 'w', zipfile.ZIP_DEFLATED) as zip_file:
+            for file in files:
+                zip_file.write(self.path(file), compress_type=zipfile.ZIP_DEFLATED)
+        return name
+
+    def open(self, filename, *args, **kwargs):
+        return open(self.path(filename), *args, **kwargs)
+
+    def path(self, filename):
+        return os.path.join(self.base_path, filename)
+
+    def exists(self, filename):
+        return os.path.exists(self.path(filename))
 
 
 class MainClass(BaseClassPython):
@@ -21,6 +52,10 @@ class MainClass(BaseClassPython):
         }
     }
     command_text = "archive"
+
+    def __init__(self, client):
+        super().__init__(client)
+        self.storage = Storage(os.path.join("data", self.name.lower(), client))
 
     async def command(self, message, args, kwargs):
         if len(args) and args[0] == "*":
