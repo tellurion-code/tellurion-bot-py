@@ -34,7 +34,7 @@ class MainClass(BaseClassPython):
         await self.update_role()
 
     async def update_role(self):
-        since = datetime.datetime.now() - datetime.timedelta(days=7)
+        since = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
         top = self.get_top(10, since)
         first = top[0][0]
         #remove role to everyone
@@ -89,7 +89,7 @@ class MainClass(BaseClassPython):
             for user in self.history.keys():
                 self.history[user].sort(key=lambda x: x[0])
 
-    def get_top(self, top=10, since=datetime.datetime(year=1, month=1, day=1), with_user=None, only_users=None):
+    def get_top(self, top=10, since=datetime.datetime(year=1, month=1, day=1, tzinfo=datetime.timezone.utc), with_user=None, only_users=None):
         """Return [(userid, [(date, delta), (date,delta), ...]), ... ]"""
         # Extract only messages after until
         if only_users is not None:
@@ -178,13 +178,13 @@ class MainClass(BaseClassPython):
                 await message.channel.send(file=discord.File(file_name))
 
             if "history" in args:
-                since = datetime.datetime(year=1, month=1, day=1)
+                since = datetime.datetime(year=1, month=1, day=1, tzinfo=datetime.timezone.utc)
                 debut_message = "la création du salon"
                 top = 5
                 if "s" in [k[0] for k in kwargs]:
                     try:
                         d = [k[1] for k in kwargs if k[0] == "s"][0]
-                        since = datetime.datetime.now() - datetime.timedelta(days=float(d))
+                        since = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=float(d))
                         debut_message = humanize.naturalday(since.date(), format='le %d %b')
                     except ValueError:
                         pass
@@ -224,10 +224,10 @@ class MainClass(BaseClassPython):
     async def command(self, message, args, kwargs):
         if message.mentions:
             await self.com_stats(message, args, kwargs)
-        since = datetime.datetime.now() - datetime.timedelta(days=7)
+        since = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=7)
         if len(args):
             try:
-                since = datetime.datetime.now() - datetime.timedelta(days=float(args[0]))
+                since = datetime.datetime.now(datetime.timezone.utc) - datetime.timedelta(days=float(args[0]))
             except ValueError:
                 pass
         top = self.get_top(10, since)
