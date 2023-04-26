@@ -176,7 +176,7 @@ class Crook(Role):
         await self.game.send_info(
             info={
                 "name": f"{self.icon} {self.action_name}",
-                "value": f"{self.player} va choisir un joueur à voler"
+                "value": f"{self.player} va choisir un joueur à voler parmi les plus riches"
             },
             view=views.PlayerSelectView(
                 self.game,
@@ -195,7 +195,7 @@ class Crook(Role):
 class Beggar(Role):
     icon = "🪔"
     name = "Mendiant"
-    description = f"De haut et bas, prenez {display_money(1)} à chaque joueur avec plus de {display_money(1)} que vous"
+    description = f"De haut en bas, prenez {display_money(1)} à chaque joueur avec plus de {display_money(1)} que vous"
     action_name = "Mendicité"
 
     async def power(self):

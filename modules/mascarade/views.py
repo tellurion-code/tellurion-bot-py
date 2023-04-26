@@ -108,7 +108,7 @@ class RoleView(PlayView):
                 "reason": "Pas assez de rôles"
             }
 
-        if "judge" not in self.game.roles:
+        if roles.Judge.name not in self.game.roles:
             return {
                 "bool": False,
                 "reason": "Le Juge doit être en jeu"
