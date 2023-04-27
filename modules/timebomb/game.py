@@ -123,7 +123,8 @@ class Game:
             color=color
         )
 
-        wires = '\n'.join(' '.join(str(self.aside[x+y*6]) for x in range(y*6, min(len(self.aside), y*6+6))) for y in range(math.floor(len(self.aside)/len(self.players))))
+        nb = len(self.players)
+        wires = '\n'.join(' '.join(str(self.aside[x+y*nb]) for x in range(y*nb, min(len(self.aside), y*nb+nb))) for y in range(math.ceil(len(self.aside)/nb)))
         embed.add_field(
             name="Fils coupés",
             value=wires if len(self.aside) else "Aucun",
