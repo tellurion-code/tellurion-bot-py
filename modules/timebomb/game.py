@@ -147,10 +147,12 @@ class Game:
         return embed
 
     async def send_info(self, mode="replace", view=None, info=None):
-        new_view = view or self.info_view
-        new_view.add_item(SelfRoleButton(row=1))
-        new_view.add_item(SelfHandButton(row=1))
-        new_view.add_item(RolesButton(row=1))
+        new_view = self.info_view
+        if view:
+            view.add_item(SelfRoleButton(row=1))
+            view.add_item(SelfHandButton(row=1))
+            view.add_item(RolesButton(row=1))
+            new_view = view
 
         embed = self.get_info_embed(info=info)
         if mode == "replace":
