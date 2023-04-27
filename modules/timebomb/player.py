@@ -15,10 +15,7 @@ class Player:
         self.wires = []
 
         self.target = None
-
-    @property
-    def must_exchange(self):
-        return (self.revealed is not None) or (self.game.round < 5 and not global_values.debug)
+        self.wire_index = None
 
     def __str__(self):
         return f"{self.index_emoji} `{self.user}`"
@@ -29,7 +26,7 @@ class Player:
             ephemeral=True
         )
 
-    async def cut_wire(self, selection, interaction):
+    async def choose_wire_to_cut(self, selection, interaction):
         await interaction.response.defer()
         self.target = selection[0]
         await self.game.send_info(
@@ -39,20 +36,21 @@ class Player:
             },
             view=views.WireCuttingView(
                 self.target,
-                self.end_turn
+                self.cut_wire
             )
         )
 
-    async def end_turn(self, index, interaction):
+    async def cut_wire(self, index, interaction):
+        self.wire_index = index
+        await self.target.wires[index].cut(self, interaction)
+
+    async def end_turn(self, interaction):
         await interaction.response.defer()
 
-        game_over = await self.target.wires[index].cut(self)
-        if not game_over:
-            wire = self.target.wires.pop(index)
-            self.game.aside.append(wire)
+        wire = self.target.wires.pop(self.wire_index)
+        self.game.aside.append(wire)
 
-            self.game.turn = self.target.user.id
-            await self.game.next_turn({
-                "name": f"✂️ Coupe",
-                "value": self.game.stack_string
-            })
+        await self.game.next_turn(self.target.user.id, {
+            "name": f"✂️ Coupe",
+            "value": self.game.stack_string
+        })

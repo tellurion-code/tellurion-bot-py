@@ -148,9 +148,11 @@ class WireCuttingView(PlayView):
         self.next = next
 
         for i, wire in enumerate(player.wires):
-            wire_button = discord.ui.Button(emoji=str(wire), style=discord.ButtonStyle.gray)
-            wire_button.callback = lambda e: self.choose_wire(i, e)
+            wire_button = discord.ui.Button(emoji=str(wire), custom_id=str(i), style=discord.ButtonStyle.gray)
+            wire_button.callback = self.choose_wire
+
             self.add_item(wire_button)
 
-    async def choose_wire(self, index, interaction):
+    async def choose_wire(self, interaction):
+        index = int(interaction.data["custom_id"])
         await self.next(index, interaction)

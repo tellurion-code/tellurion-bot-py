@@ -27,6 +27,7 @@ class Game:
             }
 
         self.turn = -1  # Le tour (user id du joueur) en cours, -1 = pas commencé
+        self.previous_turn = -1  # Le joueur précédent, pour éviter le ping-pong
         self.round = 0
         self.deck = []  # Paquet de cartes
         self.aside = []  # Cartes retirées
@@ -218,14 +219,17 @@ class Game:
         await self.send_info(
             view=PlayerSelectView(
                 self,
-                self.current_player.cut_wire,
-                condition=lambda e: e.user.id != self.current_player.user.id
+                self.current_player.choose_wire_to_cut,
+                condition=lambda e: e.user.id != self.current_player.user.id and (e.user.id != self.previous_turn or global_values.debug)
             ), 
             info=message
         )
 
     # Passe au prochain tour
-    async def next_turn(self, message=None):
+    async def next_turn(self, next_index, message=None):
+        self.previous_turn = self.turn
+        self.turn = next_index
+        
         # Vérifier si la manche est finie, et si les gentils ont gagnés
         if sum(1 for wire in self.aside if wire.name == LiveWire.name) == len(self.players):
             await self.end_game(True, message)

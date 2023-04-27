@@ -95,7 +95,7 @@ class MainClass(BaseClassPython):
                     if global_values.games[message.channel.id].info_view:
                         await global_values.games[message.channel.id].info_view.delete()
 
-                    global_values.games[message.channel.id].delete_save()
+                    # global_values.games[message.channel.id].delete_save()
                     del global_values.games[message.channel.id]
 
             async def cond(reactions):
@@ -176,9 +176,9 @@ class MainClass(BaseClassPython):
                 title="🔸 Règles de Timebomb 🔸",
                 description=f"""
 🔹 **But du jeu** : 🔹
-Une bombe a été amorcée, et un nombre de fils, égal au nombre de joueurs, permettant de la désamorcer ont été mélangés.
-L'équipe des gentils (Sherlock) gagne s'ils trouvent et coupent tous les fils
-L'équipe des méchants (Moriarty) gagne s'ils arrivent à la fin de la partie, ou trouve la bombe et la font exploser.
+Une bombe a été amorcée, et un nombre de fils permettant de la désamorcer, égal au nombre de joueurs, ont été mélangés.
+L'équipe des gentils (Sherlock) gagne s'ils trouvent et coupent tous les fils actifs
+L'équipe des méchants (Moriarty) gagne si la bombe explose, soit à cause du temps, soit à cause d'un fil spécial.
 
 🔹 **Début de manche** : 🔹
 Chaque joueur reçoit le même nombre de cartes du paquet, les regarde, puis les mélange et les place devant lui.
