@@ -2,6 +2,7 @@
 
 import discord
 import random
+import math
 from modules.timebomb.components import RolesButton, SelfHandButton, SelfRoleButton
 
 from modules.timebomb.player import Player
@@ -122,9 +123,10 @@ class Game:
             color=color
         )
 
+        wires = '\n'.join(' '.join(str(self.aside[x+y*6]) for x in range(y*6, min(len(self.aside), y*6+6))) for y in range(math.floor(len(self.aside)/len(self.players))))
         embed.add_field(
             name="Fils coupés",
-            value=' '.join(str(x) for x in self.aside) if len(self.aside) else "Aucun",
+            value=wires if len(self.aside) else "Aucun",
             inline=False
         )
 
@@ -250,7 +252,7 @@ class Game:
         
         self.phase = "end"
         embed = discord.Embed(
-            title=f"[MASCARADE] Victoire des {'🟦 Gentils' if good_win else '🟥 Méchants par ' + cause} !",
+            title=f"[TIMEBOMB] Victoire des {'🟦 Gentils' if good_win else '🟥 Méchants par ' + cause} !",
             color=global_values.color,
             description="**Joueurs :**\n" + '\n'.join(f"{p} : {p.role}" for i, p in enumerate(self.players.values()))
         )

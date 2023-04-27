@@ -33,5 +33,5 @@ class Evil(Role):
 
     def get_starting_info(self):
         info = super().get_starting_info()
-        if len(self.game.players) > 4: info + "\nVotre équipe est composée de " + ", ".join(p for p in self.game.players.values() if p.role.allegiance == "evil")
+        if len(self.game.players) > 4: info + "\nVotre équipe est composée de " + ", ".join(str(p) for p in self.game.players.values() if p.role.allegiance == "evil")
         return info
