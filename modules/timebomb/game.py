@@ -207,11 +207,11 @@ class Game:
         
         self.round += 1
         if message:
-            message["value"] += "\n**Une nouvelle manche a commencé**"
+            message["value"] += "\n⏲ **Une nouvelle manche a commencé**"
         else:
             message = {
                 "name": "Nouvelle manche",
-                "value": "**Une nouvelle manche a commencé**"
+                "value": "⏲ **Une nouvelle manche a commencé**"
             }
         
         self.previous_turn = -1
@@ -241,7 +241,7 @@ class Game:
             await self.end_game(True, message)
             return
         
-        if len(self.aside) == len(self.players) * self.round:
+        if len(self.aside) >= len(self.players) * self.round:
             await self.start_round(message)
             return
         
