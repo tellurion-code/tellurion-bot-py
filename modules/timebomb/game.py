@@ -124,7 +124,7 @@ class Game:
         )
 
         nb = len(self.players)
-        wires = '\n'.join(' '.join(str(self.aside[x+y*nb]) for x in range(y*nb, min(len(self.aside), y*nb+nb))) for y in range(math.ceil(len(self.aside)/nb)))
+        wires = '\n'.join(' '.join(str(self.aside[x]) for x in range(y*nb, min(len(self.aside), y*nb+nb))) for y in range(math.ceil(len(self.aside)/nb)))
         embed.add_field(
             name="Fils coupés",
             value=wires if len(self.aside) else "Aucun",
@@ -214,6 +214,7 @@ class Game:
                 "value": "**Une nouvelle manche a commencé**"
             }
         
+        self.previous_turn = -1
         await self.start_turn(message)
 
     async def start_turn(self, message=None):
