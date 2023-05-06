@@ -320,10 +320,9 @@ class MainClass(BaseClassPython):
 					await message.channel.send("Aucune carte n'a cet index")
 				else:
 					msg = await message.channel.send("```ini\nRedéfinissez cette carte en tapant \"[Nom de la carte] Effet\".```")
-					card = game["list"][index]
 
-					newCard = await self.startCardCreation(message.author, message.channel, index)
-					await self.editCard(game, index, card, message.channel)
+					newCard = await self.startCardCreation(message.author, message.channel)
+					await self.editCard(game, index, newCard, message.channel)
 
 					await msg.edit(content="```ini\n" + (await self.printCard(newCard)) + "```")
 
@@ -348,7 +347,7 @@ class MainClass(BaseClassPython):
 				else:
 					card = game["list"][index]
 
-					game["list"][index] =  {
+					game["list"][index] = {
 						"author": message.author.id,
 						"name": None,
 						"effect": "",
@@ -418,16 +417,19 @@ class MainClass(BaseClassPython):
 			game["zones"][location].remove(card)
 			game["zones"][zone].insert(position, card)
 
-	async def editCard(self, game, index, card, channel):
-		newCard = game["list"][index]
+	async def editCard(self, game, index, newCard, channel):
+		card = game["list"][index]
 
-		newCard["history"].append({
-			"author": card["author"],
-			"name": card["name"],
-			"effect": card["effect"]
-		})
-		newCard["history"].extend(card["history"])
-		# await message.channel.send("Carte éditée")
+		if card:
+			card["history"].append({
+				"author": card["author"],
+				"name": card["name"],
+				"effect": card["effect"]
+			})
+			newCard["history"].extend(card["history"])
+			# await message.channel.send("Carte éditée")
+		
+		game["list"][index] = newCard
 
 		location = [x for x in game["zones"] if index in game["zones"][x]][0]
 		if location not in ["deck", "discard"]:
@@ -454,7 +456,7 @@ class MainClass(BaseClassPython):
 		game = self.games[str(channel.id)]
 		await self.sendBigMessage(
 			"[Liste des cartes en jeu]\n=========================\n"
-			+ '\n'.join([str(i + 1).rjust(3, ' ') + ". " + (await self.printCard(e, False) if e else "(Carte Blanche)") for i, e in enumerate(game["list"])]), channel
+			+ '\n'.join([str(i + 1).rjust(3, ' ') + ". " + await self.printCard(e, False) for i, e in enumerate(game["list"])]), channel
 		)
 
 	async def getRecap(self, game, message=""):
@@ -479,14 +481,17 @@ class MainClass(BaseClassPython):
 	async def checkForBlankCard(self, game, author, channel, index):
 		if not game["list"][index] or not game["list"][index]["name"]:
 			msg = await channel.send("```ini\n" + str(index + 1) + ". (Carte Blanche) Envoyez un message pour définir cette carte en tapant \"[Nom de la carte] Effet\"!```")
-			await self.startCardCreation(author, channel, index)
+			newCard = await self.startCardCreation(author, channel)
+
+			self.games[str(channel.id)]["list"][index] = newCard
 			content = "```ini\n" + str(index + 1) + ". " + (await self.printCard(game["list"][index])) + "```"
 			await msg.edit(content=content)
+
 			return msg
 
 		return None
 
-	async def startCardCreation(self, author, channel, index):
+	async def startCardCreation(self, author, channel):
 		regex = r"^\[(.{1,30})\] (.+)$"
 
 		def check(m):
@@ -503,7 +508,6 @@ class MainClass(BaseClassPython):
 			"effect": match.groups()[1],
 			"history": []
 		}
-		self.games[str(channel.id)]["list"][index] = card
 
 		return card
 
@@ -526,7 +530,8 @@ class MainClass(BaseClassPython):
 			return locations[index]
 
 	async def printCard(self, card, authored=True):
-		return (("[" + card["name"] + "]" if card["name"] else "(Carte Blanche)") + " " + card["effect"] + (" (Créée par " + (await self.userstr(card["author"])) + ")" if authored else "") if card else "(Carte Blanche)")
+		if not card: return "(Carte Blanche)"
+		return "[" + card["name"] + "] " + card["effect"] + (" (Créée par " + (await self.userstr(card["author"])) + ")" if authored else "")
 
 	async def userstr(self, id):
 		if str(id) in self.members:
