@@ -319,7 +319,7 @@ class MainClass(BaseClassPython):
 				if index < 0 or index >= len(game["list"]):
 					await message.channel.send("Aucune carte n'a cet index")
 				else:
-					msg = await message.channel.send("```ini\nRedéfinissez cette carte en tapant \"[Nom de la carte] Effet\".```")
+					msg = await message.channel.send("```ini\nRedéfinissez cette carte en tapant \"[Nom de la carte] Effet # Flavor Text\".```")
 
 					newCard = await self.startCardCreation(message.author, message.channel)
 					await self.editCard(game, index, newCard, message.channel)
@@ -345,16 +345,14 @@ class MainClass(BaseClassPython):
 				if index < 0 or index >= len(game["list"]):
 					await message.channel.send("Aucune carte n'a cet index")
 				else:
-					card = game["list"][index]
-
-					game["list"][index] = {
+					newCard = {
 						"author": message.author.id,
 						"name": None,
 						"effect": "",
 						"history": []
 					}
 
-					await self.editCard(game, index, card, message.channel)
+					await self.editCard(game, index, newCard, message.channel)
 					await message.channel.send("```Carte (" + str(index + 1) + ") brûlée```")
 
 				self.objects.save_object("games", self.games)
@@ -480,7 +478,7 @@ class MainClass(BaseClassPython):
 
 	async def checkForBlankCard(self, game, author, channel, index):
 		if not game["list"][index] or not game["list"][index]["name"]:
-			msg = await channel.send("```ini\n" + str(index + 1) + ". (Carte Blanche) Envoyez un message pour définir cette carte en tapant \"[Nom de la carte] Effet\"!```")
+			msg = await channel.send("```ini\n" + str(index + 1) + ". (Carte Blanche) Envoyez un message pour définir cette carte en tapant \"[Nom de la carte] Effet # Flavor Text\"! (Sans les guillemets)```")
 			newCard = await self.startCardCreation(author, channel)
 
 			self.games[str(channel.id)]["list"][index] = newCard
