@@ -528,7 +528,7 @@ class MainClass(BaseClassPython):
 			return locations[index]
 
 	async def printCard(self, card, authored=True):
-		if not card: return "(Carte Blanche)"
+		if not card or not card["name"]: return "(Carte Blanche)"
 		return "[" + card["name"] + "] " + card["effect"] + (" (Créée par " + (await self.userstr(card["author"])) + ")" if authored else "")
 
 	async def userstr(self, id):
