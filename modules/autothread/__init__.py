@@ -1,0 +1,56 @@
+import discord
+from modules.base import BaseClassPython
+
+class MainClass(BaseClassPython):
+	name = "AutoThread"
+	help = {
+		"description": "Crée automatiquement un thread par message, en fonction du channel",
+		"commands": {
+			"{prefix}{command} enable": "Active la création automatique de threads dans le channel actuel",
+			"{prefix}{command} disable": "Désactive la création automatique de threads",
+			"{prefix}{command} list": "Affiche la liste des channels actifs (debug)"
+	}}
+	active_channels = []
+
+	def __init__(self, client):
+		super().__init__(client)
+		self.config["auth_everyone"] = True
+		self.config["authorized_roles"] = []
+		self.config["configured"] = True
+		self.config["help_active"] = True
+		self.config["command_text"] = "autothread"
+		self.config["color"] = 0x57ab1e
+		
+	async def on_ready(self):
+		#if self.objects.save_exists("active_channels"):
+		#	self.active_channels = self.objects.load_object("active_channels")
+		pass
+	
+	async def on_message(self, message):
+		if str(message.channel.id) in self.active_channels:
+			message.create_thread(name="Thread")
+	
+	async def com_enable(self, message, args, kwargs):
+		if str(message.channel.id) not in self.active_channels:
+			self.active_channels.append(str(message.channel.id))
+			#self.save_channels()
+			await message.channel.send("Channel ajouté.")
+		else:
+			await message.channel.send("AutoThread est déjà actif dans ce salon.")
+			
+	async def com_disable(self, message, args, kwargs):
+		if str(message.channel.id) in self.active_channels:
+			self.active_channels.remove(str(message.channel.id))
+			#self.save_channels()
+			await message.channel.send("Channel retiré.")
+		else:
+			await message.channel.send("Le salon n'est pas enregistré dans AutoThread.")
+	
+	async def com_list(self, message, args, kwargs):
+		print("Command list triggered.")
+		await message.channel.send("Hello.")
+		await message.channel.send(f"Active channels: {self.active_channels}")
+
+	#def save_channels(self):
+	#	self.mainclass.objects.save_object("active_channels", self.active_channels)
+	
