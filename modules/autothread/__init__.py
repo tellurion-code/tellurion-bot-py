@@ -1,5 +1,6 @@
 import discord
 from modules.base import BaseClassPython
+from random import randrange
 
 class MainClass(BaseClassPython):
 	name = "AutoThread"
@@ -27,14 +28,18 @@ class MainClass(BaseClassPython):
 		pass
 	
 	async def on_message(self, message):
+		await super().on_message(message)
+		if message.author.bot or message.content.startswith(self.client.config["prefix"]):
+			# print("autothread: ignoring command/bot message")
+			return
 		if str(message.channel.id) in self.active_channels:
-			message.create_thread(name="Thread")
+			await message.create_thread(name=f"Thread {message.author.name}-{randrange(18072)}")
 	
 	async def com_enable(self, message, args, kwargs):
 		if str(message.channel.id) not in self.active_channels:
 			self.active_channels.append(str(message.channel.id))
 			#self.save_channels()
-			await message.channel.send("Channel ajouté.")
+			await message.channel.send("Salon ajouté.")
 		else:
 			await message.channel.send("AutoThread est déjà actif dans ce salon.")
 			
@@ -42,14 +47,18 @@ class MainClass(BaseClassPython):
 		if str(message.channel.id) in self.active_channels:
 			self.active_channels.remove(str(message.channel.id))
 			#self.save_channels()
-			await message.channel.send("Channel retiré.")
+			await message.channel.send("Salon retiré.")
 		else:
 			await message.channel.send("Le salon n'est pas enregistré dans AutoThread.")
 	
 	async def com_list(self, message, args, kwargs):
-		print("Command list triggered.")
-		await message.channel.send("Hello.")
-		await message.channel.send(f"Active channels: {self.active_channels}")
+		
+		channel_list = ""
+		for chan_id in self.active_channels:
+			channel_list += "<#{0}>\n".format(chan_id)
+			
+		await message.channel.send(f"`autothread` | **Salons enregistrés ({len(self.active_channels)})** \n" + channel_list)
+		
 
 	#def save_channels(self):
 	#	self.mainclass.objects.save_object("active_channels", self.active_channels)
