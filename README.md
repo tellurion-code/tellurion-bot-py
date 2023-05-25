@@ -14,10 +14,10 @@ On va partir du principe que vous savez déjà pourquoi vous voulez suivre ce tu
 - Un compte Discord, ainsi qu'un serveur où vous êtes propriétaire.
 - Python 3.9 (ou ultérieur) installé et **disponible en ligne de commande** (pour ceux qui auraient l'idée saugrenue de développer sur Windows)
 
-### Etape 1 : Les modules à installer
+### Etape 1 : Le module à installer
 
 ```
-pip install pipenv discord.py
+pip install pipenv
 ```
 
 (sous Windows, faites un clic droit, et sélectionnez `Ouvrir la fenêtre PowerShell ici` pour ouvrir un terminal.)

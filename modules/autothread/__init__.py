@@ -1,6 +1,5 @@
 import discord
 from modules.base import BaseClassPython
-from random import randrange
 
 class MainClass(BaseClassPython):
 	name = "AutoThread"
@@ -22,10 +21,13 @@ class MainClass(BaseClassPython):
 		self.config["command_text"] = "autothread"
 		self.config["color"] = 0x840052 # Kernel's unique color
 		
-	async def on_ready(self):
 		if self.objects.save_exists("active_channels"):
 			self.active_channels = self.objects.load_object("active_channels")
 	
+	async def on_ready(self):
+		# TODO: support Alset disruptions...
+		pass
+		
 	async def on_message(self, message):
 		await super().on_message(message)
 		
@@ -34,7 +36,11 @@ class MainClass(BaseClassPython):
 			return
 			
 		if str(message.channel.id) in self.active_channels:
-			await message.create_thread(name=f"Thread {message.author.name}-{randrange(1807)}")
+			await message.create_thread(name=f"Thread {message.author.name}-{str(message.id)[-5:]}")
+	
+	async def on_guild_channel_delete(self, channel):
+		if str(channel.id) in self.active_channels:
+			self.active_channels.remove(str(channel.id))
 	
 	async def com_enable(self, message, args, kwargs):
 		if str(message.channel.id) not in self.active_channels:
@@ -61,6 +67,8 @@ class MainClass(BaseClassPython):
 		await message.channel.send(f"`autothread` | **Salons enregistrés ({len(self.active_channels)})** \n" + channel_list)
 	
 	async def com_clean(self, message, args, kwargs):
+		# Possible evolution : automatically clean all channels on a regular basis
+		
 		if str(message.channel.id) in self.active_channels:
 			deleted_threads = 0
 			for thread in message.channel.threads:
