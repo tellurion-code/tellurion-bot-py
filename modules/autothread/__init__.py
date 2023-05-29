@@ -41,6 +41,7 @@ class MainClass(BaseClassPython):
 	async def on_guild_channel_delete(self, channel):
 		if str(channel.id) in self.active_channels:
 			self.active_channels.remove(str(channel.id))
+			self.saveChannels()
 	
 	async def com_enable(self, message, args, kwargs):
 		if str(message.channel.id) not in self.active_channels:

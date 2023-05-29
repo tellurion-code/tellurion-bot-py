@@ -98,6 +98,20 @@ pipenv run py main.py
 
 Si tout se déroule comme prévu, les premières lignes de la console devraient être celles-ci :
 
+```SHELL
+$ pipenv run python main.py
+Loading .env environment variables...
+INFO:LBI:Starts to load modules...
+INFO:LBI:Start loading module modules...
+INFO:LBI:Module modules successfully imported.
+INFO:LBI:Start loading module errors...
+INFO:LBI:Module errors successfully imported.
+INFO:LBI:Start loading module restart...
+INFO:LBI:Module restart successfully imported.
+INFO:LBI:Start loading module help...
+INFO:LBI:Module help successfully imported.
+```
+
 Il ne vous reste plus qu'à vérifier que le bot répond correctement via Discord :
 ```
 %modules list
