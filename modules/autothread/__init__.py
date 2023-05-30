@@ -36,7 +36,11 @@ class MainClass(BaseClassPython):
 			return
 			
 		if str(message.channel.id) in self.active_channels:
-			await message.create_thread(name=f"Thread {message.author.name}-{str(message.id)[-5:]}")
+			try:
+				await message.create_thread(name=f"Thread {message.author.name}-{str(message.id)[-5:]}")
+			except:
+				# If something goes wrong, don't do anything
+				return
 	
 	async def on_guild_channel_delete(self, channel):
 		if str(channel.id) in self.active_channels:
