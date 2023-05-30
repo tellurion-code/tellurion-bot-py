@@ -38,7 +38,7 @@ class MainClass(BaseClassPython):
 		if str(message.channel.id) in self.active_channels:
 			try:
 				await message.create_thread(name=f"Thread {message.author.name}-{str(message.id)[-5:]}")
-			except:
+			except (ValueError, discord.HTTPException, discord.Forbidden) as e:
 				# If something goes wrong, don't do anything
 				return
 	
