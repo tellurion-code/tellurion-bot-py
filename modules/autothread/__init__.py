@@ -75,15 +75,20 @@ class MainClass(BaseClassPython):
 		# Possible evolution : automatically clean all channels on a regular basis
 		
 		if str(message.channel.id) in self.active_channels:
-			deleted_threads = 0
-			for thread in message.channel.threads:
-				# Deleting threads only if they have one message
-				messages = [msg async for msg in thread.history(limit=5)]
-				if not len(messages) >= 2:
-					deleted_threads += 1
-					await thread.delete()
-					
-			await message.channel.send(f"`autothread clean` | Threads supprimés : {deleted_threads}")
+			async with message.channel.typing():
+				deleted_threads = 0
+				for thread in message.channel.threads:
+					# Deleting threads only if they have one message
+					try:
+						messages = [msg async for msg in thread.history(limit=5)]
+					except (discord.Forbidden, discord.HTTPException) as e:
+						await message.channel.send(f"`autothread clean` | Une erreur a été capturée :\n ```{type(e).__class__} : {e}```")
+					else:
+						if not len(messages) >= 2:
+							deleted_threads += 1
+							await thread.delete()
+							
+				await message.channel.send(f"`autothread clean` | Threads supprimés : {deleted_threads}")
 		else:
 			await message.channel.send("Le salon n'est pas enregistré dans AutoThread.")
 		
