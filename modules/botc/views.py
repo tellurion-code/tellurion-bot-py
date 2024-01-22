@@ -5,7 +5,7 @@ import discord
 from modules.game.views import GameView, PlayView
 from modules.botc.player import Player
 from modules.botc.components import PlayerSelect
-from modules.botc.panels import VOTE_AGAINST, VOTE_FOR
+from modules.botc.constants import VOTE_AGAINST, VOTE_FOR
 
 class PanelView(GameView):
     def __init__(self, game, panel, *args, **kwargs):

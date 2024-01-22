@@ -4,9 +4,7 @@ import discord
 import datetime
 
 from modules.botc.views import PanelView, JoinView, NominationView, VoteView, ControlView, VoteControlView
-
-VOTE_FOR = "✅"
-VOTE_AGAINST = "❌"
+from modules.botc.constants import VOTE_AGAINST, VOTE_FOR
 
 class Panel:
     view_class = PanelView
