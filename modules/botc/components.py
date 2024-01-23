@@ -1,4 +1,4 @@
-"""Component classes"""
+"""Component classes."""
 
 import discord
 

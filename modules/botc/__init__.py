@@ -11,12 +11,13 @@ class MainClass(BaseClassPython):
     help = {
         "description": "Gère les parties par texte de BOTC",
         "commands": {
-            "{prefix}{command} create": "Crée une partie avec l'auteur du message en tant que Conteur",
-            "{prefix}{command} open": "Ouvre les nominations dans le salon (Conteur)",
-            "{prefix}{command} close": "Ferme les nominations (Conteur)",
-            "{prefix}{command} night": "Ferme les votes et démarre la nuit (Conteur)",
-            "{prefix}{command} thread <nom>": "Crée un thread avec le nom donné pour tous les joueurs (Conteur)",
-            "{prefix}{command} whisper <mentions>": "Crée un thread privé avec les joueurs mentionnés"
+            "{prefix}{command} create": "Crée une partie avec l'auteur du message en tant que Conteur.",
+            "{prefix}{command} day": "(Conteur) Commence la journée.",
+            "{prefix}{command} open [nom]": "(Conteur) comme la journée et ouvre les nominations dans un fil avec le nom donné. Si aucun n'est donné, réutilise le dernier fil de nomination s'il existe.",
+            "{prefix}{command} close": "(Conteur) Ferme les nominations.",
+            "{prefix}{command} night": "(Conteur) Ferme les votes et démarre la nuit.",
+            "{prefix}{command} thread <nom>": "(Conteur) Crée un thread avec le nom donné pour tous les joueurs.",
+            "{prefix}{command} whisper <mentions>": "Crée un thread privé avec les joueurs mentionnés."
         }
     }
     command_text = "botc"
@@ -40,6 +41,11 @@ class MainClass(BaseClassPython):
         self.debug = False
         self.games = {}
 
+        self.emojis = {
+            "for": self.client.get_emoji("857736591535505438") or "✅",
+            "against": self.client.get_emoji("857736495577563147") or "❌"
+        }
+
     async def on_ready(self):
         if self.objects.save_exists("globals"):
             object = self.objects.load_object("globals")
@@ -47,18 +53,22 @@ class MainClass(BaseClassPython):
 
         if self.objects.save_exists("games"):
             games = self.objects.load_object("games")
-            for object in games.values():
-                game = self.games[object["channel"]] = Game(self)
-                await game.reload(object, self.client)
+            for channel, object in games.items():
+                print(f"Reloading game in {channel}")
+                self.games[int(channel)] = await Game(self).parse(object, self.client)
 
     async def command(self, message, args, kwargs):
         if message.channel.id in self.games:
-            await self.games[message.channel.id].on_command(message, args, kwargs)
+            game = self.games[message.channel.id]
+            save_and_delete = await game.on_command(message, args, kwargs)
+            if save_and_delete:
+                game.save()
+                await message.delete()
 
     async def com_create(self, message, args, kwargs):
         if message.channel.id not in self.games:
             self.games[message.channel.id] = Game(self, message=message)
-            await self.games[message.channel.id].on_creation(message, args)
+            await self.games[message.channel.id].on_creation(message)
 
     async def com_end(self, message, args, kwargs):
         if message.channel.id in self.games and self.games[message.channel.id].storyteller == message.author:
@@ -80,6 +90,7 @@ class MainClass(BaseClassPython):
     async def com_whisper(self, message, args, kwargs):
         if len(args) < 2: return await message.delete()
         if message.channel.id not in self.games: return await message.delete()
+        
         game = self.games[message.channel.id]
         if game.phase == "night": return await message.delete()
 

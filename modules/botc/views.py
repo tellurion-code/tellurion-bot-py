@@ -5,7 +5,6 @@ import discord
 from modules.game.views import GameView, PlayView
 from modules.botc.player import Player
 from modules.botc.components import PlayerSelect
-from modules.botc.constants import VOTE_AGAINST, VOTE_FOR
 
 class PanelView(GameView):
     def __init__(self, game, panel, *args, **kwargs):
@@ -77,26 +76,22 @@ class NominationView(PlayView, PanelView):
     
     async def on_check_failure(self, interaction):
         if discord.utils.utcnow() > self.panel.end_time:
-            await interaction.response.send_message("Les nominations sont terminées.", ephemeral=True)
-            return
+            return await interaction.response.send_message("Les nominations sont terminées.", ephemeral=True)
         
         await super().on_check_failure(interaction)
 
     async def callback(self, interaction):
         player = self.game.players[interaction.user.id]
         if player.has_nominated and self.game.gamerules["only_nominate_once"].state:
-            await interaction.response.send_message("Vous avez déjà nominé aujourd'hui.", ephemeral=True)
-            return
+            return await interaction.response.send_message("Vous avez déjà nominé aujourd'hui.", ephemeral=True)
         
         target = self.game.players[int(self.select.values[0])]
         if target.was_nominated and self.game.gamerules["only_be_nominated_once"].state: 
-            await interaction.response.send_message("Ce joueur a déjà été nominé aujourd'hui.", ephemeral=True)
-            return
+            return await interaction.response.send_message("Ce joueur a déjà été nominé aujourd'hui.", ephemeral=True)
         
         if not player.alive and not target.traveller: 
-            await interaction.response.send_message("Vous ne pouvez pas nominer, vous êtes mort.", ephemeral=True)
-            return
-        
+            return await interaction.response.send_message("Vous ne pouvez pas nominer, vous êtes mort.", ephemeral=True)
+            
         await self.game.current_phase.on_interaction("start_vote", interaction, target)
 
 
@@ -119,8 +114,7 @@ class VoteView(PlayView, PanelView):
     
     async def on_check_failure(self, interaction):
         if discord.utils.utcnow() > self.panel.end_time:
-            await interaction.response.send_message("Le vote est terminé.", ephemeral=True)
-            return
+            return await interaction.response.send_message("Le vote est terminé.", ephemeral=True)
         
         await super().on_check_failure(interaction)
 
@@ -155,11 +149,11 @@ class VoteView(PlayView, PanelView):
 
     @discord.ui.button(label="Pour", style=discord.ButtonStyle.green)
     async def vote_for(self, button, interaction):
-        await self.panel.update_vote(interaction.user.id, VOTE_FOR, interaction)
+        await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["for"], interaction)
 
     @discord.ui.button(label="Contre", style=discord.ButtonStyle.red)
     async def vote_against(self, button, interaction):
-        await self.panel.update_vote(interaction.user.id, VOTE_AGAINST, interaction)
+        await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["against"], interaction)
 
 
 class ControlView(PanelView):
@@ -249,21 +243,27 @@ class VoteControlView(PanelView):
     def __init__(self, game, panel, *args, **kwargs):
         super().__init__(game, panel, *args, **kwargs)
 
-        close_button = discord.ui.Button(label="Fermer et comptabiliser", style=discord.ButtonStyle.gray)
-        close_button.callback = self.close_vote
-        self.add_item(close_button)
+        self.close_button = discord.ui.Button(label="Fermer et comptabiliser", style=discord.ButtonStyle.gray)
+        self.close_button.callback = self.close_vote
+
+        self.for_button = discord.ui.Button(label="Compter comme Pour", style=discord.ButtonStyle.green)
+        self.for_button.callback = self.count_as_for
+
+        self.against_button = discord.ui.Button(label="Compter comme Contre", style=discord.ButtonStyle.red)
+        self.against_button.callback = self.count_as_against
+
+        self.update()
+
+    def update(self):
+        super().update()
+        self.clear_items()
+        if self.panel.player_ids:
+            self.add_item(self.for_button)
+            self.add_item(self.against_button)
+        else:
+            self.add_item(self.close_button)
 
     async def close_vote(self, interaction):
-        self.clear_items()
-
-        for_button = discord.ui.Button(label="Compter comme Pour", style=discord.ButtonStyle.green)
-        for_button.callback = self.count_as_for
-        self.add_item(for_button)
-
-        against_button = discord.ui.Button(label="Compter comme Contre", style=discord.ButtonStyle.red)
-        against_button.callback = self.count_as_against
-        self.add_item(against_button)
-
         await self.panel.start_count(interaction)
 
     async def count_as_for(self, interaction):
