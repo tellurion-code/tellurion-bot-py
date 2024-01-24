@@ -6,6 +6,7 @@ from modules.game.views import GameView, PlayView
 from modules.botc.player import Player
 from modules.botc.components import PlayerSelect
 
+
 class PanelView(GameView):
     def __init__(self, game, panel, *args, **kwargs):
         super().__init__(game, *args, **kwargs)
@@ -243,28 +244,13 @@ class VoteControlView(PanelView):
     def __init__(self, game, panel, *args, **kwargs):
         super().__init__(game, panel, *args, **kwargs)
 
-        self.close_button = discord.ui.Button(label="Fermer et comptabiliser", style=discord.ButtonStyle.gray)
-        self.close_button.callback = self.close_vote
-
         self.for_button = discord.ui.Button(label="Compter comme Pour", style=discord.ButtonStyle.green)
         self.for_button.callback = self.count_as_for
+        self.add_item(self.for_button)   
 
         self.against_button = discord.ui.Button(label="Compter comme Contre", style=discord.ButtonStyle.red)
         self.against_button.callback = self.count_as_against
-
-        self.update()
-
-    def update(self):
-        super().update()
-        self.clear_items()
-        if self.panel.player_ids:
-            self.add_item(self.for_button)
-            self.add_item(self.against_button)
-        else:
-            self.add_item(self.close_button)
-
-    async def close_vote(self, interaction):
-        await self.panel.start_count(interaction)
+        self.add_item(self.against_button)
 
     async def count_as_for(self, interaction):
         await self.panel.count_as_for(interaction)

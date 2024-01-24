@@ -1,8 +1,16 @@
 """Phase classes."""
 
 import discord
+from enum import Enum
 
 from modules.botc.panels import Panel, JoinPanel, NominationPanel, VotePanel, ControlPanel
+
+
+class Phases(Enum):
+    start = "start"
+    night = "night"
+    day = "day"
+    nominations = "nominations"
 
 
 class Phase:
@@ -77,12 +85,12 @@ class NightPhase(Phase):
         if message.author != self.game.storyteller: return
 
         if args[0] == "day":
-            await self.game.change_phase("day")
+            await self.game.change_phase(Phases.day)
             return True
 
         if args[0] == "open":
-            if not self.game.phases["nominations"].nomination_thread and len(args) < 2: return False
-            await self.game.change_phase("day")
+            if not self.game.phases[Phases.nominations].nomination_thread and len(args) < 2: return False
+            await self.game.change_phase(Phases.day)
             return await self.game.current_phase.on_command(message, args, kwargs)
         
         return await super().on_command(message, args, kwargs)
@@ -99,12 +107,12 @@ class DayPhase(Phase):
         if message.author != self.game.storyteller: return
 
         if args[0] == "open":
-            if not self.game.phases["nominations"].nomination_thread and len(args) < 2: return False
-            await self.game.change_phase("nominations")
+            if not self.game.phases[Phases.nominations].nomination_thread and len(args) < 2: return False
+            await self.game.change_phase(Phases.nominations)
             return await self.game.current_phase.on_command(message, [None, *args[1:]], kwargs)
         
         if args[0] == "night":
-            await self.game.change_phase("night")
+            await self.game.change_phase(Phases.night)
             return True
         
         return await super().on_command(message, args, kwargs)
@@ -128,20 +136,20 @@ class NominationsPhase(PanelPhase):
             if len(args) > 1:
                 name = ' '.join(args[1:])
                 self.nomination_thread = await message.channel.create_thread(name=name, auto_archive_duration=24*60, type=discord.ChannelType.public_thread)
-                await self.nomination_thread.add_user(self.game.storyteller)
-                for player in self.game.players.values(): await self.nomination_thread.add_user(player.user)
+                # await self.nomination_thread.add_user(self.game.storyteller)
+                # for player in self.game.players.values(): await self.nomination_thread.add_user(player.user)
                 # await self.nomination_thread.edit(locked=True)
 
             await self.send(self.nomination_thread)
             return True
         
         if args[0] == "close":
-            await self.panel.channel.send(embed=discord.Embed(color=0xffffff, title="Les nouvelles nominations sont maintenant fermées!"))
+            await self.panel.channel.send(content=self.game.role.mention, embed=discord.Embed(color=0xffffff, title="Les nouvelles nominations sont maintenant fermées!"))
             await self.close()
             return True
         
         if args[0] == "night":
-            await self.game.change_phase("night")
+            await self.game.change_phase(Phases.night)
             return True
         
         return await super().on_command(message, args, kwargs)
@@ -158,13 +166,12 @@ class NominationsPhase(PanelPhase):
 
     async def close_vote(self, id):
         if id not in self.vote_panels: return
-
         await self.vote_panels[id].close()
         del self.vote_panels[id]
         
     async def on_exit(self):
         await super().on_exit()
-        for panel in self.vote_panels: await panel.close()
+        for panel in self.vote_panels.values(): await panel.close()
         await self.nomination_thread.archive()
         self.vote_panels = {}
 

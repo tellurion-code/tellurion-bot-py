@@ -2,12 +2,14 @@
 
 import discord
 
+
 class PlayerSelect(discord.ui.Select):
     def __init__(self, game, *args, **kwargs):
         self.game = game
 
         options = []
-        for id, player in self.game.players.items():
+        for id in self.game.order:
+            player = self.game.players[id]
             options.append(discord.SelectOption(
                 label=str(player),
                 value=str(id),

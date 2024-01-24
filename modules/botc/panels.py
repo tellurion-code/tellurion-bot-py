@@ -6,6 +6,7 @@ import modules.botc.phases as phases
 
 from modules.botc.views import PanelView, JoinView, NominationView, VoteView, ControlView, VoteControlView
 
+
 class Panel:
     view_class = PanelView
     keep_message = True
@@ -14,34 +15,37 @@ class Panel:
         self.game = game
         self.channel = None
         self.message = None
-        self.view = None
         self.closed = False
+        
+        self._view = None
 
-    def get_content(self):
+    @property
+    def content(self):
         return None
     
-    def get_embed(self):
+    @property
+    def embed(self):
         return discord.Embed()
 
-    def get_view(self):
-        if not self.view: 
-            if not self.closed: self.view = self.view_class(self.game, self)
+    @property
+    def view(self):
+        if not self._view: 
+            if not self.closed: self._view = self.view_class(self.game, self)
         else:
-            self.view.update()
+            self._view.update()
         
-        return self.view
+        return self._view
 
     async def send(self, channel):
         self.channel = channel
-        self.message = await channel.send(content=self.get_content(), view=self.get_view(), embed=self.get_embed())
+        self.message = await channel.send(content=self.content, view=self.view, embed=self.embed)
         return self
     
     async def update(self, interaction=None, save=True):
         if interaction:
-            await interaction.response.edit_message(content=self.get_content(), view=self.get_view(), embed=self.get_embed())
-        else:
-            await self.message.edit(content=self.get_content(), view=self.get_view(), embed=self.get_embed())
-
+            await interaction.response.defer()
+        
+        await self.message.edit(content=self.content, view=self.view, embed=self.embed)
         if save: self.game.save()
     
     async def close(self, force_keep_message=None):
@@ -49,9 +53,9 @@ class Panel:
 
         self.closed = True
         if (force_keep_message if force_keep_message != None else self.keep_message):
-            await self.view.clear()
+            await self._view.clear()
         else:
-            await self.view.delete()
+            await self._view.delete()
 
     def serialize(self):
         return {
@@ -66,7 +70,7 @@ class Panel:
         self.closed = object["closed"]
 
         if self.message:
-            self.get_view().message = self.message
+            self.view.message = self.message
             await self.update(save=False)
         
         return self
@@ -76,7 +80,8 @@ class JoinPanel(Panel):
     view_class = JoinView
     keep_message = False
     
-    def get_embed(self):
+    @property
+    def embed(self):
         embed = discord.Embed(color=self.game.mainclass.color)
         embed.title = f"Partie de BOTC | Conteur: {self.game.storyteller.display_name} | Joueurs ({str(len(self.game.players))}) :"
         embed.description = '\n'.join([x.user.mention for x in self.game.players.values()])
@@ -103,8 +108,13 @@ class TimedPanel(Panel):
 class NominationPanel(TimedPanel):
     view_class = NominationView
     keep_message = False
+
+    @property
+    def content(self):
+        return self.game.role.mention
     
-    def get_embed(self):
+    @property
+    def embed(self):
         embed = discord.Embed(
             color=self.game.mainclass.color,
             title="🔔 Les nominations sont ouvertes!",
@@ -126,23 +136,33 @@ class VotePanel(TimedPanel):
 
         self.accusation = "En attente..."
         self.defense = "En attente..."
+        self.order = []
+        self.active_order = []
         self.votes = {}
         self.control_panel = None
 
-    def get_content(self):
+    @property
+    def content(self):
         return f"{self.nominator.user.mention}{self.nominee.user.mention}"
     
-    def get_embed(self):
+    @property
+    def vote_total(self):
+        return sum(1 for x in self.votes.values() if x.startswith(self.game.mainclass.emojis['for']))
+    
+    @property
+    def required_votes(self):
+        return self.game.required_votes_for_exile if self.nominee.traveller else self.game.required_votes
+    
+    @property
+    def embed(self):
         verb = "a appelé à l'exil de" if self.nominee.traveller else "a nominé"
-        vote_total = (f"{'?' if self.game.gamerules['hidden_vote'].state else sum(1 for x in self.votes.values() if x == self.game.mainclass.emojis['for'])}"
-                      f"/{self.game.required_votes_for_exile if self.nominee.traveller else self.game.required_votes}")
 
         embed = discord.Embed(
             color=self.game.mainclass.color,
             title=f"⚖️ {self.nominator} {verb} {self.nominee}",
             description=f"""
                 Utilisez les boutons pour ajouter une accusation, une défense, et pour voter.
-                **Total des votes:** {vote_total}
+                **Total des votes:** {'?' if self.game.gamerules['hidden_vote'].state else self.vote_total}/{self.required_votes}
                 **Fin du vote:** {discord.utils.format_dt(self.end_time, style='R')}
             """
         )
@@ -157,18 +177,17 @@ class VotePanel(TimedPanel):
             value=self.defense
         )
 
-        for id, vote in self.votes.items():
-            player = self.game.players[id]
-
-            value = vote
+        for id in self.order:
+            value = self.votes[id]
             if self.game.gamerules["hidden_vote"].state: value = "🙈"
 
             icon = ""
+            player = self.game.players[id]
             if self.nominator == player: icon = "👉"
             if self.nominee == player: icon = "✋"
 
             embed.add_field(
-                name=f"{icon} {player}",
+                name=f"{'➡️ ' if len(self.active_order) and self.active_order[0] == id else ''}{player} {icon}",
                 value=value,
                 inline=False
             )
@@ -176,10 +195,14 @@ class VotePanel(TimedPanel):
         return embed
 
     async def send(self, channel):
-        self.control_panel = await VoteControlPanel(self.game, self).send(self.game.control_thread)
         if not self.nominee.traveller: self.nominator.has_nominated = True
         self.nominee.was_nominated = True
+
+        self.order = self.game.order_from(self.nominee.user.id)
+        self.active_order = [*self.order]
         self.votes = {i: "❔" if self.can_player_vote(x) else self.game.mainclass.emojis["against"] for i,x in self.game.players.items()}
+        
+        self.control_panel = await VoteControlPanel(self.game, self).send(self.game.control_thread)
         return await super().send(channel)
     
     async def update(self, interaction=None, save=True):
@@ -201,16 +224,42 @@ class VotePanel(TimedPanel):
         player = self.game.players[id]
         if not self.can_player_vote(player) and self.game.gamerules["dead_vote_required"].state:
             return await interaction.response.send_message("Vous n'avez plus de jeton de vote.", ephemeral=True)
+        
+        if id not in self.active_order:
+            return await interaction.response.send_message("Vous avez déjà voté.", ephemeral=True)
 
         self.votes[id] = vote
+        if id == self.active_order[0] and vote in (self.game.mainclass.emojis["for"], self.game.mainclass.emojis["against"]): 
+            return await self.next_player(interaction)
+        
+        await self.update(interaction)
+
+    async def next_player(self, interaction):
+        id = self.active_order.pop(0)
+        if (self.votes[id] == self.game.mainclass.emojis["for"]): self.votes[id] += f" ({self.vote_total}/{self.required_votes})"
+
+        if len(self.active_order) == 0:
+            return await self.end(interaction)
+
+        next_vote = self.votes[self.active_order[0]]
+        if next_vote == self.game.mainclass.emojis["for"]: return await self.count_as_for(interaction)
+        if next_vote == self.game.mainclass.emojis["against"]: return await self.count_as_against(interaction)
+        await self.update(interaction)
+
+    async def end(self, interaction):
+        await self.control_panel.update(save=False)
+        await self.control_panel.close()
+        await self.game.phases[phases.Phases.nominations].close_vote(self.message.id)
         await self.update(interaction)
 
     def serialize(self):
         object = super().serialize()
         object["nominator"] = self.nominator.user.id
-        object["nominee"] = self.nominator.user.id
+        object["nominee"] = self.nominee.user.id
         object["accusation"] = self.accusation
         object["defense"] = self.defense
+        object["order"] = self.order
+        object["active_order"] = self.active_order
         object["votes"] = self.votes
         object["control_panel"] = self.control_panel.serialize() if self.control_panel else None
         return object
@@ -220,6 +269,8 @@ class VotePanel(TimedPanel):
         self.nominee = self.game.players[object["nominee"]]
         self.accusation = object["accusation"]
         self.defense = object["defense"]
+        self.order = [int(x) for x in object["order"]]
+        self.active_order = [int(x) for x in object["active_order"]]
         self.votes = {int(i): x for i,x in object["votes"].items()}
         self.control_panel = await VoteControlPanel(self.game, self).parse(object["control_panel"], client) if object["control_panel"] else None
         return await super().parse(object, client)
@@ -228,7 +279,8 @@ class VotePanel(TimedPanel):
 class ControlPanel(Panel):
     view_class = ControlView
     
-    def get_embed(self):
+    @property
+    def embed(self):
         embed = discord.Embed(
             color=self.game.mainclass.color,
             title="⚙️ Panneau de contrôle"
@@ -251,60 +303,36 @@ class VoteControlPanel(Panel):
     def __init__(self, game, vote_panel):
         super().__init__(game)
         self.vote_panel = vote_panel
-        self.player_ids = None
 
-    def get_content(self):
+    @property
+    def content(self):
         return f"{self.game.storyteller.mention} **{self.vote_panel.nominator}** 👉 **{self.vote_panel.nominee}**"
 
-    def get_embed(self):
+    @property
+    def embed(self):
         embed = discord.Embed(
             color=self.game.mainclass.color,
             title=f"⚙️⚖️ Contrôle du vote"
         )
         embed.add_field(name="Accusation", value=self.vote_panel.accusation)
         embed.add_field(name="Défense", value=self.vote_panel.defense)
-        embed.add_field(name="Votes", value='\n'.join(f"__{self.game.players[id]}:__ {vote}" for id, vote in self.vote_panel.votes.items()), inline=False)
-        embed.add_field(name="Total", value=f"{sum(1 for x in self.vote_panel.votes.values() if x == self.game.mainclass.emojis['for'])}/{self.game.required_votes_for_exile if self.vote_panel.nominee.traveller else self.game.required_votes}")
 
-        if self.player_ids:
-            id = self.player_ids[-1]
+        player_info = [
+            ('➡️ ' if len(self.vote_panel.active_order) and self.vote_panel.active_order[0] == id else '')
+            + f"__{self.game.players[id]}:__ {self.vote_panel.votes[id]}"
+            for id in self.vote_panel.order
+        ]
+        embed.add_field(name="Votes", value='\n'.join(player_info), inline=False)
+        embed.add_field(name="Total", value=f"{self.vote_panel.vote_total}/{self.vote_panel.required_votes}")
+
+        if len(self.vote_panel.active_order):
+            id = self.vote_panel.active_order[0]
             embed.add_field(name="Vote à déterminer", value=f"{self.game.players[id]}: {self.vote_panel.votes[id]}", inline=False)
 
         return embed
-    
-    async def start_count(self, interaction):
-        await self.vote_panel.close()
-        self.player_ids = list(self.game.players.keys())
-        await self.next_player(interaction)
 
     async def count_as_for(self, interaction):
-        id = self.player_ids.pop()
-        self.vote_panel.votes[id] = self.game.mainclass.emojis["for"]
-        await self.next_player(interaction)
+        await self.vote_panel.update_vote(self.vote_panel.active_order[0], self.game.mainclass.emojis["for"], interaction)
 
     async def count_as_against(self, interaction):
-        id = self.player_ids.pop()
-        self.vote_panel.votes[id] = self.game.mainclass.emojis["against"]
-        await self.next_player(interaction)
-
-    async def next_player(self, interaction):
-        if len(self.player_ids) == 0: 
-            await self.vote_panel.update(save=False)
-            await self.game.phases["nominations"].close_vote(self.vote_panel.message.id)
-            await self.update(interaction)
-            await self.close(force_keep_message=self.game.gamerules["hidden_vote"].state)
-            return
-
-        next_vote = self.vote_panel.votes[self.player_ids[-1]]
-        if next_vote == self.game.mainclass.emojis["for"]: return await self.count_as_for(interaction)
-        if next_vote == self.game.mainclass.emojis["against"]: return await self.count_as_against(interaction)
-        await self.update(interaction)
-
-    def serialize(self):
-        object = super().serialize()
-        object["player_ids"] = self.player_ids
-        return object
-
-    async def parse(self, object, client):
-        self.player_ids = [int(x) for x in object["player_ids"]] if object["player_ids"] else None
-        return await super().parse(object, client)
+        await self.vote_panel.update_vote(self.vote_panel.active_order[0], self.game.mainclass.emojis["against"], interaction)

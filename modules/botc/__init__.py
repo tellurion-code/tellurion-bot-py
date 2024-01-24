@@ -4,6 +4,7 @@ import discord
 from modules.base import BaseClassPython
 
 from modules.botc.game import Game
+from modules.botc.phases import Phases
 
 
 class MainClass(BaseClassPython):
@@ -17,6 +18,7 @@ class MainClass(BaseClassPython):
             "{prefix}{command} close": "(Conteur) Ferme les nominations.",
             "{prefix}{command} night": "(Conteur) Ferme les votes et démarre la nuit.",
             "{prefix}{command} thread <nom>": "(Conteur) Crée un thread avec le nom donné pour tous les joueurs.",
+            "{prefix}{command} stthreads [message]": "(Conteur) Crée un thread privé avec chaque joueur, et envoie le message donné dans chaque.",
             "{prefix}{command} whisper <mentions>": "Crée un thread privé avec les joueurs mentionnés."
         }
     }
@@ -82,9 +84,7 @@ class MainClass(BaseClassPython):
 
         if message.channel.id in self.games and self.games[message.channel.id].storyteller == message.author:
             thread = await message.channel.create_thread(name=' '.join(args[1:]), type=discord.ChannelType.public_thread)
-            await thread.add_user(self.game.storyteller)
-            for player in self.games[message.channel.id].players.values():
-                await thread.add_user(player.user)
+            await thread.send(self.games[message.channel.id].role.mention)
             await message.delete()
 
     async def com_whisper(self, message, args, kwargs):
@@ -92,14 +92,14 @@ class MainClass(BaseClassPython):
         if message.channel.id not in self.games: return await message.delete()
 
         game = self.games[message.channel.id]
-        if game.phase == "night": return await message.delete()
+        if game.phase == Phases.night: return await message.delete()
 
         if message.author.id in game.players or message.author == game.storyteller:
             targets = set((game.players[message.author.id],))
             for arg in args[1:]:
                 for id in discord.utils.raw_mentions(arg):
                     if id != game.storyteller.id and id not in game.players: continue
-                    targets.add(game.players[id])
+                targets.add(game.players[id])
 
             if len(targets) == 1: return await message.delete()
 
@@ -119,6 +119,30 @@ class MainClass(BaseClassPython):
             # await thread.send(embed)
         else:
             await message.delete()
+
+    async def com_stthreads(self, message, args, kwargs):
+        if message.channel.id in self.games and self.games[message.channel.id].storyteller == message.author:
+            game = self.games[message.channel.id]
+            msg = ' '.join(args[1:]) if len(args) > 1 else None
+            for player in game.players.values():
+                thread = await message.channel.create_thread(name=f"[Conteur] {player}", type=discord.ChannelType.private_thread)
+                await thread.add_user(game.storyteller)
+                await thread.add_user(player.user)
+                if msg: await thread.send(msg)
+            
+        await message.delete()
+
+    async def com_order(self, message, args, kwargs):
+        if message.channel.id in self.games and self.games[message.channel.id].storyteller == message.author:
+            game = self.games[message.channel.id]
+            
+            for mention in args.reverse():
+                player = game.player_from_mention(mention)
+                if not player: continue
+                game.order.remove(player.user.id)
+                game.order.insert(0, player.user.id)
+            
+            await message.channel.send(f"Ordre actuel: {','.join(str(game.players[id]) for id in game.order)}")
 
     # Active le debug: enlève le nombre minimal de joueurs
     async def com_debug(self, message, args, kwargs):
