@@ -1,6 +1,7 @@
 """Views."""
 
 import discord
+import modules.botc.phases as phases
 
 from modules.game.views import GameView, PlayView
 from modules.botc.player import Player
@@ -17,6 +18,12 @@ class PanelView(GameView):
 
 
 class JoinView(PanelView):
+    def __init__(self, game, panel, *args, **kwargs):
+        super().__init__(game, panel, *args, **kwargs)
+
+        self.input_modal = discord.ui.Modal(discord.ui.InputText(label="Nombre de joueurs", max_length=2), title="Combien de joueurs au maximum?")
+        self.input_modal.callback = self.update_max_players
+
     def check_for_enough_players(self):
         if self.game.mainclass.debug:
             return True, "Démarrer"
@@ -24,7 +31,7 @@ class JoinView(PanelView):
         if len(self.game.players) < 5:
             return False, "Pas assez de joueurs"
 
-        if len(self.game.players) > 15:
+        if len(self.game.players) > self.game.phases[phases.Phases.start].max_players:
             return False, "Trop de joueurs"
 
         return True, "Démarrer"
@@ -37,6 +44,9 @@ class JoinView(PanelView):
 
     @discord.ui.button(label="Rejoindre ou quitter", style=discord.ButtonStyle.blurple)
     async def join_or_leave(self, button, interaction):
+        if len(self.game.players) >= self.game.phases[phases.Phases.start].max_players:
+            return await interaction.response.send_message("Le nombre maximum de joueurs est atteint.", ephemeral=True)
+
         if interaction.user.id not in self.game.players:
             if interaction.user != self.game.storyteller or self.game.mainclass.debug:
                 self.game.players[interaction.user.id] = Player(self.game, interaction.user)
@@ -47,10 +57,29 @@ class JoinView(PanelView):
     
     @discord.ui.button(label="Pas assez de joueurs", disabled=True, style=discord.ButtonStyle.gray)
     async def start(self, button, interaction):
-        await interaction.response.defer()
+        if interaction.user != self.game.storyteller:
+            return await interaction.response.defer()
 
-        if interaction.user == self.game.storyteller:
-            await self.game.start_game()
+        await self.game.start_game()
+
+    @discord.ui.button(label="Changer le nombre max de joueurs", style=discord.ButtonStyle.gray)
+    async def send_input_modal(self, button, interaction):
+        if interaction.user != self.game.storyteller:
+            return await interaction.response.defer()
+
+        await interaction.response.send_modal(self.input_modal)
+
+    async def update_max_players(self, interaction):
+        value = self.input_modal.children[0].value
+        try:
+            amount = int(value)
+        except ValueError:
+            return await interaction.response.send_message(f"{value} n'est pas un nombre.", ephemeral=True)
+        
+        if not self.game.mainclass.debug and amount < 5 or amount > 15:
+            return await interaction.response.send_message(f"{amount} n'est pas un nombre valide de joueurs (entre 5 et 15).", ephemeral=True)
+        
+        await self.panel.update_max_players(amount, interaction)
 
 
 class NominationView(PlayView, PanelView):

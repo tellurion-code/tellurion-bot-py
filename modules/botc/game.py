@@ -77,13 +77,13 @@ class Game:
         self.save()
 
     async def start_game(self):
+        self.order = [id for id in self.players]
+        random.shuffle(self.order)
+
         self.control_thread = await self.channel.create_thread(name="Salle de contrôle", type=discord.ChannelType.private_thread)
         await self.control_thread.add_user(self.storyteller)
         self.control_panel = await ControlPanel(self).send(self.control_thread)
         await self.control_panel.message.pin()
-
-        self.order = [id for id in self.players]
-        random.shuffle(self.order)
 
         await self.storyteller.add_roles(self.role)
         for player in self.players.values():
@@ -125,8 +125,8 @@ class Game:
 
     async def parse(self, object, client):
         self.id = object["id"]
-        self.storyteller = await client.fetch_user(object["storyteller"])
         self.channel = await client.fetch_channel(object["channel"])
+        self.storyteller = await self.channel.guild.fetch_member(object["storyteller"])
         self.players = {int(i): await Player(self).parse(x, client) for i,x in object["players"].items()}
         self.order = [int(i) for i in object["order"]]
         self.phase = Phases(object["phase"])

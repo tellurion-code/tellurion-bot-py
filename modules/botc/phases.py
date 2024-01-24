@@ -70,6 +70,10 @@ class PanelPhase(Phase):
 class StartPhase(PanelPhase):
     panel_class = JoinPanel
 
+    def __init__(self, game):
+        super().__init__(game)
+        self.max_players = 12
+
     async def on_command(self, message, args, kwargs):
         if message.author != self.game.storyteller: return
 
@@ -78,7 +82,16 @@ class StartPhase(PanelPhase):
             return False
         
         return await super().on_command(message, args, kwargs)
-
+    
+    def serialize(self):
+        object = super().serialize()
+        object["max_players"] = self.max_players
+        return object
+    
+    async def parse(self, object, client):
+        self.max_players = object["max_players"]
+        return await super().parse(object, client)
+    
 
 class NightPhase(Phase):
     async def on_command(self, message, args, kwargs):

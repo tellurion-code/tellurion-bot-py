@@ -83,9 +83,13 @@ class JoinPanel(Panel):
     @property
     def embed(self):
         embed = discord.Embed(color=self.game.mainclass.color)
-        embed.title = f"Partie de BOTC | Conteur: {self.game.storyteller.display_name} | Joueurs ({str(len(self.game.players))}) :"
+        embed.title = f"Partie de BotC | Conteur: {self.game.storyteller.display_name} | Joueurs ({len(self.game.players)}/{self.game.phases[phases.Phases.start].max_players}) :"
         embed.description = '\n'.join([x.user.mention for x in self.game.players.values()])
         return embed
+
+    async def update_max_players(self, amount, interaction):
+        self.game.phases[phases.Phases.start].max_players = amount
+        await self.update(interaction)
     
 
 class TimedPanel(Panel):
