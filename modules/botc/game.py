@@ -32,6 +32,7 @@ class Game:
 
         self.control_thread = None
         self.control_panel = None
+        self.st_threads = []
 
         self.gamerules = {
             "only_nominate_once": Gamerule("Nominer une fois par jour", True),
@@ -58,6 +59,10 @@ class Game:
         self.save()
 
     async def start_game(self):
+        self.control_thread = await self.channel.create_thread(name="Salle de contrôle", type=discord.ChannelType.private_thread)
+        await self.control_thread.add_user(self.storyteller)
+        self.control_panel = await ControlPanel(self).send(self.control_thread)
+
         await self.change_phase("night")
         self.save()
 

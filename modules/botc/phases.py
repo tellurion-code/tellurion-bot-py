@@ -71,12 +71,6 @@ class StartPhase(PanelPhase):
         
         return await super().on_command(message, args, kwargs)
 
-    async def on_exit(self):
-        self.game.control_thread = await self.panel.channel.create_thread(name="Salle de contrôle", type=discord.ChannelType.private_thread)
-        await self.game.control_thread.add_user(self.game.storyteller)
-        self.game.control_panel = await ControlPanel(self.game).send(self.game.control_thread)
-        await super().on_exit()
-
 
 class NightPhase(Phase):
     async def on_command(self, message, args, kwargs):

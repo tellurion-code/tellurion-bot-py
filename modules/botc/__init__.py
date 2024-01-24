@@ -13,7 +13,7 @@ class MainClass(BaseClassPython):
         "commands": {
             "{prefix}{command} create": "Crée une partie avec l'auteur du message en tant que Conteur.",
             "{prefix}{command} day": "(Conteur) Commence la journée.",
-            "{prefix}{command} open [nom]": "(Conteur) comme la journée et ouvre les nominations dans un fil avec le nom donné. Si aucun n'est donné, réutilise le dernier fil de nomination s'il existe.",
+            "{prefix}{command} open [nom]": "(Conteur) Commence la journée et ouvre les nominations dans un fil avec le nom donné. Si aucun n'est donné, réutilise le dernier fil de nomination s'il existe.",
             "{prefix}{command} close": "(Conteur) Ferme les nominations.",
             "{prefix}{command} night": "(Conteur) Ferme les votes et démarre la nuit.",
             "{prefix}{command} thread <nom>": "(Conteur) Crée un thread avec le nom donné pour tous les joueurs.",
@@ -90,7 +90,7 @@ class MainClass(BaseClassPython):
     async def com_whisper(self, message, args, kwargs):
         if len(args) < 2: return await message.delete()
         if message.channel.id not in self.games: return await message.delete()
-        
+
         game = self.games[message.channel.id]
         if game.phase == "night": return await message.delete()
 
