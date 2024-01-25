@@ -37,6 +37,7 @@ class JoinView(PanelView):
         return True, "Démarrer"
     
     def update(self):
+        super().update()
         can_start, message = self.check_for_enough_players()
         self.children[1].label = message
         self.children[1].disabled = not can_start
@@ -86,20 +87,19 @@ class NominationView(PlayView, PanelView):
     def __init__(self, game, panel, *args, **kwargs):
         super().__init__(game, panel, *args, **kwargs)
         self.timeout = None
-        self.add_item(self.create_select())
 
-    def update(self):
-        self.children[0] = self.create_select()
-
-    def create_select(self):
-        self.select = PlayerSelect(
+        self.player_select = PlayerSelect(
             self.game,
             placeholder="Nominer un joueur...",
             min_values=1,
             max_values=1
         )
-        self.select.callback = self.callback
-        return self.select
+        self.player_select.callback = self.nominate
+        self.add_item(self.player_select)
+
+    def update(self):
+        super().update()
+        self.player_select.update()
 
     async def interaction_check(self, interaction):
         return await super().interaction_check(interaction) and discord.utils.utcnow() < self.panel.end_time
@@ -110,12 +110,12 @@ class NominationView(PlayView, PanelView):
         
         await super().on_check_failure(interaction)
 
-    async def callback(self, interaction):
+    async def nominate(self, interaction):
         player = self.game.players[interaction.user.id]
         if player.has_nominated and self.game.gamerules["only_nominate_once"].state:
             return await interaction.response.send_message("Vous avez déjà nominé aujourd'hui.", ephemeral=True)
         
-        target = self.game.players[int(self.select.values[0])]
+        target = self.game.players[int(self.player_select.values[0])]
         if target.was_nominated and self.game.gamerules["only_be_nominated_once"].state: 
             return await interaction.response.send_message("Ce joueur a déjà été nominé aujourd'hui.", ephemeral=True)
         
@@ -206,6 +206,10 @@ class ControlView(PanelView):
         )
         self.gamerules_select.callback = self.gamerules_callback
         self.add_item(self.gamerules_select)
+
+    def update(self):
+        super().update()
+        self.player_select.update()
 
     async def interaction_check(self, interaction):
         return interaction.user == self.game.storyteller

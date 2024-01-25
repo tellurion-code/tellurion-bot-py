@@ -5,6 +5,7 @@ from modules.base import BaseClassPython
 
 from modules.botc.game import Game
 from modules.botc.phases import Phases
+from modules.botc.player import Player
 
 
 class MainClass(BaseClassPython):
@@ -19,6 +20,9 @@ class MainClass(BaseClassPython):
             "{prefix}{command} night": "(Conteur) Ferme les votes et démarre la nuit.",
             "{prefix}{command} thread <nom>": "(Conteur) Crée un thread avec le nom donné pour tous les joueurs.",
             "{prefix}{command} stthreads [message]": "(Conteur) Crée un thread privé avec chaque joueur, et envoie le message donné dans chaque.",
+            "{prefix}{command} order [mentions]": "(Conteur) Place les joueurs mentionnés en haut de l'ordre, puis l'affiche.",
+            "{prefix}{command} add/remove <mentions>": "(Conteur) Ajoute/Enlève les joueurs mentionnés à/de la partie.",
+            "{prefix}{command} replace <mention> <mention>": "(Conteur) Remplace un joueur par un autre utilisateur.",
             "{prefix}{command} whisper <mentions>": "Crée un thread privé avec les joueurs mentionnés."
         }
     }
@@ -80,19 +84,20 @@ class MainClass(BaseClassPython):
             # TODO: Add recap
 
     async def com_thread(self, message, args, kwargs):
-        if len(args) < 2: return
+        if len(args) < 2: return await message.delete()
 
         if message.channel.id in self.games and self.games[message.channel.id].storyteller == message.author:
             thread = await message.channel.create_thread(name=' '.join(args[1:]), type=discord.ChannelType.public_thread)
             await thread.send(self.games[message.channel.id].role.mention)
-            await message.delete()
+        
+        await message.delete()
 
     async def com_whisper(self, message, args, kwargs):
         if len(args) < 2: return await message.delete()
         if message.channel.id not in self.games: return await message.delete()
 
         game = self.games[message.channel.id]
-        if game.phase == Phases.night: return await message.delete()
+        if game.phase not in (Phases.day, Phases.nominations): return await message.delete()
 
         if message.author.id in game.players or message.author == game.storyteller:
             targets = set((game.players[message.author.id],))
@@ -121,8 +126,10 @@ class MainClass(BaseClassPython):
             await message.delete()
 
     async def com_stthreads(self, message, args, kwargs):
-        if message.channel.id in self.games and self.games[message.channel.id].storyteller == message.author:
+        if message.channel.id in self.games:
             game = self.games[message.channel.id]
+            if message.author != game.storyteller: return await message.delete()
+
             msg = ' '.join(args[1:]) if len(args) > 1 else None
             for player in game.players.values():
                 thread = await message.channel.create_thread(name=f"[Conteur] {player}", type=discord.ChannelType.private_thread)
@@ -133,16 +140,81 @@ class MainClass(BaseClassPython):
         await message.delete()
 
     async def com_order(self, message, args, kwargs):
-        if message.channel.id in self.games and self.games[message.channel.id].storyteller == message.author:
+        if message.channel.id in self.games:
             game = self.games[message.channel.id]
-            
-            for mention in args.reverse():
+            if message.author != game.storyteller: return
+            if len(game.order) == 0: return
+
+            args.reverse()
+            for mention in args:
                 player = game.player_from_mention(mention)
                 if not player: continue
                 game.order.remove(player.user.id)
                 game.order.insert(0, player.user.id)
             
-            await message.channel.send(f"Ordre actuel: {','.join(str(game.players[id]) for id in game.order)}")
+            await game.send_order(message.channel)
+            await game.control_panel.update()
+
+    async def com_add(self, message, args, kwargs):
+        if message.channel.id in self.games:
+            game = self.games[message.channel.id]
+            if message.author != game.storyteller: return
+            if len(game.order) == 0: return
+
+            for mention in args:
+                ids = discord.utils.raw_mentions(mention)
+                if len(ids) == 0: continue
+                id = ids[0]
+                game.players[id] = Player(game, game.channel.guild.get_member(id))
+                game.order.append(id)
+            
+            await game.send_order(message.channel)
+            await game.control_panel.update()
+
+    async def com_remove(self, message, args, kwargs):
+        if message.channel.id in self.games:
+            game = self.games[message.channel.id]
+            if message.author != game.storyteller: return
+            if len(game.order) == 0: return
+
+            for mention in args:
+                player = game.player_from_mention(mention)
+                if not player: continue
+                game.order.remove(player.user.id)
+                del game.players[player.user.id]
+            
+            await game.send_order(message.channel)
+            await game.control_panel.update()
+
+    async def com_replace(self, message, args, kwargs):
+        if len(args) != 3:
+            return await message.channel.send("Nombre d'arguments invalide")
+
+        if message.channel.id in self.games:
+            game = self.games[message.channel.id]
+            if message.author != game.storyteller: return
+            if len(game.order) == 0: return
+
+            player = game.player_from_mention(args[1])
+            if not player:
+                return await message.channel.send(f"`{args[1]}` n'est pas une mention valide ou un joueur dans le jeu")
+
+            ids = discord.utils.raw_mentions(args[2])
+            if len(ids) == 0:
+                return await message.channel.send(f"`{args[2]}` n'est pas une mention valide")
+            
+            id = ids[0]
+            user = game.channel.guild.get_member(id)
+            if id in game.players:
+                return await message.channel.send(f"`{user.display_name}` est déjà dans en jeu")
+
+            index = game.order.index(player.user.id)
+            del game.players[player.user.id]
+            game.players[id] = Player(game, user)
+            game.order[index] = id
+            
+            await game.send_order(message.channel)
+            await game.control_panel.update()
 
     # Active le debug: enlève le nombre minimal de joueurs
     async def com_debug(self, message, args, kwargs):

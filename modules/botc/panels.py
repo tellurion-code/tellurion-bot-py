@@ -289,7 +289,7 @@ class ControlPanel(Panel):
             color=self.game.mainclass.color,
             title="⚙️ Panneau de contrôle"
         )
-        embed.add_field(name="Joueurs", value='\n'.join(f'- {player}' for player in self.game.players.values()))
+        embed.add_field(name="Joueurs", value='\n'.join(f'- {self.game.players[id]}' for id in self.game.order))
         return embed
     
     async def update(self, interaction=None, save=True, global_update=True):

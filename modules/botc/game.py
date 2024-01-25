@@ -68,6 +68,10 @@ class Game:
         if id not in self.players: return self.order
         index = (self.order.index(id) + len(self.order) - 1) % len(self.order)
         return self.order[index:] + self.order[:index]
+    
+    async def send_order(self, channel):
+        player_names = (f"`{self.players[id]}`" for id in self.order)
+        await channel.send(f"Ordre actuel: {', '.join(player_names)}")
 
     async def on_creation(self, message):
         self.role = await self.channel.guild.create_role(name=f"BotC {self.id}", color=self.mainclass.color, mentionable=True)
