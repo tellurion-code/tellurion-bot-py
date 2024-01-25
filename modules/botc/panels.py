@@ -157,7 +157,7 @@ class VotePanel(TimedPanel):
     
     @property
     def vote_total(self):
-        return sum(x.value for x in self.votes.values())
+        return sum(x.value for i,x in self.votes.items() if i not in self.active_order)
     
     @property
     def required_votes(self):
@@ -263,8 +263,7 @@ class VotePanel(TimedPanel):
             return await self.end(interaction)
 
         next_vote = self.votes[self.active_order[0]]
-        if next_vote.state == VoteState.vote_for: return await self.count_as_for(interaction)
-        if next_vote.state == VoteState.vote_against: return await self.count_as_against(interaction)
+        if next_vote.state in (VoteState.vote_for, VoteState.vote_against): return await self.next_player(interaction)
         await self.update(interaction)
 
     async def end(self, interaction):
