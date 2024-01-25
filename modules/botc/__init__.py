@@ -49,7 +49,9 @@ class MainClass(BaseClassPython):
 
         self.emojis = {
             "for": self.client.get_emoji("857736591535505438") or "✅",
-            "against": self.client.get_emoji("857736495577563147") or "❌"
+            "against": self.client.get_emoji("857736495577563147") or "❌",
+            "thief": "💎",
+            "bureaucrat": "📄"
         }
 
     async def on_ready(self):

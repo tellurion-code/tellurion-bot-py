@@ -266,9 +266,17 @@ class VoteControlView(PanelView):
         super().__init__(game, panel, *args, **kwargs)
 
     @discord.ui.button(label="Compter comme Pour", style=discord.ButtonStyle.green)
-    async def count_as_for(self, interaction):
+    async def count_as_for(self, button, interaction):
         await self.panel.count_as_for(interaction)
     
     @discord.ui.button(label="Compter comme Contre", style=discord.ButtonStyle.red)
-    async def count_as_against(self, interaction):
+    async def count_as_against(self, button, interaction):
         await self.panel.count_as_against(interaction)
+
+    @discord.ui.button(label="Voleur", style=discord.ButtonStyle.blurple)
+    async def toggle_thief(self, button, interaction):
+        await self.panel.toggle_thief(interaction)
+
+    @discord.ui.button(label="Bureaucrate", style=discord.ButtonStyle.blurple)
+    async def toggle_bureaucrat(self, button, interaction):
+        await self.panel.toggle_bureaucrat(interaction)

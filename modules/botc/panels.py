@@ -4,7 +4,37 @@ import discord
 import datetime
 import modules.botc.phases as phases
 
+from dataclasses import dataclass
+
 from modules.botc.views import PanelView, JoinView, NominationView, VoteView, ControlView, VoteControlView
+
+
+@dataclass
+class Vote:
+    state: bool
+    display: str
+
+    with_thief: bool = False
+    with_bureaucrat: bool = False
+
+    @property
+    def value(self):
+        value = 1 if self.state else 0
+        if self.with_thief: value *= -1
+        if self.with_bureaucrat: value *= 3
+        return value
+    
+    def to_dict(self):
+        return {
+            "state": self.state,
+            "display": self.display,
+            "thief": self.with_thief,
+            "bureaucrat": self.with_bureaucrat
+        }
+    
+    @classmethod
+    def from_dict(cls, dict):
+        return cls(dict["state"], dict["display"], dict["thief"], dict["bureaucrat"])
 
 
 class Panel:
@@ -151,7 +181,7 @@ class VotePanel(TimedPanel):
     
     @property
     def vote_total(self):
-        return sum(1 for x in self.votes.values() if x.startswith(self.game.mainclass.emojis['for']))
+        return sum(x.value for x in self.votes.values())
     
     @property
     def required_votes(self):
@@ -182,13 +212,15 @@ class VotePanel(TimedPanel):
         )
 
         for id in self.order:
-            value = self.votes[id]
+            value = self.votes[id].display
             if self.game.gamerules["hidden_vote"].state: value = "🙈"
 
             icon = ""
             player = self.game.players[id]
             if self.nominator == player: icon = "👉"
             if self.nominee == player: icon = "✋"
+            if self.votes[id].with_thief: icon += self.game.mainclass.emojis["thief"]
+            if self.votes[id].with_bureaucrat: icon += self.game.mainclass.emojis["bureaucrat"]
 
             embed.add_field(
                 name=f"{'➡️ ' if len(self.active_order) and self.active_order[0] == id else ''}{player} {icon}",
@@ -204,7 +236,7 @@ class VotePanel(TimedPanel):
 
         self.order = self.game.order_from(self.nominee.user.id)
         self.active_order = [*self.order]
-        self.votes = {i: "❔" if self.can_player_vote(x) else self.game.mainclass.emojis["against"] for i,x in self.game.players.items()}
+        self.votes = {i: Vote(None, "❔") if self.can_player_vote(x) else Vote(False, self.game.mainclass.emojis["against"]) for i,x in self.game.players.items()}
         
         self.control_panel = await VoteControlPanel(self.game, self).send(self.game.control_thread)
         return await super().send(channel)
@@ -224,7 +256,7 @@ class VotePanel(TimedPanel):
         self.defense = defense
         await self.update(interaction)
     
-    async def update_vote(self, id, vote, interaction):
+    async def update_vote(self, id, display, state, interaction):
         player = self.game.players[id]
         if not self.can_player_vote(player) and self.game.gamerules["dead_vote_required"].state:
             return await interaction.response.send_message("Vous n'avez plus de jeton de vote.", ephemeral=True)
@@ -232,22 +264,24 @@ class VotePanel(TimedPanel):
         if id not in self.active_order:
             return await interaction.response.send_message("Vous avez déjà voté.", ephemeral=True)
 
-        self.votes[id] = vote
-        if id == self.active_order[0] and vote in (self.game.mainclass.emojis["for"], self.game.mainclass.emojis["against"]): 
+        self.votes[id].display = display
+        self.votes[id].state = state
+        if id == self.active_order[0] and state != None: 
             return await self.next_player(interaction)
         
         await self.update(interaction)
 
     async def next_player(self, interaction):
         id = self.active_order.pop(0)
-        if (self.votes[id] == self.game.mainclass.emojis["for"]): self.votes[id] += f" ({self.vote_total}/{self.required_votes})"
+        if self.votes[id].state == True and not self.game.gamerules["hidden_vote"].state: 
+            self.votes[id].display += f" ({self.vote_total}/{self.required_votes})"
 
         if len(self.active_order) == 0:
             return await self.end(interaction)
 
         next_vote = self.votes[self.active_order[0]]
-        if next_vote == self.game.mainclass.emojis["for"]: return await self.count_as_for(interaction)
-        if next_vote == self.game.mainclass.emojis["against"]: return await self.count_as_against(interaction)
+        if next_vote.state == True: return await self.count_as_for(interaction)
+        if next_vote.state == False: return await self.count_as_against(interaction)
         await self.update(interaction)
 
     async def end(self, interaction):
@@ -264,7 +298,7 @@ class VotePanel(TimedPanel):
         object["defense"] = self.defense
         object["order"] = self.order
         object["active_order"] = self.active_order
-        object["votes"] = self.votes
+        object["votes"] = {i: x.to_dict() for i,x in self.votes.items()}
         object["control_panel"] = self.control_panel.serialize() if self.control_panel else None
         return object
     
@@ -275,7 +309,7 @@ class VotePanel(TimedPanel):
         self.defense = object["defense"]
         self.order = [int(x) for x in object["order"]]
         self.active_order = [int(x) for x in object["active_order"]]
-        self.votes = {int(i): x for i,x in object["votes"].items()}
+        self.votes = {int(i): Vote.from_dict(x) for i,x in object["votes"].items()}
         self.control_panel = await VoteControlPanel(self.game, self).parse(object["control_panel"], client) if object["control_panel"] else None
         return await super().parse(object, client)
 
@@ -311,6 +345,10 @@ class VoteControlPanel(Panel):
     @property
     def content(self):
         return f"{self.game.storyteller.mention} **{self.vote_panel.nominator}** 👉 **{self.vote_panel.nominee}**"
+    
+    @property
+    def clockhand_player_id(self):
+        return self.vote_panel.active_order[0]
 
     @property
     def embed(self):
@@ -322,21 +360,35 @@ class VoteControlPanel(Panel):
         embed.add_field(name="Défense", value=self.vote_panel.defense)
 
         player_info = [
-            ('➡️ ' if len(self.vote_panel.active_order) and self.vote_panel.active_order[0] == id else '')
-            + f"__{self.game.players[id]}:__ {self.vote_panel.votes[id]}"
+            ('➡️ ' if len(self.vote_panel.active_order) and self.clockhand_player_id == id else '')
+            + f"__{self.game.players[id]}:__ {self.vote_panel.votes[id].display} "
+            + (self.game.mainclass.emojis["thief"] if self.vote_panel.votes[id].with_thief else "")
+            + (self.game.mainclass.emojis["bureaucrat"] if self.vote_panel.votes[id].with_bureaucrat else "")
             for id in self.vote_panel.order
         ]
         embed.add_field(name="Votes", value='\n'.join(player_info), inline=False)
         embed.add_field(name="Total", value=f"{self.vote_panel.vote_total}/{self.vote_panel.required_votes}")
 
         if len(self.vote_panel.active_order):
-            id = self.vote_panel.active_order[0]
-            embed.add_field(name="Vote à déterminer", value=f"{self.game.players[id]}: {self.vote_panel.votes[id]}", inline=False)
+            id = self.clockhand_player_id
+            embed.add_field(name="Vote à déterminer", value=f"{self.game.players[id]}: {self.vote_panel.votes[id].display}", inline=False)
 
         return embed
+    
+    async def update_next_vote(self, display, value, interaction):
+        await self.vote_panel.update_vote(self.clockhand_player_id, display, value, interaction)
 
     async def count_as_for(self, interaction):
-        await self.vote_panel.update_vote(self.vote_panel.active_order[0], self.game.mainclass.emojis["for"], interaction)
-
+        await self.update_next_vote(self.game.mainclass.emojis["for"], 1, interaction)
+    
     async def count_as_against(self, interaction):
-        await self.vote_panel.update_vote(self.vote_panel.active_order[0], self.game.mainclass.emojis["against"], interaction)
+        await self.update_next_vote(self.game.mainclass.emojis["against"], 0, interaction)
+
+    async def toggle_thief(self, interaction):
+        self.vote_panel.votes[self.clockhand_player_id].with_thief = not self.vote_panel.votes[self.clockhand_player_id].with_thief
+        await self.vote_panel.update(interaction)
+
+    async def toggle_bureaucrat(self, interaction):
+        self.vote_panel.votes[self.clockhand_player_id].with_bureaucrat = not self.vote_panel.votes[self.clockhand_player_id].with_bureaucrat
+        await self.vote_panel.update(interaction)
+
