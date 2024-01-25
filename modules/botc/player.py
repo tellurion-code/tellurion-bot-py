@@ -13,6 +13,9 @@ class Player:
         self.has_nominated = False
         self.was_nominated = False
 
+        self.thief_affected = False
+        self.bureaucrat_affected = False
+
         # self.whispers = 0
 
     @property
@@ -34,15 +37,19 @@ class Player:
             "dead_vote": self.dead_vote,
             "traveller": self.traveller,
             "has_nominated": self.has_nominated,
-            "was_nominated": self.was_nominated
+            "was_nominated": self.was_nominated,
+            "thief_affected": self.thief_affected,
+            "bureaucrat_affected": self.bureaucrat_affected
         }
     
     async def parse(self, object, client):
         self.user = await self.game.channel.guild.fetch_member(object["user"])
-        self.name = object["name"]
-        self.alive = object["alive"]
-        self.dead_vote = object["dead_vote"]
-        self.traveller = object["traveller"]
-        self.has_nominated = object["has_nominated"]
-        self.was_nominated = object["was_nominated"]
+        self.name = object.get("name", self.alive)
+        self.alive = object.get("alive", self.alive)
+        self.dead_vote = object.get("dead_vote", self.dead_vote)
+        self.traveller = object.get("traveller", self.traveller)
+        self.has_nominated = object.get("has_nominated", self.has_nominated)
+        self.was_nominated = object.get("was_nominated", self.was_nominated)
+        self.thief_affected = object.get("thief_affected", self.thief_affected)
+        self.bureaucrat_affected = object.get("bureaucrat_affected", self.bureaucrat_affected)
         return self

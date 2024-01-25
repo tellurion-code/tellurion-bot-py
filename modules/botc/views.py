@@ -1,11 +1,11 @@
 """Views."""
 
 import discord
-import modules.botc.phases as phases
 
 from modules.game.views import GameView, PlayView
 from modules.botc.player import Player
 from modules.botc.components import PlayerSelect
+from modules.botc.types import VoteState, Phases
 
 
 class PanelView(GameView):
@@ -33,7 +33,7 @@ class JoinView(PanelView):
 
     @discord.ui.button(label="Rejoindre ou quitter", style=discord.ButtonStyle.blurple)
     async def join_or_leave(self, button, interaction):
-        if len(self.game.players) >= self.game.phases[phases.Phases.start].max_players:
+        if len(self.game.players) >= self.game.phases[Phases.start].max_players:
             return await interaction.response.send_message("Le nombre maximum de joueurs est atteint.", ephemeral=True)
 
         if interaction.user.id not in self.game.players:
@@ -163,15 +163,15 @@ class VoteView(PlayView, PanelView):
         await self.panel.update_defense(self.defense_modal.children[0].value, interaction)
 
     async def update_vote(self, interaction):
-        await self.panel.update_vote(interaction.user.id, self.vote_modal.children[0].value, interaction)
+        await self.panel.update_vote(interaction.user.id, self.vote_modal.children[0].value, VoteState.unknown, interaction)
 
     @discord.ui.button(label="Pour", style=discord.ButtonStyle.green)
     async def vote_for(self, button, interaction):
-        await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["for"], interaction)
+        await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["for"], VoteState.vote_for, interaction)
 
     @discord.ui.button(label="Contre", style=discord.ButtonStyle.red)
     async def vote_against(self, button, interaction):
-        await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["against"], interaction)
+        await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["against"], VoteState.vote_against, interaction)
 
 
 class ControlView(PanelView):
@@ -181,6 +181,7 @@ class ControlView(PanelView):
         self.player_select = PlayerSelect(
             self.game,
             placeholder="Choisissez un (des) joueur(s) à affecter",
+            min_values=0,
             max_values=len(self.game.players)
         )
         self.player_select.callback = self.player_callback
@@ -260,6 +261,20 @@ class ControlView(PanelView):
 
         await self.panel.update(interaction)
 
+    @discord.ui.button(label="Voleur", style=discord.ButtonStyle.blurple)
+    async def mark_thief(self, button, interaction):
+        for id, player in self.game.players.items():
+            player.thief_affected = str(id) in self.player_select.values
+
+        await self.panel.update(interaction)
+
+    @discord.ui.button(label="Bureaucrate", style=discord.ButtonStyle.blurple)
+    async def mark_bureaucrat(self, button, interaction):
+        for id, player in self.game.players.items():
+            player.bureaucrat_affected = str(id) in self.player_select.values
+
+        await self.panel.update(interaction)
+
 
 class VoteControlView(PanelView):
     def __init__(self, game, panel, *args, **kwargs):
@@ -273,10 +288,6 @@ class VoteControlView(PanelView):
     async def count_as_against(self, button, interaction):
         await self.panel.count_as_against(interaction)
 
-    @discord.ui.button(label="Voleur", style=discord.ButtonStyle.blurple)
-    async def toggle_thief(self, button, interaction):
-        await self.panel.toggle_thief(interaction)
-
-    @discord.ui.button(label="Bureaucrate", style=discord.ButtonStyle.blurple)
-    async def toggle_bureaucrat(self, button, interaction):
-        await self.panel.toggle_bureaucrat(interaction)
+    @discord.ui.button(label="Ping les joueurs restants", style=discord.ButtonStyle.gray)
+    async def ping_missing(self, button, interaction):
+        await self.panel.ping_missing(interaction)

@@ -3,17 +3,10 @@
 import discord
 import random
 
-from dataclasses import dataclass
-
 from modules.botc.phases import Phases, StartPhase, NominationsPhase, NightPhase, DayPhase
 from modules.botc.panels import ControlPanel
 from modules.botc.player import Player
-
-
-@dataclass
-class Gamerule:
-    name: str
-    state: bool
+from modules.botc.types import Gamerule
 
 
 class Game:

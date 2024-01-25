@@ -9,8 +9,9 @@ class PlayerSelect(discord.ui.Select):
         self.game = game
         self.update()
 
-    def update(self):
-        self.options = []
+    def update(self, keep_values_as_defaults=True):
+        self.options.clear()
+        
         for id in self.game.order:
             player = self.game.players[id]
             self.options.append(discord.SelectOption(
@@ -18,3 +19,9 @@ class PlayerSelect(discord.ui.Select):
                 value=str(id),
                 # emoji=player.emoji
             ))
+
+        if keep_values_as_defaults:
+            for option in self.options:
+                option.default = option.value in self.values
+        else:
+            self.values.clear()

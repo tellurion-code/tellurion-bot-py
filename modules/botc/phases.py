@@ -1,16 +1,9 @@
 """Phase classes."""
 
 import discord
-from enum import Enum
 
 from modules.botc.panels import Panel, JoinPanel, NominationPanel, VotePanel, ControlPanel
-
-
-class Phases(Enum):
-    start = "start"
-    night = "night"
-    day = "day"
-    nominations = "nominations"
+from modules.botc.types import Phases
 
 
 class Phase:

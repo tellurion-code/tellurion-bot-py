@@ -14,10 +14,10 @@ class MainClass(BaseClassPython):
         "description": "Gère les parties par texte de BOTC",
         "commands": {
             "{prefix}{command} create": "Crée une partie avec l'auteur du message en tant que Conteur.",
-            "{prefix}{command} day": "(Conteur) Commence la journée.",
+            "{prefix}{command} start/end": "(Conteur) Démarre/Termine la partie.",
+            "{prefix}{command} day/night": "(Conteur) Commence/Termine la journée.",
             "{prefix}{command} open [nom]": "(Conteur) Commence la journée et ouvre les nominations dans un fil avec le nom donné. Si aucun n'est donné, réutilise le dernier fil de nomination s'il existe.",
             "{prefix}{command} close": "(Conteur) Ferme les nominations.",
-            "{prefix}{command} night": "(Conteur) Ferme les votes et démarre la nuit.",
             "{prefix}{command} thread <nom>": "(Conteur) Crée un thread avec le nom donné pour tous les joueurs.",
             "{prefix}{command} stthreads [message]": "(Conteur) Crée un thread privé avec chaque joueur, et envoie le message donné dans chaque.",
             "{prefix}{command} order [mentions]": "(Conteur) Place les joueurs mentionnés en haut de l'ordre, puis l'affiche.",
