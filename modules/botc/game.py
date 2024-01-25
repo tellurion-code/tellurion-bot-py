@@ -80,6 +80,18 @@ class Game:
         await self.current_phase.on_command(message, [None], {})
         self.save()
 
+    def check_for_enough_players(self):
+        if self.mainclass.debug:
+            return True, None
+
+        if len(self.players) < 5:
+            return False, "Pas assez de joueurs"
+
+        if len(self.players) > self.phases[Phases.start].max_players:
+            return False, "Trop de joueurs"
+
+        return True, None
+
     async def start_game(self):
         self.order = [id for id in self.players]
         random.shuffle(self.order)

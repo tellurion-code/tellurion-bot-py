@@ -76,6 +76,19 @@ class MainClass(BaseClassPython):
             self.games[message.channel.id] = Game(self, message=message)
             await self.games[message.channel.id].on_creation(message)
 
+    async def com_start(self, message, args, kwargs):
+        if message.channel.id in self.games and self.games[message.channel.id].storyteller == message.author:
+            game = self.games[message.channel.id]
+            if game.phase != Phases.start: return
+
+            can_start, reason = game.check_for_enough_players()
+            if can_start:
+                await game.start_game()
+            else:
+                await message.channel.send(reason)
+
+        await message.delete()
+
     async def com_end(self, message, args, kwargs):
         if message.channel.id in self.games and self.games[message.channel.id].storyteller == message.author:
             await self.games[message.channel.id].end()
@@ -142,8 +155,8 @@ class MainClass(BaseClassPython):
     async def com_order(self, message, args, kwargs):
         if message.channel.id in self.games:
             game = self.games[message.channel.id]
+            if game.phase == Phases.start: return
             if message.author != game.storyteller: return
-            if len(game.order) == 0: return
 
             args.reverse()
             for mention in args:
@@ -158,8 +171,8 @@ class MainClass(BaseClassPython):
     async def com_add(self, message, args, kwargs):
         if message.channel.id in self.games:
             game = self.games[message.channel.id]
+            if game.phase == Phases.start: return
             if message.author != game.storyteller: return
-            if len(game.order) == 0: return
 
             for mention in args:
                 ids = discord.utils.raw_mentions(mention)
@@ -174,8 +187,8 @@ class MainClass(BaseClassPython):
     async def com_remove(self, message, args, kwargs):
         if message.channel.id in self.games:
             game = self.games[message.channel.id]
+            if game.phase == Phases.start: return
             if message.author != game.storyteller: return
-            if len(game.order) == 0: return
 
             for mention in args:
                 player = game.player_from_mention(mention)
@@ -192,8 +205,8 @@ class MainClass(BaseClassPython):
 
         if message.channel.id in self.games:
             game = self.games[message.channel.id]
+            if game.phase == Phases.start: return
             if message.author != game.storyteller: return
-            if len(game.order) == 0: return
 
             player = game.player_from_mention(args[1])
             if not player:

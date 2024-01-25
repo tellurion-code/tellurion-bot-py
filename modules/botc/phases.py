@@ -149,9 +149,6 @@ class NominationsPhase(PanelPhase):
             if len(args) > 1:
                 name = ' '.join(args[1:])
                 self.nomination_thread = await message.channel.create_thread(name=name, auto_archive_duration=24*60, type=discord.ChannelType.public_thread)
-                # await self.nomination_thread.add_user(self.game.storyteller)
-                # for player in self.game.players.values(): await self.nomination_thread.add_user(player.user)
-                # await self.nomination_thread.edit(locked=True)
 
             await self.send(self.nomination_thread)
             return True

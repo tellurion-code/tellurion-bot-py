@@ -23,25 +23,13 @@ class JoinView(PanelView):
 
         self.input_modal = discord.ui.Modal(discord.ui.InputText(label="Nombre de joueurs", max_length=2), title="Combien de joueurs au maximum?")
         self.input_modal.callback = self.update_max_players
-
-    def check_for_enough_players(self):
-        if self.game.mainclass.debug:
-            return True, "Démarrer"
-
-        if len(self.game.players) < 5:
-            return False, "Pas assez de joueurs"
-
-        if len(self.game.players) > self.game.phases[phases.Phases.start].max_players:
-            return False, "Trop de joueurs"
-
-        return True, "Démarrer"
     
-    def update(self):
-        super().update()
-        can_start, message = self.check_for_enough_players()
-        self.children[1].label = message
-        self.children[1].disabled = not can_start
-        self.children[1].style = discord.ButtonStyle.green if can_start else discord.ButtonStyle.gray
+    # def update(self):
+    #     super().update()
+    #     can_start, message = self.check_for_enough_players()
+    #     self.children[1].label = message
+    #     self.children[1].disabled = not can_start
+    #     self.children[1].style = discord.ButtonStyle.green if can_start else discord.ButtonStyle.gray
 
     @discord.ui.button(label="Rejoindre ou quitter", style=discord.ButtonStyle.blurple)
     async def join_or_leave(self, button, interaction):
@@ -56,12 +44,12 @@ class JoinView(PanelView):
 
         await self.panel.update(interaction)
     
-    @discord.ui.button(label="Pas assez de joueurs", disabled=True, style=discord.ButtonStyle.gray)
-    async def start(self, button, interaction):
-        if interaction.user != self.game.storyteller:
-            return await interaction.response.defer()
+    # @discord.ui.button(label="Pas assez de joueurs", disabled=True, style=discord.ButtonStyle.gray)
+    # async def start(self, button, interaction):
+    #     if interaction.user != self.game.storyteller:
+    #         return await interaction.response.defer()
 
-        await self.game.start_game()
+    #     await self.game.start_game()
 
     @discord.ui.button(label="Changer le nombre max de joueurs", style=discord.ButtonStyle.gray)
     async def send_input_modal(self, button, interaction):
@@ -277,16 +265,10 @@ class VoteControlView(PanelView):
     def __init__(self, game, panel, *args, **kwargs):
         super().__init__(game, panel, *args, **kwargs)
 
-        self.for_button = discord.ui.Button(label="Compter comme Pour", style=discord.ButtonStyle.green)
-        self.for_button.callback = self.count_as_for
-        self.add_item(self.for_button)   
-
-        self.against_button = discord.ui.Button(label="Compter comme Contre", style=discord.ButtonStyle.red)
-        self.against_button.callback = self.count_as_against
-        self.add_item(self.against_button)
-
+    @discord.ui.button(label="Compter comme Pour", style=discord.ButtonStyle.green)
     async def count_as_for(self, interaction):
         await self.panel.count_as_for(interaction)
     
+    @discord.ui.button(label="Compter comme Contre", style=discord.ButtonStyle.red)
     async def count_as_against(self, interaction):
         await self.panel.count_as_against(interaction)
