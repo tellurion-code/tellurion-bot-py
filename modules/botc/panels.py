@@ -193,14 +193,14 @@ class VotePanel(TimedPanel):
 
             icon = ""
             player = self.game.players[id]
-            if self.nominator == player: icon = "👉"
-            if self.nominee == player: icon = "✋"
+            if self.nominator == player: icon += "👉"
+            if self.nominee == player: icon += "✋"
             if not self.game.gamerules["hidden_vote"].state:
                 if self.votes[id].with_thief: icon += self.game.mainclass.emojis["thief"]
                 if self.votes[id].with_bureaucrat: icon += self.game.mainclass.emojis["bureaucrat"]
 
             embed.add_field(
-                name=f"{'➡️ ' if len(self.active_order) and self.active_order[0] == id else ''}{player} {icon}",
+                name=f"{'➡️ ' if not self.game.gamerules['hidden_vote'].state and len(self.active_order) and self.active_order[0] == id else ''}{player} {icon}",
                 value=value,
                 inline=False
             )
