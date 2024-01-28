@@ -48,13 +48,16 @@ class MainClass(BaseClassPython):
         self.games = {}
 
         self.emojis = {
-            "for": self.client.get_emoji(857736591535505438) or "✅",
-            "against": self.client.get_emoji(857736495577563147) or "❌",
+            "for": "✅",
+            "against": "❌",
             "thief": "💎",
             "bureaucrat": "📄"
         }
 
     async def on_ready(self):
+        self.emojis["for"] = str(self.client.get_emoji(857736591535505438) or self.emojis["for"])
+        self.emojis["against"] = str(self.client.get_emoji(857736495577563147) or self.emojis["against"])
+
         if self.objects.save_exists("globals"):
             object = self.objects.load_object("globals")
             self.debug = object["debug"]
@@ -180,8 +183,10 @@ class MainClass(BaseClassPython):
                 ids = discord.utils.raw_mentions(mention)
                 if len(ids) == 0: continue
                 id = ids[0]
-                game.players[id] = Player(game, game.channel.guild.get_member(id))
+                user = game.channel.guild.get_member(id)
+                game.players[id] = Player(game, user)
                 game.order.append(id)
+                await user.add_roles(game.role)
             
             await game.send_order(message.channel)
             await game.control_panel.update()
@@ -196,6 +201,7 @@ class MainClass(BaseClassPython):
                 player = game.player_from_mention(mention)
                 if not player: continue
                 game.order.remove(player.user.id)
+                await player.user.remove_roles(game.role)
                 del game.players[player.user.id]
             
             await game.send_order(message.channel)
@@ -224,8 +230,10 @@ class MainClass(BaseClassPython):
                 return await message.channel.send(f"`{user.display_name}` est déjà dans en jeu")
 
             index = game.order.index(player.user.id)
+            await player.user.remove_roles(game.role)
             del game.players[player.user.id]
             game.players[id] = Player(game, user)
+            await user.add_roles(game.role)
             game.order[index] = id
             
             await game.send_order(message.channel)
