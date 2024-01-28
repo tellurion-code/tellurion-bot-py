@@ -59,7 +59,7 @@ class Game:
 
     def order_from(self, id):
         if id not in self.players: return self.order
-        index = (self.order.index(id) + len(self.order) - 1) % len(self.order)
+        index = (self.order.index(id) + 1) % len(self.order)
         return self.order[index:] + self.order[:index]
     
     async def send_order(self, channel):
