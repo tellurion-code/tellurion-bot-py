@@ -131,8 +131,6 @@ class MainClass(BaseClassPython):
             for player in targets:
                 await thread.add_user(player.user)
                 # player.whispers += 1
-
-            if message.author == game.storyteller: await message.delete()
             
             # embed = discord.Embed(title="Nouvelle discussion privée")
             # embed.add_field(
@@ -140,8 +138,8 @@ class MainClass(BaseClassPython):
             #     value='\n'.join(f"{game.players[x].display_name}: {game.players[x].whispers}" for x in targets)
             # )
             # await thread.send(embed)
-        else:
-            await message.delete()
+        
+        await message.delete()
 
     async def com_stthreads(self, message, args, kwargs):
         if message.channel.id in self.games:
