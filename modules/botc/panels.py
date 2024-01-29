@@ -266,9 +266,12 @@ class VotePanel(TimedPanel):
         if next_vote.state in (VoteState.vote_for, VoteState.vote_against): return await self.next_player(interaction)
         await self.update(interaction)
 
-    async def end(self, interaction=None):
+    async def end(self, interaction=None, no_delete=False):
         await self.control_panel.close()
-        await self.game.phases[Phases.nominations].close_vote(self.message.id)
+        if no_delete:
+            await self.close()
+        else:
+            await self.game.phases[Phases.nominations].close_vote(self.message.id)
         await self.update(interaction)
 
     def serialize(self):

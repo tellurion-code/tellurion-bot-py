@@ -174,7 +174,7 @@ class NominationsPhase(PanelPhase):
         
     async def on_exit(self):
         await super().on_exit()
-        for panel in self.vote_panels.values(): await panel.end()
+        for panel in self.vote_panels.values(): await panel.end(no_delete=True)
         await self.nomination_thread.archive()
         self.vote_panels = {}
 
