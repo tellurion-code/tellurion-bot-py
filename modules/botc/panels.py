@@ -339,7 +339,7 @@ class VoteControlPanel(Panel):
     
     @property
     def clockhand_player_id(self):
-        return self.vote_panel.active_order[0]
+        return self.vote_panel.active_order[0] if len(self.vote_panel.active_order) else None
 
     @property
     def embed(self):
@@ -367,6 +367,9 @@ class VoteControlPanel(Panel):
         return embed
     
     async def update_next_vote(self, display, value, interaction):
+        if not self.clockhand_player_id:
+            return await interaction.response.defer()
+        
         await self.vote_panel.update_vote(self.clockhand_player_id, display, value, interaction)
 
     async def count_as_for(self, interaction):
