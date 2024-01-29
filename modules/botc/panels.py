@@ -266,8 +266,7 @@ class VotePanel(TimedPanel):
         if next_vote.state in (VoteState.vote_for, VoteState.vote_against): return await self.next_player(interaction)
         await self.update(interaction)
 
-    async def end(self, interaction):
-        await self.control_panel.update(save=False)
+    async def end(self, interaction=None):
         await self.control_panel.close()
         await self.game.phases[Phases.nominations].close_vote(self.message.id)
         await self.update(interaction)
