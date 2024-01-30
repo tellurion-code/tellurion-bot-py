@@ -254,9 +254,10 @@ class VotePanel(TimedPanel):
     async def next_player(self, interaction):
         id = self.active_order.pop(0)
         vote = self.votes[id]
-        if vote.state == VoteState.vote_for: 
-            vote.with_thief = self.game.players[id].thief_affected
-            vote.with_bureaucrat = self.game.players[id].bureaucrat_affected
+        if vote.state == VoteState.vote_for:
+            if not self.nominee.traveller:
+                vote.with_thief = self.game.players[id].thief_affected
+                vote.with_bureaucrat = self.game.players[id].bureaucrat_affected
             vote.display += f" ({self.vote_total}/{self.required_votes})"
 
         if len(self.active_order) == 0:
