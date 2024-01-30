@@ -141,6 +141,7 @@ class NominationsPhase(PanelPhase):
         if args[0] == None:
             if len(args) > 1:
                 name = ' '.join(args[1:])
+                if self.nomination_thread: await self.nomination_thread.archive()
                 self.nomination_thread = await message.channel.create_thread(name=name, auto_archive_duration=24*60, type=discord.ChannelType.public_thread)
 
             await self.send(self.nomination_thread)
@@ -175,7 +176,6 @@ class NominationsPhase(PanelPhase):
     async def on_exit(self):
         await super().on_exit()
         for panel in self.vote_panels.values(): await panel.end(no_delete=True)
-        await self.nomination_thread.archive()
         self.vote_panels = {}
 
     def serialize(self):
