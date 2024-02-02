@@ -167,11 +167,11 @@ class VoteView(PlayView, PanelView):
 
     @discord.ui.button(label="Pour", style=discord.ButtonStyle.green)
     async def vote_for(self, button, interaction):
-        await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["for"], VoteState.vote_for, interaction)
+        await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["for"], VoteState.unknown, interaction)
 
     @discord.ui.button(label="Contre", style=discord.ButtonStyle.red)
     async def vote_against(self, button, interaction):
-        await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["against"], VoteState.vote_against, interaction)
+        await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["against"], VoteState.unknown, interaction)
 
 
 class ControlView(PanelView):
