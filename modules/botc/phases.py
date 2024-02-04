@@ -1,5 +1,6 @@
 """Phase classes."""
 
+import datetime
 import discord
 
 from modules.botc.panels import Panel, JoinPanel, NominationPanel, VotePanel, ControlPanel
@@ -154,6 +155,22 @@ class NominationsPhase(PanelPhase):
         
         if args[0] == "night":
             await self.game.change_phase(Phases.night)
+            return True
+
+        if args[0] == "refresh":
+            if self.panel.closed:
+                return True
+
+            if len(args) > 1:
+                try:
+                    duration = datetime.timedelta(hours=int(args[1]))
+                except:
+                    duration = self.panel.duration
+            else:
+                duration = self.panel.duration
+
+            self.panel.end_time += duration
+            await self.panel.update()
             return True
         
         return await super().on_command(message, args, kwargs)

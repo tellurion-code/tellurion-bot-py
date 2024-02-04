@@ -2,6 +2,7 @@
 
 import discord
 import random
+import math
 
 from modules.botc.phases import Phases, StartPhase, NominationsPhase, NightPhase, DayPhase
 from modules.botc.panels import ControlPanel
@@ -45,11 +46,11 @@ class Game:
     
     @property
     def required_votes(self):
-        return round(sum(1 for x in self.players.values() if x.alive) / 2)
+        return math.ceil(sum(1 for x in self.players.values() if x.alive) / 2)
     
     @property
     def required_votes_for_exile(self):
-        return round(len(self.players) / 2)
+        return math.ceil(len(self.players) / 2)
 
     def player_from_mention(self, mention):
         ids = discord.utils.raw_mentions(mention)
