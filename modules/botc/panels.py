@@ -206,6 +206,9 @@ class VotePanel(TimedPanel):
             )
     
         return embed
+    
+    def can_player_vote(self, player):
+        return player.can_vote or self.nominee.traveller
 
     async def send(self, channel):
         if not self.nominee.traveller: self.nominator.has_nominated = True
@@ -222,11 +225,12 @@ class VotePanel(TimedPanel):
         return await super().send(channel)
     
     async def update(self, interaction=None, save=True):
+        for id, vote in self.votes.items():
+            if not self.can_player_vote(self.game.players[id]) and vote.state != VoteState.vote_against:
+                self.votes[id] = Vote(VoteState.vote_against, self.game.mainclass.emojis["against"])
+
         await self.control_panel.update(save=False)
         await super().update(interaction, save=save)
-
-    def can_player_vote(self, player):
-        return player.can_vote or self.nominee.traveller
     
     async def update_accusation(self, accusation, interaction):
         self.accusation = accusation
