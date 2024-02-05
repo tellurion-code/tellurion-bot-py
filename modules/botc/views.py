@@ -118,10 +118,10 @@ class VoteView(PlayView, PanelView):
         super().__init__(game, panel, *args, **kwargs)
         self.timeout = None
 
-        self.accusation_modal = discord.ui.Modal(discord.ui.InputText(label=f"Votre accusation", max_length=200), title="Accusation", style=discord.InputTextStyle.long)
+        self.accusation_modal = discord.ui.Modal(discord.ui.InputText(label=f"Votre accusation", max_length=200, style=discord.InputTextStyle.long), title="Accusation")
         self.accusation_modal.callback = self.update_accusation
 
-        self.defense_modal = discord.ui.Modal(discord.ui.InputText(label=f"Votre défense", max_length=200), title="Défense", style=discord.InputTextStyle.long)
+        self.defense_modal = discord.ui.Modal(discord.ui.InputText(label=f"Votre défense", max_length=200, style=discord.InputTextStyle.long), title="Défense")
         self.defense_modal.callback = self.update_defense
         
         self.vote_modal = discord.ui.Modal(discord.ui.InputText(label=f"Votre vote", max_length=100), title="Vote")
