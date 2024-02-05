@@ -118,17 +118,18 @@ class VoteView(PlayView, PanelView):
         super().__init__(game, panel, *args, **kwargs)
         self.timeout = None
 
-        self.accusation_modal = discord.ui.Modal(discord.ui.InputText(label=f"Votre accusation", max_length=200), title="Accusation")
+        self.accusation_modal = discord.ui.Modal(discord.ui.InputText(label=f"Votre accusation", max_length=200), title="Accusation", style=discord.InputTextStyle.long)
         self.accusation_modal.callback = self.update_accusation
 
-        self.defense_modal = discord.ui.Modal(discord.ui.InputText(label=f"Votre défense", max_length=200), title="Défense")
+        self.defense_modal = discord.ui.Modal(discord.ui.InputText(label=f"Votre défense", max_length=200), title="Défense", style=discord.InputTextStyle.long)
         self.defense_modal.callback = self.update_defense
         
         self.vote_modal = discord.ui.Modal(discord.ui.InputText(label=f"Votre vote", max_length=100), title="Vote")
         self.vote_modal.callback = self.update_vote
 
     async def interaction_check(self, interaction):
-        return await super().interaction_check(interaction) and discord.utils.utcnow() < self.panel.end_time
+        is_player_or_st = interaction.user == self.game.storyteller and await super().interaction_check(interaction)
+        return is_player_or_st and discord.utils.utcnow() < self.panel.end_time
     
     async def on_check_failure(self, interaction):
         if discord.utils.utcnow() > self.panel.end_time:
@@ -138,22 +139,23 @@ class VoteView(PlayView, PanelView):
 
     @discord.ui.button(label="Accusation", style=discord.ButtonStyle.gray)
     async def write_accusation(self, button, interaction):
-        if interaction.user != self.panel.nominator.user:
-            await interaction.response.defer()
-            return
+        if interaction.user not in (self.game.storyteller, self.panel.nominator.user):
+            return await interaction.response.defer()
         
         await interaction.response.send_modal(self.accusation_modal)
 
     @discord.ui.button(label="Défense", style=discord.ButtonStyle.gray)
     async def write_defense(self, button, interaction):
-        if interaction.user != self.panel.nominee.user:
-            await interaction.response.defer()
-            return
+        if interaction.user not in (self.game.storyteller, self.panel.nominee.user):
+            return await interaction.response.defer()
         
         await interaction.response.send_modal(self.defense_modal)
 
     @discord.ui.button(label="Vote", style=discord.ButtonStyle.blurple)
     async def write_vote(self, button, interaction):
+        if interaction.user == self.game.storyteller:
+            return await interaction.response.defer()
+
         await interaction.response.send_modal(self.vote_modal)
 
     async def update_accusation(self, interaction):
@@ -167,10 +169,16 @@ class VoteView(PlayView, PanelView):
 
     @discord.ui.button(label="Pour", style=discord.ButtonStyle.green)
     async def vote_for(self, button, interaction):
+        if interaction.user == self.game.storyteller:
+            return await interaction.response.defer()
+        
         await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["for"], VoteState.unknown, interaction)
 
     @discord.ui.button(label="Contre", style=discord.ButtonStyle.red)
     async def vote_against(self, button, interaction):
+        if interaction.user == self.game.storyteller:
+            return await interaction.response.defer()
+        
         await self.panel.update_vote(interaction.user.id, self.game.mainclass.emojis["against"], VoteState.unknown, interaction)
 
 
