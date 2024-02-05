@@ -128,7 +128,7 @@ class VoteView(PlayView, PanelView):
         self.vote_modal.callback = self.update_vote
 
     async def interaction_check(self, interaction):
-        is_player_or_st = interaction.user == self.game.storyteller and await super().interaction_check(interaction)
+        is_player_or_st = interaction.user == self.game.storyteller or await super().interaction_check(interaction)
         return is_player_or_st and discord.utils.utcnow() < self.panel.end_time
     
     async def on_check_failure(self, interaction):
