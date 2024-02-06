@@ -50,7 +50,6 @@ class Game:
     async def start(self):
         self.order = [i for i in self.players.keys()]
         random.shuffle(self.order)
-        self.turn = 0
         self.round = 1
 
         self.map = Map(size=self.map_size)
@@ -124,6 +123,7 @@ class Game:
             if self.current_player.score() > 0 or self.turn == last_turn:
                 break
 
+        self.current_player.start_turn()
         await self.check_for_game_end(interaction)
         self.announcements = []
 

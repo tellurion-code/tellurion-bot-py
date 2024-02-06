@@ -26,6 +26,9 @@ class Player:
         hex = Hex(q, r).rotate(rotation)
         self.game.map.set(hex, self.index)
 
+    def start_turn(self):
+        pass
+
     def move(self, direction):
         with self.game.map.edit() as editor:
             for hex, value in editor.map.hexes():

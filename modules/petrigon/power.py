@@ -89,7 +89,7 @@ class Glitcher(Power):
 class Pacifist(Power):
     name = "Pacifiste"
     icon = "🕊️"
-    description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué (jusqu'au tour 20)"
+    description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué"
 
     def __init__(self, player):
         super().__init__(player)
@@ -104,6 +104,37 @@ class Pacifist(Power):
 
     def on_defense_decorator(self, func):
         def decorated(opponent):
-            return func(opponent) + (math.inf if opponent.user.id not in self.war_with and self.game.round < 20 else 0)
+            return func(opponent) + (math.inf if opponent.user.id not in self.war_with else 0)
+
+        return decorated
+
+
+class General(Power):
+    name = "Général"
+    icon = "🚩"
+    description = "Une fois par partie, peut doubler la force de ses unités pour 2 manches"
+
+    activation_description = "Les unités du Général vont être doublées pour 2 tours"
+    start_active = True
+
+    def __init__(self, player):
+        super().__init__(player)
+        self.doubled_turns = 0
+
+    def use(self):
+        self.doubled_turns = 2
+        self.active = False
+        return super().use()
+
+    def start_turn_decorator(self, func):
+        def decorated():
+            if self.doubled_turns > 0: self.doubled_turns -= 1
+            func()
+
+        return decorated
+
+    def on_attack_decorator(self, func):
+        def decorated(opponent):
+            return func(opponent) * (2 if self.doubled_turns > 0 else 1)
 
         return decorated

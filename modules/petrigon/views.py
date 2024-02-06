@@ -76,7 +76,12 @@ class PowerView(PanelView, PlayView):
         super().__init__(game, panel, *args, **kwargs)
 
         self.power_classes = {x.__name__: x for x in (*Power.__subclasses__(), Power)}
-        options = [discord.SelectOption(label=subclass.name, emoji=subclass.icon, value=key) for key, subclass in self.power_classes.items()]
+        options = [discord.SelectOption(
+            label=subclass.name,
+            description=subclass.description,
+            emoji=subclass.icon,
+            value=key
+        ) for key, subclass in self.power_classes.items()]
         
         self.select = discord.ui.Select(options=options, placeholder="Choisissez un pouvoir")
         self.select.callback = self.callback
