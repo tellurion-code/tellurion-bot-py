@@ -2,7 +2,6 @@
 
 class Hex:
     """A hex in axial/cube coordinates. Basically a vector in hex coordinates."""
-
     def __init__(self, q: int, r: int, s: int = None):
         self.q = q
         self.r = r

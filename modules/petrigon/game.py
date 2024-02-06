@@ -6,6 +6,7 @@ import random
 
 from modules.petrigon.map import Map
 from modules.petrigon.hex import Hex
+from modules.petrigon.power import Power
 from modules.petrigon.panels import FightPanel, JoinPanel, PowerPanel
 
 
@@ -21,10 +22,11 @@ class Game:
         self.round = 0
 
         self.powers_enabled = False
-        self.map_size = 5
+        self.map_size = 6
         self.wall_count = 1
 
         self.panel = None
+        self.announcements = []
 
     @property
     def current_player(self):
@@ -65,18 +67,17 @@ class Game:
         r = -int(math.ceil(self.map_size/2.))
         q = random.randrange(0, -r)
         for i, id in enumerate(self.order):
-            hex = Hex(q, r).rotate(rotations[len(self.players)][i])
-            self.map.set(hex, i+2)
             self.players[id].index = i+2
+            self.players[id].place(q, r, rotations[len(self.players)][i])
 
         # Place walls
-        def validate_hex(hex):
+        def validate_wall_placement(hex):
             if self.map.get(hex) != 0:
                 return False
 
             for neighbor in hex.neighbors():
                 if self.map.get(neighbor) != 0:
-                    return False 
+                    return False
 
             return True    
         
@@ -84,10 +85,10 @@ class Game:
             remaining_walls_to_place = self.wall_count
             while remaining_walls_to_place > 0:
                 q = random.randrange(0, self.map.size)
-                r = -random.randrange(q + 1, 6)
+                r = -random.randrange(q + 1, self.map_size + 1)
                 hex = Hex(q, r).rotate(i)
 
-                if not validate_hex(hex):
+                if not validate_wall_placement(hex):
                     continue
 
                 self.map.set(hex, 1)
@@ -98,7 +99,19 @@ class Game:
         if self.powers_enabled:
             self.panel = await PowerPanel(self).send(self.channel)
         else:
+            for player in self.players.values():
+                player.set_power(Power)  # No special ability
+
             self.panel = await FightPanel(self).send(self.channel)
+
+    async def finish_power_selection(self, interaction):
+        await interaction.response.defer()
+        await self.panel.close()
+
+        for player in self.players.values():
+            player.power.setup()
+
+        self.panel = await FightPanel(self).send(self.channel)
 
     async def next_turn(self, interaction):
         last_turn = self.turn
@@ -109,22 +122,23 @@ class Game:
                 break
 
         await self.check_for_game_end(interaction)
+        self.announcements = []
 
     async def check_for_game_end(self, interaction):
         potential_winner, alive_players = None, 0
         for player in self.players.values():
             if player.score() > self.domination_score:
                 await self.end_game(player, "Domination")
+                alive_players = -1
                 break
 
             if player.score() > 0:
                 potential_winner = player
                 alive_players += 1
-
+        
         if alive_players == 1:
             await self.end_game(potential_winner, "Annihilation")
-
-        if alive_players == 0:
+        elif alive_players == 0:
             await self.end_game(None, "Destruction Mutuelle")
 
         await self.panel.update(interaction)

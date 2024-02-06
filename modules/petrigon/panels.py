@@ -95,6 +95,13 @@ class PowerPanel(Panel):
     view_class = PowerView
     keep_message = False
 
+    @property
+    def embed(self):
+        embed = discord.Embed(color=self.game.mainclass.color)
+        embed.title = f"Choix des pouvoirs"
+        embed.description = '\n'.join([f"{x}: {'✅' if x.power else '❌'}" for x in self.game.players.values()])
+        return embed
+
 
 class FightPanel(Panel):
     view_class = FightView
@@ -103,7 +110,14 @@ class FightPanel(Panel):
     def embed(self):
         embed = discord.Embed(color=constants.PLAYER_COLORS[self.game.turn])
         embed.title = f"Partie de Petrigon | Manche {self.game.round} | Tour de {self.game.current_player}"
-        embed.description = str(self.game.map)
+        embed.description = f"### Plateau\n{self.game.map}"
+
+        for announcement in self.game.announcements:
+            embed.add_field(
+                name=announcement.name,
+                value=announcement.value,
+                inline=False
+            )
 
         embed.add_field(
             name=f"Joueurs | Score de Domination: {self.game.domination_score}",
