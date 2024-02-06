@@ -92,8 +92,7 @@ class Player:
     
     def info(self, no_change=False):
         score_change = f"({'+' if self.last_score_change > 0 else ''}{self.last_score_change})" if self.last_score_change and not no_change else ""
-        power_display = f"({self.power})" if self.power else ""
-        return f"{constants.TILE_COLORS[self.index]} **{self}** {power_display}: {self.score()} {score_change}"
+        return f"{constants.TILE_COLORS[self.index]}{self.power.icon if self.power else ''} **{self}**: {self.score()} {score_change}"
 
     def __str__(self):
         return self.user.display_name

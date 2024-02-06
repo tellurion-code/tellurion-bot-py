@@ -91,15 +91,14 @@ class Map:
     def __str__(self):
         string = ""
         for y in range(-self.size, self.size + 1):
-            if y&1 == 0: string += "⠀"
+            if y&1 == 1: string += "⠀"
             
             for x in range(-self.size, self.size + 1):
-                q = int(x - (y + (y&1)) / 2)
+                q = int(x - (y - (y&1)) / 2)
                 r = y
                 value = self.get(Hex(q, r))
                 string += constants.TILE_COLORS[-1] if value == None else constants.TILE_COLORS[value]
-            
-            if y&1 == 1: string += constants.TILE_COLORS[-1]
+        
             string += "\n"
 
         return string

@@ -39,10 +39,10 @@ class Attacker(Power):
     description = "A un bonus de +1 en attaque"
 
     def on_attack_decorator(self, func):
-        def decorator():
+        def decorated():
             return func() + 1
 
-        return decorator
+        return decorated
 
 
 class Defender(Power):
@@ -51,10 +51,10 @@ class Defender(Power):
     description = "A un bonus de +1 en défense"
 
     def on_defense_decorator(self, func):
-        def decorator():
+        def decorated():
             return func() + 1
 
-        return decorator
+        return decorated
 
 
 class Glitcher(Power):
@@ -75,10 +75,10 @@ class Glitcher(Power):
         return super().use()
 
     def end_turn_decorator(self, func):
-        async def decorator(interaction):
+        async def decorated(interaction):
             if self.double_turn: 
                 self.player.game.turn += len(self.player.game.players) - 1
                 self.double_turn = False
             await func(interaction)
 
-        return decorator
+        return decorated

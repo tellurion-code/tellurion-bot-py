@@ -89,10 +89,19 @@ class MainClass(BaseClassPython):
     async def com_rules(self, message, args, kwargs):
         if len(args) > 1:
             if args[1] == "powers":
-                await message.channel.send(embed=discord.Embed(
+                embed = discord.Embed(
                     title=":small_orange_diamond: Pouvoirs :small_orange_diamond:",
-                    description="Les pouvoirs actifs sont déclenchés avec l'option 🦸 et ne prennent pas le tour\n\n" + '\n\n'.join(["**" + c.name + "**\n" + c.description for c in Power.__subclasses__()]),
-                    color=self.color))
+                    description="Les pouvoirs actifs sont déclenchés avec l'option 🦸 et ne prennent pas le tour",
+                    color=self.color
+                )
+
+                for c in Power.__subclasses__():
+                    embed.add_field(
+                        name=str(c),
+                        value=c.description
+                    )
+                
+                await message.channel.send(embed=embed)
             else:
                 await message.channel.send("Sous-section inconnue")
         else:
