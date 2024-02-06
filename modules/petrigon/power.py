@@ -42,7 +42,7 @@ class Attacker(Power):
 
     def on_attack_decorator(self, func):
         def decorated(opponent):
-            return func() + 1
+            return func(opponent) + 1
 
         return decorated
 
@@ -54,7 +54,7 @@ class Defender(Power):
 
     def on_defense_decorator(self, func):
         def decorated(opponent):
-            return func() + 1
+            return func(opponent) + 1
 
         return decorated
 
@@ -98,12 +98,12 @@ class Pacifist(Power):
     def on_attack_decorator(self, func):
         def decorated(opponent):
             self.war_with.push(opponent.user.id)
-            return func()
+            return func(opponent)
 
         return decorated
 
     def on_defense_decorator(self, func):
         def decorated(opponent):
-            return func() + (math.inf if opponent.user.id not in self.war_with and self.game.round < 20 else 0)
+            return func(opponent) + (math.inf if opponent.user.id not in self.war_with and self.game.round < 20 else 0)
 
         return decorated
