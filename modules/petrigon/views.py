@@ -84,7 +84,7 @@ class PowerView(PanelView, PlayView):
         
 
     def check_for_selection(self):
-        if sum(1 for x in self.game.players.values() if not x.power) > 0:
+        if sum(1 for x in self.game.players.values() if x.power == None) > 0:
             return False, "Choix restants à faire"
         
         return True, "Démarrer"
