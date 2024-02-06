@@ -22,6 +22,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
+        self.config["command_text"] = self.command_text
         self.config["color"] = self.color
         self.config["configured"] = True
         self.config["auth_everyone"] = True
