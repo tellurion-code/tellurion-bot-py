@@ -140,7 +140,7 @@ class FightView(PanelView, PlayView):
             return await interaction.response.defer()
         
         if self.game.current_player.move(direction):
-            self.game.last_input = emoji
+            self.game.last_input = str(emoji)
             await self.game.current_player.end_turn(interaction)
         else:
             await interaction.response.send_message("Ce mouvement ne cause aucun changement du plateau.", ephemeral=True)
