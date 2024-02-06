@@ -20,7 +20,7 @@ class Power:
     def setup(self):
         # Get all methods ending with "_decorator" and apply them to the player
         for method_name in (func for func in dir(self.__class__) if callable(getattr(self, func)) and func.endswith("_decorator")):
-            player_method_name = method_name.rstrip("_decorator")
+            player_method_name = method_name.removesuffix("_decorator")
             player_method = getattr(self.player, player_method_name)
             setattr(self.player, player_method_name, getattr(self, method_name)(player_method))
 
