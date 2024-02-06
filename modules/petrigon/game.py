@@ -50,7 +50,6 @@ class Game:
     async def start(self):
         self.order = [i for i in self.players.keys()]
         random.shuffle(self.order)
-        self.round = 1
 
         self.map = Map(size=self.map_size)
 
@@ -103,7 +102,7 @@ class Game:
         else:
             for player in self.players.values():
                 player.set_power(Power)  # No special ability
-
+            
             self.panel = await FightPanel(self).send(self.channel)
 
     async def finish_power_selection(self, interaction):

@@ -22,7 +22,8 @@ class Power:
         for method_name in (func for func in dir(self.__class__) if callable(getattr(self, func)) and func.endswith("_decorator")):
             player_method_name = method_name.removesuffix("_decorator")
             player_method = getattr(self.player, player_method_name)
-            setattr(self.player, player_method_name, getattr(self, method_name)(player_method))
+            decorator = getattr(self, method_name)
+            setattr(self.player, player_method_name, decorator(player_method))
 
     def use(self):
         self.player.game.announcements.append(Announcement(
@@ -112,7 +113,7 @@ class Pacifist(Power):
 class General(Power):
     name = "Général"
     icon = "🚩"
-    description = "Une fois par partie, peut doubler la force de ses unités pour 2 manches"
+    description = "Une fois par partie, peut doubler la force de ses unités pour 2 tours"
 
     activation_description = "Les unités du Général vont être doublées pour 2 tours"
     start_active = True
@@ -133,8 +134,14 @@ class General(Power):
 
         return decorated
 
-    def on_attack_decorator(self, func):
-        def decorated(opponent):
-            return func(opponent) * (2 if self.doubled_turns > 0 else 1)
+    def get_strength_decorator(self, func):
+        def decorated(*args):
+            return func(*args) * (2 if self.doubled_turns > 0 else 1)
 
+        return decorated
+    
+    def info_decorator(self, func):
+        def decorated():
+            return func() + (f" (🚩 {self.doubled_turns} tours)" if self.doubled_turns > 0 else "")
+        
         return decorated

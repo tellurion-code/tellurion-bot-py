@@ -106,6 +106,12 @@ class PowerPanel(Panel):
 class FightPanel(Panel):
     view_class = FightView
 
+    async def send(self, channel):
+        self.game.round = 1
+        self.game.turn = 0
+        self.game.current_player.start_turn()
+        return await super().send(channel)
+
     @property
     def embed(self):
         embed = discord.Embed(color=constants.PLAYER_COLORS[self.game.turn])
