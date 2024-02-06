@@ -71,7 +71,6 @@ class MainClass(BaseClassPython):
     async def com_end(self, message, args, kwargs):
         if message.channel.id in self.games and message.author.id in self.games[message.channel.id].players:
             await self.games[message.channel.id].end()
-            del self.games[message.channel.id]
 
     # Active le debug: le nombre minimal de joueurs
     async def com_debug(self, message, args, kwargs):
