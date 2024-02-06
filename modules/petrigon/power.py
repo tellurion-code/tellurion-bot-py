@@ -97,7 +97,7 @@ class Pacifist(Power):
 
     def on_attack_decorator(self, func):
         def decorated(opponent):
-            self.war_with.push(opponent.user.id)
+            self.war_with.append(opponent.user.id)
             return func(opponent)
 
         return decorated
