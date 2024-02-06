@@ -23,7 +23,7 @@ class Map:
 
     def __init__(self, size):
         self.size = size    # This is a hexagonal shaped hex grid, so this is the number of hexes from the center (size of 1 = "3x3")
-        self.hash_map = {}      # Dict<Hex, int>. Non-existence means the tile is empty. For simplicity, coordinates are gonna be based around the center
+        self.hash_map = {}  # Dict<Hex, int>. Non-existence means the tile is empty. For simplicity, coordinates are gonna be based around the center
 
     @classmethod
     def copy(cls, other):

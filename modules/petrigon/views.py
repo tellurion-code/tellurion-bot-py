@@ -6,6 +6,7 @@ from modules.game.views import GameView, PlayView
 from modules.petrigon.player import Player
 from modules.petrigon.hex import Hex
 from modules.petrigon.power import Power
+from modules.petrigon.types import Announcement
 
 
 class PanelView(GameView):
@@ -112,33 +113,34 @@ class FightView(PanelView, PlayView):
 
     @discord.ui.button(emoji="↖️", style=discord.ButtonStyle.blurple)
     async def move_up_left(self, button, interaction):
-        await self.try_to_move(interaction, Hex(0, -1))
+        await self.try_to_move(interaction, button.emoji, Hex(0, -1))
 
     @discord.ui.button(emoji="⬅️", style=discord.ButtonStyle.blurple)
     async def move_left(self, button, interaction):
-        await self.try_to_move(interaction, Hex(-1, 0))
+        await self.try_to_move(interaction, button.emoji, Hex(-1, 0))
 
     @discord.ui.button(emoji="↗️", style=discord.ButtonStyle.blurple)
     async def move_up_right(self, button, interaction):
-        await self.try_to_move(interaction, Hex(1, -1))
+        await self.try_to_move(interaction, button.emoji, Hex(1, -1))
     
     @discord.ui.button(emoji="↙️", style=discord.ButtonStyle.blurple, row=1)
     async def move_down_left(self, button, interaction):
-        await self.try_to_move(interaction, Hex(-1, 1))
+        await self.try_to_move(interaction, button.emoji, Hex(-1, 1))
     
     @discord.ui.button(emoji="➡️", style=discord.ButtonStyle.blurple, row=1)
     async def move_right(self, button, interaction):
-        await self.try_to_move(interaction, Hex(1, 0))
+        await self.try_to_move(interaction, button.emoji, Hex(1, 0))
     
     @discord.ui.button(emoji="↘️", style=discord.ButtonStyle.blurple, row=1)
     async def move_down_right(self, button, interaction):
-        await self.try_to_move(interaction, Hex(0, 1))
+        await self.try_to_move(interaction, button.emoji, Hex(0, 1))
 
-    async def try_to_move(self, interaction, direction):
+    async def try_to_move(self, interaction, emoji, direction):
         if interaction.user != self.game.current_player.user:
             return await interaction.response.defer()
         
         if self.game.current_player.move(direction):
+            self.game.last_input = emoji
             await self.game.current_player.end_turn(interaction)
         else:
             await interaction.response.send_message("Ce mouvement ne cause aucun changement du plateau.", ephemeral=True)

@@ -53,18 +53,18 @@ class Player:
         new_map = Map.copy(map)
         opponent = self.game.index_to_player(map.get(hex + direction))
 
-        attack = self.get_strength(map, hex, direction * -1) + self.on_attack()
-        defense = opponent.get_strength(map, hex + direction, direction) + opponent.on_defense()
+        attack = self.get_strength(map, hex, direction * -1) + self.on_attack(opponent)
+        defense = opponent.get_strength(map, hex + direction, direction) + opponent.on_defense(self)
 
         if attack >= defense:
             new_map.set(hex + direction, 0 if attack == defense else self.index)
 
         return new_map
     
-    def on_attack(self):
+    def on_attack(self, opponent):
         return 0
     
-    def on_defense(self):
+    def on_defense(self, opponent):
         return 0
     
     def get_strength(self, map, hex, direction):
@@ -91,7 +91,7 @@ class Player:
                     editor.new_map.set(hex, 0)
     
     def info(self, no_change=False):
-        score_change = f"({'+' if self.last_score_change > 0 else ''}{self.last_score_change})" if self.last_score_change and not no_change else ""
+        score_change = f"**({'+' if self.last_score_change > 0 else ''}{self.last_score_change})**" if self.last_score_change and not no_change else ""
         return f"{constants.TILE_COLORS[self.index]}{self.power.icon if self.power else ''} **{self}**: {self.score()} {score_change}"
 
     def __str__(self):

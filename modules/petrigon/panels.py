@@ -109,7 +109,7 @@ class FightPanel(Panel):
     @property
     def embed(self):
         embed = discord.Embed(color=constants.PLAYER_COLORS[self.game.turn])
-        embed.title = f"Partie de Petrigon | Manche {self.game.round} | Tour de {self.game.current_player}"
+        embed.title = f"Petrigon | Manche {self.game.round} | Tour de {self.game.current_player}"
         embed.description = f"### Plateau\n{self.game.map}"
 
         for announcement in self.game.announcements:
@@ -120,7 +120,7 @@ class FightPanel(Panel):
             )
 
         embed.add_field(
-            name=f"Joueurs | Score de Domination: {self.game.domination_score}",
+            name=f"Joueurs | Score de Domination: {self.game.domination_score}{' | Dernier choix: ' + self.game.last_input if self.game.last_input else ''}",
             value='\n'.join(self.game.players[id].info() for id in self.game.order)
         )
 

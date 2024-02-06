@@ -1,5 +1,7 @@
 """Power class."""
 
+import math
+
 from modules.petrigon.types import Announcement
 
 
@@ -39,7 +41,7 @@ class Attacker(Power):
     description = "A un bonus de +1 en attaque"
 
     def on_attack_decorator(self, func):
-        def decorated():
+        def decorated(opponent):
             return func() + 1
 
         return decorated
@@ -51,7 +53,7 @@ class Defender(Power):
     description = "A un bonus de +1 en défense"
 
     def on_defense_decorator(self, func):
-        def decorated():
+        def decorated(opponent):
             return func() + 1
 
         return decorated
@@ -80,5 +82,28 @@ class Glitcher(Power):
                 self.player.game.turn += len(self.player.game.players) - 1
                 self.double_turn = False
             await func(interaction)
+
+        return decorated
+
+
+class Pacifist(Power):
+    name = "Pacifiste"
+    icon = "🕊️"
+    description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué (jusqu'au tour 20)"
+
+    def __init__(self, player):
+        super().__init__(player)
+        self.war_with = []
+
+    def on_attack_decorator(self, func):
+        def decorated(opponent):
+            self.war_with.push(opponent.user.id)
+            return func()
+
+        return decorated
+
+    def on_defense_decorator(self, func):
+        def decorated(opponent):
+            return func() + (math.inf if opponent.user.id not in self.war_with and self.game.round < 20 else 0)
 
         return decorated

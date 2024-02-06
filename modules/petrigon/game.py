@@ -27,6 +27,7 @@ class Game:
 
         self.panel = None
         self.announcements = []
+        self.last_input = None
 
     @property
     def current_player(self):
@@ -71,6 +72,8 @@ class Game:
             self.players[id].place(q, r, rotations[len(self.players)][i])
 
         # Place walls
+        self.map.set(Hex(0, 0), 1)
+
         def validate_wall_placement(hex):
             if self.map.get(hex) != 0:
                 return False
@@ -125,21 +128,28 @@ class Game:
         self.announcements = []
 
     async def check_for_game_end(self, interaction):
-        potential_winner, alive_players = None, 0
+        potential_winner, max_score, alive_players = None, 0, 0
         for player in self.players.values():
-            if player.score() > self.domination_score:
+            if player.score() >= self.domination_score:
                 await self.end_game(player, "Domination")
                 alive_players = -1
                 break
 
             if player.score() > 0:
-                potential_winner = player
                 alive_players += 1
+
+            if player.score() > max_score:
+                potential_winner = player
+                max_score = max_score
         
         if alive_players == 1:
             await self.end_game(potential_winner, "Annihilation")
-        elif alive_players == 0:
+        
+        if alive_players == 0:
             await self.end_game(None, "Destruction Mutuelle")
+
+        if self.round >= 40:
+            await self.end_game(potential_winner, "Usure")
 
         await self.panel.update(interaction)
 
