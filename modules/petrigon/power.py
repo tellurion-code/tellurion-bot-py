@@ -35,6 +35,9 @@ class Power:
     def __str__(self):
         return f"{self.icon} {self.name}"
     
+    def __repr__(self):
+        return str(self)
+    
 
 class Attacker(Power):
     name = "Attaquant"

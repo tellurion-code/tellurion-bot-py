@@ -106,24 +106,24 @@ class MainClass(BaseClassPython):
                 await message.channel.send("Sous-section inconnue")
         else:
             await message.channel.send(embed=discord.Embed(
-                title=":small_orange_diamond: Règles de Petri :small_orange_diamond:",
+                title=":small_orange_diamond: Règles de Petrigon :small_orange_diamond:",
                 description="""
 :small_blue_diamond: **But du jeu** : :small_blue_diamond:
-Chaque joueur commence avec une troupe à un endroit aléatoire de la carte de 10x10 au début de la partie.
+Chaque joueur commence avec une troupe à un endroit aléatoire de la carte au début de la partie.
 Le gagnant est le joueur qui est le dernier avec des troupes encore vivantes, ou bien qui arrive à contrôler 50% de la carte.
 Après 30 tours de table complets (manche) sans qu'un gagnant ne soit déterminé, le joueur avec le plus de troupes gagne.
 
 :small_blue_diamond: **Déroulement d’un tour** : :small_blue_diamond:
- -  Le joueur choisit une direction
- -  Toutes ses troupes essaient de se répliquer dans cette direction:
-   -  Si la case dans cette direction est vide, une nouvelle troupe de sa couleur est créée
-   -  Si la case est occupée par une troupe alliée, rien ne se passe
-   -  Si la case est occupée par une troupe ennemie, un combat se déclenche entre cette troupe et celle qui essaie de se répliquer
+-  Le joueur choisit une direction
+-  Toutes ses troupes essaient de se répliquer dans cette direction:
+    -  Si la case dans cette direction est vide, une nouvelle troupe de sa couleur est créée
+    -  Si la case est occupée par une troupe alliée, rien ne se passe
+    -  Si la case est occupée par une troupe ennemie, un combat se déclenche entre cette troupe et celle qui essaie de se répliquer
 
 :small_blue_diamond: **Les combats** : :small_blue_diamond:
 Pour déterminer qui gagne le combat, il suffit de regarder le nombre de troupes alliées se trouvant en une ligne derrière les deux troupes:
- -  Si l'attaquant en a le plus, il se réplique sur le défenseur
- -  Si le défenseur en a le plus, rien ne se passe
- -  S'il y a égalité, le défenseur est tué mais l'attaquant ne se réplique pas
+-  Si l'attaquant en a le plus, il se réplique sur le défenseur
+-  Si le défenseur en a le plus, rien ne se passe
+-  S'il y a égalité, le défenseur est tué mais l'attaquant ne se réplique pas
                 """,
                 color=self.color))
