@@ -117,7 +117,7 @@ class Pacifist(Power):
 class General(Power):
     name = "Général"
     icon = "🚩"
-    description = "Une fois par partie, peut doubler la force de ses unités pour 2 tours"
+    description = "Une fois par partie, peut doubler la force de ses unités pour deux tours"
 
     activation_description = "Les unités du Général vont être doublées pour 2 tours"
     start_active = True
@@ -191,7 +191,7 @@ class Topologist(Power):
 class Swarm(Power):
     name = "Essaim"
     icon = "🐝"
-    description = "Commence avec 3 unités en triangle"
+    description = "Commence avec trois unités en triangle"
 
     def place_decorator(self, func):
         def decorated(hex, rotation, *args, **kwargs):
