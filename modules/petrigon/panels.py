@@ -110,6 +110,7 @@ class FightPanel(Panel):
         self.game.round = 1
         self.game.turn = 0
         self.game.current_player.start_turn()
+        self.game.setup_map()
         return await super().send(channel)
 
     @property

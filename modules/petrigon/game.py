@@ -51,6 +51,26 @@ class Game:
         self.order = [i for i in self.players.keys()]
         random.shuffle(self.order)
 
+        # Change panel
+        await self.panel.close()
+        if self.powers_enabled:
+            self.panel = await PowerPanel(self).send(self.channel)
+        else:
+            for player in self.players.values():
+                player.set_power(Power)  # No special ability
+            
+            self.panel = await FightPanel(self).send(self.channel)
+
+    async def finish_power_selection(self, interaction):
+        await interaction.response.defer()
+        await self.panel.close()
+
+        for player in self.players.values():
+            player.power.setup()
+
+        self.panel = await FightPanel(self).send(self.channel)
+
+    def setup_map(self):
         self.map = Map(size=self.map_size)
 
         # Place players
@@ -67,7 +87,7 @@ class Game:
         q = random.randrange(0, -r)
         for i, id in enumerate(self.order):
             self.players[id].index = i+2
-            self.players[id].place(q, r, rotations[len(self.players)][i])
+            self.players[id].place(Hex(q, r), rotations[len(self.players)][i])
 
         # Place walls
         self.map.set(Hex(0, 0), 1)
@@ -94,25 +114,6 @@ class Game:
 
                 self.map.set(hex, 1)
                 remaining_walls_to_place -= 1
-
-        # Change panel
-        await self.panel.close()
-        if self.powers_enabled:
-            self.panel = await PowerPanel(self).send(self.channel)
-        else:
-            for player in self.players.values():
-                player.set_power(Power)  # No special ability
-            
-            self.panel = await FightPanel(self).send(self.channel)
-
-    async def finish_power_selection(self, interaction):
-        await interaction.response.defer()
-        await self.panel.close()
-
-        for player in self.players.values():
-            player.power.setup()
-
-        self.panel = await FightPanel(self).send(self.channel)
 
     async def next_turn(self, interaction):
         last_turn = self.turn

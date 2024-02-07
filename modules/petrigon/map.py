@@ -51,6 +51,9 @@ class Map:
     def set(self, hex, value):
         if not self.is_inside(hex):
             return
+
+        if value == None:
+            raise ValueError(f"{value} is not a valid value to set a hex")
         
         if value == 0:
             return self.clear(hex)
@@ -71,6 +74,16 @@ class Map:
     
     def edit(self):
         return Map.MapEditor(self)
+    
+    def update(self, other, base_map=None):
+        """Apply all the differences between other and base_map (default: self) to the Map."""
+        if base_map == None: base_map = self
+
+        for hex, value in other.hexes():
+            if value != base_map.get(hex): self.set(hex, value)
+
+        for hex, value in base_map.hexes():
+            if value != other.get(hex): self.set(hex, other.get(hex))
     
     def __eq__(self, other):
         if not isinstance(other, Map):

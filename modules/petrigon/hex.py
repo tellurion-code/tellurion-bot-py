@@ -32,7 +32,7 @@ class Hex:
         return Hex(self.q + other.q, self.r + other.r)
     
     def __sub__(self, other):
-        return Hex(self.q - other.r, self.r - other.r)
+        return Hex(self.q - other.q, self.r - other.r)
     
     def __mul__(self, other):
         return Hex(self.q * other, self.r * other)
@@ -46,6 +46,9 @@ class Hex:
     
     def __ne__(self, other):
         return not self == other
+    
+    def __repr__(self):
+        return f"Hex({self.q}, {self.r}, {self.s})"
 
 
 AXIAL_DIRECTION_VECTORS = [

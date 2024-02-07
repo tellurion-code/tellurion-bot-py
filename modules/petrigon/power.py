@@ -2,6 +2,7 @@
 
 import math
 
+from modules.petrigon.hex import Hex
 from modules.petrigon.types import Announcement
 
 
@@ -85,7 +86,7 @@ class Glitcher(Power):
             if self.double_turn: 
                 self.player.game.turn += len(self.player.game.players) - 1
                 self.double_turn = False
-            await func(*args, **kwargs)
+            return await func(*args, **kwargs)
 
         return decorated
 
@@ -133,7 +134,7 @@ class General(Power):
     def start_turn_decorator(self, func):
         def decorated(*args, **kwargs):
             if self.doubled_turns > 0: self.doubled_turns -= 1
-            func(*args, **kwargs)
+            return func(*args, **kwargs)
 
         return decorated
 
@@ -147,4 +148,55 @@ class General(Power):
         def decorated(*args, **kwargs):
             return func(*args, **kwargs) + (f" (🚩 {self.doubled_turns} tours)" if self.doubled_turns > 0 else "")
         
+        return decorated
+
+
+class Topologist(Power):
+    name = "Topologiste"
+    icon = "🍩"
+    description = "Considère les bords du plateau comme adjacents"
+
+    def __init__(self, player):
+        super().__init__(player)
+        n = self.player.game.map_size
+        self.mirror_centers = [Hex(2*n + 1, -n).rotate(i) for i in range(6)]
+
+    def wraparound_hex(self, map, hex):
+        if not map.is_inside(hex):
+            for center in self.mirror_centers:
+                moved = hex - center
+                if map.is_inside(moved): return moved
+
+        return hex
+
+    def move_tile_decorator(self, func):
+        def decorated(map, hex, target, direction, *args, **kwargs):
+            target = self.wraparound_hex(map, target)
+            return func(map, hex, target, direction, *args, **kwargs)
+        
+        return decorated
+    
+    def get_strength_decorator(self, func):
+        def decorated(map, hex, direction, *args, **kwargs):
+            strength = 0
+            while map.get(hex) == self.player.index:
+                strength += 1
+                hex = self.wraparound_hex(map, hex + direction)
+
+            return strength
+
+        return decorated
+
+
+class Swarm(Power):
+    name = "Essaim"
+    icon = "🐝"
+    description = "Commence avec 3 unités en triangle"
+
+    def place_decorator(self, func):
+        def decorated(hex, rotation, *args, **kwargs):
+            func(hex, rotation, *args, **kwargs)
+            func(hex + Hex(0, -1), rotation, *args, **kwargs)
+            func(hex + Hex(1, -1), rotation, *args, **kwargs)
+            
         return decorated

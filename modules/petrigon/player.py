@@ -2,8 +2,6 @@
 
 from modules.petrigon import constants
 from modules.petrigon.map import Map
-from modules.petrigon.hex import Hex
-
 
 class Player:
     def __init__(self, game, user=None):
@@ -22,27 +20,16 @@ class Player:
     def set_power(self, power_class):
         self.power = power_class(self)
 
-    def place(self, q, r, rotation):
-        hex = Hex(q, r).rotate(rotation)
-        self.game.map.set(hex, self.index)
+    def place(self, hex, rotation):
+        self.game.map.set(hex.rotate(rotation), self.index)
 
     def start_turn(self):
         pass
 
     def move(self, direction):
         with self.game.map.edit() as editor:
-            for hex, value in editor.map.hexes():
-                if value == self.index:
-                    moving_to = editor.map.get(hex + direction)
-                    if moving_to == None or moving_to == 1:
-                        continue
-
-                    if moving_to == 0:
-                        editor.new_map.set(hex + direction, self.index)
-                        continue
-
-                    if moving_to != self.index:
-                        editor.new_map = self.fight(editor.new_map, hex, direction)
+            for hex, _ in editor.map.hexes():
+                editor.new_map.update(self.move_tile(editor.map, hex, hex + direction, direction), base_map=editor.map)
 
             if editor.new_map == editor.map:
                 return False
@@ -52,15 +39,32 @@ class Player:
 
         return True
     
-    def fight(self, map, hex, direction):
+    def move_tile(self, map, hex, target, direction):
         new_map = Map.copy(map)
-        opponent = self.game.index_to_player(map.get(hex + direction))
+        if map.get(hex) == self.index:
+            moving_to = map.get(target)
+            if moving_to == None or moving_to == 1:
+                return new_map
+
+            if moving_to == 0:
+                new_map.set(target, self.index)
+                return new_map
+
+            if moving_to != self.index:
+                new_map.update(self.fight(map, hex, target, direction), base_map=map)
+                return new_map
+        
+        return new_map
+    
+    def fight(self, map, hex, target, direction):
+        new_map = Map.copy(map)
+        opponent = self.game.index_to_player(map.get(target))
 
         attack = self.get_strength(map, hex, direction * -1) + self.on_attack(opponent)
-        defense = opponent.get_strength(map, hex + direction, direction) + opponent.on_defense(self)
+        defense = opponent.get_strength(map, target, direction) + opponent.on_defense(self)
 
         if attack >= defense:
-            new_map.set(hex + direction, 0 if attack == defense else self.index)
+            new_map.set(target, 0 if attack == defense else self.index)
 
         return new_map
     
