@@ -97,7 +97,7 @@ class MainClass(BaseClassPython):
 
                 for c in Power.__subclasses__():
                     embed.add_field(
-                        name=str(c),
+                        name=f"{c.icon} {c.name}",
                         value=c.description
                     )
                 
