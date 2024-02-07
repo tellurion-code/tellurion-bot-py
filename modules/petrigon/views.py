@@ -56,14 +56,14 @@ class JoinView(PanelView):
     @discord.ui.button(label="Pas assez de joueurs", disabled=True, style=discord.ButtonStyle.gray)
     async def start(self, button, interaction):
         if interaction.user.id != self.game.admin:
-            return await interaction.response.defer()
+            return await interaction.response.send_message("Seul le créateur de la partie peut la démarrer", ephemeral=True)
 
         await self.game.start()
 
     @discord.ui.button(label="Pouvoirs désactivés", emoji="🦸", style=discord.ButtonStyle.gray)
     async def toggle_powers(self, button, interaction):
         if interaction.user.id != self.game.admin:
-            await interaction.response.defer()
+            return await interaction.response.send_message("Seul le créateur de la partie peut changer les paramètres", ephemeral=True)
 
         self.game.powers_enabled = not self.game.powers_enabled
         button.label = f"Pouvoirs {'activés' if self.game.powers_enabled else 'désactivés'}" 
@@ -108,7 +108,7 @@ class PowerView(PanelView, PlayView):
     @discord.ui.button(label="Choix restants à faire", disabled=True, style=discord.ButtonStyle.gray, row=1)
     async def start(self, button, interaction):
         if interaction.user.id != self.game.admin:
-            return await interaction.response.defer()
+            return await interaction.response.send_message("Seul le créateur de la partie peut la démarrer", ephemeral=True)
 
         await self.game.finish_power_selection(interaction)
 
