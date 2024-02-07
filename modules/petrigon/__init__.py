@@ -17,7 +17,7 @@ class MainClass(BaseClassPython):
         }
     }
     help_active = True
-    command_text = "hextri"
+    command_text = "petrigon"
     color = 0x00FFBF
 
     def __init__(self, client):
