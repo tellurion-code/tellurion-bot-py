@@ -14,6 +14,7 @@ class Game:
     def __init__(self, mainclass):
         self.mainclass = mainclass
         self.channel = None
+        self.admin = None
 
         self.map = None
         self.players = {}
@@ -45,6 +46,7 @@ class Game:
 
     async def on_creation(self, message):
         self.channel = message.channel
+        self.admin = message.author.id
         self.panel = await JoinPanel(self).send(self.channel)
 
     async def start(self):
