@@ -42,8 +42,8 @@ class Attacker(Power):
     description = "A un bonus de +1 en attaque"
 
     def on_attack_decorator(self, func):
-        def decorated(opponent):
-            return func(opponent) + 1
+        def decorated(*args, **kwargs):
+            return func(*args, **kwargs) + 1
 
         return decorated
 
@@ -54,8 +54,8 @@ class Defender(Power):
     description = "A un bonus de +1 en défense"
 
     def on_defense_decorator(self, func):
-        def decorated(opponent):
-            return func(opponent) + 1
+        def decorated(*args, **kwargs):
+            return func(*args, **kwargs) + 1
 
         return decorated
 
@@ -78,11 +78,11 @@ class Glitcher(Power):
         return super().use()
 
     def end_turn_decorator(self, func):
-        async def decorated(interaction):
+        async def decorated(*args, **kwargs):
             if self.double_turn: 
                 self.player.game.turn += len(self.player.game.players) - 1
                 self.double_turn = False
-            await func(interaction)
+            await func(*args, **kwargs)
 
         return decorated
 
@@ -97,15 +97,15 @@ class Pacifist(Power):
         self.war_with = []
 
     def on_attack_decorator(self, func):
-        def decorated(opponent):
+        def decorated(opponent, *args, **kwargs):
             self.war_with.append(opponent.user.id)
-            return func(opponent)
+            return func(opponent, *args, **kwargs)
 
         return decorated
 
     def on_defense_decorator(self, func):
-        def decorated(opponent):
-            return func(opponent) + (math.inf if opponent.user.id not in self.war_with else 0)
+        def decorated(opponent, *args, **kwargs):
+            return func(opponent, *args, **kwargs) + (math.inf if opponent.user.id not in self.war_with else 0)
 
         return decorated
 
@@ -128,20 +128,20 @@ class General(Power):
         return super().use()
 
     def start_turn_decorator(self, func):
-        def decorated():
+        def decorated(*args, **kwargs):
             if self.doubled_turns > 0: self.doubled_turns -= 1
-            func()
+            func(*args, **kwargs)
 
         return decorated
 
     def get_strength_decorator(self, func):
-        def decorated(*args):
-            return func(*args) * (2 if self.doubled_turns > 0 else 1)
+        def decorated(*args, **kwargs):
+            return func(*args, **kwargs) * (2 if self.doubled_turns > 0 else 1)
 
         return decorated
     
     def info_decorator(self, func):
-        def decorated():
-            return func() + (f" (🚩 {self.doubled_turns} tours)" if self.doubled_turns > 0 else "")
+        def decorated(*args, **kwargs):
+            return func(*args, **kwargs) + (f" (🚩 {self.doubled_turns} tours)" if self.doubled_turns > 0 else "")
         
         return decorated

@@ -35,7 +35,7 @@ class Game:
     
     @property
     def domination_score(self):
-        return int(math.ceil(self.map.hex_count / 2.)) if self.map else None
+        return int(math.ceil((self.map.hex_count - self.wall_count * 6 + 1) / 2.)) if self.map else None
     
     def index_to_player(self, index):
         for player in self.players.values():
@@ -63,7 +63,7 @@ class Game:
             [0, 1, 2, 3, 5],    # We leave a gap between the last two players as last player advantage
             [0, 1, 2, 3, 4, 5]
         ]
-        r = -int(math.ceil(self.map_size/2.))
+        r = -int(math.ceil(self.map_size * 2./3.))
         q = random.randrange(0, -r)
         for i, id in enumerate(self.order):
             self.players[id].index = i+2
@@ -147,7 +147,7 @@ class Game:
         if alive_players == 0:
             await self.end_game(None, "Destruction Mutuelle")
 
-        if self.round >= 40:
+        if self.round >= 30:
             await self.end_game(potential_winner, "Usure")
 
         await self.panel.update(interaction)
