@@ -3,10 +3,10 @@
 import discord
 
 from modules.game.views import GameView, PlayView
+from modules.petrigon.bot import GameBot
 from modules.petrigon.player import Player
 from modules.petrigon.hex import Hex
 from modules.petrigon.power import Power
-from modules.petrigon.types import Announcement
 
 
 class PanelView(GameView):
@@ -37,14 +37,14 @@ class JoinView(PanelView):
     def update(self):
         super().update()
         can_start, message = self.check_for_enough_players()
-        self.children[1].label = message
-        self.children[1].disabled = not can_start
-        self.children[1].style = discord.ButtonStyle.green if can_start else discord.ButtonStyle.gray
+        self.children[3].label = message
+        self.children[3].disabled = not can_start
+        self.children[3].style = discord.ButtonStyle.green if can_start else discord.ButtonStyle.gray
 
     @discord.ui.button(label="Rejoindre ou quitter", style=discord.ButtonStyle.blurple)
     async def join_or_leave(self, button, interaction):
-        if len(self.game.players) > 6:
-            return await interaction.response.send_message("Le nombre maximum de joueurs est atteint.", ephemeral=True)
+        if len(self.game.players) >= 6:
+            return await interaction.response.send_message("Le nombre maximum de joueurs est atteint", ephemeral=True)
 
         if interaction.user.id not in self.game.players:
             self.game.players[interaction.user.id] = Player(self.game, interaction.user)
@@ -52,13 +52,37 @@ class JoinView(PanelView):
             del self.game.players[interaction.user.id]
 
         await self.panel.update(interaction)
+
+    @discord.ui.button(label="+", emoji="🤖", style=discord.ButtonStyle.blurple)
+    async def add_bot(self, button, interaction):
+        if interaction.user.id != self.game.admin:
+            return await interaction.response.send_message("Seul le créateur de la partie peut changer les paramètres", ephemeral=True)
+        
+        if len(self.game.players) >= 6:
+            return await interaction.response.send_message("Le nombre maximum de joueurs est atteint", ephemeral=True)
+        
+        id = min(min(self.game.players.keys(), default=0), 0) - 1
+        self.game.players[id] = GameBot(self.game, id, depth=2)
+        return await self.panel.update(interaction)
+    
+    @discord.ui.button(label="-", emoji="🤖", style=discord.ButtonStyle.red)
+    async def remove_bot(self, button, interaction):
+        if interaction.user.id != self.game.admin:
+            return await interaction.response.send_message("Seul le créateur de la partie peut changer les paramètres", ephemeral=True)
+
+        id = min(self.game.players.keys(), default=0)
+        if id == 0:
+            return await interaction.response.send_message("Aucun bot n'est dans cette partie", ephemeral=True)
+        
+        del self.game.players[id]
+        return await self.panel.update(interaction)
     
     @discord.ui.button(label="Pas assez de joueurs", disabled=True, style=discord.ButtonStyle.gray)
     async def start(self, button, interaction):
         if interaction.user.id != self.game.admin:
             return await interaction.response.send_message("Seul le créateur de la partie peut la démarrer", ephemeral=True)
 
-        await self.game.start()
+        await self.game.prepare_game()
 
     @discord.ui.button(label="Pouvoirs désactivés", emoji="🦸", style=discord.ButtonStyle.gray)
     async def toggle_powers(self, button, interaction):
@@ -72,6 +96,8 @@ class JoinView(PanelView):
 
 
 class PowerView(PanelView, PlayView):
+    update_on_init = True
+
     def __init__(self, game, panel, *args, **kwargs):
         super().__init__(game, panel, *args, **kwargs)
 
@@ -87,7 +113,6 @@ class PowerView(PanelView, PlayView):
         self.select.callback = self.callback
         self.add_item(self.select)
         
-
     def check_for_selection(self):
         if sum(1 for x in self.game.players.values() if x.power == None) > 0:
             return False, "Choix restants à faire"
@@ -147,21 +172,14 @@ class FightView(PanelView, PlayView):
         if interaction.user != self.game.current_player.user:
             return await interaction.response.defer()
         
-        if self.game.current_player.move(direction):
-            self.game.last_input = str(emoji)
-            await self.game.current_player.end_turn(interaction)
-        else:
+        success = await self.game.handle_direction(direction, interaction)
+
+        if not success:
             await interaction.response.send_message("Ce mouvement ne cause aucun changement du plateau.", ephemeral=True)
 
     @discord.ui.button(emoji="💀", style=discord.ButtonStyle.red)
     async def forfeit(self, button, interaction):
-        player = self.game.players[interaction.user.id]
-        player.forfeit()
-        
-        if player == self.game.current_player:
-            await self.game.next_turn(interaction)
-        else:
-            await self.game.check_for_game_end(interaction)
+        await self.game.players[interaction.user.id].forfeit(interaction)
 
     @discord.ui.button(emoji="🦸", style=discord.ButtonStyle.green, row=1)
     async def use_ability(self, button, interaction):

@@ -102,14 +102,14 @@ class Pacifist(Power):
 
     def on_attack_decorator(self, func):
         def decorated(opponent, *args, **kwargs):
-            self.war_with.append(opponent.user.id)
+            self.war_with.append(opponent.id)
             return func(opponent, *args, **kwargs)
 
         return decorated
 
     def on_defense_decorator(self, func):
         def decorated(opponent, *args, **kwargs):
-            return func(opponent, *args, **kwargs) + (math.inf if opponent.user.id not in self.war_with else 0)
+            return func(opponent, *args, **kwargs) + (math.inf if opponent.id not in self.war_with else 0)
 
         return decorated
 
@@ -132,9 +132,9 @@ class General(Power):
         return super().use()
 
     def start_turn_decorator(self, func):
-        def decorated(*args, **kwargs):
+        async def decorated(*args, **kwargs):
             if self.doubled_turns > 0: self.doubled_turns -= 1
-            return func(*args, **kwargs)
+            return await func(*args, **kwargs)
 
         return decorated
 

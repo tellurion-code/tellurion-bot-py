@@ -4,9 +4,10 @@ import discord
 import math
 import random
 
+from modules.petrigon.bot import GameBot
 from modules.petrigon.map import Map
-from modules.petrigon.hex import Hex
-from modules.petrigon.power import Power
+from modules.petrigon.hex import DIRECTIONS_TO_EMOJIS, Hex
+from modules.petrigon.power import Attacker, Defender, Power, Swarm, Topologist
 from modules.petrigon.panels import FightPanel, JoinPanel, PowerPanel
 
 
@@ -31,12 +32,12 @@ class Game:
         self.last_input = None
 
     @property
-    def current_player(self):
-        return self.players[self.order[self.turn]]
+    def domination_score(self):
+        return int(math.ceil((self.map.hex_count - self.wall_count * 6 - 1) / 2.)) if self.map else None
     
     @property
-    def domination_score(self):
-        return int(math.ceil((self.map.hex_count - self.wall_count * 6 + 1) / 2.)) if self.map else None
+    def current_player(self):
+        return self.turn_to_player(self.turn)
     
     def index_to_player(self, index):
         for player in self.players.values():
@@ -44,24 +45,44 @@ class Game:
         
         return None
 
+    def player_turn(self, player):
+        return self.order.index(player.id)
+    
+    def next_valid_turn(self, turn):
+        last_turn = turn
+        while True:
+            turn = (turn + 1) % len(self.players)
+            if self.players[self.order[turn]].score() > 0 or turn == last_turn:
+                return turn
+            
+    def turn_to_player(self, turn):
+        return self.players[self.order[turn]]
+    
+    def next_player(self, player):
+        return self.turn_to_player(self.next_valid_turn(self.player_turn(player)))
+
     async def on_creation(self, message):
         self.channel = message.channel
         self.admin = message.author.id
         self.panel = await JoinPanel(self).send(self.channel)
 
-    async def start(self):
+    async def prepare_game(self):
         self.order = [i for i in self.players.keys()]
         random.shuffle(self.order)
 
         # Change panel
         await self.panel.close()
         if self.powers_enabled:
+            for player in self.players.values():
+                if isinstance(player, GameBot):
+                    player.set_power(random.choice((Attacker, Defender, Swarm, Topologist)))
+
             self.panel = await PowerPanel(self).send(self.channel)
         else:
             for player in self.players.values():
                 player.set_power(Power)  # No special ability
             
-            self.panel = await FightPanel(self).send(self.channel)
+            await self.start()
 
     async def finish_power_selection(self, interaction):
         await interaction.response.defer()
@@ -70,7 +91,15 @@ class Game:
         for player in self.players.values():
             player.power.setup()
 
+        await self.start()
+
+    async def start(self):
+        self.round = 1
+        self.turn = 0
+        self.setup_map()
+
         self.panel = await FightPanel(self).send(self.channel)
+        await self.current_player.start_turn()
 
     def setup_map(self):
         self.map = Map(size=self.map_size)
@@ -82,8 +111,8 @@ class Game:
             [0, 3],
             [0, 2, 4],
             [0, 1, 3, 4],
-            [0, 1, 2, 3, 5],    # We leave a gap between the last two players as last player advantage
-            [0, 1, 2, 3, 4, 5]
+            [0, 1, 5, 2, 4],    # We leave a gap between the last two players as last player advantage
+            [0, 2, 4, 1, 3, 5]
         ]
         r = -int(math.ceil(self.map_size * 2./3.))
         q = random.randrange(0, -r)
@@ -117,43 +146,58 @@ class Game:
                 self.map.set(hex, 1)
                 remaining_walls_to_place -= 1
 
+    async def handle_direction(self, direction, interaction=None):
+        with self.map.edit() as editor:
+            editor.new_map = self.current_player.move(editor.map, direction)
+
+            if editor.new_map == editor.map:
+                return False
+
+            for player in self.players.values():
+                player.last_score_change = player.score(editor.new_map) - player.score(editor.map)
+
+        self.last_input = DIRECTIONS_TO_EMOJIS[direction]    
+        await self.current_player.end_turn(interaction)
+        return True
+
     async def next_turn(self, interaction):
-        last_turn = self.turn
-        while True:
-            self.turn = (self.turn + 1) % len(self.players)
-            if self.turn == 0: self.round += 1
-            if self.current_player.score() > 0 or self.turn == last_turn:
-                break
-
-        self.current_player.start_turn()
-        await self.check_for_game_end(interaction)
-        self.announcements = []
-
-    async def check_for_game_end(self, interaction):
-        potential_winner, max_score, alive_players = None, 0, 0
-        for player in self.players.values():
-            if player.score() >= self.domination_score:
-                await self.end_game(player, "Domination")
-                alive_players = -1
-                break
-
-            if player.score() > 0:
-                alive_players += 1
-
-            if player.score() > max_score:
-                potential_winner = player
-                max_score = max_score
-        
-        if alive_players == 1:
-            await self.end_game(potential_winner, "Annihilation")
-        
-        if alive_players == 0:
-            await self.end_game(None, "Destruction Mutuelle")
-
-        if self.round >= 30:
-            await self.end_game(potential_winner, "Usure")
+        next_turn = self.next_valid_turn(self.turn)
+        if next_turn <= self.turn: self.round += 1
+        self.turn = next_turn
 
         await self.panel.update(interaction)
+        self.announcements = []
+
+        winner, reason = self.check_game_over()
+        if reason:
+            await self.end_game(winner, reason)
+        else:
+            await self.current_player.start_turn()
+        
+    def check_game_over(self):
+        potential_winner, max_score, alive_players = None, 0, 0
+        for player in self.players.values():
+            score = player.score()
+            if score >= self.domination_score:
+                return player, "Domination"
+
+            if score > 0:
+                alive_players += 1
+
+            if score > max_score:
+                potential_winner = player
+                max_score = score
+        
+        if alive_players == 1:
+            return potential_winner, "Annihilation"
+        
+        if alive_players == 0:
+            return None, "Destruction Mutuelle"
+
+        if self.round >= 30:
+            return potential_winner, "Usure"
+
+        return None, None
 
     async def end_game(self, winner, reason):
         embed = discord.Embed(title=f"Petrigon | Victoire de {winner if winner else 'personne'} par {reason}", color=self.mainclass.color)

@@ -87,7 +87,7 @@ class JoinPanel(Panel):
     def embed(self):
         embed = discord.Embed(color=self.game.mainclass.color)
         embed.title = f"Partie de Petrigon | Joueurs ({len(self.game.players)}) :"
-        embed.description = '\n'.join([x.user.mention for x in self.game.players.values()])
+        embed.description = '\n'.join([f"- {x}" for x in self.game.players.values()])
         return embed
     
 
@@ -105,14 +105,7 @@ class PowerPanel(Panel):
 
 class FightPanel(Panel):
     view_class = FightView
-
-    async def send(self, channel):
-        self.game.round = 1
-        self.game.turn = 0
-        self.game.current_player.start_turn()
-        self.game.setup_map()
-        return await super().send(channel)
-
+    
     @property
     def embed(self):
         embed = discord.Embed(color=constants.PLAYER_COLORS[self.game.turn])

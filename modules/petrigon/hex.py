@@ -42,7 +42,7 @@ class Hex:
         return self.q * 13 + self.r * 17
     
     def __eq__(self, other):
-        return isinstance(other, Hex) and self.__hash__() == other.__hash__()
+        return isinstance(other, Hex) and hash(self) == hash(other)
     
     def __ne__(self, other):
         return not self == other
@@ -55,3 +55,11 @@ AXIAL_DIRECTION_VECTORS = [
     Hex(+1, 0), Hex(+1, -1), Hex(0, -1), 
     Hex(-1, 0), Hex(-1, +1), Hex(0, +1), 
 ]
+DIRECTIONS_TO_EMOJIS = {
+    Hex(+1, 0): "➡️", 
+    Hex(+1, -1): "↗️",
+    Hex(0, -1): "↖️", 
+    Hex(-1, 0): "⬅️", 
+    Hex(-1, +1): "↙️", 
+    Hex(0, +1): "↘️", 
+}

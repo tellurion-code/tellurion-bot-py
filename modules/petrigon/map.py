@@ -1,5 +1,7 @@
 """Map class."""
 
+import random
+
 from modules.petrigon import constants
 from modules.petrigon.hex import Hex
 
@@ -19,16 +21,41 @@ class Map:
         def __exit__(self, exc_type, exc_value, traceback):
             if exc_type == None:
                 self.map.hash_map = self.new_map.hash_map
+
+
+    class ZobristHash():
+        hash_tables = {}
+
+        def __init__(self, size):
+            if size in self.hash_tables: 
+                self.zobrist_hash = self.hash_tables[size]
+                return
+
+            self.zobrist_hash = self.hash_tables[size] = {}
+            for r in range(-size, size+1):
+                hex = Hex(max(0, -r) - size, r)
+
+                while hex.length <= size:
+                    self.zobrist_hash[hex] = {i+1: random.getrandbits(64) for i in range(7)}
+                    hex += Hex(1, 0)
+
+        def hash(self, map):
+            hash = 0
+            for hex, value in map.items():
+                hash ^= self.zobrist_hash[hex][value]
+
+            return hash
     
 
     def __init__(self, size):
-        self.size = size    # This is a hexagonal shaped hex grid, so this is the number of hexes from the center (size of 1 = "3x3")
-        self.hash_map = {}  # Dict<Hex, int>. Non-existence means the tile is empty. For simplicity, coordinates are gonna be based around the center
+        self.size = size                            # This is a hexagonal shaped hex grid, so this is the number of hexes from the center (size of 1 = "3x3")
+        self.hash_map = {}                          # Dict<Hex, int>. Non-existence means the tile is empty. For simplicity, coordinates are gonna be based around the center
+        self.zobrist_hash = Map.ZobristHash(size)   # Hashing handler
 
     @classmethod
     def copy(cls, other):
         map = cls(other.size)
-        map.hash_map = {i: x for i, x in other.hash_map.items()}
+        map.hash_map = other.hash_map.copy()
         return map
 
     @property
@@ -54,10 +81,10 @@ class Map:
 
         if value == None:
             raise ValueError(f"{value} is not a valid value to set a hex")
-        
+
         if value == 0:
             return self.clear(hex)
-        
+
         self.hash_map[hex] = value
 
     def clear(self, hex):
@@ -69,8 +96,11 @@ class Map:
         
         del self.hash_map[hex]
 
-    def hexes(self):
+    def items(self):
         return self.hash_map.items()
+    
+    def hexes(self):
+        return self.hash_map.keys()
     
     def edit(self):
         return Map.MapEditor(self)
@@ -78,12 +108,12 @@ class Map:
     def update(self, other, base_map=None):
         """Apply all the differences between other and base_map (default: self) to the Map."""
         if base_map == None: base_map = self
+        if other == base_map: return
 
-        for hex, value in other.hexes():
+        hexes = set((*base_map.hexes(), *other.hexes()))
+        for hex in hexes:
+            value = other.get(hex)
             if value != base_map.get(hex): self.set(hex, value)
-
-        for hex, value in base_map.hexes():
-            if value != other.get(hex): self.set(hex, other.get(hex))
     
     def __eq__(self, other):
         if not isinstance(other, Map):
@@ -92,9 +122,8 @@ class Map:
         if len(self.hash_map) != len(other.hash_map):
             return False
         
-        for hex, value in self.hash_map.items():
-            if other.get(hex) != value:
-                return False
+        if any(other.get(hex) != value for hex, value in self.hash_map.items()):
+            return False
             
         return True
     
@@ -112,6 +141,35 @@ class Map:
                 value = self.get(Hex(q, r))
                 string += constants.TILE_COLORS[-1] if value == None else constants.TILE_COLORS[value]
         
-            string += "\n"
+            string = string.rstrip(constants.TILE_COLORS[-1]) + "\n"
 
         return string
+    
+    def __repr__(self):
+        lines = []
+        empty_count = 0
+        for r in range(-self.size, self.size+1):
+            hex = Hex(max(0, -r) - self.size, r)
+            line = ""
+
+            while self.is_inside(hex):
+                value = self.get(hex)
+                hex += Hex(1, 0)
+                if value == 0:
+                    empty_count += 1
+                else:
+                    if empty_count > 0:
+                        line += str(empty_count)
+                        empty_count = 0
+                    
+                    line += "X" if value == 1 else chr(63 + value)
+
+            if empty_count > 0:
+                line += str(empty_count)
+                empty_count = 0
+            lines.append(line)
+
+        return f"Map({'/'.join(lines)})"
+
+    def __hash__(self):
+        return self.zobrist_hash.hash(self)
