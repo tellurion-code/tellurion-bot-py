@@ -41,4 +41,5 @@ class GameView(discord.ui.View):
 
 class PlayView(GameView):
     async def interaction_check(self, interaction):
-        return interaction.user.id in self.game.players
+        admin = self.game.admin if hasattr(self.game, "admin") else 0
+        return interaction.user.id in self.game.players or interaction.user.id == admin
