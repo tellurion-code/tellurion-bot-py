@@ -4,11 +4,11 @@ import discord
 import math
 import random
 
-from modules.petrigon.bot import GameBot
 from modules.petrigon.map import Map
-from modules.petrigon.hex import DIRECTIONS_TO_EMOJIS, Hex
-from modules.petrigon.power import Attacker, Defender, Power, Swarm, Topologist
+from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, DIRECTIONS_TO_EMOJIS, Hex
 from modules.petrigon.panels import FightPanel, JoinPanel, PowerPanel
+from modules.petrigon.power import Attacker, Defender, Liquid, Power, Swarm, Topologist
+from modules.petrigon.bot import GameBot
 
 
 class Game:
@@ -33,7 +33,7 @@ class Game:
 
     @property
     def domination_score(self):
-        return int(math.ceil((self.map.hex_count - self.wall_count * 6 - 1))) * self.domination_fraction if self.map else None
+        return int(math.ceil((self.map.hex_count - self.wall_count * 6 - 1)) * self.domination_fraction) if self.map else None
     
     @property
     def domination_fraction(self):
@@ -56,7 +56,7 @@ class Game:
         last_turn = turn
         while True:
             turn = (turn + 1) % len(self.players)
-            if self.players[self.order[turn]].score() > 0 or turn == last_turn:
+            if any(self.players[self.order[turn]].move(self.map, direction) for direction in AXIAL_DIRECTION_VECTORS) or turn == last_turn:
                 return turn
             
     def turn_to_player(self, turn):
@@ -79,7 +79,7 @@ class Game:
         if self.powers_enabled:
             for player in self.players.values():
                 if isinstance(player, GameBot):
-                    player.set_power(random.choice((Attacker, Defender, Swarm, Topologist)))
+                    player.set_power(random.choice((Attacker, Defender, Swarm, Topologist, Liquid)))
 
             self.panel = await PowerPanel(self).send(self.channel)
         else:
@@ -151,15 +151,18 @@ class Game:
                 remaining_walls_to_place -= 1
 
     async def handle_direction(self, direction, interaction=None):
-        with self.map.edit() as editor:
-            editor.new_map = self.current_player.move(editor.map, direction)
+        result = self.current_player.move(self.map, direction)
+        if not result.valid:
+            return False
 
-            if editor.new_map == None:
-                return False
+        for fight in result.fights:
+            fight.attacker.on_fight(fight)
+            fight.defender.on_fight(fight)
 
-            for player in self.players.values():
-                player.last_score_change = player.score(editor.new_map) - player.score(editor.map)
+        for player in self.players.values():
+            player.last_score_change = player.score(result.map) - player.score(self.map)
 
+        self.map = result.map
         self.last_input = DIRECTIONS_TO_EMOJIS[direction]    
         await self.current_player.end_turn(interaction)
         return True
@@ -211,6 +214,9 @@ class Game:
 
     async def end(self):
         await self.panel.close()
+        self.players.clear()
+        del self.map
+        del self.panel
         del self.mainclass.games[self.channel.id]
         # self.delete_save()
 

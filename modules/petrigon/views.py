@@ -3,8 +3,8 @@
 import discord
 
 from modules.game.views import GameView, PlayView
-from modules.petrigon.bot import GameBot
 from modules.petrigon.player import Player
+from modules.petrigon.bot import GameBot
 from modules.petrigon.hex import Hex
 from modules.petrigon.power import Power
 

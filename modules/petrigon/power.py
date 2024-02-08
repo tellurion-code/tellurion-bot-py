@@ -3,6 +3,7 @@
 import math
 
 from modules.petrigon.hex import Hex
+from modules.petrigon.map import Map
 from modules.petrigon.types import Announcement
 
 
@@ -22,6 +23,8 @@ class Power:
         # Get all methods ending with "_decorator" and apply them to the player
         for method_name in (func for func in dir(self.__class__) if callable(getattr(self, func)) and func.endswith("_decorator")):
             player_method_name = method_name.removesuffix("_decorator")
+            if not hasattr(self.player, player_method_name): continue
+
             player_method = getattr(self.player, player_method_name)
             decorator = getattr(self, method_name)
             setattr(self.player, player_method_name, decorator(player_method))
@@ -45,7 +48,7 @@ class Attacker(Power):
     icon = "🗡️"
     description = "A un bonus de +1 en attaque"
 
-    def on_attack_decorator(self, func):
+    def attack_bonus_decorator(self, func):
         def decorated(*args, **kwargs):
             return func(*args, **kwargs) + 1
 
@@ -57,7 +60,7 @@ class Defender(Power):
     icon = "🛡️"
     description = "A un bonus de +1 en défense"
 
-    def on_defense_decorator(self, func):
+    def defense_bonus_decorator(self, func):
         def decorated(*args, **kwargs):
             return func(*args, **kwargs) + 1
 
@@ -100,16 +103,16 @@ class Pacifist(Power):
         super().__init__(player)
         self.war_with = []
 
-    def on_attack_decorator(self, func):
-        def decorated(opponent, *args, **kwargs):
-            self.war_with.append(opponent.id)
-            return func(opponent, *args, **kwargs)
+    def on_fight_decorator(self, func):
+        def decorated(fight, *args, **kwargs):
+            if fight.attacker == self.player: self.war_with.append(fight.defender.id)
+            return func(fight, *args, **kwargs)
 
         return decorated
 
-    def on_defense_decorator(self, func):
+    def defense_bonus_decorator(self, func):
         def decorated(opponent, *args, **kwargs):
-            return func(opponent, *args, **kwargs) + (math.inf if opponent.id not in self.war_with else 0)
+            return math.inf if opponent.id not in self.war_with else func(opponent, *args, **kwargs)
 
         return decorated
 
@@ -186,6 +189,12 @@ class Topologist(Power):
             return strength
 
         return decorated
+    
+    def evaluate_for_player_decorate(self, func):
+        def decorated(map, player):
+            return sum(map.size - hex.length + 1 for hex, value in map.items() if value == player.index)
+
+        return decorated
 
 
 class Swarm(Power):
@@ -199,4 +208,36 @@ class Swarm(Power):
             func(hex + Hex(0, -1), rotation, *args, **kwargs)
             func(hex + Hex(1, -1), rotation, *args, **kwargs)
             
+        return decorated
+
+
+class Liquid(Power):
+    name = "Liquide"
+    icon = "💧"
+    description = "Se déplace dans la direction choisie avant de se répliquer"
+
+    def move_decorator(self, func):
+        def decorated(map, direction):
+            first_result = func(map, direction)
+            if not first_result.valid: return first_result
+            
+            new_map = Map.copy(first_result.map)
+            for hex, value in first_result.map.items():
+                if value == self.player.index and first_result.map.get(hex - direction) != self.player.index:
+                    wall_check_hex = hex + direction
+                    while first_result.map.get(wall_check_hex) == self.player.index:
+                        wall_check_hex += direction
+
+                    check_value = first_result.map.get(wall_check_hex)
+                    if not (
+                        check_value in (None, 1) or                                 # We moved against a wall or edge, or
+                        any(x.hex == wall_check_hex for x in first_result.fights)   # we didn't win a fight (fight on the tile, but it's not ours)
+                    ):
+                        new_map.clear(hex)
+
+            second_result = func(new_map, direction)
+            second_result.valid = second_result.map != map
+            second_result.fights.extend(first_result.fights)
+            return second_result
+        
         return decorated

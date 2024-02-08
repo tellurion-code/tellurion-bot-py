@@ -7,3 +7,5 @@ from dataclasses import dataclass
 class Announcement:
     name: str
     value: str
+
+    

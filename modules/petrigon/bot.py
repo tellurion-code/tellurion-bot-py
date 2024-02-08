@@ -5,48 +5,50 @@ import random
 import asyncio
 from dataclasses import dataclass
 
-from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, DIRECTIONS_TO_EMOJIS
+from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS
 from modules.petrigon.player import Player
 
 
-class GameBot(Player):
-    class TreeNode:
-        """A node in the minmax tree."""
-        def __init__(self, map, player, last_direction=None):
-            self.map = map                          # The map at this node
-            self.player = player                    # The player who played the last move
-            self.children = {}                      # The children of this node (Dict<Hex,TreeNode>). The Hex is the direction chosen
-            self.last_direction = last_direction    # The last direction chosen by the last player
-            self.eval = None                        # The final evaluation given by the algorithm
+class TreeNode:
+    """A node in the minmax tree."""
+    def __init__(self, map, player, last_direction=None):
+        self.map = map                          # The map at this node
+        self.player = player                    # The player who played the last move
+        self.children = {}                      # The children of this node (Dict<Hex,TreeNode>). The Hex is the direction chosen
+        self.last_direction = last_direction    # The last direction chosen by the last player
+        self.eval = None                        # The final evaluation given by the algorithm
 
-        @property
-        def depth(self):
-            return max(x.depth for x in self.children.values()) + 1 if len(self.children) else 0
-        
-        @property
-        def total_nodes(self):
-            return sum(x.total_nodes for x in self.children.values()) if len(self.children) else 1
-
-        def add_child(self, direction, node):
-            self.children[direction] = node
-
-        def remove_child(self, direction):
-            del self.children[direction]
-
-        def __hash__(self):
-            return hash(self.map) ^ self.player.id
-        
-        def __eq__(self, other):
-            return isinstance(other, GameBot.TreeNode) and hash(self) == hash(other)
+    @property
+    def depth(self):
+        return max(x.depth for x in self.children.values()) + 1 if len(self.children) else 0
     
-        def __ne__(self, other):
-            return not self == other
+    @property
+    def total_nodes(self):
+        return sum(x.total_nodes for x in self.children.values()) if len(self.children) else 1
 
-    @dataclass
-    class Transposition:
-        evaluation: int
-        turn: int
+    def add_child(self, direction, node):
+        self.children[direction] = node
 
+    def remove_child(self, direction):
+        del self.children[direction]
+
+    def __hash__(self):
+        return hash(self.map) ^ self.player.id
+    
+    def __eq__(self, other):
+        return isinstance(other, TreeNode) and hash(self) == hash(other)
+
+    def __ne__(self, other):
+        return not self == other
+
+
+@dataclass
+class Transposition:
+    evaluation: int
+    turn: int
+
+
+class GameBot(Player):
     def __init__(self, game, id, depth=1):
         super().__init__(game, None)
         self.id = id
@@ -78,7 +80,7 @@ class GameBot(Player):
         await self.game.handle_direction(direction)
 
     def find_best_direction(self):
-        root = GameBot.TreeNode(self.game.map, self)
+        root = TreeNode(self.game.map, self)
         # turn = self.game.player_turn(self)
         # best_eval = self.maxn(root, self.upper_bound)[turn]
 
@@ -106,14 +108,14 @@ class GameBot(Player):
             if maximising != (player.id == self.id): continue  # Only consider self on MAX nodes, and opponents on MIN nodes
 
             for direction in AXIAL_DIRECTION_VECTORS:
-                next_map = player.move(node.map, direction)
-                if not next_map: continue
-                child = GameBot.TreeNode(next_map, player, direction)
+                next_result = player.move(node.map, direction)
+                if not next_result.valid: continue
+                child = TreeNode(next_result.map, player, direction)
                 node.add_child(direction, child)
 
                 # print(f"{'  ' * (self.depth * 2 - depth)}Checking {DIRECTIONS_TO_EMOJIS[direction]}  for {player}:")
                 child.eval = -self.brs(child, alpha=-beta, beta=-alpha, depth=depth-1, maximising=not maximising)
-                self.transpositions[child] = GameBot.Transposition(child.eval, self.game.turn)
+                self.transpositions[child] = Transposition(child.eval, self.game.turn)
                 # print(f"{'  ' * (self.depth * 2 - depth)}Result: {child.eval}")
                 if child.eval >= beta: return child.eval  # Snip!
                 alpha = max(alpha, child.eval)

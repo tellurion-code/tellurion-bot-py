@@ -1,7 +1,10 @@
 """Player class."""
 
+from dataclasses import dataclass, field
+
 from modules.petrigon import constants
 from modules.petrigon.map import Map
+from modules.petrigon.hex import Hex
 
 
 class Player:
@@ -29,48 +32,44 @@ class Player:
         pass
 
     def move(self, map, direction):
-        new_map = Map.copy(map)
+        result = MoveResult(Map.copy(map))
         for hex in map.hexes():
-            update = self.move_tile(map, hex, hex + direction, direction)
-            if update: new_map.update(update, base_map=map)
+            new_map, fight = self.move_tile(map, hex, hex + direction, direction)
+            if new_map: result.map.update(new_map, base_map=map)
+            if fight: result.fights.append(fight)
 
-        if new_map == map:
-            return None
-    
-        return new_map
+        result.valid = result.map != map
+        return result
     
     def move_tile(self, map, hex, target, direction):
         if map.get(hex) == self.index:
             moving_to = map.get(target)
             if moving_to in (None, 1, self.index):
-                return None
+                return None, None
             
             if moving_to not in (0, self.index):
-                return self.fight(map, hex, target, direction)
+                fight = self.fight(map, hex, target, direction)
+                new_map = fight.resolve(map)
+                return new_map, fight
 
             new_map = Map.copy(map)
             new_map.set(target, self.index)
-            return new_map
+            return new_map, None
         
-        return None
+        return None, None
     
     def fight(self, map, hex, target, direction):
         opponent = self.game.index_to_player(map.get(target))
 
-        attack = self.get_strength(map, hex, direction * -1) + self.on_attack(opponent)
-        defense = opponent.get_strength(map, target, direction) + opponent.on_defense(self)
+        attack = self.get_strength(map, hex, direction * -1) + self.attack_bonus(opponent)
+        defense = opponent.get_strength(map, target, direction) + opponent.defense_bonus(self)
 
-        if attack >= defense:
-            new_map = Map.copy(map)
-            new_map.set(target, 0 if attack == defense else self.index)
-            return new_map
-        
-        return None
+        return Fight(self, opponent, attack, defense, target)
     
-    def on_attack(self, opponent):
+    def attack_bonus(self, opponent):
         return 0
     
-    def on_defense(self, opponent):
+    def defense_bonus(self, opponent):
         return 0
     
     def get_strength(self, map, hex, direction):
@@ -80,6 +79,9 @@ class Player:
             hex += direction
 
         return strength
+    
+    def on_fight(self, fight):
+        pass
     
     def use_power(self):
         if not self.power:
@@ -107,3 +109,27 @@ class Player:
 
     def __str__(self):
         return self.user.display_name
+
+
+@dataclass
+class Fight:
+    attacker: Player
+    defender: Player
+    attack: int
+    defense: int
+    hex: Hex
+
+    def resolve(self, map: Map):
+        if self.attack >= self.defense:
+            new_map = Map.copy(map)
+            new_map.set(self.hex, 0 if self.attack == self.defense else self.attacker.index)
+            return new_map
+    
+        return map
+
+
+@dataclass
+class MoveResult:
+    map: Map
+    fights: list[Fight] = field(default_factory=list)
+    valid: bool = True

@@ -23,7 +23,7 @@ class Map:
                 self.map.hash_map = self.new_map.hash_map
 
 
-    class ZobristHash():
+    class ZobristHash:
         hash_tables = {}
 
         def __init__(self, size):

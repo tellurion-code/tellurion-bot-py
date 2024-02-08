@@ -2,8 +2,8 @@ import discord
 
 from modules.base import BaseClassPython
 from modules.petrigon import constants
-from modules.petrigon.power import Power
 from modules.petrigon.game import Game
+from modules.petrigon.power import Power
 
 
 class MainClass(BaseClassPython):
