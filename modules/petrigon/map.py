@@ -19,7 +19,7 @@ class Map:
             return self
 
         def __exit__(self, exc_type, exc_value, traceback):
-            if exc_type == None:
+            if exc_type == None and self.new_map:
                 self.map.hash_map = self.new_map.hash_map
 
 

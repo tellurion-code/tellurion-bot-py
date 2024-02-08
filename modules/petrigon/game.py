@@ -116,7 +116,7 @@ class Game:
             [0, 2, 4],
             [0, 1, 3, 4],
             [0, 1, 5, 2, 4],    # We leave a gap between the last two players as last player advantage
-            [0, 2, 4, 1, 3, 5]
+            [0, 1, 2, 3, 4, 5]
         ]
         r = -int(math.ceil(self.map_size * 2./3.))
         q = random.randrange(0, -r)
@@ -154,7 +154,7 @@ class Game:
         with self.map.edit() as editor:
             editor.new_map = self.current_player.move(editor.map, direction)
 
-            if editor.new_map == editor.map:
+            if editor.new_map == None:
                 return False
 
             for player in self.players.values():

@@ -34,6 +34,9 @@ class Player:
             update = self.move_tile(map, hex, hex + direction, direction)
             if update: new_map.update(update, base_map=map)
 
+        if new_map == map:
+            return None
+    
         return new_map
     
     def move_tile(self, map, hex, target, direction):
