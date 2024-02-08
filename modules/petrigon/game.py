@@ -33,7 +33,11 @@ class Game:
 
     @property
     def domination_score(self):
-        return int(math.ceil((self.map.hex_count - self.wall_count * 6 - 1) / 2.)) if self.map else None
+        return int(math.ceil((self.map.hex_count - self.wall_count * 6 - 1))) * self.domination_fraction if self.map else None
+    
+    @property
+    def domination_fraction(self):
+        return 1./2. if len(self.players) > 2 else 3./5.
     
     @property
     def current_player(self):
