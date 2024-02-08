@@ -99,7 +99,9 @@ class PowerPanel(Panel):
     def embed(self):
         embed = discord.Embed(color=self.game.mainclass.color)
         embed.title = f"Choix des pouvoirs"
-        embed.description = '\n'.join([f"{x}: {'✅' if x.power else '❌'}" for x in self.game.players.values()])
+        embed.description = '\n'.join([
+            f"{constants.TILE_COLORS[i+2]} {self.game.players[i]}: {'✅' if self.game.players[i].power else '❌'}" for i in self.game.order
+        ])
         return embed
 
 

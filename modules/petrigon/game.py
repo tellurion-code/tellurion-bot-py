@@ -102,8 +102,8 @@ class Game:
         self.turn = 0
         self.setup_map()
 
-        self.panel = await FightPanel(self).send(self.channel)
         await self.current_player.start_turn()
+        self.panel = await FightPanel(self).send(self.channel)
 
     def setup_map(self):
         self.map = Map(size=self.map_size)

@@ -120,36 +120,36 @@ class Pacifist(Power):
 class General(Power):
     name = "Général"
     icon = "🚩"
-    description = "Une fois par partie, peut doubler la force de ses unités pour deux tours"
+    description = "Une fois par partie, peut tripler puis doubler la force de ses unités sur deux tours"
 
-    activation_description = "Les unités du Général vont être doublées pour 2 tours"
+    activation_description = "Les unités du Général vont être triplées puis doublées sur 2 tours"
     start_active = True
 
     def __init__(self, player):
         super().__init__(player)
-        self.doubled_turns = 0
+        self.ratio = 0
 
     def use(self):
-        self.doubled_turns = 2
+        self.ratio = 2
         self.active = False
         return super().use()
 
     def start_turn_decorator(self, func):
         async def decorated(*args, **kwargs):
-            if self.doubled_turns > 0: self.doubled_turns -= 1
+            if self.ratio > 0: self.ratio -= 1
             return await func(*args, **kwargs)
 
         return decorated
 
     def get_strength_decorator(self, func):
         def decorated(*args, **kwargs):
-            return func(*args, **kwargs) * (2 if self.doubled_turns > 0 else 1)
+            return func(*args, **kwargs) * (self.ratio + 1)
 
         return decorated
     
     def info_decorator(self, func):
         def decorated(*args, **kwargs):
-            return func(*args, **kwargs) + (f" (🚩 {self.doubled_turns} tours)" if self.doubled_turns > 0 else "")
+            return func(*args, **kwargs) + (f" (🚩 x{self.ratio + 1})" if self.ratio > 0 else "")
         
         return decorated
 
@@ -157,7 +157,7 @@ class General(Power):
 class Topologist(Power):
     name = "Topologiste"
     icon = "🍩"
-    description = "Considère les bords du plateau comme adjacents"
+    description = "Peut traverser les bords, et gagne +1 en combat quand il le fait"
 
     def __init__(self, player):
         super().__init__(player)
@@ -184,7 +184,9 @@ class Topologist(Power):
             strength = 0
             while map.get(hex) == self.player.index:
                 strength += 1
-                hex = self.wraparound_hex(map, hex + direction)
+                next_hex = hex + direction
+                hex = self.wraparound_hex(map, next_hex)
+                if hex != next_hex: strength += 1
 
             return strength
 
@@ -230,8 +232,8 @@ class Liquid(Power):
 
                     if not (
                         map.get(wall_check_hex) in (None, 1) or     # We moved against a wall or edge, or
-                        any(                                        # we didn't win a fight
-                            x.hex == wall_check_hex and first_result.map.get(x.hex) != self.player.index
+                        any(                                        # we lost a fight
+                            x.hex == wall_check_hex and first_result.map.get(x.hex) not in (self.player.index, 0)
                             for x in first_result.fights
                         )                               
                     ):
@@ -243,3 +245,16 @@ class Liquid(Power):
             return second_result
         
         return decorated
+    
+
+    class Turtle(Power):
+        name = "Tortue"
+        icon = "🐢"
+        description = "Gagne +1 en combat si l'unité en combat est supportée par deux unités alliées"
+
+        def get_strength_decorator(self, func):
+            def decorated(map, hex, direction, *args, **kwargs):
+                bonus = 1 if map.get(hex + direction.rotate(1)) == map.get(hex + direction.rotate(-1)) == self.player.index else 0
+                return func(map, hex, direction, *args, **kwargs) + bonus
+            
+            return decorated
