@@ -225,13 +225,15 @@ class Liquid(Power):
             for hex, value in first_result.map.items():
                 if value == self.player.index and first_result.map.get(hex - direction) != self.player.index:
                     wall_check_hex = hex + direction
-                    while first_result.map.get(wall_check_hex) == self.player.index:
+                    while map.get(wall_check_hex) == self.player.index:
                         wall_check_hex += direction
 
-                    check_value = first_result.map.get(wall_check_hex)
                     if not (
-                        check_value in (None, 1) or                                 # We moved against a wall or edge, or
-                        any(x.hex == wall_check_hex for x in first_result.fights)   # we didn't win a fight (fight on the tile, but it's not ours)
+                        map.get(wall_check_hex) in (None, 1) or     # We moved against a wall or edge, or
+                        any(                                        # we didn't win a fight
+                            x.hex == wall_check_hex and first_result.map.get(x.hex) != self.player.index
+                            for x in first_result.fights
+                        )                               
                     ):
                         new_map.clear(hex)
 

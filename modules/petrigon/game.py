@@ -56,7 +56,7 @@ class Game:
         last_turn = turn
         while True:
             turn = (turn + 1) % len(self.players)
-            if any(self.players[self.order[turn]].move(self.map, direction) for direction in AXIAL_DIRECTION_VECTORS) or turn == last_turn:
+            if any(self.players[self.order[turn]].move(self.map, direction).valid for direction in AXIAL_DIRECTION_VECTORS) or turn == last_turn:
                 return turn
             
     def turn_to_player(self, turn):
