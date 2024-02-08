@@ -69,8 +69,10 @@ class MainClass(BaseClassPython):
             await self.games[message.channel.id].on_creation(message)
 
     async def com_end(self, message, args, kwargs):
-        if message.channel.id in self.games and message.author.id in self.games[message.channel.id].players:
-            await self.games[message.channel.id].end()
+        if message.channel.id in self.games:
+            game = self.games[message.channel.id]
+            if message.author.id in (*game.players.keys(), game.admin):
+                await game.end()
 
     # Active le debug: le nombre minimal de joueurs
     async def com_debug(self, message, args, kwargs):
