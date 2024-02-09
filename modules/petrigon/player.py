@@ -5,6 +5,7 @@ from dataclasses import dataclass, field
 from modules.petrigon import constants
 from modules.petrigon.map import Map
 from modules.petrigon.hex import Hex
+from modules.petrigon.panels import PowerActivationPanel
 
 
 class Player:
@@ -14,7 +15,7 @@ class Player:
         self.id = user.id if user else 0
 
         self.index = None
-        self.power = None
+        self.powers = {}
 
         self.last_score_change = 0
 
@@ -22,8 +23,9 @@ class Player:
         if not map: map = self.game.map
         return sum(1 for _, x in map.items() if x == self.index)
 
-    def set_power(self, power_class):
-        self.power = power_class(self)
+    def set_powers(self, power_classes):
+        self.powers.clear()
+        self.powers = {c.__name__: c(self) for c in power_classes}
 
     def place(self, hex, rotation):
         self.game.map.set(hex.rotate(rotation), self.index)
@@ -40,10 +42,13 @@ class Player:
 
         result.valid = result.map != map
         return result
+
+    def get_hex(self, map, hex):
+        return map.get(hex)
     
     def move_tile(self, map, hex, target, direction):
-        if map.get(hex) == self.index:
-            moving_to = map.get(target)
+        if self.get_hex(map, hex) == self.index:
+            moving_to = self.get_hex(map, target)
             if moving_to in (None, 1, self.index):
                 return None, None
             
@@ -59,7 +64,7 @@ class Player:
         return None, None
     
     def fight(self, map, hex, target, direction):
-        opponent = self.game.index_to_player(map.get(target))
+        opponent = self.game.index_to_player(self.get_hex(map, target))
 
         attack = self.get_strength(map, hex, direction * -1) + self.attack_bonus(opponent)
         defense = opponent.get_strength(map, target, direction) + opponent.defense_bonus(self)
@@ -74,7 +79,7 @@ class Player:
     
     def get_strength(self, map, hex, direction):
         strength = 0
-        while map.get(hex) == self.index:
+        while self.get_hex(map, hex) == self.index:
             strength += 1
             hex += direction
 
@@ -83,11 +88,9 @@ class Player:
     def on_fight(self, fight):
         pass
     
-    def use_power(self):
-        if not self.power:
-            return False
-        
-        return self.power.use()
+    async def use_power(self, interaction):
+        powers = {i: x for i,x in self.powers if x.active}
+        await PowerActivationPanel(powers).reply(interaction)
     
     async def end_turn(self, interaction):
         await self.game.next_turn(interaction)
@@ -105,10 +108,10 @@ class Player:
     
     def info(self, no_change=False):
         score_change = f"**({'+' if self.last_score_change > 0 else ''}{self.last_score_change})**" if self.last_score_change and not no_change else ""
-        return f"{constants.TILE_COLORS[self.index]}{self.power.icon if self.power else ''} **{self}**: {self.score()} {score_change}"
+        return f"{constants.TILE_COLORS[self.index]}{''.join(power.icon for power in self.powers.values())} **{self}**: {self.score()} {score_change}"
 
     def __str__(self):
-        return self.user.display_name
+        return f"`{self.user.display_name}`"
 
 
 @dataclass

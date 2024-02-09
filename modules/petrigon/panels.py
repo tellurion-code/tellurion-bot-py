@@ -4,7 +4,7 @@ import discord
 import math
 
 from modules.petrigon import constants
-from modules.petrigon.views import FightView, PanelView, JoinView, PowerView
+from modules.petrigon.views import FightView, PanelView, JoinView, PowerActivationView, PowerView
 
 
 class Panel:
@@ -42,6 +42,11 @@ class Panel:
     async def send(self, channel):
         self.channel = channel
         self.message = await channel.send(content=self.content, view=self.view, embed=self.embed)
+        return self
+    
+    async def reply(self, interaction, ephemeral=False):
+        self.channel = interaction.channel
+        self.message = await interaction.response.send_message(content=self.content, view=self.view, embed=self.embed, ephemeral=ephemeral)
         return self
     
     async def update(self, interaction=None, save=True):
@@ -100,7 +105,7 @@ class PowerPanel(Panel):
         embed = discord.Embed(color=self.game.mainclass.color)
         embed.title = f"Choix des pouvoirs"
         embed.description = '\n'.join([
-            f"{constants.TILE_COLORS[i+2]} {self.game.players[i]}: {'✅' if self.game.players[i].power else '❌'}" for i in self.game.order
+            f"{constants.TILE_COLORS[i+2]} {self.game.players[id]}: {'✅' if len(self.game.players[id].powers) else '❌'}" for i, id in enumerate(self.game.order)
         ])
         return embed
 
@@ -127,3 +132,27 @@ class FightPanel(Panel):
         )
 
         return embed
+
+
+class PowerActivationPanel(Panel):
+    view_class = PowerActivationView
+    keep_message = False
+
+    def __init__(self, game, powers):
+        super().__init__(game)
+        self.powers = powers
+
+    async def reply(self, interaction):
+        if len(self.powers) == 1: return await self.resolve_power(next(self.powers.keys()), interaction)
+        return await super().reply(interaction, ephemeral=True)
+
+    @property
+    def content(self):
+        return "Vous avez plusieurs pouvoirs activables"
+    
+    async def resolve_power(self, power, interaction):
+        if self.powers[power]():
+            await self.close()
+            await self.game.panel.update(interaction)
+        else:
+            await interaction.response.send_message("Vous ne pouvez pas utiliser votre pouvoir.", ephemeral=True)

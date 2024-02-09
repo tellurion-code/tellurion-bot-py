@@ -3,8 +3,6 @@
 import discord
 
 from modules.game.views import GameView, PlayView
-from modules.petrigon.player import Player
-from modules.petrigon.bot import GameBot
 from modules.petrigon.hex import Hex
 from modules.petrigon.power import Power
 
@@ -47,7 +45,7 @@ class JoinView(PanelView):
             return await interaction.response.send_message("Le nombre maximum de joueurs est atteint", ephemeral=True)
 
         if interaction.user.id not in self.game.players:
-            self.game.players[interaction.user.id] = Player(self.game, interaction.user)
+            self.game.add_player(interaction.user)
         else:
             del self.game.players[interaction.user.id]
 
@@ -61,8 +59,7 @@ class JoinView(PanelView):
         if len(self.game.players) >= 6:
             return await interaction.response.send_message("Le nombre maximum de joueurs est atteint", ephemeral=True)
         
-        id = min(min(self.game.players.keys(), default=0), 0) - 1
-        self.game.players[id] = GameBot(self.game, id, depth=2)
+        self.game.add_bot(depth=2)
         return await self.panel.update(interaction)
     
     @discord.ui.button(label="-", emoji="🤖", style=discord.ButtonStyle.red)
@@ -109,12 +106,12 @@ class PowerView(PanelView, PlayView):
             value=key
         ) for key, subclass in self.power_classes.items()]
         
-        self.select = discord.ui.Select(options=options, placeholder="Choisissez un pouvoir")
+        self.select = discord.ui.Select(options=options, placeholder="Choisissez un pouvoir", max_values=2)
         self.select.callback = self.callback
         self.add_item(self.select)
         
     def check_for_selection(self):
-        if sum(1 for x in self.game.players.values() if x.power == None) > 0:
+        if sum(1 for x in self.game.players.values() if len(x.powers) == 0) > 0:
             return False, "Choix restants à faire"
         
         return True, "Démarrer"
@@ -127,7 +124,7 @@ class PowerView(PanelView, PlayView):
         self.children[0].style = discord.ButtonStyle.green if can_start else discord.ButtonStyle.gray
 
     async def callback(self, interaction):
-        self.game.players[interaction.user.id].set_power(self.power_classes[self.select.values[0]])
+        self.game.players[interaction.user.id].set_powers(self.power_classes[x] for x in self.select.values)
         await self.panel.update(interaction)
 
     @discord.ui.button(label="Choix restants à faire", disabled=True, style=discord.ButtonStyle.gray, row=1)
@@ -142,7 +139,7 @@ class FightView(PanelView, PlayView):
     update_on_init = True
 
     def update(self):
-        self.children[7].disabled = not (self.game.current_player.power and self.game.current_player.power.active)
+        self.children[7].disabled = not any(power.active for power in self.game.current_player.powers.values())
 
     @discord.ui.button(emoji="↖️", style=discord.ButtonStyle.blurple)
     async def move_up_left(self, button, interaction):
@@ -186,7 +183,21 @@ class FightView(PanelView, PlayView):
         if interaction.user != self.game.current_player.user:
             return await interaction.response.defer()
         
-        if self.game.current_player.use_power():
-            await self.panel.update(interaction)
-        else:
-            await interaction.response.send_message("Vous ne pouvez pas utiliser votre pouvoir.", ephemeral=True)
+        await self.game.current_player.use_power(interaction)
+
+
+class PowerActivationView(PanelView):
+    def __init__(self, game, panel, powers, *args, **kwargs):
+        super().__init__(game, panel, *args, **kwargs)
+        self.powers = powers    
+    
+        options = []
+        for key, power in powers.items():
+            options.append(discord.SelectOption(emoji=power.icon, label=power.name, description=power.description, value=key))
+
+        self.select = discord.ui.Select(placeholder="Choisissez le pouvoir à activer", options=options)
+        self.select.callback = self.callback
+        self.add_item(self.select)
+
+    async def callback(self, interaction):
+        await self.panel.resolve_power(self.select.values[0], interaction)

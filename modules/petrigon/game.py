@@ -5,9 +5,11 @@ import math
 import random
 
 from modules.petrigon.map import Map
+from modules.petrigon.player import Player
+from modules.petrigon.bot import GameBot
 from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, DIRECTIONS_TO_EMOJIS, Hex
 from modules.petrigon.panels import FightPanel, JoinPanel, PowerPanel
-from modules.petrigon.power import Attacker, Defender, Liquid, Power, Swarm, Topologist
+from modules.petrigon.power import Attacker, Defender, General, Glitcher, Liquid, Pacifist, Power, Swarm, Topologist, Turtle
 from modules.petrigon.bot import GameBot
 
 
@@ -70,6 +72,13 @@ class Game:
         self.admin = message.author.id
         self.panel = await JoinPanel(self).send(self.channel)
 
+    def add_player(self, user):
+        self.players[user.id] = Player(self, user)
+
+    def add_bot(self, depth):
+        id = min(min(self.players.keys(), default=0), 0) - 1
+        self.players[id] = GameBot(self, id, depth=depth)
+
     async def prepare_game(self):
         self.order = [i for i in self.players.keys()]
         random.shuffle(self.order)
@@ -79,12 +88,12 @@ class Game:
         if self.powers_enabled:
             for player in self.players.values():
                 if isinstance(player, GameBot):
-                    player.set_power(random.choice((Attacker, Defender, Swarm, Topologist, Liquid)))
+                    player.set_powers((random.choice((Attacker, Defender, Swarm, Topologist, Liquid)),))
 
             self.panel = await PowerPanel(self).send(self.channel)
         else:
-            for player in self.players.values():
-                player.set_power(Power)  # No special ability
+            # for player in self.players.values():
+            #     player.set_power((Power,))  # No special ability
             
             await self.start()
 
@@ -92,8 +101,21 @@ class Game:
         await interaction.response.defer()
         await self.panel.close()
 
+        powers_priority = (
+            Swarm,
+            Glitcher,
+            Turtle,
+            Attacker,
+            Defender,
+            General,
+            Pacifist,
+            Topologist,
+            Liquid,
+        )
         for player in self.players.values():
-            player.power.setup()
+            for power_class in powers_priority:
+                if power := player.powers.get(power_class.__name__, None):
+                    power.setup()
 
         await self.start()
 
@@ -102,6 +124,7 @@ class Game:
         self.turn = 0
         self.setup_map()
 
+        self.panel = None
         await self.current_player.start_turn()
         self.panel = await FightPanel(self).send(self.channel)
 

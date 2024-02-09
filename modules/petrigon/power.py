@@ -172,6 +172,13 @@ class Topologist(Power):
 
         return hex
 
+    def get_hex_decorator(self, func):
+        def decorated(map, hex, *args, **kwargs):
+            hex = self.wraparound_hex(map, hex)
+            return func(map, hex, *args, **kwargs)
+        
+        return decorated
+    
     def move_tile_decorator(self, func):
         def decorated(map, hex, target, direction, *args, **kwargs):
             target = self.wraparound_hex(map, target)
@@ -182,7 +189,7 @@ class Topologist(Power):
     def get_strength_decorator(self, func):
         def decorated(map, hex, direction, *args, **kwargs):
             strength = 0
-            while map.get(hex) == self.player.index:
+            while self.player.get_hex(map, hex) == self.player.index:
                 strength += 1
                 next_hex = hex + direction
                 hex = self.wraparound_hex(map, next_hex)
@@ -225,15 +232,15 @@ class Liquid(Power):
             
             new_map = Map.copy(first_result.map)
             for hex, value in first_result.map.items():
-                if value == self.player.index and first_result.map.get(hex - direction) != self.player.index:
+                if value == self.player.index and self.player.get_hex(first_result.map, hex - direction) != self.player.index:
                     wall_check_hex = hex + direction
-                    while map.get(wall_check_hex) == self.player.index:
+                    while self.player.get_hex(map, wall_check_hex) == self.player.index:
                         wall_check_hex += direction
 
                     if not (
-                        map.get(wall_check_hex) in (None, 1) or     # We moved against a wall or edge, or
-                        any(                                        # we lost a fight
-                            x.hex == wall_check_hex and first_result.map.get(x.hex) not in (self.player.index, 0)
+                        self.player.get_hex(map, wall_check_hex) in (None, 1) or    # We moved against a wall or edge, or
+                        any(                                                        # we lost a fight
+                            x.hex == wall_check_hex and self.player.get_hex(first_result.map, x.hex) not in (self.player.index, 0)
                             for x in first_result.fights
                         )                               
                     ):
@@ -247,14 +254,14 @@ class Liquid(Power):
         return decorated
     
 
-    class Turtle(Power):
-        name = "Tortue"
-        icon = "🐢"
-        description = "Gagne +1 en combat si l'unité en combat est supportée par deux unités alliées"
+class Turtle(Power):
+    name = "Tortue"
+    icon = "🐢"
+    description = "Gagne +1 en combat si l'unité en combat est supportée par deux unités alliées"
 
-        def get_strength_decorator(self, func):
-            def decorated(map, hex, direction, *args, **kwargs):
-                bonus = 1 if map.get(hex + direction.rotate(1)) == map.get(hex + direction.rotate(-1)) == self.player.index else 0
-                return func(map, hex, direction, *args, **kwargs) + bonus
-            
-            return decorated
+    def get_strength_decorator(self, func):
+        def decorated(map, hex, direction, *args, **kwargs):
+            bonus = 1 if self.player.get_hex(map, hex + direction.rotate(1)) == self.player.get_hex(map, hex + direction.rotate(-1)) == self.player.index else 0
+            return func(map, hex, direction, *args, **kwargs) + bonus
+        
+        return decorated
