@@ -9,7 +9,7 @@ from modules.petrigon.player import Player
 from modules.petrigon.bot import GameBot
 from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, DIRECTIONS_TO_EMOJIS, Hex
 from modules.petrigon.panels import FightPanel, JoinPanel, PowerPanel
-from modules.petrigon.power import Attacker, Defender, General, Glitcher, Liquid, Pacifist, Power, Swarm, Topologist, Turtle
+from modules.petrigon.power import Attacker, Defender, General, Glitcher, Liquid, Pacifist, Power, Scout, Swarm, Topologist, Turtle
 from modules.petrigon.bot import GameBot
 
 
@@ -27,15 +27,17 @@ class Game:
 
         self.powers_enabled = False
         self.map_size = 6
-        self.wall_count = 1
+        self.wall_count = 6
+        self.use_symmetry = True
 
         self.panel = None
         self.announcements = []
         self.last_input = None
+        self.map_images = []
 
     @property
     def domination_score(self):
-        return int(math.ceil((self.map.hex_count - self.wall_count * 6 - 1)) * self.domination_fraction) if self.map else None
+        return int(math.ceil((self.map.hex_count - self.wall_count - 1)) * self.domination_fraction) if self.map else None
     
     @property
     def domination_fraction(self):
@@ -101,7 +103,7 @@ class Game:
         await interaction.response.defer()
         await self.panel.close()
 
-        powers_priority = (
+        powers_priority = (  # Later is more important
             Swarm,
             Glitcher,
             Turtle,
@@ -110,6 +112,7 @@ class Game:
             General,
             Pacifist,
             Liquid,
+            Scout,
             Topologist,
         )
         for player in self.players.values():
@@ -148,29 +151,36 @@ class Game:
 
         # Place walls
         self.map.set(Hex(0, 0), 1)
+        symmetries = (
+            [0, 3] if len(self.players) == 2 else
+            ([0, 2, 4] if len(self.players) == 3 else
+            ([0, 3] if len(self.players) == 4 else
+            [0, 1, 2, 3, 4, 5]))
+        ) if self.use_symmetry else [0]
 
-        def validate_wall_placement(hex):
-            if self.map.get(hex) != 0:
-                return False
-
-            for neighbor in hex.neighbors():
-                if self.map.get(neighbor) != 0:
+        def validate_walls_placement(hexes):
+            for hex in hexes:
+                if self.map.get(hex) != 0:
                     return False
+
+                for neighbor in hex.neighbors():
+                    if self.map.get(neighbor) != 0:
+                        return False
 
             return True    
         
-        for i in range(6):
-            remaining_walls_to_place = self.wall_count
-            while remaining_walls_to_place > 0:
-                q = random.randrange(0, self.map.size)
-                r = -random.randrange(q + 1, self.map_size + 1)
-                hex = Hex(q, r).rotate(i)
+        i = 0
+        while i < self.wall_count:
+            q = random.randrange(0, self.map.size)
+            r = -random.randrange(q + 1, self.map_size + 1)
+            hexes = [Hex(q, r).rotate(i).rotate(j) for j in symmetries]
 
-                if not validate_wall_placement(hex):
-                    continue
+            if not validate_walls_placement(hexes):
+                continue
 
+            for hex in hexes:
                 self.map.set(hex, 1)
-                remaining_walls_to_place -= 1
+                i += 1
 
     async def handle_direction(self, direction, interaction=None):
         result = self.current_player.move(self.map, direction)

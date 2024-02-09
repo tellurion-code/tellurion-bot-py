@@ -3,7 +3,6 @@
 import math
 
 from modules.petrigon.hex import Hex
-from modules.petrigon.map import Map
 from modules.petrigon.types import Announcement
 
 
@@ -86,8 +85,8 @@ class Glitcher(Power):
 
     def end_turn_decorator(self, func):
         async def decorated(*args, **kwargs):
-            if self.double_turn: 
-                self.player.game.turn -= 1
+            if self.double_turn and self.player.game.turn == self.player.game.player_turn(self.player): 
+                self.player.game.turn += len(self.player.game.players) - 1
                 self.player.game.round -= 1
                 self.double_turn = False
             
@@ -153,7 +152,7 @@ class General(Power):
     
     def info_decorator(self, func):
         def decorated(*args, **kwargs):
-            return func(*args, **kwargs) + (f" (🚩 x{self.ratio + 1})" if self.ratio > 0 else "")
+            return func(*args, **kwargs) + (f" ({self.icon} x{self.ratio + 1})" if self.ratio > 0 else "")
         
         return decorated
 
@@ -231,26 +230,10 @@ class Liquid(Power):
 
     def move_decorator(self, func):
         def decorated(map, direction):
-            first_result = func(map, direction)
+            first_result = self.player.displace(map, direction, ties_consume_units=True)
             if not first_result.valid: return first_result
-            
-            new_map = Map.copy(first_result.map)
-            for hex, value in first_result.map.items():
-                if value == self.player.index and self.player.get_hex(first_result.map, hex - direction) != self.player.index:
-                    wall_check_hex = hex + direction
-                    while self.player.get_hex(map, wall_check_hex) == self.player.index:
-                        wall_check_hex += direction
 
-                    if not (
-                        self.player.get_hex(map, wall_check_hex) in (None, 1) or    # We moved against a wall or edge, or
-                        any(                                                        # we lost a fight
-                            x.hex == wall_check_hex and self.player.get_hex(first_result.map, x.hex) not in (self.player.index, 0)
-                            for x in first_result.fights
-                        )                               
-                    ):
-                        new_map.clear(hex)
-
-            second_result = func(new_map, direction)
+            second_result = self.player.do_move(first_result.map, direction)
             second_result.valid = second_result.map != map
             second_result.fights.extend(first_result.fights)
             return second_result
@@ -273,8 +256,8 @@ class Turtle(Power):
 
 class Scout(Power):
     name = "Éclaireur"
-    icon = "🗺"
-    description = "Deux fois par partie, peut se déplacer dans une direction choisie (sans combattre)"
+    icon = "🗺️"
+    description = "Deux fois par partie, peut se déplacer dans une direction choisie (ne peut pas attaqué)"
 
     activation_description = "Les unités de l'Éclaireur vont se déplacer"
     start_active = True
@@ -287,51 +270,43 @@ class Scout(Power):
     def use(self):
         self.moving = True
         self.moves -= 1
-        if self.moves == 0: self.active = False
+        self.active = False
         return super().use()
 
+    def start_turn_decorator(self, func):
+        async def decorated(*args, **kwargs):
+            if self.moves > 0: self.active = True
+            return await func(*args, **kwargs)
+
+        return decorated
+
     def move_decorator(self, func):
-        def decorated(map, direction):
-            if not self.moving: return func(*args, **kwargs)
-            
-            first_result = func(map, direction)
-            if not first_result.valid: return first_result
-            
-            new_map = Map.copy(first_result.map)
-            for hex, value in first_result.map.items():
-                if value == self.player.index and self.player.get_hex(first_result.map, hex - direction) != self.player.index:
-                    wall_check_hex = hex + direction
-                    while self.player.get_hex(map, wall_check_hex) == self.player.index:
-                        wall_check_hex += direction
-
-                    if not (
-                        self.player.get_hex(map, wall_check_hex) in (None, 1) or    # We moved against a wall or edge, or
-                        any(x.hex == wall_check_hex for x in first_result.fights)   # we didn't win a fight (fight on the tile, but it's not ours)
-                    ):
-                        new_map.clear(hex)
-
-            second_result = MoveResult(new_map)
-            second_result.valid = second_result.map != map
-            second_result.fights.extend(first_result.fights)  # Est-ce qu'on peut mettre ça directement dans le MoveResult() ?
-            return second_result
+        def decorated(map, direction, *args, **kwargs):
+            if self.moving: return self.player.displace(map, direction, *args, **kwargs)
+            return func(map, direction, *args, **kwargs)
         
         return decorated
 
     def get_strength_decorator(self, func):
         def decorated(*args, **kwargs):
-            if self.moving:
-                return 0
-            return func(*args, **kwargs) * (self.ratio + 1)
+            attacking = kwargs.get("attacking", False)
+            return -math.inf if self.moving and attacking else func(*args, **kwargs)
 
         return decorated
 
     def end_turn_decorator(self, func):
         async def decorated(*args, **kwargs):
-            if self.moving: 
-                self.player.game.turn -= 1
+            if self.moving and self.player.game.turn == self.player.game.player_turn(self.player): 
+                self.player.game.turn += len(self.player.game.players) - 1
                 self.player.game.round -= 1
                 self.moving = False
             
             return await func(*args, **kwargs)
 
+        return decorated
+    
+    def info_decorator(self, func):
+        def decorated(*args, **kwargs):
+            return func(*args, **kwargs) + (f" ({self.icon} x{self.moves})" if self.moves > 0 else "")
+        
         return decorated

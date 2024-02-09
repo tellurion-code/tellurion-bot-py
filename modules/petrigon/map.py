@@ -1,6 +1,8 @@
 """Map class."""
 
+import math
 import random
+from PIL import Image, ImageColor
 
 from modules.petrigon import constants
 from modules.petrigon.hex import Hex
@@ -114,6 +116,33 @@ class Map:
         for hex in hexes:
             value = other.get(hex)
             if value != base_map.get(hex): self.set(hex, value)
+
+    def render(self, tile_size=20, padding=1.1):
+        folder = "./modules/petrigon/assets/"
+        sqrt3 = math.sqrt(3)
+
+        image_size = int(tile_size * padding * self.size * 2)
+        center = (image_size, int(image_size * sqrt3/2))
+        image = Image.new("RGBA", (image_size * 2, int(image_size * sqrt3)))
+        image.putalpha(0)
+
+        tiles = {name: Image.open(f'{folder}{name}.png').resize((int(tile_size * sqrt3), tile_size * 2)).convert("RGBA") for name in constants.TILE_NAMES}
+        for y in range(-self.size, self.size + 1):
+            for x in range(-self.size, self.size + 1):
+                hex = Hex(int(x - (y - (y&1)) / 2), y)
+                value = self.get(hex)
+                if value == None or value < 0 or value > len(constants.TILE_NAMES): continue
+
+                tile_name = constants.TILE_NAMES[value]
+                if not tile_name: continue
+
+                tile = tiles[tile_name]
+                image.paste(tile, (
+                    int((sqrt3 * hex.q + sqrt3/2 * hex.r) * tile_size * padding - sqrt3/2 * tile_size + center[0]),
+                    int((                   3./2 * hex.r) * tile_size * padding - sqrt3/2 * tile_size + center[1])
+                ), mask=tile)
+
+        return image
     
     def __eq__(self, other):
         if not isinstance(other, Map):

@@ -73,8 +73,8 @@ class GameBot(Player):
         asyncio.create_task(self.take_move())
 
     async def take_move(self):
-        # Wait to confirm the game has a panel
-        while not self.game.panel: pass
+        # Confirm the game has a panel (it's running)
+        if not hasattr(self.game, "panel"): return
 
         # We're unlikely to meet a transposition we've stored more than one turn ago
         self.transpositions = {i: x for i,x in self.transpositions.items() if x.turn < self.game.turn - 1}

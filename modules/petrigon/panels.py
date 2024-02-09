@@ -119,6 +119,7 @@ class FightPanel(Panel):
         embed = discord.Embed(color=constants.PLAYER_COLORS[self.game.turn])
         embed.title = f"Petrigon | Manche {self.game.round} | Tour de {self.game.current_player}"
         embed.description = f"### Plateau{' | Dernier choix: ' + self.game.last_input if self.game.last_input else ''}\n{self.game.map}"
+        # embed.set_image(self.get_map_image_url(self.game.map_images[-1]))
 
         for announcement in self.game.announcements:
             embed.add_field(
@@ -133,7 +134,11 @@ class FightPanel(Panel):
         )
 
         return embed
+    
+    def get_map_image_url(self, map_image):
+        if map_image.url: return map_image.url
 
+        # Send the image to a private channel, get the url, then delete it
 
 class PowerActivationPanel(Panel):
     view_class = PowerActivationView

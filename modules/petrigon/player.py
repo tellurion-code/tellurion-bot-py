@@ -32,9 +32,13 @@ class Player:
 
     async def start_turn(self, interaction=None):
         await self.game.panel.update(interaction)
+        self.game.map.render()
         self.game.announcements = []
 
     def move(self, map, direction):
+        return self.do_move(map, direction)
+
+    def do_move(self, map, direction):
         result = MoveResult(Map.copy(map))
         for hex in map.hexes():
             new_map, fight = self.move_tile(map, hex, hex + direction, direction)
@@ -43,6 +47,32 @@ class Player:
 
         result.valid = result.map != map
         return result
+    
+    def displace(self, map, direction, ties_consume_units=False):
+        first_result = self.do_move(map, direction)
+        if not first_result.valid: return first_result
+        
+        new_map = Map.copy(first_result.map)
+        for hex, value in first_result.map.items():
+            if value == self.index and self.get_hex(first_result.map, hex - direction) != self.index:
+                wall_check_hex = hex + direction
+                while self.get_hex(map, wall_check_hex) == self.index:
+                    wall_check_hex += direction
+
+                if not (                                                # Don't remove the unit if:
+                    self.get_hex(map, wall_check_hex) in (None, 1) or   # We moved against a wall or edge, or
+                    any(                                                # We lost a fight (or it's a tie and should not consume a unit)
+                        x.hex == wall_check_hex and (
+                            self.get_hex(first_result.map, x.hex) == x.defender.index or
+                            self.get_hex(first_result.map, x.hex) == 0 and not ties_consume_units
+                        )
+                        for x in first_result.fights
+                    )                               
+                ):
+                    new_map.clear(hex)
+
+        second_result = MoveResult(new_map, fights=first_result.fights, valid=new_map != map)
+        return second_result
 
     def get_hex(self, map, hex):
         return map.get(hex)
