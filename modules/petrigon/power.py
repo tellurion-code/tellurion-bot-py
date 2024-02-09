@@ -115,7 +115,7 @@ class Pacifist(Power):
         def decorated(*args, **kwargs):
             opponent = kwargs.get("opponent", None)
             attacking = kwargs.get("attacking", False)
-            return math.inf if opponent.id not in self.war_with and not attacking else func(opponent, *args, **kwargs)
+            return math.inf if opponent.id not in self.war_with and not attacking else func(*args, **kwargs)
 
         return decorated
 
