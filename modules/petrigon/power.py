@@ -287,12 +287,12 @@ class Scout(Power):
     def use(self):
         self.moving = True
         self.moves -= 1
-        if not self.moves: self.active = False
+        if self.moves == 0: self.active = False
         return super().use()
 
     def move_decorator(self, func):
         def decorated(map, direction):
-            if(not self.moving): return func(*args, **kwargs)
+            if not self.moving: return func(*args, **kwargs)
             
             first_result = func(map, direction)
             if not first_result.valid: return first_result
