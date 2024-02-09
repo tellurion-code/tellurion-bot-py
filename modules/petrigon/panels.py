@@ -25,7 +25,7 @@ class Panel:
     
     @property
     def embed(self):
-        return discord.Embed()
+        return None
 
     @property
     def view(self):
@@ -60,6 +60,7 @@ class Panel:
         if self.closed: return
 
         self.closed = True
+        if not self._view: return
         if (force_keep_message if force_keep_message != None else self.keep_message):
             await self._view.clear()
         else:
@@ -143,7 +144,7 @@ class PowerActivationPanel(Panel):
         self.powers = powers
 
     async def reply(self, interaction):
-        if len(self.powers) == 1: return await self.resolve_power(next(self.powers.keys()), interaction)
+        if len(self.powers) == 1: return await self.resolve_power(next(iter(self.powers)), interaction)
         return await super().reply(interaction, ephemeral=True)
 
     @property
@@ -151,7 +152,7 @@ class PowerActivationPanel(Panel):
         return "Vous avez plusieurs pouvoirs activables"
     
     async def resolve_power(self, power, interaction):
-        if self.powers[power]():
+        if self.powers[power].use():
             await self.close()
             await self.game.panel.update(interaction)
         else:

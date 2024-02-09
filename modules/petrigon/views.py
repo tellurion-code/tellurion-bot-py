@@ -187,12 +187,10 @@ class FightView(PanelView, PlayView):
 
 
 class PowerActivationView(PanelView):
-    def __init__(self, game, panel, powers, *args, **kwargs):
-        super().__init__(game, panel, *args, **kwargs)
-        self.powers = powers    
-    
+    def __init__(self, game, panel, *args, **kwargs):
+        super().__init__(game, panel, *args, **kwargs) 
         options = []
-        for key, power in powers.items():
+        for key, power in self.panel.powers.items():
             options.append(discord.SelectOption(emoji=power.icon, label=power.name, description=power.description, value=key))
 
         self.select = discord.ui.Select(placeholder="Choisissez le pouvoir à activer", options=options)

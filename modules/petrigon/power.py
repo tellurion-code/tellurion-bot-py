@@ -87,8 +87,10 @@ class Glitcher(Power):
     def end_turn_decorator(self, func):
         async def decorated(*args, **kwargs):
             if self.double_turn: 
-                self.player.game.turn += len(self.player.game.players) - 1
+                self.player.game.turn -= 1
+                self.player.game.round -= 1
                 self.double_turn = False
+            
             return await func(*args, **kwargs)
 
         return decorated

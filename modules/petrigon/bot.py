@@ -68,8 +68,8 @@ class GameBot(Player):
     def evaluate_for_player(self, map, player):
         return sum((map.size - hex.length + 1) ** 2 for hex, value in map.items() if value == player.index)
 
-    async def start_turn(self):
-        await super().start_turn()
+    async def start_turn(self, interaction=None):
+        await super().start_turn(interaction)
         asyncio.create_task(self.take_move())
 
     async def take_move(self):
@@ -129,4 +129,4 @@ class GameBot(Player):
         return alpha
     
     def __str__(self):
-        return f"🤖 Bot {-self.id}" + (f" ({self.num_evaluated_positions}/{len(self.transpositions)})" if self.num_evaluated_positions else "")
+        return f"`🤖 Bot {-self.id}`" + (f" ({self.num_evaluated_positions}/{len(self.transpositions)})" if self.num_evaluated_positions else "")

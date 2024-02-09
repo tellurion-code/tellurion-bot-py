@@ -124,9 +124,8 @@ class Game:
         self.turn = 0
         self.setup_map()
 
-        self.panel = None
-        await self.current_player.start_turn()
         self.panel = await FightPanel(self).send(self.channel)
+        await self.current_player.start_turn()
 
     def setup_map(self):
         self.map = Map(size=self.map_size)
@@ -195,14 +194,11 @@ class Game:
         if next_turn <= self.turn: self.round += 1
         self.turn = next_turn
 
-        await self.panel.update(interaction)
-        self.announcements = []
-
         winner, reason = self.check_game_over()
         if reason:
-            await self.end_game(winner, reason)
+            await self.end_game(winner, reason, interaction)
         else:
-            await self.current_player.start_turn()
+            await self.current_player.start_turn(interaction)
         
     def check_game_over(self):
         potential_winner, max_score, alive_players = None, 0, 0
@@ -229,10 +225,11 @@ class Game:
 
         return None, None
 
-    async def end_game(self, winner, reason):
+    async def end_game(self, winner, reason, interaction):
         embed = discord.Embed(title=f"Petrigon | Victoire de {winner if winner else 'personne'} par {reason}", color=self.mainclass.color)
         embed.description = '\n'.join(self.players[id].info(no_change=True) for id in self.order)
         await self.channel.send(embed=embed)
+        await self.panel.update(interaction)
         await self.end()
 
     async def end(self):

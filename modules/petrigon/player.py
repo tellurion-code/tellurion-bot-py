@@ -30,8 +30,9 @@ class Player:
     def place(self, hex, rotation):
         self.game.map.set(hex.rotate(rotation), self.index)
 
-    async def start_turn(self):
-        pass
+    async def start_turn(self, interaction=None):
+        await self.game.panel.update(interaction)
+        self.game.announcements = []
 
     def move(self, map, direction):
         result = MoveResult(Map.copy(map))
@@ -89,8 +90,8 @@ class Player:
         pass
     
     async def use_power(self, interaction):
-        powers = {i: x for i,x in self.powers if x.active}
-        await PowerActivationPanel(powers).reply(interaction)
+        powers = {i: x for i,x in self.powers.items() if x.active}
+        await PowerActivationPanel(self.game, powers).reply(interaction)
     
     async def end_turn(self, interaction):
         await self.game.next_turn(interaction)
