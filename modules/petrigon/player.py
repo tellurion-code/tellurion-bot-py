@@ -67,18 +67,12 @@ class Player:
     def fight(self, map, hex, target, direction):
         opponent = self.game.index_to_player(self.get_hex(map, target))
 
-        attack = self.get_strength(map, hex, direction * -1) + self.attack_bonus(opponent)
-        defense = opponent.get_strength(map, target, direction) + opponent.defense_bonus(self)
+        attack = self.get_strength(map, hex, direction * -1, opponent=opponent, attacking=True)
+        defense = opponent.get_strength(map, target, direction, opponent=self, attacking=False)
 
         return Fight(self, opponent, attack, defense, target)
     
-    def attack_bonus(self, opponent):
-        return 0
-    
-    def defense_bonus(self, opponent):
-        return 0
-    
-    def get_strength(self, map, hex, direction):
+    def get_strength(self, map, hex, direction, opponent, attacking):
         strength = 0
         while self.get_hex(map, hex) == self.index:
             strength += 1

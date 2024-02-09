@@ -88,7 +88,7 @@ class Game:
         if self.powers_enabled:
             for player in self.players.values():
                 if isinstance(player, GameBot):
-                    player.set_powers((random.choice((Attacker, Defender, Swarm, Topologist, Liquid)),))
+                    player.set_powers((random.choice((Attacker, Defender, Swarm, Topologist, Liquid, Turtle)),))
 
             self.panel = await PowerPanel(self).send(self.channel)
         else:
@@ -109,8 +109,8 @@ class Game:
             Defender,
             General,
             Pacifist,
-            Topologist,
             Liquid,
+            Topologist,
         )
         for player in self.players.values():
             for power_class in powers_priority:
@@ -228,8 +228,8 @@ class Game:
     async def end_game(self, winner, reason, interaction):
         embed = discord.Embed(title=f"Petrigon | Victoire de {winner if winner else 'personne'} par {reason}", color=self.mainclass.color)
         embed.description = '\n'.join(self.players[id].info(no_change=True) for id in self.order)
-        await self.channel.send(embed=embed)
         await self.panel.update(interaction)
+        await self.channel.send(embed=embed)
         await self.end()
 
     async def end(self):

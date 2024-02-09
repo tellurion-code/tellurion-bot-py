@@ -48,9 +48,9 @@ class Attacker(Power):
     icon = "🗡️"
     description = "A un bonus de +1 en attaque"
 
-    def attack_bonus_decorator(self, func):
+    def get_strength_decorator(self, func):
         def decorated(*args, **kwargs):
-            return func(*args, **kwargs) + 1
+            return func(*args, **kwargs) + (1 if kwargs.get("attacking", False) else 0)
 
         return decorated
 
@@ -60,9 +60,9 @@ class Defender(Power):
     icon = "🛡️"
     description = "A un bonus de +1 en défense"
 
-    def defense_bonus_decorator(self, func):
+    def get_strength_decorator(self, func):
         def decorated(*args, **kwargs):
-            return func(*args, **kwargs) + 1
+            return func(*args, **kwargs) + (1 if not kwargs.get("attacking", False) else 0)
 
         return decorated
 
@@ -112,9 +112,11 @@ class Pacifist(Power):
 
         return decorated
 
-    def defense_bonus_decorator(self, func):
-        def decorated(opponent, *args, **kwargs):
-            return math.inf if opponent.id not in self.war_with else func(opponent, *args, **kwargs)
+    def get_strength_decorator(self, func):
+        def decorated(*args, **kwargs):
+            opponent = kwargs.get("opponent", None)
+            attacking = kwargs.get("attacking", False)
+            return math.inf if opponent.id not in self.war_with and not attacking else func(opponent, *args, **kwargs)
 
         return decorated
 
