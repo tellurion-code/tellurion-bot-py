@@ -269,3 +269,69 @@ class Turtle(Power):
             return func(map, hex, direction, *args, **kwargs) + bonus
         
         return decorated
+
+
+class Scout(Power):
+    name = "Éclaireur"
+    icon = "🗺"
+    description = "Deux fois par partie, peut se déplacer dans une direction choisie (sans combattre)"
+
+    activation_description = "Les unités de l'Éclaireur vont se déplacer"
+    start_active = True
+
+    def __init__(self, player):
+        super().__init__(player)
+        self.moving = False
+        self.moves = 2
+
+    def use(self):
+        self.moving = True
+        self.moves -= 1
+        if not self.moves: self.active = False
+        return super().use()
+
+    def move_decorator(self, func):
+        def decorated(map, direction):
+            if(not self.moving): return func(*args, **kwargs)
+            
+            first_result = func(map, direction)
+            if not first_result.valid: return first_result
+            
+            new_map = Map.copy(first_result.map)
+            for hex, value in first_result.map.items():
+                if value == self.player.index and self.player.get_hex(first_result.map, hex - direction) != self.player.index:
+                    wall_check_hex = hex + direction
+                    while self.player.get_hex(map, wall_check_hex) == self.player.index:
+                        wall_check_hex += direction
+
+                    if not (
+                        self.player.get_hex(map, wall_check_hex) in (None, 1) or    # We moved against a wall or edge, or
+                        any(x.hex == wall_check_hex for x in first_result.fights)   # we didn't win a fight (fight on the tile, but it's not ours)
+                    ):
+                        new_map.clear(hex)
+
+            second_result = MoveResult(new_map)
+            second_result.valid = second_result.map != map
+            second_result.fights.extend(first_result.fights)  # Est-ce qu'on peut mettre ça directement dans le MoveResult() ?
+            return second_result
+        
+        return decorated
+
+    def get_strength_decorator(self, func):
+        def decorated(*args, **kwargs):
+            if self.moving:
+                return 0
+            return func(*args, **kwargs) * (self.ratio + 1)
+
+        return decorated
+
+    def end_turn_decorator(self, func):
+        async def decorated(*args, **kwargs):
+            if self.moving: 
+                self.player.game.turn -= 1
+                self.player.game.round -= 1
+                self.moving = False
+            
+            return await func(*args, **kwargs)
+
+        return decorated
