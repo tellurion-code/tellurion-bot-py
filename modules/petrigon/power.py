@@ -257,7 +257,7 @@ class Turtle(Power):
 class Scout(Power):
     name = "Éclaireur"
     icon = "🗺️"
-    description = "Deux fois par partie, peut se déplacer dans une direction choisie (ne peut pas attaqué)"
+    description = "Deux fois par partie, peut se déplacer dans une direction choisie (ne peut pas attaquer)"
 
     activation_description = "Les unités de l'Éclaireur vont se déplacer"
     start_active = True

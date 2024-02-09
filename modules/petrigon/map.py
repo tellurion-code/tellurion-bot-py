@@ -2,7 +2,7 @@
 
 import math
 import random
-from PIL import Image, ImageColor
+from PIL import Image
 
 from modules.petrigon import constants
 from modules.petrigon.hex import Hex
@@ -118,7 +118,6 @@ class Map:
             if value != base_map.get(hex): self.set(hex, value)
 
     def render(self, tile_size=20, padding=1.1):
-        folder = "./modules/petrigon/assets/"
         sqrt3 = math.sqrt(3)
 
         image_size = int(tile_size * padding * self.size * 2)
@@ -126,7 +125,7 @@ class Map:
         image = Image.new("RGBA", (image_size * 2, int(image_size * sqrt3)))
         image.putalpha(0)
 
-        tiles = {name: Image.open(f'{folder}{name}.png').resize((int(tile_size * sqrt3), tile_size * 2)).convert("RGBA") for name in constants.TILE_NAMES}
+        tiles = {name: Image.open(f'{constants.ASSET_FOLDER}{name}.png').resize((int(tile_size * sqrt3), tile_size * 2)).convert("RGBA") for name in constants.TILE_NAMES}
         for y in range(-self.size, self.size + 1):
             for x in range(-self.size, self.size + 1):
                 hex = Hex(int(x - (y - (y&1)) / 2), y)

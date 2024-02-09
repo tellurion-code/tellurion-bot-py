@@ -91,13 +91,13 @@ class JoinView(PanelView):
         button.style = discord.ButtonStyle.green if self.game.powers_enabled else discord.ButtonStyle.gray
         return await self.panel.update(interaction)
     
-    @discord.ui.button(label="Symmétrie activée", emoji="🔄", style=discord.ButtonStyle.green, row=1)
+    @discord.ui.button(label="Symétrie activée", emoji="🔄", style=discord.ButtonStyle.green, row=1)
     async def toggle_symmetry(self, button, interaction):
         if interaction.user.id != self.game.admin:
             return await interaction.response.send_message("Seul le créateur de la partie peut changer les paramètres", ephemeral=True)
 
         self.game.use_symmetry = not self.game.use_symmetry
-        button.label = f"Symmétrie {'activée' if self.game.use_symmetry else 'désactivée'}" 
+        button.label = f"Symétrie {'activée' if self.game.use_symmetry else 'désactivée'}" 
         button.style = discord.ButtonStyle.green if self.game.use_symmetry else discord.ButtonStyle.gray
         return await self.panel.update(interaction)
 

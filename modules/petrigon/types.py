@@ -9,7 +9,7 @@ class Announcement:
     name: str
     value: str
 
-    
+
 @dataclass
 class MapImage:
     image: Image

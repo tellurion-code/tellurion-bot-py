@@ -33,7 +33,6 @@ class Game:
         self.panel = None
         self.announcements = []
         self.last_input = None
-        self.map_images = []
 
     @property
     def domination_score(self):
@@ -236,10 +235,7 @@ class Game:
         return None, None
 
     async def end_game(self, winner, reason, interaction):
-        embed = discord.Embed(title=f"Petrigon | Victoire de {winner if winner else 'personne'} par {reason}", color=self.mainclass.color)
-        embed.description = '\n'.join(self.players[id].info(no_change=True) for id in self.order)
-        await self.panel.update(interaction)
-        await self.channel.send(embed=embed)
+        await self.panel.end(winner, reason, interaction)
         await self.end()
 
     async def end(self):

@@ -4,6 +4,7 @@ import discord
 import math
 
 from modules.petrigon import constants
+from modules.petrigon.types import MapImage
 from modules.petrigon.views import FightView, PanelView, JoinView, PowerActivationView, PowerView
 
 
@@ -113,13 +114,19 @@ class PowerPanel(Panel):
 
 class FightPanel(Panel):
     view_class = FightView
+
+    def __init__(self, game):
+        super().__init__(game)
+        self.map_images = []
+        self.last_map = None
+        self.image_url = None
     
     @property
     def embed(self):
         embed = discord.Embed(color=constants.PLAYER_COLORS[self.game.turn])
         embed.title = f"Petrigon | Manche {self.game.round} | Tour de {self.game.current_player}"
         embed.description = f"### Plateau{' | Dernier choix: ' + self.game.last_input if self.game.last_input else ''}\n{self.game.map}"
-        # embed.set_image(self.get_map_image_url(self.game.map_images[-1]))
+        # embed.set_image(url=self.image_url)
 
         for announcement in self.game.announcements:
             embed.add_field(
@@ -134,11 +141,61 @@ class FightPanel(Panel):
         )
 
         return embed
+
+    async def send(self, channel):
+        map_image = self.update_map_image()
+        # self.image_url = await self.get_url(map_image)
+        return await super().send(channel)
     
-    def get_map_image_url(self, map_image):
+    async def update(self, interaction=None, save=True):
+        map_image = self.update_map_image()
+        # self.image_url = await self.get_url(map_image)
+        return await super().update(interaction, save)
+    
+    def update_map_image(self):
+        if self.last_map != self.game.map:
+            image = self.game.map.render()
+            self.map_images.append(MapImage(image))
+            self.last_map = self.game.map
+
+        return self.map_images[-1]
+
+    async def get_url(self, map_image):
         if map_image.url: return map_image.url
 
+        filename = f"{constants.ASSET_FOLDER}board.png"
+        map_image.image.save(filename)
+        map_image.url = await self.send_and_get_url(filename)
+        return map_image.url
+
+    async def send_and_get_url(self, filename):
+        url = None
+
         # Send the image to a private channel, get the url, then delete it
+        config = self.game.mainclass.client.modules["errors"]["initialized_class"].config
+        for chanid in config.dev_chan:
+            message = await self.game.mainclass.client.get_channel(chanid).send(file=discord.File(filename))
+            url = message.attachments[0].url
+            await message.delete()
+            break
+        
+        return url
+    
+    async def end(self, winner, reason, interaction):
+        await self.update(interaction)
+
+        embed = discord.Embed(title=f"Petrigon | Victoire de {winner if winner else 'personne'} par {reason}", color=self.game.mainclass.color)
+        embed.description = '\n'.join(self.game.players[id].info(no_change=True) for id in self.game.order)
+
+        await self.channel.send(embed=embed, file=discord.File(self.get_game_gif()))
+        del self.map_images
+
+    def get_game_gif(self):
+        filename = f"{constants.ASSET_FOLDER}game.gif"
+        images = [x.image for x in self.map_images]
+        images[0].save(filename, save_all=True, append_images=(*images[1:], images[-1]), duration=750, loop=0)
+        return filename
+
 
 class PowerActivationPanel(Panel):
     view_class = PowerActivationView
