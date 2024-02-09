@@ -285,17 +285,21 @@ class Scout(Power):
         self.moves = 2
 
     def use(self):
+        await self.channel.send("Use1 Moving : " + str(self.moving))
         self.moving = True
+        await self.channel.send("Use2 Moving : " + str(self.moving))
         self.moves -= 1
         if self.moves == 0: self.active = False
         return super().use()
 
     def move_decorator(self, func):
         def decorated(map, direction):
+            await self.channel.send("Start Moving : " + str(self.moving))
             if not self.moving: return func(*args, **kwargs)
             
             first_result = func(map, direction)
             if not first_result.valid: return first_result
+            await self.channel.send("First Moving : " + str(self.moving))
             
             new_map = Map.copy(first_result.map)
             for hex, value in first_result.map.items():
@@ -309,10 +313,12 @@ class Scout(Power):
                         any(x.hex == wall_check_hex for x in first_result.fights)   # we didn't win a fight (fight on the tile, but it's not ours)
                     ):
                         new_map.clear(hex)
+            await self.channel.send("Map Moving : " + str(self.moving))
 
             second_result = MoveResult(new_map)
             second_result.valid = second_result.map != map
             second_result.fights.extend(first_result.fights)  # Est-ce qu'on peut mettre ça directement dans le MoveResult() ?
+            await self.channel.send("Map Moving : " + str(self.moving))
             return second_result
         
         return decorated
@@ -327,10 +333,12 @@ class Scout(Power):
 
     def end_turn_decorator(self, func):
         async def decorated(*args, **kwargs):
+            await self.channel.send("End1 Moving : " + str(self.moving))
             if self.moving: 
                 self.player.game.turn -= 1
                 self.player.game.round -= 1
                 self.moving = False
+                await self.channel.send("End2 Moving : " + str(self.moving))
             
             return await func(*args, **kwargs)
 
