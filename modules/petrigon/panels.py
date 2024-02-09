@@ -114,6 +114,7 @@ class PowerPanel(Panel):
 
 class FightPanel(Panel):
     view_class = FightView
+    keep_message = False
 
     def __init__(self, game):
         super().__init__(game)
@@ -184,7 +185,7 @@ class FightPanel(Panel):
     async def end(self, winner, reason, interaction):
         await self.update(interaction)
 
-        embed = discord.Embed(title=f"Petrigon | Victoire de {winner if winner else 'personne'} par {reason}", color=self.game.mainclass.color)
+        embed = discord.Embed(title=f"Petrigon | Victoire de {winner if winner else 'personne'} par {reason} (Manche {self.game.round})", color=self.game.mainclass.color)
         embed.description = '\n'.join(self.game.players[id].info(no_change=True) for id in self.game.order)
 
         await self.channel.send(embed=embed, file=discord.File(self.get_game_gif()))
@@ -193,7 +194,7 @@ class FightPanel(Panel):
     def get_game_gif(self):
         filename = f"{constants.ASSET_FOLDER}game.gif"
         images = [x.image for x in self.map_images]
-        images[0].save(filename, save_all=True, append_images=(*images[1:], images[-1]), duration=750, loop=0)
+        images[0].save(filename, save_all=True, append_images=(*images[1:], images[-1], images[-1],), duration=667, loop=0)
         return filename
 
 
