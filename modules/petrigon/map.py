@@ -6,8 +6,10 @@ from PIL import Image
 
 from modules.petrigon import constants
 from modules.petrigon.hex import Hex
+from modules.petrigon.zobrist import zobrist_hash
 
 
+@zobrist_hash(fields=('hash_map',))
 class Map:
     """A hash map representing a hexagonal-shaped hex map."""
     class MapEditor:
@@ -17,47 +19,21 @@ class Map:
             self.new_map = None
 
         def __enter__(self):
-            self.new_map = Map.copy(self.map)
+            self.new_map = self.map.copy()
             return self
 
         def __exit__(self, exc_type, exc_value, traceback):
-            if exc_type == None and self.new_map:
+            if exc_type is None and self.new_map:
                 self.map.hash_map = self.new_map.hash_map
 
 
-    class ZobristHash:
-        hash_tables = {}
-
-        def __init__(self, size):
-            if size in self.hash_tables: 
-                self.zobrist_hash = self.hash_tables[size]
-                return
-
-            self.zobrist_hash = self.hash_tables[size] = {}
-            for r in range(-size, size+1):
-                hex = Hex(max(0, -r) - size, r)
-
-                while hex.length <= size:
-                    self.zobrist_hash[hex] = {i+1: random.getrandbits(64) for i in range(7)}
-                    hex += Hex(1, 0)
-
-        def hash(self, map):
-            hash = 0
-            for hex, value in map.items():
-                hash ^= self.zobrist_hash[hex][value]
-
-            return hash
-    
-
     def __init__(self, size):
-        self.size = size                            # This is a hexagonal shaped hex grid, so this is the number of hexes from the center (size of 1 = "3x3")
-        self.hash_map = {}                          # Dict<Hex, int>. Non-existence means the tile is empty. For simplicity, coordinates are gonna be based around the center
-        self.zobrist_hash = Map.ZobristHash(size)   # Hashing handler
-
-    @classmethod
-    def copy(cls, other):
-        map = cls(other.size)
-        map.hash_map = other.hash_map.copy()
+        self.size = size    # This is a hexagonal shaped hex grid, so this is the number of hexes from the center (size of 1 = "3x3")
+        self.hash_map = {}  # Dict<Hex, int>. Non-existence means the tile is empty. For simplicity, coordinates are gonna be based around the center
+    
+    def copy(self):
+        map = Map(self.size)
+        map.hash_map = self.hash_map.copy()
         return map
 
     @property
@@ -81,7 +57,7 @@ class Map:
         if not self.is_inside(hex):
             return
 
-        if value == None:
+        if value is None:
             raise ValueError(f"{value} is not a valid value to set a hex")
 
         if value == 0:
@@ -109,7 +85,7 @@ class Map:
     
     def update(self, other, base_map=None):
         """Apply all the differences between other and base_map (default: self) to the Map."""
-        if base_map == None: base_map = self
+        if base_map is None: base_map = self
         if other == base_map: return
 
         hexes = set((*base_map.hexes(), *other.hexes()))
@@ -130,7 +106,7 @@ class Map:
             for x in range(-self.size, self.size + 1):
                 hex = Hex(int(x - (y - (y&1)) / 2), y)
                 value = self.get(hex)
-                if value == None or value < 0 or value > len(constants.TILE_NAMES): continue
+                if value is None or value < 0 or value > len(constants.TILE_NAMES): continue
 
                 tile_name = constants.TILE_NAMES[value]
                 if not tile_name: continue
@@ -167,7 +143,7 @@ class Map:
                 q = int(x - (y - (y&1)) / 2)
                 r = y
                 value = self.get(Hex(q, r))
-                string += constants.TILE_COLORS[-1] if value == None else constants.TILE_COLORS[value]
+                string += constants.TILE_COLORS[-1] if value is None else constants.TILE_COLORS[value]
         
             string = string.rstrip(constants.TILE_COLORS[-1]) + "\n"
 

@@ -1,6 +1,6 @@
 """Game class."""
 
-import discord
+import asyncio
 import math
 import random
 
@@ -9,7 +9,7 @@ from modules.petrigon.player import Player
 from modules.petrigon.bot import GameBot
 from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, DIRECTIONS_TO_EMOJIS, Hex
 from modules.petrigon.panels import FightPanel, JoinPanel, PowerPanel
-from modules.petrigon.power import Attacker, Defender, General, Glitcher, Liquid, Pacifist, Power, Scout, Swarm, Topologist, Turtle
+from modules.petrigon.power import Attacker, Defender, General, Glitcher, Liquid, Pacifist, Scout, Swarm, Topologist, Turtle
 from modules.petrigon.bot import GameBot
 
 
@@ -59,9 +59,15 @@ class Game:
         last_turn = turn
         while True:
             turn = (turn + 1) % len(self.players)
-            if any(self.players[self.order[turn]].move(self.map, direction).valid for direction in AXIAL_DIRECTION_VECTORS) or turn == last_turn:
-                return turn
+            if turn == last_turn: return turn
             
+            # TODO: Since we're calculating all that, might as well store it somewhere to have the turn go by faster
+            current_player = self.players[self.order[turn]]
+            for direction in AXIAL_DIRECTION_VECTORS:
+                for combination in current_player.usable_powers_combinations():
+                    context = current_player.use_powers_from_combination(current_player.current_context, combination)
+                    if current_player.move(context, direction).valid: return turn
+
     def turn_to_player(self, turn):
         return self.players[self.order[turn]]
     
@@ -127,7 +133,7 @@ class Game:
         self.setup_map()
 
         self.panel = await FightPanel(self).send(self.channel)
-        await self.current_player.start_turn()
+        await self.start_turn()
 
     def setup_map(self):
         self.map = Map(size=self.map_size)
@@ -153,7 +159,7 @@ class Game:
         symmetries = (
             [0, 3] if len(self.players) == 2 else
             ([0, 2, 4] if len(self.players) == 3 else
-            ([0, 3] if len(self.players) == 4 else
+            ([0, 3] if len(self.players) == 4 else  # FIXME: La symmétrie est pas bonne ici
             [0, 1, 2, 3, 4, 5]))
         ) if self.use_symmetry else [0]
 
@@ -181,21 +187,35 @@ class Game:
                 self.map.set(hex, 1)
                 i += 1
 
+    async def start_turn(self, interaction=None):
+        context = self.current_player.start_turn(self.current_player.current_context)
+        self.current_player.apply_powers_data(context.powers_data)
+        await self.panel.update(interaction)
+        self.announcements = []
+
+        if isinstance(self.current_player, GameBot):
+            asyncio.create_task(self.current_player.take_move())
+
     async def handle_direction(self, direction, interaction=None):
-        result = self.current_player.move(self.map, direction)
+        result = self.current_player.move(self.current_player.current_context, direction)
         if not result.valid:
             return False
 
-        for fight in result.fights:
-            fight.attacker.on_fight(fight)
-            fight.defender.on_fight(fight)
+        self.current_player.apply_powers_data(result.context.powers_data)
 
         for player in self.players.values():
-            player.last_score_change = player.score(result.map) - player.score(self.map)
+            player.last_score_change = player.score(result.context.map) - player.score(self.map)
 
-        self.map = result.map
-        self.last_input = DIRECTIONS_TO_EMOJIS[direction]    
-        await self.current_player.end_turn(interaction)
+        self.map = result.context.map
+        self.last_input = DIRECTIONS_TO_EMOJIS[direction]
+        pass_turn, context = self.current_player.end_turn(self.current_player.current_context)
+        self.current_player.apply_powers_data(context.powers_data)
+
+        if pass_turn:
+            await self.next_turn(interaction)
+        else:
+            await self.panel.update(interaction)
+        
         return True
 
     async def next_turn(self, interaction):
@@ -203,11 +223,16 @@ class Game:
         if next_turn <= self.turn: self.round += 1
         self.turn = next_turn
 
+        if not await self.check_for_game_end(interaction):
+            await self.start_turn(interaction)
+
+    async def check_for_game_end(self, interaction):
         winner, reason = self.check_game_over()
         if reason:
             await self.end_game(winner, reason, interaction)
-        else:
-            await self.current_player.start_turn(interaction)
+            return True
+        
+        return False
         
     def check_game_over(self):
         potential_winner, max_score, alive_players = None, 0, 0

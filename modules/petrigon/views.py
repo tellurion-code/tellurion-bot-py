@@ -4,7 +4,7 @@ import discord
 
 from modules.game.views import GameView, PlayView
 from modules.petrigon.hex import Hex
-from modules.petrigon.power import Power
+from modules.petrigon.power import ALL_POWERS
 
 
 class PanelView(GameView):
@@ -108,7 +108,7 @@ class PowerView(PanelView, PlayView):
     def __init__(self, game, panel, *args, **kwargs):
         super().__init__(game, panel, *args, **kwargs)
 
-        self.power_classes = {x.__name__: x for x in (*Power.__subclasses__(), Power)}
+        self.power_classes = {x.__name__: x for x in ALL_POWERS}
         options = [discord.SelectOption(
             label=subclass.name,
             description=subclass.description,
@@ -149,7 +149,7 @@ class FightView(PanelView, PlayView):
     update_on_init = True
 
     def update(self):
-        self.children[7].disabled = not any(power.active for power in self.game.current_player.powers.values())
+        self.children[7].disabled = not any(power.data.active for power in self.game.current_player.powers.values())
 
     @discord.ui.button(emoji="↖️", style=discord.ButtonStyle.blurple)
     async def move_up_left(self, button, interaction):

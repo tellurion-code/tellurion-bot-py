@@ -3,7 +3,7 @@ import discord
 from modules.base import BaseClassPython
 from modules.petrigon import constants
 from modules.petrigon.game import Game
-from modules.petrigon.power import Power
+from modules.petrigon.power import ALL_POWERS
 
 
 class MainClass(BaseClassPython):
@@ -97,7 +97,7 @@ class MainClass(BaseClassPython):
                     color=self.color
                 )
 
-                for c in Power.__subclasses__():
+                for c in ALL_POWERS:
                     embed.add_field(
                         name=f"{c.icon} {c.name}",
                         value=c.description

@@ -1,11 +1,14 @@
 """Player class."""
 
+import itertools
+import random
 from dataclasses import dataclass, field
 
 from modules.petrigon import constants
 from modules.petrigon.map import Map
-from modules.petrigon.hex import Hex
+from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, Hex
 from modules.petrigon.panels import PowerActivationPanel
+from modules.petrigon.types import Context, PowersData
 
 
 class Player:
@@ -15,9 +18,39 @@ class Player:
         self.id = user.id if user else 0
 
         self.index = None
+        self.hash = random.getrandbits(64)
         self.powers = {}
 
         self.last_score_change = 0
+
+    @property
+    def current_context(self):
+        return Context(self.game.map, PowersData({x.key: x.data for x in self.powers.values()}))
+    
+    def usable_powers_combinations(self, context=None):
+        if context is None: context = self.current_context
+        max_power_uses = {}
+        for key in self.powers.keys():
+            max_uses = 0
+            power_context = context.copy()
+            while power_context.powers_data[key].active:  # We assume the powers are activated independently
+                power_context = self.powers[key].use(power_context)
+                max_uses += 1
+            
+            max_power_uses[key] = tuple(range(max_uses + 1))
+
+        return tuple(dict(zip(max_power_uses.keys(), x)) for x in tuple(itertools.product(*max_power_uses.values())))
+
+    def use_powers_from_combination(self, context, combination):
+        for key, amount in combination.items():
+            for _ in range(amount):
+                context = self.powers[key].use(context)
+        
+        return context
+    
+    def possible_moves(self, context=None):
+        if context is None: context = self.current_context
+        return [(direction, new_powers_data) for direction in AXIAL_DIRECTION_VECTORS for new_powers_data in self.possible_powers_data(context)]
 
     def score(self, map=None):
         if not map: map = self.game.map
@@ -25,100 +58,124 @@ class Player:
 
     def set_powers(self, power_classes):
         self.powers.clear()
-        self.powers = {c.__name__: c(self) for c in power_classes}
+        power_instances = [c(self) for c in power_classes]
+        self.powers = {p.key: p for p in power_instances}
 
     def place(self, hex, rotation):
         self.game.map.set(hex.rotate(rotation), self.index)
 
-    async def start_turn(self, interaction=None):
-        await self.game.panel.update(interaction)
-        self.game.map.render()
-        self.game.announcements = []
+    def start_turn(self, context):
+        return context
 
-    def move(self, map, direction):
-        return self.do_move(map, direction)
+    def move(self, context, direction):
+        return self.do_move(context, direction)
 
-    def do_move(self, map, direction):
-        result = MoveResult(Map.copy(map))
-        for hex in map.hexes():
-            new_map, fight = self.move_tile(map, hex, hex + direction, direction)
-            if new_map: result.map.update(new_map, base_map=map)
+    def do_move(self, context, direction):
+        new_context = context.copy()
+        result = MoveResult(new_context)
+        for hex in context.map.hexes():
+            move_context, fight = self.move_tile(context, hex, hex + direction, direction)
+            if move_context:
+                new_context.map.update(move_context.map, base_map=context.map)
+                new_context.powers_data.update(move_context.powers_data)
             if fight: result.fights.append(fight)
 
-        result.valid = result.map != map
+        result.valid = new_context.map != context.map
         return result
     
-    def displace(self, map, direction, ties_consume_units=False):
-        first_result = self.do_move(map, direction)
+    def displace(self, context, direction, *, ties_consume_units=False):
+        first_result = self.do_move(context, direction)
         if not first_result.valid: return first_result
         
-        new_map = Map.copy(first_result.map)
-        for hex, value in first_result.map.items():
-            if value == self.index and self.get_hex(first_result.map, hex - direction) != self.index:
+        new_map = first_result.context.map.copy()
+        for hex, value in first_result.context.map.items():
+            if value == self.index and self.get_hex(first_result.context, hex - direction) != self.index:
                 wall_check_hex = hex + direction
-                while self.get_hex(map, wall_check_hex) == self.index:
+                while self.get_hex(context, wall_check_hex) == self.index:
                     wall_check_hex += direction
 
-                if not (                                                # Don't remove the unit if:
-                    self.get_hex(map, wall_check_hex) in (None, 1) or   # We moved against a wall or edge, or
-                    any(                                                # We lost a fight (or it's a tie and should not consume a unit)
+                if not ( # Don't remove the unit if:
+                    # We moved against a wall or edge, or
+                    self.get_hex(context, wall_check_hex) in (None, 1) or
+                     # We lost a fight (or it's a tie and should not consume a unit)
+                    any(
                         x.hex == wall_check_hex and (
-                            self.get_hex(first_result.map, x.hex) == x.defender.index or
-                            self.get_hex(first_result.map, x.hex) == 0 and not ties_consume_units
+                            self.get_hex(first_result.context, x.hex) == x.defender.index or
+                            self.get_hex(first_result.context, x.hex) == 0 and not ties_consume_units
                         )
                         for x in first_result.fights
                     )                               
                 ):
                     new_map.clear(hex)
 
-        second_result = MoveResult(new_map, fights=first_result.fights, valid=new_map != map)
+        second_result = MoveResult(
+            Context(new_map, first_result.context.powers_data),
+            fights=first_result.fights,
+            valid=new_map != context.map
+        )
         return second_result
 
-    def get_hex(self, map, hex):
-        return map.get(hex)
+    def get_hex(self, context, hex):
+        return context.map.get(hex)
     
-    def move_tile(self, map, hex, target, direction):
-        if self.get_hex(map, hex) == self.index:
-            moving_to = self.get_hex(map, target)
+    def move_tile(self, context, hex, target, direction):
+        if self.get_hex(context, hex) == self.index:
+            moving_to = self.get_hex(context, target)
             if moving_to in (None, 1, self.index):
                 return None, None
             
             if moving_to not in (0, self.index):
-                fight = self.fight(map, hex, target, direction)
-                new_map = fight.resolve(map)
-                return new_map, fight
+                return self.fight(context, hex, target, direction)
 
-            new_map = Map.copy(map)
+            new_map = context.map.copy()
             new_map.set(target, self.index)
-            return new_map, None
+            return Context(new_map, context.powers_data), None
         
         return None, None
     
-    def fight(self, map, hex, target, direction):
-        opponent = self.game.index_to_player(self.get_hex(map, target))
+    def fight(self, context, hex, target, direction):
+        opponent = self.game.index_to_player(self.get_hex(context, target))
 
-        attack = self.get_strength(map, hex, direction * -1, opponent=opponent, attacking=True)
-        defense = opponent.get_strength(map, target, direction, opponent=self, attacking=False)
+        attack = self.get_strength(context, hex, direction * -1, opponent=opponent, attacking=True)
+        defense = opponent.get_strength(context, target, direction, opponent=self, attacking=False)
 
-        return Fight(self, opponent, attack, defense, target)
+        fight = Fight(self, opponent, attack, defense, target)
+        new_context = context.copy()
+        new_context.map = fight.resolve(new_context.map)
+        return new_context, fight
     
-    def get_strength(self, map, hex, direction, opponent, attacking):
+    def get_strength(self, context, hex, direction, *, opponent, attacking):
         strength = 0
-        while self.get_hex(map, hex) == self.index:
+        while self.get_hex(context, hex) == self.index:
             strength += 1
             hex += direction
 
         return strength
     
-    def on_fight(self, fight):
-        pass
+    def apply_powers_data(self, powers_data):
+        for key, data in powers_data.items():
+            self.powers[key].data = data
     
     async def use_power(self, interaction):
-        powers = {i: x for i,x in self.powers.items() if x.active}
+        powers = {i: x for i,x in self.powers.items() if x.data.active}
         await PowerActivationPanel(self.game, powers).reply(interaction)
+
+    def is_on_extra_turn(self, powers_data):
+        new_powers_data = PowersData(powers_data)
+        extra_turn = False
+        for key, data in powers_data.items():
+            if data.extra_turn:
+                new_powers_data[key].extra_turn = False
+                extra_turn = True
+                break
+
+        return extra_turn, new_powers_data
     
-    async def end_turn(self, interaction):
-        await self.game.next_turn(interaction)
+    def end_turn(self, context):
+        extra_turn, new_powers_data = self.is_on_extra_turn(context.powers_data)
+        new_context = Context(context.map, new_powers_data)
+        if extra_turn: return False, new_context
+        return True, new_context
     
     async def forfeit(self, interaction):
         with self.game.map.edit() as editor:
@@ -137,6 +194,9 @@ class Player:
 
     def __str__(self):
         return f"`{self.user.display_name}`"
+    
+    def __hash__(self):
+        return self.hash
 
 
 @dataclass
@@ -149,7 +209,7 @@ class Fight:
 
     def resolve(self, map: Map):
         if self.attack >= self.defense:
-            new_map = Map.copy(map)
+            new_map = map.copy()
             new_map.set(self.hex, 0 if self.attack == self.defense else self.attacker.index)
             return new_map
     
@@ -158,6 +218,6 @@ class Fight:
 
 @dataclass
 class MoveResult:
-    map: Map
+    context: Context
     fights: list[Fight] = field(default_factory=list)
     valid: bool = True

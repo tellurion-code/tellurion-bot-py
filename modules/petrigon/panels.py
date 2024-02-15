@@ -1,10 +1,9 @@
 """Panel classes (mesages with views)"""
 
 import discord
-import math
 
 from modules.petrigon import constants
-from modules.petrigon.types import MapImage
+from modules.petrigon.types import Announcement, MapImage
 from modules.petrigon.views import FightView, PanelView, JoinView, PowerActivationView, PowerView
 
 
@@ -214,8 +213,16 @@ class PowerActivationPanel(Panel):
     def content(self):
         return "Vous avez plusieurs pouvoirs activables"
     
-    async def resolve_power(self, power, interaction):
-        if self.powers[power].use():
+    async def resolve_power(self, power_key, interaction):
+        power = self.powers[power_key]
+        context = power.use(self.game.current_player.current_context)
+        if context:
+            self.game.announcements.append(Announcement(
+                name=f"{power.icon} Pouvoir du {power.name}",
+                value=power.activation_description
+            ))
+            power.data = context.powers_data[power_key]
+
             await self.close()
             await self.game.panel.update(interaction)
         else:

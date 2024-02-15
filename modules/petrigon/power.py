@@ -1,22 +1,34 @@
 """Power class."""
 
 import math
+from dataclasses import dataclass, field
 
 from modules.petrigon.hex import Hex
-from modules.petrigon.types import Announcement
+from modules.petrigon.types import Context, PowersData
+from modules.petrigon.zobrist import zobrist_hash
 
 
 class Power:
+    @dataclass
+    @zobrist_hash
+    class Data:
+        active: bool = False
+        extra_turn: bool = False
+    
+
     name = "Sans Pouvoir"
     icon = "🚫"
     description = "Sans pouvoir spécial"
 
     activation_description = ""
-    start_active = False
+
+    @property
+    def key(self):
+        return self.__class__.__name__
 
     def __init__(self, player):
         self.player = player
-        self.active = self.start_active
+        self.data = self.Data()
 
     def setup(self):
         # Get all methods ending with "_decorator" and apply them to the player
@@ -28,12 +40,9 @@ class Power:
             decorator = getattr(self, method_name)
             setattr(self.player, player_method_name, decorator(player_method))
 
-    def use(self):
-        self.player.game.announcements.append(Announcement(
-            name=f"{self.icon} Pouvoir du {self.name}",
-            value=self.activation_description
-        ))
-        return True
+    def use(self, context):
+        if not context.powers_data[self.key].active: return None
+        return context.copy()
 
     def __str__(self):
         return f"{self.icon} {self.name}"
@@ -66,94 +75,36 @@ class Defender(Power):
         return decorated
 
 
-class Glitcher(Power):
-    name = "Glitcheur"
-    icon = "👾"
-    description = "Une fois par partie, peut jouer deux tours d'affilée"
-
-    activation_description = "Le Glitcheur va jouer deux tours d'affilée"
-    start_active = True
-
-    def __init__(self, player):
-        super().__init__(player)
-        self.double_turn = False
-
-    def use(self):
-        self.active = False
-        self.double_turn = True
-        return super().use()
-
-    def end_turn_decorator(self, func):
-        async def decorated(*args, **kwargs):
-            if self.double_turn and self.player.game.turn == self.player.game.player_turn(self.player): 
-                self.player.game.turn += len(self.player.game.players) - 1
-                self.player.game.round -= 1
-                self.double_turn = False
-            
-            return await func(*args, **kwargs)
-
-        return decorated
-
-
 class Pacifist(Power):
+    @dataclass
+    class Data(Power.Data):
+        war_with: set = field(default_factory=set)
+
     name = "Pacifiste"
     icon = "🕊️"
     description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué"
 
-    def __init__(self, player):
-        super().__init__(player)
-        self.war_with = []
-
-    def on_fight_decorator(self, func):
-        def decorated(fight, *args, **kwargs):
-            if fight.attacker == self.player: self.war_with.append(fight.defender.id)
-            return func(fight, *args, **kwargs)
+    def fight_decorator(self, func):
+        def decorated(context, hex, target, *args, **kwargs):
+            new_powers_data = PowersData(context.powers_data)
+            opponent = self.game.index_to_player(self.get_hex(context, target))
+            new_powers_data[self.key].war_with.add(opponent.id)
+            
+            return func(Context(map, new_powers_data), hex, target, *args, **kwargs)
 
         return decorated
 
     def get_strength_decorator(self, func):
-        def decorated(*args, **kwargs):
+        def decorated(context, *args, **kwargs):
             opponent = kwargs.get("opponent", None)
             attacking = kwargs.get("attacking", False)
-            return math.inf if opponent.id not in self.war_with and not attacking else func(*args, **kwargs)
 
-        return decorated
+            return (
+                math.inf 
+                if opponent.id not in context.powers_data[self.key].war_with and not attacking 
+                else func(*args, **kwargs)
+            )
 
-
-class General(Power):
-    name = "Général"
-    icon = "🚩"
-    description = "Une fois par partie, peut tripler puis doubler la force de ses unités sur deux tours"
-
-    activation_description = "Les unités du Général vont être triplées puis doublées sur 2 tours"
-    start_active = True
-
-    def __init__(self, player):
-        super().__init__(player)
-        self.ratio = 0
-
-    def use(self):
-        self.ratio = 2
-        self.active = False
-        return super().use()
-
-    def start_turn_decorator(self, func):
-        async def decorated(*args, **kwargs):
-            if self.ratio > 0: self.ratio -= 1
-            return await func(*args, **kwargs)
-
-        return decorated
-
-    def get_strength_decorator(self, func):
-        def decorated(*args, **kwargs):
-            return func(*args, **kwargs) * (self.ratio + 1)
-
-        return decorated
-    
-    def info_decorator(self, func):
-        def decorated(*args, **kwargs):
-            return func(*args, **kwargs) + (f" ({self.icon} x{self.ratio + 1})" if self.ratio > 0 else "")
-        
         return decorated
 
 
@@ -176,26 +127,26 @@ class Topologist(Power):
         return hex
 
     def get_hex_decorator(self, func):
-        def decorated(map, hex, *args, **kwargs):
-            hex = self.wraparound_hex(map, hex)
-            return func(map, hex, *args, **kwargs)
+        def decorated(context, hex, *args, **kwargs):
+            hex = self.wraparound_hex(context.map, hex)
+            return func(context, hex, *args, **kwargs)
         
         return decorated
     
     def move_tile_decorator(self, func):
-        def decorated(map, hex, target, direction, *args, **kwargs):
-            target = self.wraparound_hex(map, target)
-            return func(map, hex, target, direction, *args, **kwargs)
+        def decorated(context, hex, target, direction, *args, **kwargs):
+            target = self.wraparound_hex(context.map, target)
+            return func(context, hex, target, direction, *args, **kwargs)
         
         return decorated
     
     def get_strength_decorator(self, func):
-        def decorated(map, hex, direction, *args, **kwargs):
+        def decorated(context, hex, direction, *args, **kwargs):
             strength = 0
-            while self.player.get_hex(map, hex) == self.player.index:
+            while self.player.get_hex(context, hex) == self.player.index:
                 strength += 1
                 next_hex = hex + direction
-                hex = self.wraparound_hex(map, next_hex)
+                hex = self.wraparound_hex(context.map, next_hex)
                 if hex != next_hex: strength += 1
 
             return strength
@@ -203,8 +154,8 @@ class Topologist(Power):
         return decorated
     
     def evaluate_for_player_decorate(self, func):
-        def decorated(map, player):
-            return sum(map.size - hex.length + 1 for hex, value in map.items() if value == player.index)
+        def decorated(context, player):
+            return sum(context.map.size - hex.length + 1 for hex, value in context.map.items() if value == player.index)
 
         return decorated
 
@@ -229,12 +180,12 @@ class Liquid(Power):
     description = "Se déplace dans la direction choisie avant de se répliquer"
 
     def move_decorator(self, func):
-        def decorated(map, direction):
-            first_result = self.player.displace(map, direction, ties_consume_units=True)
+        def decorated(context, *args, **kwargs):
+            first_result = self.player.displace(context, *args, ties_consume_units=True, **kwargs)
             if not first_result.valid: return first_result
 
-            second_result = self.player.do_move(first_result.map, direction)
-            second_result.valid = second_result.map != map
+            second_result = func(first_result.context, *args, **kwargs)
+            second_result.valid = second_result.context.map != context.map
             second_result.fights.extend(first_result.fights)
             return second_result
         
@@ -247,66 +198,155 @@ class Turtle(Power):
     description = "Gagne +1 en combat si l'unité en combat est supportée par deux unités alliées"
 
     def get_strength_decorator(self, func):
-        def decorated(map, hex, direction, *args, **kwargs):
-            bonus = 1 if self.player.get_hex(map, hex + direction.rotate(1)) == self.player.get_hex(map, hex + direction.rotate(-1)) == self.player.index else 0
-            return func(map, hex, direction, *args, **kwargs) + bonus
+        def decorated(context, hex, direction, *args, **kwargs):
+            bonus = 1 if (
+                self.player.get_hex(context, hex + direction.rotate(1)) == 
+                self.player.get_hex(context, hex + direction.rotate(-1)) == 
+                self.player.index
+            ) else 0
+            
+            return func(context, hex, direction, *args, **kwargs) + bonus
         
         return decorated
+    
 
+class ActivePower(Power):
+    @dataclass
+    class Data(Power.Data):
+        active: bool = True
+        uses: int = 1
 
-class Scout(Power):
-    name = "Éclaireur"
-    icon = "🗺️"
-    description = "Deux fois par partie, peut se déplacer dans une direction choisie (ne peut pas attaquer)"
+    multiple_uses_per_turn = False
 
-    activation_description = "Les unités de l'Éclaireur vont se déplacer"
-    start_active = True
+    def use(self, context):
+        new_context = super().use(context)
+        if new_context is None: return None
 
-    def __init__(self, player):
-        super().__init__(player)
-        self.moving = False
-        self.moves = 2
+        new_data = new_context.powers_data[self.key]  # Reminder: this is a reference
+        new_data.uses -= 1
+        new_data.active = new_data.uses > 0 and self.multiple_uses_per_turn
+        return new_context
+    
+    def start_turn_decorator(self, func):
+        def decorated(context, *args, **kwargs):
+            powers_data = PowersData(context.powers_data)
+            if powers_data[self.key].uses > 0:
+                powers_data[self.key].active = True
 
-    def use(self):
-        self.moving = True
-        self.moves -= 1
-        self.active = False
-        return super().use()
+            return func(Context(context.map, powers_data), *args, **kwargs)
+
+        return decorated
+    
+
+class Glitcher(ActivePower):
+    name = "Glitcheur"
+    icon = "👾"
+    description = "Une fois par partie, peut jouer deux tours d'affilée"
+    activation_description = "Le Glitcheur va jouer deux tours d'affilée"
+
+    def use(self, context):
+        new_context = super().use(context)
+        if new_context is None: return None
+        
+        new_context.powers_data[self.key].extra_turn = True
+        return new_context
+    
+
+class General(ActivePower):
+    @dataclass
+    class Data(ActivePower.Data):
+        ratio: int = 0
+
+    name = "Général"
+    icon = "🚩"
+    description = "Une fois par partie, peut tripler puis doubler la force de ses unités sur deux tours"
+    activation_description = "Les unités du Général vont être triplées puis doublées sur 2 tours"
+
+    def use(self, context):
+        new_context = super().use(context)
+        if new_context is None: return None
+
+        new_context.powers_data[self.key].ratio = 2
+        return new_context
 
     def start_turn_decorator(self, func):
-        async def decorated(*args, **kwargs):
-            if self.moves > 0: self.active = True
-            return await func(*args, **kwargs)
+        def decorated(context, *args, **kwargs):
+            powers_data = PowersData(context.powers_data)
+            if powers_data[self.key].ratio > 0: 
+                powers_data[self.key].ratio -= 1
+            
+            return func(Context(context.map, powers_data), *args, **kwargs)
 
-        return decorated
-
-    def move_decorator(self, func):
-        def decorated(map, direction, *args, **kwargs):
-            if self.moving: return self.player.displace(map, direction, *args, **kwargs)
-            return func(map, direction, *args, **kwargs)
-        
-        return decorated
+        return super().start_turn_decorator(decorated)
 
     def get_strength_decorator(self, func):
-        def decorated(*args, **kwargs):
-            attacking = kwargs.get("attacking", False)
-            return -math.inf if self.moving and attacking else func(*args, **kwargs)
-
-        return decorated
-
-    def end_turn_decorator(self, func):
-        async def decorated(*args, **kwargs):
-            if self.moving and self.player.game.turn == self.player.game.player_turn(self.player): 
-                self.player.game.turn += len(self.player.game.players) - 1
-                self.player.game.round -= 1
-                self.moving = False
-            
-            return await func(*args, **kwargs)
+        def decorated(context, *args, **kwargs):
+            return func(*args, **kwargs) * (context.powers_data[self.key].ratio + 1)
 
         return decorated
     
     def info_decorator(self, func):
         def decorated(*args, **kwargs):
-            return func(*args, **kwargs) + (f" ({self.icon} x{self.moves})" if self.moves > 0 else "")
+            return func(*args, **kwargs) + (f" ({self.icon} x{self.data.ratio + 1})" if self.data.ratio > 0 else "")
         
         return decorated
+
+
+class Scout(ActivePower):
+    @dataclass
+    class Data(ActivePower.Data):
+        uses: int = 2
+        moving: bool = False
+    
+    name = "Éclaireur"
+    icon = "🗺️"
+    description = "Deux fois par partie, peut se déplacer dans une direction choisie (ne peut pas attaquer)"
+    activation_description = "Les unités de l'Éclaireur vont se déplacer"
+
+    def use(self, context):
+        new_context = super().use(context)
+        if new_context is None: return None
+
+        new_data = new_context.powers_data[self.key]  # Reminder: this is a reference
+        new_data.moving = True
+        new_data.extra_turn = True
+        return new_context
+
+    def move_decorator(self, func):
+        def decorated(context, *args, **kwargs):
+            data = context.powers_data[self.key]
+            if data.moving:
+                data.moving = False  # If the move fails, this data won't be applied
+                return self.player.displace(context, *args, **kwargs)
+
+            return func(context, *args, **kwargs)
+        
+        return decorated
+
+    def get_strength_decorator(self, func):
+        def decorated(context, *args, **kwargs):
+            attacking = kwargs.get("attacking", False)
+            return (
+                -math.inf 
+                if context.powers_data[self.key].moving and attacking 
+                else func(*args, **kwargs)
+            )
+
+        return decorated
+
+    def info_decorator(self, func):
+        def decorated(*args, **kwargs):
+            return func(*args, **kwargs) + (f" ({self.icon} x{self.data.uses})" if self.data.uses > 0 else "")
+        
+        return decorated
+
+
+def get_leaf_subclasses(cls):
+    subclasses = cls.__subclasses__()
+    if not len(subclasses): yield cls
+    
+    for subclass in subclasses:
+        for subsubclass in get_leaf_subclasses(subclass):
+            yield subsubclass
+
+ALL_POWERS = (*[c for c in get_leaf_subclasses(Power)], Power)
