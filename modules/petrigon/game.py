@@ -9,8 +9,9 @@ from modules.petrigon.player import Player
 from modules.petrigon.bot import GameBot
 from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, DIRECTIONS_TO_EMOJIS, Hex
 from modules.petrigon.panels import FightPanel, JoinPanel, PowerPanel
-from modules.petrigon.power import Attacker, Defender, General, Glitcher, Liquid, Pacifist, Scout, Swarm, Topologist, Turtle
+from modules.petrigon.power import ALL_POWERS, Attacker, Defender, General, Glitcher, Liquid, Pacifist, Scout, Swarm, Topologist, Turtle
 from modules.petrigon.bot import GameBot
+from modules.petrigon.types import Context, PowersData
 
 
 class Game:
@@ -46,6 +47,10 @@ class Game:
     def current_player(self):
         return self.turn_to_player(self.turn)
     
+    @property
+    def current_context(self):
+        return Context(self.map, {k: PowersData({x.key: x.data for x in p.powers.values()}) for k,p in self.players.items()})
+    
     def index_to_player(self, index):
         for player in self.players.values():
             if player.index == index: return player
@@ -65,7 +70,7 @@ class Game:
             current_player = self.players[self.order[turn]]
             for direction in AXIAL_DIRECTION_VECTORS:
                 for combination in current_player.usable_powers_combinations():
-                    context = current_player.use_powers_from_combination(current_player.current_context, combination)
+                    context = current_player.use_powers_from_combination(self.current_context, combination)
                     if current_player.move(context, direction).valid: return turn
 
     def turn_to_player(self, turn):
@@ -95,7 +100,7 @@ class Game:
         if self.powers_enabled:
             for player in self.players.values():
                 if isinstance(player, GameBot):
-                    player.set_powers((random.choice((Attacker, Defender, Swarm, Topologist, Liquid, Turtle)),))
+                    player.set_powers((random.choice(ALL_POWERS),))
 
             self.panel = await PowerPanel(self).send(self.channel)
         else:
@@ -188,8 +193,8 @@ class Game:
                 i += 1
 
     async def start_turn(self, interaction=None):
-        context = self.current_player.start_turn(self.current_player.current_context)
-        self.current_player.apply_powers_data(context.powers_data)
+        context = self.current_player.start_turn(self.current_context)
+        self.current_player.apply_powers_data(context)
         await self.panel.update(interaction)
         self.announcements = []
 
@@ -197,34 +202,37 @@ class Game:
             asyncio.create_task(self.current_player.take_move())
 
     async def handle_direction(self, direction, interaction=None):
-        result = self.current_player.move(self.current_player.current_context, direction)
+        result = self.current_player.move(self.current_context, direction)
         if not result.valid:
             return False
 
-        self.current_player.apply_powers_data(result.context.powers_data)
+        self.current_player.apply_powers_data(result.context)
 
         for player in self.players.values():
             player.last_score_change = player.score(result.context.map) - player.score(self.map)
 
         self.map = result.context.map
         self.last_input = DIRECTIONS_TO_EMOJIS[direction]
-        pass_turn, context = self.current_player.end_turn(self.current_player.current_context)
-        self.current_player.apply_powers_data(context.powers_data)
+        pass_turn, context = self.current_player.end_turn(self.current_context)
+        self.current_player.apply_powers_data(context)
 
-        if pass_turn:
-            await self.next_turn(interaction)
-        else:
-            await self.panel.update(interaction)
+        await self.end_action(pass_turn, interaction)
         
         return True
-
-    async def next_turn(self, interaction):
-        next_turn = self.next_valid_turn(self.turn)
-        if next_turn <= self.turn: self.round += 1
-        self.turn = next_turn
+    
+    async def end_action(self, pass_turn, interaction):
+        if pass_turn:
+            await self.next_turn()
+        else:
+            await self.panel.update()
 
         if not await self.check_for_game_end(interaction):
             await self.start_turn(interaction)
+
+    async def next_turn(self):
+        next_turn = self.next_valid_turn(self.turn)
+        if next_turn <= self.turn: self.round += 1
+        self.turn = next_turn
 
     async def check_for_game_end(self, interaction):
         winner, reason = self.check_game_over()

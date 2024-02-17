@@ -1,7 +1,7 @@
 """Power class."""
 
 import math
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 
 from modules.petrigon.hex import Hex
 from modules.petrigon.types import Context, PowersData
@@ -14,6 +14,18 @@ class Power:
     class Data:
         active: bool = False
         extra_turn: bool = False
+
+    
+    class ContextPowerDataEditor:
+        def __init__(self, power, context, **kwargs) -> None:
+            self.power = power
+            self.context = context
+            self.kwargs = kwargs
+            self.data = replace(power.data_from_context(context))
+        
+        @property
+        def new_context(self):
+            return self.power.copy_context_with_data(self.context, self.data, **self.kwargs)
     
 
     name = "Sans Pouvoir"
@@ -22,13 +34,13 @@ class Power:
 
     activation_description = ""
 
-    @property
-    def key(self):
-        return self.__class__.__name__
-
     def __init__(self, player):
         self.player = player
         self.data = self.Data()
+
+    @property
+    def key(self):
+        return self.__class__.__name__
 
     def setup(self):
         # Get all methods ending with "_decorator" and apply them to the player
@@ -40,9 +52,17 @@ class Power:
             decorator = getattr(self, method_name)
             setattr(self.player, player_method_name, decorator(player_method))
 
+    def data_from_context(self, context):
+        return self.player.powers_data_from_context(context)[self.key]
+    
+    def copy_context_with_data(self, context, data, *, same_map=True):
+        powers_data = PowersData(self.player.powers_data_from_context(context))
+        powers_data[self.key] = data
+        return context.copy(same_map=same_map, players_powers_data_update={self.player.id: powers_data})
+
     def use(self, context):
-        if not context.powers_data[self.key].active: return None
-        return context.copy()
+        if not self.data_from_context(context).active: return None
+        return context
 
     def __str__(self):
         return f"{self.icon} {self.name}"
@@ -86,11 +106,11 @@ class Pacifist(Power):
 
     def fight_decorator(self, func):
         def decorated(context, hex, target, *args, **kwargs):
-            new_powers_data = PowersData(context.powers_data)
-            opponent = self.game.index_to_player(self.get_hex(context, target))
-            new_powers_data[self.key].war_with.add(opponent.id)
+            editor = Power.ContextPowerDataEditor(self, context)
+            opponent = self.player.game.index_to_player(self.get_hex(context, target))
+            editor.data.war_with.add(opponent.id)
             
-            return func(Context(map, new_powers_data), hex, target, *args, **kwargs)
+            return func(editor.new_context, hex, target, *args, **kwargs)
 
         return decorated
 
@@ -101,7 +121,7 @@ class Pacifist(Power):
 
             return (
                 math.inf 
-                if opponent.id not in context.powers_data[self.key].war_with and not attacking 
+                if opponent.id not in self.data_from_context(context).war_with and not attacking 
                 else func(*args, **kwargs)
             )
 
@@ -222,18 +242,20 @@ class ActivePower(Power):
         new_context = super().use(context)
         if new_context is None: return None
 
-        new_data = new_context.powers_data[self.key]  # Reminder: this is a reference
-        new_data.uses -= 1
-        new_data.active = new_data.uses > 0 and self.multiple_uses_per_turn
-        return new_context
+        editor = Power.ContextPowerDataEditor(self, new_context)
+        editor.data.uses -= 1
+        editor.data.active = editor.data.uses > 0 and self.multiple_uses_per_turn
+        return editor.new_context
     
     def start_turn_decorator(self, func):
         def decorated(context, *args, **kwargs):
-            powers_data = PowersData(context.powers_data)
-            if powers_data[self.key].uses > 0:
-                powers_data[self.key].active = True
+            data = self.data_from_context(context)
+            if data.uses > 0:
+                editor = Power.ContextPowerDataEditor(self, context)
+                editor.data.active = True
+                context = editor.new_context
 
-            return func(Context(context.map, powers_data), *args, **kwargs)
+            return func(context, *args, **kwargs)
 
         return decorated
     
@@ -248,8 +270,9 @@ class Glitcher(ActivePower):
         new_context = super().use(context)
         if new_context is None: return None
         
-        new_context.powers_data[self.key].extra_turn = True
-        return new_context
+        editor = Power.ContextPowerDataEditor(self, new_context)
+        editor.data.extra_turn = True
+        return editor.new_context
     
 
 class General(ActivePower):
@@ -266,22 +289,25 @@ class General(ActivePower):
         new_context = super().use(context)
         if new_context is None: return None
 
-        new_context.powers_data[self.key].ratio = 2
-        return new_context
+        editor = Power.ContextPowerDataEditor(self, new_context)
+        editor.data.ratio = 2
+        return editor.new_context
 
     def start_turn_decorator(self, func):
         def decorated(context, *args, **kwargs):
-            powers_data = PowersData(context.powers_data)
-            if powers_data[self.key].ratio > 0: 
-                powers_data[self.key].ratio -= 1
+            data = self.data_from_context(context)
+            if data.ratio > 0: 
+                editor = Power.ContextPowerDataEditor(self, context)
+                editor.data.ratio -= 1
+                context = editor.new_context
             
-            return func(Context(context.map, powers_data), *args, **kwargs)
+            return func(context, *args, **kwargs)
 
         return super().start_turn_decorator(decorated)
 
     def get_strength_decorator(self, func):
         def decorated(context, *args, **kwargs):
-            return func(*args, **kwargs) * (context.powers_data[self.key].ratio + 1)
+            return func(context, *args, **kwargs) * (self.data_from_context(context).ratio + 1)
 
         return decorated
     
@@ -307,17 +333,18 @@ class Scout(ActivePower):
         new_context = super().use(context)
         if new_context is None: return None
 
-        new_data = new_context.powers_data[self.key]  # Reminder: this is a reference
-        new_data.moving = True
-        new_data.extra_turn = True
-        return new_context
+        editor = Power.ContextPowerDataEditor(self, new_context)
+        editor.data.moving = True
+        editor.data.extra_turn = True
+        return editor.new_context
 
     def move_decorator(self, func):
         def decorated(context, *args, **kwargs):
-            data = context.powers_data[self.key]
+            data = self.data_from_context(context)
             if data.moving:
-                data.moving = False  # If the move fails, this data won't be applied
-                return self.player.displace(context, *args, **kwargs)
+                editor = Power.ContextPowerDataEditor(self, context)
+                editor.data.moving = False  # If the move fails, this data won't be applied
+                return self.player.displace(editor.new_context, *args, **kwargs)
 
             return func(context, *args, **kwargs)
         
@@ -328,8 +355,8 @@ class Scout(ActivePower):
             attacking = kwargs.get("attacking", False)
             return (
                 -math.inf 
-                if context.powers_data[self.key].moving and attacking 
-                else func(*args, **kwargs)
+                if self.data_from_context(context).moving and attacking 
+                else func(context, *args, **kwargs)
             )
 
         return decorated
@@ -349,4 +376,4 @@ def get_leaf_subclasses(cls):
         for subsubclass in get_leaf_subclasses(subclass):
             yield subsubclass
 
-ALL_POWERS = (*[c for c in get_leaf_subclasses(Power)], Power)
+ALL_POWERS = tuple(get_leaf_subclasses(Power))

@@ -4,7 +4,7 @@ import discord
 
 from modules.game.views import GameView, PlayView
 from modules.petrigon.hex import Hex
-from modules.petrigon.power import ALL_POWERS
+from modules.petrigon.power import ALL_POWERS, Power
 
 
 class PanelView(GameView):
@@ -108,7 +108,7 @@ class PowerView(PanelView, PlayView):
     def __init__(self, game, panel, *args, **kwargs):
         super().__init__(game, panel, *args, **kwargs)
 
-        self.power_classes = {x.__name__: x for x in ALL_POWERS}
+        self.power_classes = {x.__name__: x for x in (*ALL_POWERS, Power)}
         options = [discord.SelectOption(
             label=subclass.name,
             description=subclass.description,

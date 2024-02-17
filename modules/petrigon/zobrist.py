@@ -7,10 +7,10 @@ def _get_hash_from_table(table, key):
     return table[key]
 
 
-def _process_flag(name, flag):
+def _process_flag(name: str, flag: str):
     flag_set = False
-    if name.endswith(flag):
-        name = name.removesuffix(flag)
+    if flag in name:
+        name = name.replace(flag, '')
         flag_set = True
 
     return name, flag_set
@@ -22,52 +22,56 @@ def _get_zobrist_hash(self):
     _hash = 0
 
     for name in fields:
-        name, unordered = _process_flag(name, "__unordered")   # Even if it's a list or tuple, we don't care about the order
+        name, no_key = _process_flag(name, "__no_key")   # Even if it's a dict, list, or tuple, we don't care about the order
 
         if name not in self._zobrist_hash: self._zobrist_hash[name] = {}
         zobrist_table = self._zobrist_hash[name]
-        value = getattr(self, name)
+        value = getattr(self, name) if name != "self" else self
 
-        # Don't hash methods or classes
-        if callable(value): continue
-
-        vtype = type(value)
-
-        # Simple types
-        if value is None or vtype in (int, float, complex, bool, str, bytes, bytearray):
-            _hash ^= _get_hash_from_table(zobrist_table, value)
-            continue
-
-        # User defined zobrist hashable types
-        if hasattr(vtype, "_zobrist_hash"):
-            _hash ^= hash(value)
-            continue
-
-        # Unordered collections
-        if vtype in (frozenset, set) or unordered:
-            for element in value:
-                _hash ^= _get_hash_from_table(zobrist_table, element)
-            
-            continue
-
-        # Ordered collections
-        if vtype in (list, tuple, dict):
-            if vtype == dict:
-                items = value.items()
-            else:
-                items = enumerate(value)
-
-            for k, element in items:
-                _hash ^= _get_hash_from_table(zobrist_table, (k, element))
-            
-            continue
-
-        # User-defined normally hashable types
-        if hasattr(vtype, "__hash__") and hasattr(vtype, "__eq__"):
-            _hash ^= _get_hash_from_table(zobrist_table, value)
-            continue
-
+        _hash ^= _hash_value(zobrist_table, value, no_key)
+    
     return _hash
+
+def _hash_value(zobrist_table, value, no_key):
+    # Don't hash methods or classes
+    if callable(value): return 0
+
+    vtype = type(value)
+
+    # Simple types
+    if value is None or vtype in (int, float, complex, bool, str, bytes, bytearray):
+        return _get_hash_from_table(zobrist_table, value)
+
+    # Unordered collections
+    if vtype in (frozenset, set) or no_key:
+        _hash = 0
+        for element in value:
+            _hash ^= _hash_value(zobrist_table, element, False)
+        
+        return _hash
+
+    # Ordered collections
+    if vtype in (list, tuple, dict):
+        _hash = 0
+        if vtype == dict:
+            items = value.items() 
+        else:
+            items = enumerate(value)
+
+        for k, element in items:
+            _hash ^= _get_hash_from_table(zobrist_table, (k, element))
+        
+        return _hash
+    
+    # User defined zobrist hashable types
+    if hasattr(vtype, "_zobrist_hash"):
+        return hash(value)
+
+    # User-defined normally hashable types
+    if hasattr(vtype, "__hash__") and hasattr(vtype, "__eq__"):
+        return _get_hash_from_table(zobrist_table, value)
+    
+    return 0
 
 
 def _process_class(cls, fields):
