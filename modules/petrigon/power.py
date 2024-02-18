@@ -107,7 +107,7 @@ class Pacifist(Power):
     def fight_decorator(self, func):
         def decorated(context, hex, target, *args, **kwargs):
             editor = Power.ContextPowerDataEditor(self, context)
-            opponent = self.player.game.index_to_player(self.get_hex(context, target))
+            opponent = self.player.game.index_to_player(self.player.get_hex(context, target))
             editor.data.war_with.add(opponent.id)
             
             return func(editor.new_context, hex, target, *args, **kwargs)
@@ -258,6 +258,12 @@ class ActivePower(Power):
             return func(context, *args, **kwargs)
 
         return decorated
+
+    def info_decorator(self, func):
+        def decorated(*args, **kwargs):
+            return func(*args, **kwargs) + (f" ({self.icon} x{self.data.uses})" if self.data.uses > 0 else "")
+        
+        return decorated
     
 
 class Glitcher(ActivePower):
@@ -342,9 +348,9 @@ class Scout(ActivePower):
         def decorated(context, *args, **kwargs):
             data = self.data_from_context(context)
             if data.moving:
-                editor = Power.ContextPowerDataEditor(self, context)
-                editor.data.moving = False  # If the move fails, this data won't be applied
-                return self.player.displace(editor.new_context, *args, **kwargs)
+                result = self.player.displace(context, *args, **kwargs)
+                self.data_from_context(result.context).moving = False  # If the move fails, this data won't be applied
+                return result
 
             return func(context, *args, **kwargs)
         
@@ -359,12 +365,6 @@ class Scout(ActivePower):
                 else func(context, *args, **kwargs)
             )
 
-        return decorated
-
-    def info_decorator(self, func):
-        def decorated(*args, **kwargs):
-            return func(*args, **kwargs) + (f" ({self.icon} x{self.data.uses})" if self.data.uses > 0 else "")
-        
         return decorated
 
 

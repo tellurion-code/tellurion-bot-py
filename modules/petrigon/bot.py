@@ -99,7 +99,7 @@ class GameBot(Player):
         best_eval = self.brs(root)
         self.num_evaluated_positions = root.total_nodes
         # self.print_tree(root)
-        print(f"(Best: {best_eval}):\n" + '\n'.join(f"  {x}" for x in root.children))
+        # print(f"(Best: {best_eval}):\n" + '\n'.join(f"  {x}" for x in root.children))
 
         # Decision: best evaluation, then least power uses
         best_node = max(root.children, key=lambda x: (x.eval, -sum(x.use_combination.values())), default=None)
