@@ -122,7 +122,7 @@ class Pacifist(Power):
             return (
                 math.inf 
                 if opponent.id not in self.data_from_context(context).war_with and not attacking 
-                else func(*args, **kwargs)
+                else func(context, *args, **kwargs)
             )
 
         return decorated
