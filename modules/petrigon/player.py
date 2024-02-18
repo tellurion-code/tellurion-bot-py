@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 
 from modules.petrigon import constants
 from modules.petrigon.map import Map
-from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, Hex
+from modules.petrigon.hex import Hex
 from modules.petrigon.panels import PowerActivationPanel
 from modules.petrigon.types import Context, PowersData
 
@@ -40,10 +40,11 @@ class Player:
 
         return tuple(dict(zip(max_power_uses.keys(), x)) for x in tuple(itertools.product(*max_power_uses.values())))
 
-    def use_powers_from_combination(self, context, combination):
+    def use_powers_from_combination(self, context, combination, *, with_announcements=False):
         for key, amount in combination.items():
             for _ in range(amount):
                 context = self.powers[key].use(context)
+                if with_announcements: self.powers[key].send_announcement()
                 if context is None: return None
         
         return context
@@ -182,7 +183,7 @@ class Player:
     
     def info(self, no_change=False):
         score_change = f"**({'+' if self.last_score_change > 0 else ''}{self.last_score_change})**" if self.last_score_change and not no_change else ""
-        return f"{constants.TILE_COLORS[self.index]}{''.join(power.icon for power in self.powers.values())} **{self}**: {self.score()} {score_change}"
+        return f"{constants.TILE_EMOJIS[self.index]}{''.join(power.icon for power in self.powers.values())} **{self}**: {self.score()} {score_change}"
 
     def __str__(self):
         return f"`{self.user.display_name}`"

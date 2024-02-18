@@ -1,7 +1,7 @@
 """Map class."""
 
 import math
-import random
+from copy import copy
 from PIL import Image
 
 from modules.petrigon import constants
@@ -143,9 +143,9 @@ class Map:
                 q = int(x - (y - (y&1)) / 2)
                 r = y
                 value = self.get(Hex(q, r))
-                string += constants.TILE_COLORS[-1] if value is None else constants.TILE_COLORS[value]
+                string += constants.TILE_EMOJIS[-1] if value is None else constants.TILE_EMOJIS[value]
         
-            string = string.rstrip(constants.TILE_COLORS[-1]) + "\n"
+            string = string.rstrip(constants.TILE_EMOJIS[-1]) + "\n"
 
         return string
     

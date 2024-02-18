@@ -1,10 +1,12 @@
 """Power class."""
 
 import math
-from dataclasses import dataclass, field, replace
+from copy import deepcopy
+from dataclasses import dataclass, field
+from modules.petrigon.constants import TILE_EMOJIS
 
 from modules.petrigon.hex import Hex
-from modules.petrigon.types import Context, PowersData
+from modules.petrigon.types import Announcement, PowersData
 from modules.petrigon.zobrist import zobrist_hash
 
 
@@ -21,7 +23,7 @@ class Power:
             self.power = power
             self.context = context
             self.kwargs = kwargs
-            self.data = replace(power.data_from_context(context))
+            self.data = deepcopy(power.data_from_context(context))
         
         @property
         def new_context(self):
@@ -63,6 +65,12 @@ class Power:
     def use(self, context):
         if not self.data_from_context(context).active: return None
         return context
+    
+    def send_announcement(self):
+        self.player.game.announcements.append(Announcement(
+            name=f"{self.icon} Pouvoir du {self.name}",
+            value=self.activation_description
+        ))
 
     def __str__(self):
         return f"{self.icon} {self.name}"
@@ -104,11 +112,15 @@ class Pacifist(Power):
     icon = "🕊️"
     description = "Ne peut pas être attaqué par les joueurs qu'il n'a pas attaqué"
 
+    def setup(self):
+        self.data.peace_with = set(x for x,p in self.player.game.players.items() if p != self.player)
+        return super().setup()
+
     def fight_decorator(self, func):
         def decorated(context, hex, target, *args, **kwargs):
             editor = Power.ContextPowerDataEditor(self, context)
             opponent = self.player.game.index_to_player(self.player.get_hex(context, target))
-            editor.data.war_with.add(opponent.id)
+            editor.data.peace_with.discard(opponent.id)
             
             return func(editor.new_context, hex, target, *args, **kwargs)
 
@@ -120,11 +132,17 @@ class Pacifist(Power):
             attacking = kwargs.get("attacking", False)
 
             return (
-                math.inf 
-                if opponent.id not in self.data_from_context(context).war_with and not attacking 
+                math.inf
+                if opponent.id in self.data_from_context(context).peace_with and not attacking 
                 else func(context, *args, **kwargs)
             )
 
+        return decorated
+
+    def info_decorator(self, func):
+        def decorated(*args, **kwargs):
+            return func(*args, **kwargs) + (f" ({self.icon} {''.join(TILE_EMOJIS[self.player.game.players[x].index] for x in self.data.peace_with)})" if len(self.data.peace_with) else "")
+        
         return decorated
 
 
@@ -261,7 +279,8 @@ class ActivePower(Power):
 
     def info_decorator(self, func):
         def decorated(*args, **kwargs):
-            return func(*args, **kwargs) + (f" ({self.icon} x{self.data.uses})" if self.data.uses > 0 else "")
+            uses_info = self.icon + (f" x{self.data.uses}" if self.data.uses > 1 else "")
+            return func(*args, **kwargs) + (f" ({uses_info})" if self.data.uses > 0 else "")
         
         return decorated
     

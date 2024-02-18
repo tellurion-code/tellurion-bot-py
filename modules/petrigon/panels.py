@@ -3,7 +3,7 @@
 import discord
 
 from modules.petrigon import constants
-from modules.petrigon.types import Announcement, MapImage
+from modules.petrigon.types import MapImage
 from modules.petrigon.views import FightView, PanelView, JoinView, PowerActivationView, PowerView
 
 
@@ -106,7 +106,7 @@ class PowerPanel(Panel):
         embed = discord.Embed(color=self.game.mainclass.color)
         embed.title = f"Choix des pouvoirs"
         embed.description = '\n'.join([
-            f"{constants.TILE_COLORS[i+2]} {self.game.players[id]}: {'✅' if len(self.game.players[id].powers) else '❌'}" for i, id in enumerate(self.game.order)
+            f"{constants.TILE_EMOJIS[i+2]} {self.game.players[id]}: {'✅' if len(self.game.players[id].powers) else '❌'}" for i, id in enumerate(self.game.order)
         ])
         return embed
 
@@ -215,13 +215,11 @@ class PowerActivationPanel(Panel):
     
     async def resolve_power(self, power_key, interaction):
         power = self.powers[power_key]
-        context = power.use(self.game.current_player.current_context)
+        context = power.use(self.game.current_context)
+
         if context:
-            self.game.announcements.append(Announcement(
-                name=f"{power.icon} Pouvoir du {power.name}",
-                value=power.activation_description
-            ))
-            power.data = context.powers_data[power_key]
+            power.send_announcement()
+            power.data = power.data_from_context(context)
 
             await self.close()
             await self.game.panel.update(interaction)

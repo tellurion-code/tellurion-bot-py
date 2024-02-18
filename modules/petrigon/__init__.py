@@ -54,7 +54,7 @@ class MainClass(BaseClassPython):
         )
         for i, ids in enumerate(emoji_ids):
             emojis = list(filter(None, (self.client.get_emoji(id) for id in ids)))
-            constants.TILE_COLORS[i] = str(emojis[0] if len(emojis) else constants.TILE_COLORS[i])
+            constants.TILE_EMOJIS[i] = str(emojis[0] if len(emojis) else constants.TILE_EMOJIS[i])
 
     async def command(self, message, args, kwargs):
         if len(args):

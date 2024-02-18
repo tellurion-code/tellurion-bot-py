@@ -5,7 +5,8 @@ import random
 from dataclasses import dataclass
 
 from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, DIRECTIONS_TO_EMOJIS
-from modules.petrigon.player import Context, Player
+from modules.petrigon.player import Player
+from modules.petrigon.power import ActivePower
 from modules.petrigon.zobrist import zobrist_hash
 
 
@@ -71,7 +72,10 @@ class GameBot(Player):
         return score
     
     def evaluate_for_player(self, context, player):
-        return sum((context.map.size - hex.length + 1) ** 2 for hex, value in context.map.items() if value == player.index)
+        def distance_to_edge(context, hex): return (context.map.size - hex.length + 1)
+        map_eval = sum(distance_to_edge(context, hex) ** 2 for hex, value in context.map.items() if value == player.index)
+        powers_eval = sum(x.uses for x in self.powers_data_from_context(context).values() if isinstance(x, ActivePower)) * 50
+        return map_eval + powers_eval
 
     async def take_move(self):
         # Confirm the game has a panel (it's running)
@@ -82,7 +86,7 @@ class GameBot(Player):
 
         direction, use_combination = self.find_best_action()
         
-        context = self.use_powers_from_combination(self.game.current_context, use_combination)
+        context = self.use_powers_from_combination(self.game.current_context, use_combination, with_announcements=True)
         if context: self.apply_powers_data(context)
         
         await self.game.handle_direction(direction)
@@ -101,8 +105,8 @@ class GameBot(Player):
         # self.print_tree(root)
         # print(f"(Best: {best_eval}):\n" + '\n'.join(f"  {x}" for x in root.children))
 
-        # Decision: best evaluation, then least power uses
-        best_node = max(root.children, key=lambda x: (x.eval, -sum(x.use_combination.values())), default=None)
+        # Decision: best evaluation, then least power uses, then random choice
+        best_node = max(root.children, key=lambda x: (x.eval, -sum(x.use_combination.values()), random.random()), default=None)
         # if best_node and best_node.eval < best_eval: print(f"Difference in eval and choice: {best_node.eval}/{best_eval}")
 
         return (best_node.last_direction, best_node.use_combination) if best_node else (random.choice(AXIAL_DIRECTION_VECTORS), {})
@@ -126,7 +130,7 @@ class GameBot(Player):
         improved to Althöfer's algorithm from https://www.mdpi.com/1999-4893/5/4/521,
         and improved to BRS+ from https://www.researchgate.net/publication/259591343_Improving_Best-Reply_Search (TODO)
         """
-        if depth is None: depth = self.depth * 2 - 1
+        if depth is None: depth = self.depth * 2
 
         evaluation = self.evaluate_for_player(node.context, self)
         if node in self.transpositions:
@@ -140,10 +144,11 @@ class GameBot(Player):
             node.add_child(child)
 
             # print(f"{'  ' * (self.depth * 2 - depth)}Checking {child}:")
-            child.eval = -self.brs(child, alpha=-beta+evaluation, beta=-alpha, depth=depth-1)
-            self.transpositions[child] = Transposition(child.eval, self.game.turn, maximising=node.maximising)
+            child_evaluation = -self.brs(child, alpha=-beta+evaluation, beta=-alpha, depth=depth-1)
+            child.eval = child_evaluation + self.evaluate_for_player(child.context, self)
+            self.transpositions[child] = Transposition(child_evaluation, self.game.turn, maximising=node.maximising)
             # print(f"{'  ' * (self.depth * 2 - depth)}Result: {child.eval}")
-            alpha = max(alpha, child.eval)
+            alpha = max(alpha, child_evaluation)
             if alpha + evaluation >= beta: break  # Snip!
             # print(f"{'  ' * (self.depth * 2 - depth)}Updating alpha to {child.eval}")
 

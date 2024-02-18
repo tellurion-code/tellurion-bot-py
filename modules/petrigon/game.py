@@ -127,7 +127,7 @@ class Game:
         )
         for player in self.players.values():
             for power_class in powers_priority:
-                if power := player.powers.get(power_class.__name__, None):
+                if power := player.powers.get(power_class.__name__):
                     power.setup()
 
         await self.start()

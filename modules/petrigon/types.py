@@ -1,7 +1,7 @@
 """Dataclasses and enums."""
 
 from copy import deepcopy
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from PIL import Image
 
 from modules.petrigon.map import Map
@@ -24,7 +24,7 @@ class MapImage:
 class PowersData(dict):
     def __init__(self, powers_data):
         for key, value in powers_data.items():
-            self[key] = replace(value)
+            self[key] = deepcopy(value)
 
 
 @dataclass
