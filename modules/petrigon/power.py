@@ -106,7 +106,7 @@ class Defender(Power):
 class Pacifist(Power):
     @dataclass
     class Data(Power.Data):
-        war_with: set = field(default_factory=set)
+        peace_with: set = field(default_factory=set)
 
     name = "Pacifiste"
     icon = "🕊️"
