@@ -26,10 +26,10 @@ class Game:
         self.turn = -1
         self.round = 0
 
-        self.powers_enabled = False
+        self.powers_enabled = True
+        self.use_symmetry = False
         self.map_size = 6
         self.wall_count = 6
-        self.use_symmetry = True
 
         self.panel = None
         self.announcements = []
