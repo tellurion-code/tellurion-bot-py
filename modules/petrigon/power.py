@@ -183,9 +183,9 @@ class Topologist(Power):
             strength = 0
             while self.player.get_hex(context, hex) == self.player.index:
                 strength += 1
-                next_hex = hex + direction
-                hex = self.wraparound_hex(context.map, next_hex)
-                if hex != next_hex: strength += 1
+                wrap_hex = self.wraparound_hex(context.map, next_hex)
+                if hex != wrap_hex: strength += 1
+                next_hex = wrap_hex + direction
 
             return strength
 
