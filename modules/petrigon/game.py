@@ -205,19 +205,16 @@ class Game:
         result = self.current_player.move(self.current_context, direction)
         if not result.valid:
             return False
+        pass_turn, context = self.current_player.end_turn(result.context)
 
-        self.current_player.apply_powers_data(result.context)
-
-        for player in self.players.values():
-            player.last_score_change = player.score(result.context.map) - player.score(self.map)
-
-        self.map = result.context.map
         self.last_input = DIRECTIONS_TO_EMOJIS[direction]
-        pass_turn, context = self.current_player.end_turn(self.current_context)
+        for player in self.players.values():
+            player.last_score_change = player.score(context.map) - player.score(self.map)
+        
         self.current_player.apply_powers_data(context)
+        self.map = context.map
 
         await self.end_action(pass_turn, interaction)
-        
         return True
     
     async def end_action(self, pass_turn, interaction):

@@ -58,7 +58,7 @@ class Power:
         return self.player.powers_data_from_context(context)[self.key]
     
     def copy_context_with_data(self, context, data, *, same_map=True):
-        powers_data = PowersData(self.player.powers_data_from_context(context))
+        powers_data = deepcopy(self.player.powers_data_from_context(context))
         powers_data[self.key] = data
         return context.copy(same_map=same_map, players_powers_data_update={self.player.id: powers_data})
 
@@ -215,14 +215,14 @@ class Swarm(Power):
 class Liquid(Power):
     name = "Liquide"
     icon = "💧"
-    description = "Se déplace dans la direction choisie avant de se répliquer"
+    description = "Se déplace dans la direction choisie après s'être répliqué"
 
     def move_decorator(self, func):
         def decorated(context, *args, **kwargs):
-            first_result = self.player.displace(context, *args, ties_consume_units=True, **kwargs)
+            first_result = func(context, *args, **kwargs)
             if not first_result.valid: return first_result
 
-            second_result = func(first_result.context, *args, **kwargs)
+            second_result = self.player.displace(first_result.context, *args, ties_consume_units=True, **kwargs)
             second_result.valid = second_result.context.map != context.map
             second_result.fights.extend(first_result.fights)
             return second_result

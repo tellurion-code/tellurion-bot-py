@@ -22,9 +22,7 @@ class MapImage:
 
 @zobrist_hash(fields=('self__no_key',))
 class PowersData(dict):
-    def __init__(self, powers_data):
-        for key, value in powers_data.items():
-            self[key] = deepcopy(value)
+    pass
 
 
 @dataclass
