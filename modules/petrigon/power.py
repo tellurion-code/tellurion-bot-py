@@ -6,7 +6,7 @@ from dataclasses import dataclass, field
 from modules.petrigon.constants import TILE_EMOJIS
 
 from modules.petrigon.hex import Hex
-from modules.petrigon.types import Announcement, PowersData
+from modules.petrigon.types import Announcement
 from modules.petrigon.zobrist import zobrist_hash
 
 
@@ -116,16 +116,6 @@ class Pacifist(Power):
         self.data.peace_with = set(x for x,p in self.player.game.players.items() if p != self.player)
         return super().setup()
 
-    def fight_decorator(self, func):
-        def decorated(context, hex, target, *args, **kwargs):
-            editor = Power.ContextPowerDataEditor(self, context)
-            opponent = self.player.game.index_to_player(self.player.get_hex(context, target))
-            editor.data.peace_with.discard(opponent.id)
-            
-            return func(editor.new_context, hex, target, *args, **kwargs)
-
-        return decorated
-
     def get_strength_decorator(self, func):
         def decorated(context, *args, **kwargs):
             opponent = kwargs.get("opponent", None)
@@ -136,6 +126,19 @@ class Pacifist(Power):
                 if opponent.id in self.data_from_context(context).peace_with and not attacking 
                 else func(context, *args, **kwargs)
             )
+
+        return decorated
+
+    def end_turn_decorator(self, func):
+        def decorated(result, *args, **kwargs):
+            pass_turn, new_context = func(result, *args, **kwargs)
+
+            # The new context is already a copy, it's fine to edit it directly
+            for fight in result.fights:
+                if fight.attacker == self.player:
+                    self.data_from_context(new_context).peace_with.discard(fight.defender.id)
+            
+            return pass_turn, new_context
 
         return decorated
 

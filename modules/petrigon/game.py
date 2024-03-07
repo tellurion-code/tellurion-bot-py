@@ -205,7 +205,7 @@ class Game:
         result = self.current_player.move(self.current_context, direction)
         if not result.valid:
             return False
-        pass_turn, context = self.current_player.end_turn(result.context)
+        pass_turn, context = self.current_player.end_turn(result)
 
         self.last_input = DIRECTIONS_TO_EMOJIS[direction]
         for player in self.players.values():

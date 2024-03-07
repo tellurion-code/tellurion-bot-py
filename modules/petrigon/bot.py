@@ -75,7 +75,7 @@ class GameBot(Player):
         def distance_to_edge(context, hex): return (context.map.size - hex.length + 1)
         map_eval = sum(distance_to_edge(context, hex) ** 2 for hex, value in context.map.items() if value == player.index)
 
-        POWER_USES_INCENTIVE = 120
+        POWER_USES_INCENTIVE = 250
         powers_eval = sum(x.uses for x in self.powers_data_from_context(context).values() if isinstance(x, ActivePower)) * POWER_USES_INCENTIVE
         return map_eval + powers_eval
 
@@ -172,7 +172,7 @@ class GameBot(Player):
                     power_context = player.use_powers_from_combination(turn_context, combination)
                     result = player.move(power_context, direction)  # Calculate the next possible move
                     if not result.valid: continue
-                    pass_turn, play_context = player.end_turn(result.context)
+                    pass_turn, play_context = player.end_turn(result)
 
                     child = TreeNode(
                         play_context,

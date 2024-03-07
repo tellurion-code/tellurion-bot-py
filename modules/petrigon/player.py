@@ -1,5 +1,6 @@
 """Player class."""
 
+from copy import deepcopy
 import itertools
 import random
 from dataclasses import dataclass, field
@@ -8,7 +9,7 @@ from modules.petrigon import constants
 from modules.petrigon.map import Map
 from modules.petrigon.hex import Hex
 from modules.petrigon.panels import PowerActivationPanel
-from modules.petrigon.types import Context, PowersData
+from modules.petrigon.types import Context
 
 
 class Player:
@@ -158,7 +159,7 @@ class Player:
         await PowerActivationPanel(self.game, powers).reply(interaction)
 
     def is_on_extra_turn(self, context):
-        new_powers_data = PowersData(self.powers_data_from_context(context))
+        new_powers_data = deepcopy(self.powers_data_from_context(context))
         extra_turn = False
         for key, data in self.powers_data_from_context(context).items():
             if data.extra_turn:
@@ -168,8 +169,8 @@ class Player:
 
         return extra_turn, context.copy(same_map=True, players_powers_data_update={self.id: new_powers_data})
     
-    def end_turn(self, context):
-        extra_turn, new_context = self.is_on_extra_turn(context)
+    def end_turn(self, result):
+        extra_turn, new_context = self.is_on_extra_turn(result.context)
         if extra_turn: return False, new_context
         return True, new_context
     
