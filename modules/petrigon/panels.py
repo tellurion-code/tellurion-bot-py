@@ -93,7 +93,7 @@ class JoinPanel(Panel):
     def embed(self):
         embed = discord.Embed(color=self.game.mainclass.color)
         embed.title = f"Partie de Petrigon | Joueurs ({len(self.game.players)}) :"
-        embed.description = '\n'.join([f"- {x}" for x in self.game.players.values()])
+        embed.description = '\n'.join([f"- {x.player_name(show_name=True)}" for x in self.game.players.values()])
         return embed
     
 
@@ -106,7 +106,7 @@ class PowerPanel(Panel):
         embed = discord.Embed(color=self.game.mainclass.color)
         embed.title = f"Choix des pouvoirs"
         embed.description = '\n'.join([
-            f"{constants.TILE_EMOJIS[i+2]} {self.game.players[id]}: {'✅' if len(self.game.players[id].powers) else '❌'}" for i, id in enumerate(self.game.order)
+            f"{constants.TILE_EMOJIS[i+2]} {self.game.players[id].player_name()}: {'✅' if len(self.game.players[id].powers) else '❌'}" for i, id in enumerate(self.game.order)
         ])
         return embed
 
@@ -124,7 +124,7 @@ class FightPanel(Panel):
     @property
     def embed(self):
         embed = discord.Embed(color=constants.PLAYER_COLORS[self.game.turn])
-        embed.title = f"Petrigon | Manche {self.game.round} | Tour de {self.game.current_player}"
+        embed.title = f"Petrigon | Manche {self.game.round} | Tour de {self.game.current_player.player_name()}"
         embed.description = f"### Plateau{' | Dernier choix: ' + self.game.last_input if self.game.last_input else ''}\n{self.game.map}"
         # embed.set_image(url=self.image_url)
 
@@ -184,8 +184,8 @@ class FightPanel(Panel):
     async def end(self, winner, reason, interaction):
         await self.update(interaction)
 
-        embed = discord.Embed(title=f"Petrigon | Victoire de {winner if winner else 'personne'} par {reason} (Manche {self.game.round})", color=self.game.mainclass.color)
-        embed.description = '\n'.join(self.game.players[id].info(no_change=True) for id in self.game.order)
+        embed = discord.Embed(title=f"Petrigon | Victoire de {winner.player_name() if winner else 'personne'} par {reason} (Manche {self.game.round})", color=self.game.mainclass.color)
+        embed.description = '\n'.join(self.game.players[id].base_info(show_name=True) for id in self.game.order)
 
         await self.channel.send(embed=embed, file=discord.File(self.get_game_gif()))
         del self.map_images

@@ -101,6 +101,16 @@ class JoinView(PanelView):
         button.style = discord.ButtonStyle.green if self.game.use_symmetry else discord.ButtonStyle.gray
         return await self.panel.update(interaction)
 
+    @discord.ui.button(label="Tournoi désactivé", emoji="🏆", style=discord.ButtonStyle.gray, row=1)
+    async def toggle_tournament(self, button, interaction):
+        if interaction.user.id != self.game.admin:
+            return await interaction.response.send_message("Seul le créateur de la partie peut changer les paramètres", ephemeral=True)
+
+        self.game.tournament = not self.game.tournament
+        button.label = f"Tournoi {'activé' if self.game.tournament else 'désactivé'}" 
+        button.style = discord.ButtonStyle.green if self.game.tournament else discord.ButtonStyle.gray
+        return await self.panel.update(interaction)
+
 
 class PowerView(PanelView, PlayView):
     update_on_init = True

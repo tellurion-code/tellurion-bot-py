@@ -28,6 +28,7 @@ class Game:
 
         self.powers_enabled = True
         self.use_symmetry = False
+        self.tournament = False
         self.map_size = 6
         self.wall_count = 6
 
@@ -95,6 +96,11 @@ class Game:
         self.order = [i for i in self.players.keys()]
         random.shuffle(self.order)
 
+        for i, id in enumerate(self.order):
+            self.players[id].index = i+2
+            if self.tournament and (user := self.players[id].user):
+                await user.send(f"Vous êtes le joueur {i+1}")
+
         # Change panel
         await self.panel.close()
         if self.powers_enabled:
@@ -156,7 +162,6 @@ class Game:
         r = -int(math.ceil(self.map_size * 2./3.))
         q = random.randrange(0, -r)
         for i, id in enumerate(self.order):
-            self.players[id].index = i+2
             self.players[id].place(Hex(q, r), rotations[len(self.players)][i])
 
         # Place walls

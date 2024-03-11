@@ -181,14 +181,17 @@ class Player:
                     editor.new_map.clear(hex)
 
         await self.game.end_action(self == self.game.current_player, interaction)
-    
-    def info(self, no_change=False):
-        score_change = f"**({'+' if self.last_score_change > 0 else ''}{self.last_score_change})**" if self.last_score_change and not no_change else ""
-        return f"{constants.TILE_EMOJIS[self.index]}{''.join(power.icon for power in self.powers.values())} **{self}**: {self.score()} {score_change}"
 
-    def __str__(self):
-        return f"`{self.user.display_name}`"
+    def base_info(self, show_name=False):
+        return f"{constants.TILE_EMOJIS[self.index]}{''.join(power.icon for power in self.powers.values())} **{self.player_name(show_name)}**: {self.score()}"
     
+    def info(self):
+        score_change = f"**({'+' if self.last_score_change > 0 else ''}{self.last_score_change})**"
+        return f"{self.base_info()} {score_change}"
+
+    def player_name(self, show_name=False):
+        return f"`{self.user.display_name}`" if show_name or not self.game.tournament else f"`Joueur {self.index - 1}`"
+
     def __hash__(self):
         return self.hash
 

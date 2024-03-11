@@ -186,5 +186,6 @@ class GameBot(Player):
                     else:  # We're playing a second turn: flatten the grandchildren as children
                         for grandchild in self.explore_children(child, extra_turn_of=player): yield grandchild
     
-    def __str__(self):
+    def player_name(self, show_name=False):
+        if not show_name: return super().player_name(show_name=False)
         return f"`🤖 Bot {-self.id}`" + (f" ({self.num_evaluated_positions}/{len(self.transpositions)})" if self.num_evaluated_positions else "")
