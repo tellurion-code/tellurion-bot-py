@@ -113,8 +113,6 @@ class JoinView(PanelView):
 
 
 class PowerView(PanelView, PlayView):
-    update_on_init = True
-
     def __init__(self, game, panel, *args, **kwargs):
         super().__init__(game, panel, *args, **kwargs)
 
@@ -129,6 +127,10 @@ class PowerView(PanelView, PlayView):
         self.select = discord.ui.Select(options=options, placeholder="Choisissez un pouvoir", max_values=2)
         self.select.callback = self.callback
         self.add_item(self.select)
+
+        self.button = discord.ui.Button(label="Choix restants à faire", disabled=True, style=discord.ButtonStyle.gray, row=1)
+        self.button.callback = self.start
+        self.add_item(self.button)
         
     def check_for_selection(self):
         if sum(1 for x in self.game.players.values() if len(x.powers) == 0) > 0:
@@ -139,16 +141,15 @@ class PowerView(PanelView, PlayView):
     def update(self):
         super().update()
         can_start, message = self.check_for_selection()
-        self.children[0].label = message
-        self.children[0].disabled = not can_start
-        self.children[0].style = discord.ButtonStyle.green if can_start else discord.ButtonStyle.gray
+        self.button.label = message
+        self.button.disabled = not can_start
+        self.button.style = discord.ButtonStyle.green if can_start else discord.ButtonStyle.gray
 
     async def callback(self, interaction):
         self.game.players[interaction.user.id].set_powers(self.power_classes[x] for x in self.select.values)
         await self.panel.update(interaction)
 
-    @discord.ui.button(label="Choix restants à faire", disabled=True, style=discord.ButtonStyle.gray, row=1)
-    async def start(self, button, interaction):
+    async def start(self, interaction):
         if interaction.user.id != self.game.admin:
             return await interaction.response.send_message("Seul le créateur de la partie peut la démarrer", ephemeral=True)
 
