@@ -25,6 +25,9 @@ class GameView(discord.ui.View):
         await interaction.response.defer()
 
     async def on_error(self, error, item, interaction):
+        if type(error) is discord.NotFound:
+            return
+
         embed = discord.Embed(
             title="[Erreur] Aïe :/",
             description="```python\n{0}```".format(traceback.format_exc())
