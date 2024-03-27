@@ -226,7 +226,7 @@ class Liquid(Power):
             if not first_result.valid: return first_result
 
             second_result = self.player.displace(first_result.context, *args, ties_consume_units=True, **kwargs)
-            second_result.valid = second_result.context.map != context.map
+            second_result.valid = hash(second_result.context) != hash(context)
             second_result.fights.extend(first_result.fights)
             return second_result
         
@@ -340,6 +340,8 @@ class General(ActivePower):
         return decorated
     
     def info_decorator(self, func):
+        func = super().info_decorator(func)
+
         def decorated(*args, **kwargs):
             return func(*args, **kwargs) + (f" ({self.icon} x{self.data.ratio + 1})" if self.data.ratio > 0 else "")
         

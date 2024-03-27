@@ -78,7 +78,7 @@ class Player:
                 new_context.players_powers_data.update(move_context.players_powers_data)
             if fight: result.fights.append(fight)
 
-        result.valid = new_context.map != context.map
+        result.valid = hash(new_context) != hash(context)
         return result
     
     def displace(self, context, direction, *, ties_consume_units=False):
@@ -106,10 +106,11 @@ class Player:
                 ):
                     new_map.clear(hex)
 
+        new_context = Context(new_map, first_result.context.players_powers_data)
         second_result = MoveResult(
-            Context(new_map, first_result.context.players_powers_data),
+            new_context,
             fights=first_result.fights,
-            valid=new_map != context.map
+            valid=hash(new_context) != hash(context)
         )
         return second_result
 
@@ -186,8 +187,8 @@ class Player:
         return f"{constants.TILE_EMOJIS[self.index]}{''.join(power.icon for power in self.powers.values())} **{self.player_name(show_name)}**: {self.score()}"
     
     def info(self):
-        score_change = f"**({'+' if self.last_score_change > 0 else ''}{self.last_score_change})**"
-        return f"{self.base_info()} {score_change}"
+        score_change = f" **({'+' if self.last_score_change > 0 else ''}{self.last_score_change})**" if self.last_score_change != 0 else ""
+        return f"{self.base_info()}{score_change}"
 
     def player_name(self, show_name=False):
         return f"`{self.user.display_name}`" if show_name or not self.game.tournament else f"`Joueur {self.index - 1}`"
