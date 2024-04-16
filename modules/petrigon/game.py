@@ -120,6 +120,7 @@ class Game:
         await self.panel.close()
 
         powers_priority = (  # Later is more important
+            Topologist,
             Swarm,
             Glitcher,
             Turtle,
@@ -129,7 +130,6 @@ class Game:
             Pacifist,
             Liquid,
             Scout,
-            Topologist,
         )
         for player in self.players.values():
             for power_class in powers_priority:
@@ -156,7 +156,7 @@ class Game:
             [0, 3],
             [0, 2, 4],
             [0, 1, 3, 4],
-            [0, 1, 5, 2, 4],    # We leave a gap between the last two players as last player advantage
+            [0, 1, 2, 3, 5],    # We leave a gap between the last two players as last player advantage
             [0, 1, 2, 3, 4, 5]
         ]
         r = -int(math.ceil(self.map_size * 2./3.))

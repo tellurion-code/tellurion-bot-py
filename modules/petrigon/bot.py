@@ -114,7 +114,7 @@ class GameBot(Player):
         return (best_node.last_direction, best_node.use_combination) if best_node else (random.choice(AXIAL_DIRECTION_VECTORS), {})
 
     def print_tree(self, root, markerStr="+- ", levelMarkers=[]):
-        emptyStr = " "*len(markerStr)
+        emptyStr = " " * len(markerStr)
         connectionStr = "|" + emptyStr[:-1]
         level = len(levelMarkers)
         mapper = lambda draw: connectionStr if draw else emptyStr
