@@ -63,7 +63,7 @@ class MainClass(BaseClassPython):
 			card = game["list"][index]
 
 			if not res:
-				content = "```ini\n" + str(index + 1) + ". " + (await self.printCard(card)) + "```"
+				content = "```ini\n" + str(index + 1) + ". " + self.printCard(card) + "```"
 				await message.channel.send(content)
 
 			if str(message.author.id) not in game["zones"]:
@@ -73,11 +73,11 @@ class MainClass(BaseClassPython):
 				except:
 					pass
 
-			msg = await message.channel.send(await self.getRecap(game, "⚠ **Envoyez l'index de la zone où vous voulez jouer la carte** ⚠️"))
+			msg = await message.channel.send(self.getRecap(game, "⚠ **Envoyez l'index de la zone où vous voulez jouer la carte** ⚠️"))
 			zone = await self.waitForZone(message.author, message.channel)
 			game["zones"][zone].append(index)
 
-			await msg.edit(content=await self.getRecap(game))
+			await msg.edit(content=self.getRecap(game))
 
 			self.objects.save_object("games", self.games)
 		else:
@@ -109,7 +109,7 @@ class MainClass(BaseClassPython):
 
 							# await message.channel.send("La carte `" + this.printCard(game["list"][index]) + "` a été défaussée depuis la " + ("pioche" if location == "deck" else "zone de " + self.userstr(location)))
 
-				if success: await message.channel.send(await self.getRecap(game))
+				if success: await message.channel.send(self.getRecap(game))
 				self.objects.save_object("games", self.games)
 			else:
 				await message.channel.send("Veuillez renseigner l'index de la carte à modifier")
@@ -151,7 +151,7 @@ class MainClass(BaseClassPython):
 						else:
 							cards.append(index)
 
-				await message.channel.send(await self.getRecap(game))
+				await message.channel.send(self.getRecap(game))
 				self.objects.save_object("games", self.games)
 			else:
 				await message.channel.send("Veuillez renseigner l'index des cartes à déplacer et l'index de la zone d'arrivée")
@@ -193,7 +193,7 @@ class MainClass(BaseClassPython):
 						else:
 							cards.append(index)
 
-				await message.channel.send(await self.getRecap(game))
+				await message.channel.send(self.getRecap(game))
 				self.objects.save_object("games", self.games)
 			else:
 				await message.channel.send("Veuillez renseigner l'index des cartes à déplacer et l'index de la zone d'arrivée")
@@ -233,7 +233,7 @@ class MainClass(BaseClassPython):
 				self.moveCards(game, cards, "deck")
 				random.shuffle(game["zones"]["deck"])
 
-				await message.channel.send(await self.getRecap(game))
+				await message.channel.send(self.getRecap(game))
 				self.objects.save_object("games", self.games)
 			else:
 				await message.channel.send("Veuillez renseigner l'index des cartes à mélanger dans le paquet")
@@ -268,11 +268,11 @@ class MainClass(BaseClassPython):
 				location = list(game["zones"].keys())[index]
 
 				content = "\n= • - Recap - • =\n=================\n"
-				content += str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else (await self.userstr(location)))) + " :\n" + '\n'.join(["  • " + str(x + 1).rjust(3, ' ') + ". " + (await self.printCard(game["list"][x], False)) for x in game["zones"][location]])
+				content += str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else self.userstr(location))) + " :\n" + '\n'.join(["  • " + str(x + 1).rjust(3, ' ') + ". " + self.printCard(game["list"][x], False) for x in game["zones"][location]])
 
 				await self.sendBigMessage(content, message.channel, "ini")
 			else:
-				await message.channel.send(await self.getRecap(game))
+				await message.channel.send(self.getRecap(game))
 		else:
 			await message.channel.send("Aucune partie n'est actuellement en cours dans ce salon")
 
@@ -324,7 +324,7 @@ class MainClass(BaseClassPython):
 					newCard = await self.startCardCreation(message.author, message.channel)
 					await self.editCard(game, index, newCard, message.channel)
 
-					await msg.edit(content="```ini\n" + (await self.printCard(newCard)) + "```")
+					await msg.edit(content="```ini\n" + self.printCard(newCard) + "```")
 
 				self.objects.save_object("games", self.games)
 			else:
@@ -393,7 +393,7 @@ class MainClass(BaseClassPython):
 					await message.channel.send("Carte Blanche")
 				else:
 					card = game["list"][index]
-					await self.sendBigMessage("Carte actuelle : " + (await self.printCard(card)) + "\n" + '\n'.join(["  ↳ " + (await self.printCard(e)) for e in card["history"]]), message.channel)
+					await self.sendBigMessage("Carte actuelle : " + self.printCard(card) + "\n" + '\n'.join(["  ↳ " + self.printCard(e) for e in card["history"]]), message.channel)
 			else:
 				await message.channel.send("Veuillez renseigner l'index de la carte à voir")
 		else:
@@ -401,7 +401,7 @@ class MainClass(BaseClassPython):
 
 	async def endGame(self, channel):
 		await self.sendCardList(channel)
-		await channel.send(await self.getRecap(self.games[str(channel.id)]))
+		await channel.send(self.getRecap(self.games[str(channel.id)]))
 		del self.games[str(channel.id)]
 		await channel.send("Partie finie!")
 
@@ -435,7 +435,7 @@ class MainClass(BaseClassPython):
 			game["zones"]["discard"].append(index)
 			await channel.send("La carte a été défaussée suite à la modification")
 
-			await channel.send(await self.getRecap(game))
+			await channel.send(self.getRecap(game))
 
 	async def sendBigMessage(self, message, channel, language="ini"):
 		sentences = message.split("\n")
@@ -454,13 +454,13 @@ class MainClass(BaseClassPython):
 		game = self.games[str(channel.id)]
 		await self.sendBigMessage(
 			"[Liste des cartes en jeu]\n=========================\n"
-			+ '\n'.join([str(i + 1).rjust(3, ' ') + ". " + await self.printCard(e, False) for i, e in enumerate(game["list"])]), channel
+			+ '\n'.join([str(i + 1).rjust(3, ' ') + ". " + self.printCard(e, False) for i, e in enumerate(game["list"])]), channel
 		)
 
-	async def getRecap(self, game, message=""):
+	def getRecap(self, game, message=""):
 		maxLength = len("Centre")
 		for i, k in enumerate(list(game["zones"].keys())):
-			if k not in ["center", "discard", "deck"]: maxLength = max(maxLength, len(await self.userstr(k)))
+			if k not in ["center", "discard", "deck"]: maxLength = max(maxLength, len(self.userstr(k)))
 
 		def sendZone(zone):
 			return ' '.join([("[" + str(x + 1) + " " + (game["list"][x]["name"] if game["list"][x]["name"] else "Carte Blanche") + "]" if game["list"][x] else "(" + str(x + 1) + " " + "Carte Blanche)") for x in zone])
@@ -470,7 +470,7 @@ class MainClass(BaseClassPython):
 		content += "\n\n••• Paquet : " + str(len(game["zones"]["deck"])) + " carte(s)"
 		content += "\n 0. Défausse : " + sendZone(game["zones"]["discard"])
 		content += "\n\n 1. Centre : " + sendZone(game["zones"]["center"])
-		content += "\n\n" + '\n'.join([str(list(game["zones"].keys()).index(k) - 1).rjust(2, ' ') + ". " + (await self.userstr(k)).ljust(maxLength, ' ') + " : " + sendZone(v) for k, v in game["zones"].items() if k not in ["center", "deck", "discard"]])
+		content += "\n\n" + '\n'.join([str(list(game["zones"].keys()).index(k) - 1).rjust(2, ' ') + ". " + (self.userstr(k).replace("_", "")).ljust(maxLength, ' ') + " : " + sendZone(v) for k, v in game["zones"].items() if k not in ["center", "deck", "discard"]])
 		content += "```"
 		content += message
 
@@ -482,7 +482,7 @@ class MainClass(BaseClassPython):
 			newCard = await self.startCardCreation(author, channel)
 
 			self.games[str(channel.id)]["list"][index] = newCard
-			content = "```ini\n" + str(index + 1) + ". " + (await self.printCard(game["list"][index])) + "```"
+			content = "```ini\n" + str(index + 1) + ". " + self.printCard(game["list"][index]) + "```"
 			await msg.edit(content=content)
 
 			return msg
@@ -527,11 +527,11 @@ class MainClass(BaseClassPython):
 		else:
 			return locations[index]
 
-	async def printCard(self, card, authored=True):
+	def printCard(self, card, authored=True):
 		if not card or not card["name"]: return "(Carte Blanche)"
-		return "[" + card["name"] + "] " + card["effect"] + (" (Créée par " + (await self.userstr(card["author"])) + ")" if authored else "")
+		return "[" + card["name"] + "] " + card["effect"] + (" (Créée par " + self.userstr(card["author"]) + ")" if authored else "")
 
-	async def userstr(self, id):
+	def userstr(self, id):
 		if str(id) in self.members:
 			return self.members[str(id)].name
 		else:
