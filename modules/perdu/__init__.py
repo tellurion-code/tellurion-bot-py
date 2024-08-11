@@ -25,7 +25,7 @@ class MainClass(BaseClassPython):
 
     def __init__(self, client):
         super().__init__(client)
-        self.config.init({"channel": 0, "lost_role": 0, "min_delta": datetime.timedelta(minutes=26).total_seconds()})
+        self.config.init({"channel": 0, "lost_role": 0, "min_delta": datetime.timedelta(minutes=29).total_seconds()})
         self.history = {}
         self.lock = asyncio.Lock()
 
