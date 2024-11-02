@@ -152,7 +152,7 @@ class Pacifist(Power):
 class Topologist(Power):
     name = "Topologiste"
     icon = "🍩"
-    description = "Peut traverser les bords, et gagne +1 en combat quand il le fait"
+    description = "Peut traverser les bords comme s'ils étaient adjacents"
 
     def __init__(self, player):
         super().__init__(player)
@@ -187,14 +187,14 @@ class Topologist(Power):
             while self.player.get_hex(context, hex) == self.player.index:
                 strength += 1
                 wrap_hex = self.wraparound_hex(context.map, hex)
-                if hex != wrap_hex: strength += 1
+                # if hex != wrap_hex: strength += 1
                 hex = wrap_hex + direction
 
             return strength
 
         return decorated
     
-    def evaluate_for_player_decorate(self, func):
+    def evaluate_for_player_decorator(self, func):
         def decorated(context, player):
             return sum(context.map.size - hex.length + 1 for hex, value in context.map.items() if value == player.index)
 
