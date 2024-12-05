@@ -119,7 +119,7 @@ class Game:
         await interaction.response.defer()
         await self.panel.close()
 
-        powers_priority = (  # Later is more important
+        powers_priority = (  # Later is more important, earlier is more fundamental
             Topologist,
             Swarm,
             Glitcher,

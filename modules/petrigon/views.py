@@ -91,7 +91,7 @@ class JoinView(PanelView):
         button.style = discord.ButtonStyle.green if self.game.powers_enabled else discord.ButtonStyle.gray
         return await self.panel.update(interaction)
     
-    @discord.ui.button(label="Symétrie désactivées", emoji="🔄", style=discord.ButtonStyle.gray, row=1)
+    @discord.ui.button(label="Symétrie désactivée", emoji="🔄", style=discord.ButtonStyle.gray, row=1)
     async def toggle_symmetry(self, button, interaction):
         if interaction.user.id != self.game.admin:
             return await interaction.response.send_message("Seul le créateur de la partie peut changer les paramètres", ephemeral=True)
@@ -131,6 +131,8 @@ class PowerView(PanelView, PlayView):
         self.button = discord.ui.Button(label="Choix restants à faire", disabled=True, style=discord.ButtonStyle.gray, row=1)
         self.button.callback = self.start
         self.add_item(self.button)
+
+        self.update()
         
     def check_for_selection(self):
         if sum(1 for x in self.game.players.values() if len(x.powers) == 0) > 0:

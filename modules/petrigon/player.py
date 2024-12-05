@@ -95,7 +95,7 @@ class Player:
                 if not ( # Don't remove the unit if:
                     # We moved against a wall or edge, or
                     self.get_hex(context, wall_check_hex) in (None, 1) or
-                     # We lost a fight (or it's a tie and should not consume a unit)
+                    # We lost a fight (or it's a tie and should not consume a unit)
                     any(
                         x.hex == wall_check_hex and (
                             self.get_hex(first_result.context, x.hex) == x.defender.index or
