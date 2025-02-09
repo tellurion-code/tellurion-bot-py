@@ -65,7 +65,7 @@ class MainClass(BaseClassPython):
 	async def on_guild_channel_delete(self, channel):
 
 		if str(channel.id) in self.athchannels:
-			self.athchannels.pop(str(message.channel.id))
+			self.athchannels.pop(str(channel.id))
 			self.saveATHChannels()
 	
 	async def com_enable(self, message, args, kwargs):
