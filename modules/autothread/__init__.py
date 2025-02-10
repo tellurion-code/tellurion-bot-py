@@ -93,15 +93,14 @@ class MainClass(BaseClassPython):
 		channel_list = ""
 		for chan_id in self.athchannels:
 			chan_entry = self.athchannels[chan_id]
-			match chan_entry["clean_mode"]:
-				case "manual":
-					channel_list += "<#{0}> (mode manuel)\n".format(chan_id)
-				case "auto":
-					channel_list += "<#{0}> (mode auto, période: `{1}`, LCTS: <t:{2}:R>)\n".format(chan_id,
+			if chan_entry["clean_mode"] == "manual":
+				channel_list += "<#{0}> (mode manuel)\n".format(chan_id)
+			elif chan_entry["clean_mode"] == "auto":
+				channel_list += "<#{0}> (mode auto, période: `{1}`, LCTS: <t:{2}:R>)\n".format(chan_id,
 						humanize.time.precisedelta(chan_entry["clean_period"]),
 						chan_entry["lcts"])
-				case _:
-					channel_list += "<#{0}> (mode inconnu)\n"
+			else:
+				channel_list += "<#{0}> (mode inconnu)\n"
 
 		await message.channel.send(f"`autothread` | **Salons enregistrés ({len(self.athchannels)})** \n" + channel_list)
 	
