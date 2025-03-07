@@ -62,7 +62,7 @@ class MainClass(BaseClassPython):
     async def on_ready(self):
         self.change_color.start()
 
-    @discord.ext.task.loop(seconds=10)
+    @discord.task.loop(seconds=10)
     async def change_color(self):
         guild = self.client.get_guild(self.client.config.main_guild)
         role = guild.get_role(1347659937542574140)
