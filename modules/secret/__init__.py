@@ -18,7 +18,38 @@ class MainClass(BaseClassPython):
     }
     games = {}
 
-    colors = []
+    colors = [
+        #878722,
+        #8b8722,
+        #8e8623,
+        #928523,
+        #968423,
+        #9a8223,
+        #9e8123,
+        #a27e23,
+        #a67c23,
+        #a97924,
+        #ad7724,
+        #b17324,
+        #b57024,
+        #b96c24,
+        #be6823,
+        #c26323,
+        #c65e23,
+        #ca5923,
+        #ce5323,
+        #d24e23,
+        #d64723,
+        #db4122,
+        #dd3b24,
+        #df3626,
+        #e03129,
+        #e12d2c,
+        #e22f35,
+        #e4313f,
+        #e53448,
+        #e63752
+    ]
 
     def __init__(self, client):
         super().__init__(client)
