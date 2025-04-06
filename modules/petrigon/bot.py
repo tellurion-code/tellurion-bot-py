@@ -73,7 +73,7 @@ class GameBot(Player):
     
     def evaluate_for_player(self, context, player):
         def distance_to_edge(context, hex): return (context.map.size - hex.length + 1)
-        map_eval = sum(distance_to_edge(context, hex) ** 2 for hex, value in context.map.items() if value == player.index)
+        map_eval = sum(distance_to_edge(context, hex) for hex, value in context.map.items() if value == player.index)
 
         POWER_USES_INCENTIVE = 250
         powers_eval = sum(x.uses for x in self.powers_data_from_context(context).values() if isinstance(x, ActivePower)) * POWER_USES_INCENTIVE
