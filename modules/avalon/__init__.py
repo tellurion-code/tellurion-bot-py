@@ -305,6 +305,9 @@ Attention S’il y a 7 participants ou plus, la Quête n°4 doit avoir 2 échecs
 				""",
 				color=global_values.color))
 
+	async def com_resetemojis(self, message, args, kwargs):
+		self.objects.save_object("icons", {})
+
 	async def on_reaction_add(self, reaction, user):
 		if not user.bot:
 			if reaction.message.channel.id in global_values.games:
