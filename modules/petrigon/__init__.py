@@ -113,7 +113,7 @@ class MainClass(BaseClassPython):
 :small_blue_diamond: **But du jeu** : :small_blue_diamond:
 Chaque joueur commence avec une troupe à un endroit aléatoire de la carte au début de la partie.
 Le gagnant est le joueur qui est le dernier avec des troupes encore vivantes, ou bien qui arrive à contrôler 50% de la carte.
-Après 30 tours de table complets (manche) sans qu'un gagnant ne soit déterminé, le joueur avec le plus de troupes gagne.
+Après 40 tours de table complets (manche) sans qu'un gagnant ne soit déterminé, ou si la carte se répète entre chaque manche 3 fois d'affilée, le joueur avec le plus de troupes gagne.
 
 :small_blue_diamond: **Déroulement d’un tour** : :small_blue_diamond:
 -  Le joueur choisit une direction

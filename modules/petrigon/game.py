@@ -26,6 +26,9 @@ class Game:
         self.turn = -1
         self.round = 0
 
+        self.repetitions = 0
+        self.start_of_round_map = None
+
         self.powers_enabled = True
         self.use_symmetry = False
         self.tournament = False
@@ -233,7 +236,13 @@ class Game:
 
     async def next_turn(self):
         next_turn = self.next_valid_turn(self.turn)
-        if next_turn <= self.turn: self.round += 1
+        if next_turn <= self.turn:
+            self.round += 1
+            if (self.map == self.start_of_round_map):
+                self.repetitions += 1
+            else:
+                self.repetitions = 0
+            self.start_of_round_map = self.map.copy()
         self.turn = next_turn
 
     async def check_for_game_end(self, interaction):
@@ -264,8 +273,11 @@ class Game:
         if alive_players == 0:
             return None, "Destruction Mutuelle"
 
-        if self.round >= 30:
+        if self.round >= 40:
             return potential_winner, "Usure"
+
+        if self.repetitions >= 3:
+            return potential_winner, "Répétition"
 
         return None, None
 
