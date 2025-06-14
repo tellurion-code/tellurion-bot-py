@@ -44,7 +44,7 @@ class MainClass(BaseClassPython):
         await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
     async def com_vowel(self, message, args, kwargs):
-        vowels = "AEIOUY"
+        vowels = "AEIOUY" if "uniform" in [k[0] for k in kwargs] else "AAAAAAAAAEEEEEEEEEEEEEEEIIIIIIIIOOOOOOUUUUUUY"
         result = []
         amount = 1
         if len(args) > 1:
@@ -62,7 +62,7 @@ class MainClass(BaseClassPython):
         await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
     async def com_consonant(self, message, args, kwargs):
-        consonants = "BCDFGHJKLMNPQRSTVWXZ"
+        consonants = "BCDFGHJKLMNPQRSTVWXZ" if "uniform" in [k[0] for k in kwargs] else "BBCCDDDFFGGHHJKLLLLLMMMNNNNNNPPQRRRRRRSSSSSSTTTTTTVVWXZ"
         result = []
         amount = 1
         if len(args) > 1:
@@ -80,7 +80,7 @@ class MainClass(BaseClassPython):
         await message.channel.send(embed=discord.Embed(description=embed_description, color=self.config.color))
 
     async def com_letter(self, message, args, kwargs):
-        letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+        letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ" if "uniform" in [k[0] for k in kwargs] else "AAAAAAAAABBCCDDDEEEEEEEEEEEEEEEFFGGHHIIIIIIIIJKLLLLLMMMNNNNNNOOOOOOPPQRRRRRRSSSSSSTTTTTTUUUUUUVVWXYZ"
         result = []
         amount = 1
         if len(args) > 1:
