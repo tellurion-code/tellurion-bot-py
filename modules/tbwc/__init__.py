@@ -267,8 +267,7 @@ class MainClass(BaseClassPython):
 
 				location = list(game["zones"].keys())[index]
 
-				content = "\n= • - Recap - • =\n=================\n"
-				content += str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else self.userstr(location))) + " :\n" + '\n'.join(["  • " + str(x + 1).rjust(3, ' ') + ". " + self.printCard(game["list"][x], False) for x in game["zones"][location]])
+				content = str(index - 1).rjust(2, ' ') + ". " + ("Défausse" if index == 1 else ("Centre" if index == 2 else self.userstr(location))) + " :\n" + '\n'.join(["  • " + str(x + 1).rjust(3, ' ') + ". " + self.printCard(game["list"][x], False) for x in game["zones"][location]])
 
 				await self.sendBigMessage(content, message.channel, "ini")
 			else:
@@ -320,7 +319,7 @@ class MainClass(BaseClassPython):
 					await message.channel.send("Aucune carte n'a cet index")
 				else:
 					card = game["list"][index]
-					msg = await message.channel.send("```ini\n" + self.printCard(card) + "\nRedéfinissez cette carte en envoyant:\n[Nom de la carte] Effet # Flavor Text.```")
+					msg = await message.channel.send("```ini\n" + self.printCard(card) + "\n\nRedéfinissez cette carte en envoyant:\n[Nom de la carte] Effet # Flavor Text.```")
 
 					newCard = await self.startCardCreation(message.author, message.channel)
 					if "silent" in [k[0] for k in kwargs]: newCard["author"] = card["author"]
@@ -480,7 +479,7 @@ class MainClass(BaseClassPython):
 
 	async def checkForBlankCard(self, game, author, channel, index):
 		if not game["list"][index] or not game["list"][index]["name"]:
-			msg = await channel.send("```ini\n" + str(index + 1) + ". (Carte Blanche) Envoyez un message pour définir cette carte en tapant \"[Nom de la carte] Effet # Flavor Text\"! (Sans les guillemets)```")
+			msg = await channel.send("```ini\n" + str(index + 1) + ". (Carte Blanche) Envoyez un message pour définir cette carte en envoyant\n[Nom de la carte] Effet # Flavor Text```")
 			newCard = await self.startCardCreation(author, channel)
 
 			self.games[str(channel.id)]["list"][index] = newCard
