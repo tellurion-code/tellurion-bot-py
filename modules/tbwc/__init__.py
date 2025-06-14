@@ -320,8 +320,7 @@ class MainClass(BaseClassPython):
 					msg = await message.channel.send("```ini\n" + self.printCard(card) + "\n\nRedéfinissez cette carte en envoyant:\n[Nom de la carte] Effet # Flavor Text.```")
 
 					newCard = await self.startCardCreation(message.author, message.channel)
-					if "silent" in [k[0] for k in kwargs]: newCard["author"] = card["author"]
-					await self.editCard(game, index, newCard, message.channel)
+					await self.editCard(game, index, newCard, message.channel, "silent" in [k[0] for k in kwargs])
 
 					await msg.edit(content="```ini\n" + self.printCard(newCard) + "```")
 
@@ -414,7 +413,7 @@ class MainClass(BaseClassPython):
 			game["zones"][location].remove(card)
 			game["zones"][zone].insert(position, card)
 
-	async def editCard(self, game, index, newCard, channel):
+	async def editCard(self, game, index, newCard, channel, silent=False):
 		card = game["list"][index]
 
 		if card:
@@ -424,12 +423,13 @@ class MainClass(BaseClassPython):
 				"effect": card["effect"]
 			})
 			newCard["history"].extend(card["history"])
+			if silent: newCard["author"] = card["author"]
 			# await message.channel.send("Carte éditée")
 		
 		game["list"][index] = newCard
 
 		location = [x for x in game["zones"] if index in game["zones"][x]][0]
-		if location not in ["deck", "discard"]:
+		if location not in ["deck", "discard"] and not silent:
 			game["zones"][location].remove(index)
 			game["zones"]["discard"].append(index)
 			await channel.send("La carte a été défaussée suite à la modification")
