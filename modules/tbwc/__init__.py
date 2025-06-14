@@ -319,10 +319,11 @@ class MainClass(BaseClassPython):
 				if index < 0 or index >= len(game["list"]):
 					await message.channel.send("Aucune carte n'a cet index")
 				else:
-					msg = await message.channel.send("```ini\nRedéfinissez cette carte en tapant \"[Nom de la carte] Effet # Flavor Text\".```")
+					card = game["list"][index]
+					msg = await message.channel.send("```ini\n" + self.printCard(card) + "\nRedéfinissez cette carte en envoyant:\n[Nom de la carte] Effet # Flavor Text.```")
 
 					newCard = await self.startCardCreation(message.author, message.channel)
-					if "silent" in [k[0] for k in kwargs]: newCard["author"] = game["list"][index]["author"]
+					if "silent" in [k[0] for k in kwargs]: newCard["author"] = card["author"]
 					await self.editCard(game, index, newCard, message.channel)
 
 					await msg.edit(content="```ini\n" + self.printCard(newCard) + "```")
