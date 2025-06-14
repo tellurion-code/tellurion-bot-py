@@ -322,6 +322,7 @@ class MainClass(BaseClassPython):
 					msg = await message.channel.send("```ini\nRedéfinissez cette carte en tapant \"[Nom de la carte] Effet # Flavor Text\".```")
 
 					newCard = await self.startCardCreation(message.author, message.channel)
+					if "silent" in [k[0] for k in kwargs]: newCard["author"] = game["list"][index]["author"]
 					await self.editCard(game, index, newCard, message.channel)
 
 					await msg.edit(content="```ini\n" + self.printCard(newCard) + "```")
