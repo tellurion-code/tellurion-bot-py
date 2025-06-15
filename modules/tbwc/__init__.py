@@ -203,7 +203,6 @@ class MainClass(BaseClassPython):
 	async def com_shuffle(self, message, args, kwargs):
 		if str(message.channel.id) in self.games:
 			game = self.games[str(message.channel.id)]
-			print(args)
 
 			args.pop(0)
 			if len(args):
@@ -528,7 +527,7 @@ class MainClass(BaseClassPython):
 
 	def printCard(self, card, authored=True):
 		if not card or not card["name"]: return "(Carte Blanche)"
-		return "[" + card["name"] + "] " + card["effect"] + (" (Créée par " + self.userstr(card["author"]) + ")" if authored else "")
+		return "[" + card["name"] + "] " + card["effect"] + (("#" if "#" not in card["effect"] else "") + " (Créée par " + self.userstr(card["author"]) + ")" if authored else "")
 
 	def userstr(self, id):
 		if str(id) in self.members:
