@@ -26,7 +26,7 @@ class MainClass(BaseClassPython):
         if message.channel.id == 431016132040851459:
             try:
                 if self.estPremier(int(message.content[:10])):
-                    await message.reply(f"Regarde, c'est un nombre premier <@544845665910390784> !")
+                    await message.reply(f"Regarde, c'est un nombre premier <@&544845665910390784> !")
             except ValueError:
                 pass
             except TypeError:
