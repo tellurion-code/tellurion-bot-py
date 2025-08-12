@@ -3,9 +3,9 @@
 import discord
 
 import modules.petrigon.bot as bot
+from modules.petrigon.power import ALL_POWERS, Power
 from modules.game.views import GameView, PlayView
 from modules.petrigon.hex import Hex
-from modules.petrigon.power import ALL_POWERS, Power
 
 
 class PanelView(GameView):
@@ -188,11 +188,12 @@ class BotPowerSelectView(PlayView):
                     default=key in self.game.players[id].powers.keys()
                 ) for key, subclass in self.power_classes.items()]
                 self.select = discord.ui.Select(options=options, max_values=2, placeholder=f"Pouvoir de {self.game.players[id].name}")
-                self.select.callback = lambda interaction: self.update_bot_power(interaction, id)
+                bot_id = id
+                self.select.callback = lambda interaction: self.update_bot_power(interaction, bot_id)
                 self.add_item(self.select)
 
     async def update_bot_power(self, interaction, id):
-        self.game.players[id].set_powers([self.power_classes[x] for x in self.select.values])
+        self.game.players[id].set_powers(self.power_classes[x] for x in self.select.values)
         self.update()
         await interaction.response.edit_message(view=self)
 
