@@ -188,4 +188,8 @@ class GameBot(Player):
     
     def player_name(self, show_name=False):
         if self.game.tournament and not show_name: return super().player_name(show_name=False)
-        return f"`🤖 Bot {-self.id}`" + (f" ({self.num_evaluated_positions}/{len(self.transpositions)})" if self.num_evaluated_positions else "")
+        return f"`{self.name}`" + (f" ({self.num_evaluated_positions}/{len(self.transpositions)})" if self.num_evaluated_positions else "")
+
+    @property
+    def name(self):
+        return f"🤖 Bot {-self.id}"

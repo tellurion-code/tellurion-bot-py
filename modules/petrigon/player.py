@@ -191,7 +191,11 @@ class Player:
         return f"{self.base_info()}{score_change}"
 
     def player_name(self, show_name=False):
-        return f"`{self.user.display_name}`" if show_name or not self.game.tournament else f"`Joueur {self.index - 1}`"
+        return f"`{self.name}`" if show_name or not self.game.tournament else f"`Joueur {self.index - 1}`"
+
+    @property
+    def name(self):
+        return f"{self.user.display_name}"
 
     def __hash__(self):
         return self.hash
