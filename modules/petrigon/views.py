@@ -2,8 +2,8 @@
 
 import discord
 
+import modules.petrigon.bot as bot
 from modules.game.views import GameView, PlayView
-from modules.petrigon.bot import GameBot
 from modules.petrigon.hex import Hex
 from modules.petrigon.power import ALL_POWERS, Power
 
@@ -133,10 +133,10 @@ class PowerView(PanelView, PlayView):
         self.button.callback = self.start
         self.add_item(self.button)
 
-        if (any([isinstance(x, GameBot) for x in game.players.values()])):
-            bot_powers_button = discord.ui.Button(label="Modifier les pouvoirs des bots", style=discord.ButtonStyle.gray, row=2)
-            bot_powers_button.callback = self.set_bot_powers
-            self.add_item(bot_powers_button)
+        if (any([isinstance(x, bot.GameBot) for x in game.players.values()])):
+            self.bot_powers_button = discord.ui.Button(label="Modifier les pouvoirs des bots", style=discord.ButtonStyle.gray, row=2)
+            self.bot_powers_button.callback = self.set_bot_powers
+            self.add_item(self.bot_powers_button)
 
         self.update()
 
@@ -179,7 +179,7 @@ class BotPowerSelectView(PlayView):
     def update(self):
         self.clear_items()
         for id in self.game.order:
-            if isinstance(self.game.players[id], GameBot):
+            if isinstance(self.game.players[id], bot.GameBot):
                 options = [discord.SelectOption(
                     label=subclass.name,
                     description=subclass.description,
@@ -187,14 +187,14 @@ class BotPowerSelectView(PlayView):
                     value=key,
                     default=key in self.game.players[id].powers.keys()
                 ) for key, subclass in self.power_classes.items()]
-                select = discord.ui.Select(options=options, max_values=2, default="")
-                select.callback = lambda interaction: self.update_bot_power(interaction, id)
-                self.add_item(select)
+                self.select = discord.ui.Select(options=options, max_values=2, placeholder=f"Pouvoir de {self.game.players[id].name}")
+                self.select.callback = lambda interaction: self.update_bot_power(interaction, id)
+                self.add_item(self.select)
 
     async def update_bot_power(self, interaction, id):
-        self.game.players[id].set_powers(self.power_classes[x] for x in self.select.values)
+        self.game.players[id].set_powers([self.power_classes[x] for x in self.select.values])
         self.update()
-        await interaction.reponse.edit(view=self)
+        await interaction.response.edit_message(view=self)
 
 class FightView(PanelView, PlayView):
     update_on_init = True

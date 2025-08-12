@@ -6,7 +6,6 @@ import random
 
 from modules.petrigon.map import Map
 from modules.petrigon.player import Player
-from modules.petrigon.bot import GameBot
 from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, DIRECTIONS_TO_EMOJIS, Hex
 from modules.petrigon.panels import FightPanel, JoinPanel, PowerPanel
 from modules.petrigon.power import ALL_POWERS, Attacker, Defender, General, Glitcher, Liquid, Pacifist, Scout, Swarm, Topologist, Turtle
