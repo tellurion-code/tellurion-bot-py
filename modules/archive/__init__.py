@@ -58,23 +58,46 @@ class MainClass(BaseClassPython):
         self.storage = Storage(os.path.join("data", self.name.lower()), client)
 
     async def command(self, message, args, kwargs):
-        if len(args) and args[0] == "*":
-            try:
-                await message.delete()
-            except discord.Forbidden:
-                self.client.warning("Impossible de supprimer le message {message.id}, permission "
-                                    "refusée.".format(message=message))
-            except discord.HTTPException:
-                self.client.warning("Impossible de supprimer le message {message.id}.".format(message=message))
-            current_time = time.time()
-            files = await self.save_channel(current_time=current_time)
-            zip_file_path = self.storage.mkzip(files, str(current_time)+".zip")
-            with self.storage.open(zip_file_path, "rb") as zip_file:
-                await message.author.send(file=discord.File(zip_file, filename=str(zip_file_path.encode('UTF-8'))))
-        else:
-            file_path = await self.save_channel(message.channel)
-            with self.storage.open(file_path, "rb") as file:
-                await message.author.send(file=discord.File(file, filename=str(file_path.encode('UTF-8'))))
+        async with message.channel.typing():
+            if len(args) and args[0] == "*":
+                try:
+                    await message.delete()
+                except discord.Forbidden:
+                    self.client.warning("Impossible de supprimer le message {message.id}, permission "
+                                        "refusée.".format(message=message))
+                except discord.HTTPException:
+                    self.client.warning("Impossible de supprimer le message {message.id}.".format(message=message))
+                current_time = time.time()
+                files = await self.save_channel(current_time=current_time)
+                zip_file_path = self.storage.mkzip(files, str(current_time)+".zip")
+                with self.storage.open(zip_file_path, "rb") as zip_file:
+                    await message.author.send(file=discord.File(zip_file, filename=str(zip_file_path.encode('UTF-8'))))
+            else:
+                file_paths = [await self.save_channel(message.channel)]
+                attempts = 0
+                while attempts < 3:
+                    try:
+                        for path in file_paths:
+                            with self.storage.open(path, "rb") as file:
+                                await message.author.send(file=discord.File(file, filename=str(path.encode('UTF-8'))))
+                        return
+                    except:
+                        await message.author.send("Failed to send archive. Trying to subdivide")
+                        prev_amount = len(file_paths)
+                        for i in range(prev_amount):
+                            path = file_paths[i]
+                            with self.storage.open(path, "rb") as file:
+                                lines = file.readlines()
+                            cutoff = len(lines) // 2
+                            with self.storage.open(path, "bw") as file1:
+                                file1.writelines(lines[:cutoff])
+                            new_file_name = path[:path.rindex(".")] + "+" * pow(2, attempts) + path[path.rindex("."):]
+                            with self.storage.open(new_file_name, "bw") as file2:
+                                file2.writelines(lines[cutoff:])
+                            file_paths.append(new_file_name)
+                    finally:
+                        attempts += 1
+                await message.author.send("Fully failed to send archive after 3 attemps")
 
     async def save_channel(self, channel=None, current_time=time.time()):
         if channel is None:
@@ -88,7 +111,8 @@ class MainClass(BaseClassPython):
                 files.append(await self.save_channel(chan, current_time))
             return files
         self.storage.mkdir(str(current_time))
-        with self.storage.open(os.path.join(str(current_time), channel.name + " [" + str(channel.id) + "]" + ".txt"), "bw") as file:
+        file_name = os.path.join(str(current_time), channel.name + " [" + str(channel.id) + "]" + ".txt")
+        with self.storage.open(file_name, "bw") as file:
             if type(channel) is discord.TextChannel:
                 try:
                     async for rec in channel.history(limit=None):
@@ -104,4 +128,4 @@ class MainClass(BaseClassPython):
                                     bytes(attachment.proxy_url, "utf8") + b"\n")
                 except discord.Forbidden:
                     file.write(b"Forbidden")
-        return os.path.join(str(current_time), channel.name + " [" + str(channel.id) + "]" + ".txt")
+        return file_name
