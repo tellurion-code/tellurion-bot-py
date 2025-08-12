@@ -174,6 +174,7 @@ class BotPowerSelectView(PlayView):
         super().__init__(game, *args, **kwargs)
 
         self.power_classes = {x.__name__: x for x in (*ALL_POWERS, Power)}
+        self.selects = {}
         self.update()
 
     def update(self):
@@ -187,13 +188,13 @@ class BotPowerSelectView(PlayView):
                     value=key,
                     default=key in self.game.players[id].powers.keys()
                 ) for key, subclass in self.power_classes.items()]
-                self.select = discord.ui.Select(options=options, max_values=2, placeholder=f"Pouvoir de {self.game.players[id].name}")
-                bot_id = id
-                self.select.callback = lambda interaction: self.update_bot_power(interaction, bot_id)
-                self.add_item(self.select)
+                select = discord.ui.Select(options=options, max_values=2, placeholder=f"Pouvoir de {self.game.players[id].name}", custom_id=str(id))
+                select.callback = self.update_bot_power
+                self.add_item(select)
 
-    async def update_bot_power(self, interaction, id):
-        self.game.players[id].set_powers(self.power_classes[x] for x in self.select.values)
+    async def update_bot_power(self, interaction):
+        select = self.get_item(interaction.custom_id)
+        self.game.players[int(interaction.custom_id)].set_powers(self.power_classes[x] for x in select.values)
         self.update()
         await interaction.response.edit_message(view=self)
 
