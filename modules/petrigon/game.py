@@ -9,7 +9,7 @@ from modules.petrigon.bot import GameBot
 from modules.petrigon.player import Player
 from modules.petrigon.hex import AXIAL_DIRECTION_VECTORS, DIRECTIONS_TO_EMOJIS, Hex
 from modules.petrigon.panels import FightPanel, JoinPanel, PowerPanel
-from modules.petrigon.power import ALL_POWERS, Attacker, Defender, General, Glitcher, Liquid, Pacifist, Scout, Swarm, Topologist, Turtle
+from modules.petrigon.power import ALL_POWERS, Attacker, Architect, Defender, General, Glitcher, Liquid, Navigator, Pacifist, Scout, Swarm, Topologist, Turtle
 from modules.petrigon.types import Context, PowersData
 
 
@@ -122,12 +122,14 @@ class Game:
         await self.panel.close()
 
         powers_priority = (  # Later is more important, earlier is more fundamental
+            Architect,
             Topologist,
             Swarm,
             Glitcher,
             Turtle,
             Attacker,
             Defender,
+            Navigator,
             General,
             Pacifist,
             Liquid,
@@ -184,7 +186,7 @@ class Game:
                     if self.map.get(neighbor) != 0:
                         return False
 
-            return True    
+            return True
         
         i = 0
         while i < self.wall_count:

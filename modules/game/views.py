@@ -46,3 +46,17 @@ class PlayView(GameView):
     async def interaction_check(self, interaction):
         admin = self.game.admin if hasattr(self.game, "admin") else 0
         return interaction.user.id in self.game.players or interaction.user.id == admin
+
+
+class EndView(GameView):
+    def __init__(self, game, *args, **kwargs):
+        super().__init__(game, *args, **kwargs)
+
+    @discord.ui.button(label="Oui", style=discord.ButtonStyle.green)
+    async def end(self, button, interaction):
+        await self.game.end()
+        await self.delete()
+
+    @discord.ui.button(label="Non", style=discord.ButtonStyle.red)
+    async def cancel(self, button, interaction):
+        await self.delete()

@@ -1,6 +1,7 @@
 import discord
 
 from modules.base import BaseClassPython
+from modules.game.views import EndView
 from modules.petrigon import constants
 from modules.petrigon.game import Game
 from modules.petrigon.power import ALL_POWERS
@@ -12,8 +13,9 @@ class MainClass(BaseClassPython):
         "description": "Module du jeu Petrigon",
         "commands": {
             "`{prefix}{command} create`": "Crée une partie",
-            "`{prefix}{command} reset`": "Reinitialise la partie",
-            "`{prefix}{command} rules`": "Affiche les règles"
+            "`{prefix}{command} end`": "Annule la partie",
+            "`{prefix}{command} rules`": "Affiche les règles",
+            "`{prefix}{command} rules powers`": "Affiche les pouvoirs"
         }
     }
     help_active = True
@@ -71,8 +73,7 @@ class MainClass(BaseClassPython):
     async def com_end(self, message, args, kwargs):
         if message.channel.id in self.games:
             game = self.games[message.channel.id]
-            if message.author.id in (*game.players.keys(), game.admin):
-                await game.end()
+            await message.channel.send("Voulez-vous mettre fin à la partie en cours?", view=EndView(game))
 
     # Active le debug: le nombre minimal de joueurs
     async def com_debug(self, message, args, kwargs):
@@ -109,7 +110,7 @@ class MainClass(BaseClassPython):
         else:
             await message.channel.send(embed=discord.Embed(
                 title=":small_orange_diamond: Règles de Petrigon :small_orange_diamond:",
-                description="""
+                description=f"""
 :small_blue_diamond: **But du jeu** : :small_blue_diamond:
 Chaque joueur commence avec une troupe à un endroit aléatoire de la carte au début de la partie.
 Le gagnant est le joueur qui est le dernier avec des troupes encore vivantes, ou bien qui arrive à contrôler 50% de la carte.
@@ -127,5 +128,7 @@ Pour déterminer qui gagne le combat, il suffit de regarder le nombre de troupes
 -  Si l'attaquant en a le plus, il se réplique sur le défenseur
 -  Si le défenseur en a le plus, rien ne se passe
 -  S'il y a égalité, le défenseur est tué mais l'attaquant ne se réplique pas
-                """,
+
+:small_blue_diamond: **Les pouvoirs** : :small_blue_diamond:
+Envoyez "%{self.command_text} rules powers" pour avoir la liste des pouvoirs.""",
                 color=self.color))

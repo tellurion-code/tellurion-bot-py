@@ -172,8 +172,7 @@ class Player:
     
     def end_turn(self, result):
         extra_turn, new_context = self.is_on_extra_turn(result.context)
-        if extra_turn: return False, new_context
-        return True, new_context
+        return not extra_turn, new_context
     
     async def forfeit(self, interaction):
         with self.game.map.edit() as editor:
