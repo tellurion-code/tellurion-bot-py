@@ -151,7 +151,7 @@ class Pacifist(Power):
 class Topologist(Power):
     name = "Topologiste"
     icon = "🍩"
-    description = "Peut traverser les bords comme s'ils étaient adjacents"
+    description = "Considère les bords opposés du plateau comme adjacents"
 
     def __init__(self, player):
         super().__init__(player)
