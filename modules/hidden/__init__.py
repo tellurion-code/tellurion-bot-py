@@ -11,8 +11,7 @@ class MainClass(BaseClassPython):
         "commands": {
             "`{prefix}{command} create`": "Crée une partie s'il n'y en a pas déjà une dans le salon",
             "`{prefix}{command} reset`": "Reinitialise la partie",
-            "`{prefix}{command} roles set/add/remove`": "Change les rôles, ou affiche les rôles en jeu si aucune sous-commande n'est donnée",
-            "`{prefix}{command} rules`": "Affiche les règles et les explications des rôles"
+            "`{prefix}{command} roles set/add/remove`": "Change les rôles, ou affiche les rôles en jeu si aucune sous-commande n'est donnée"
         }
     }
     help_active = True
